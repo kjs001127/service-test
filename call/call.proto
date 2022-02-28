@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/ch-proto/call";
+
+package call;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service Call {
+  // CreatePhoneCall
+  //
+  // {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
+  // It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
+  //
+  rpc CreatePhoneCall(PhoneCallRequest) returns (CallResponse) {
+    option (google.api.http) = {
+      post: "/api/phoneCall"
+      body: "*"
+      // body 넣지 않으면 "form-x-www-urlencoded"
+      // body "*" 이면 "application/json"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "ApiKeyAuth";
+          value: {}
+        }
+        security_requirement: {
+          key: "OAuth2";
+          value: {
+            scope: "read";
+            scope: "write";
+          }
+        }
+      }
+      extensions: {
+        key: "x-irreversible";
+        value {
+          bool_value: true;
+        }
+      }
+    };
+  }
+}
+
+message PhoneCallRequest {
+  string fromNumber = 1;
+  string toNumber = 2;
+}
+
+message MediaServer {
+  string ip = 1;
+  string sipId = 2;
+  string sipPw = 3;
+  string publicIp = 4;
+  string internalIp = 5;
+}
+
+message CallResponse {
+  MediaServer media = 1;
+  string session = 2;
+}
