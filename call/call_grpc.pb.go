@@ -107,5 +107,5 @@ var Call_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/call/call.proto",
+	Metadata: "call/call.proto",
 }
