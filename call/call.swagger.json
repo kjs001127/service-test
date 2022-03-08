@@ -1,0 +1,138 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "call/call.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Call"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/phoneCall": {
+      "post": {
+        "summary": "CreatePhoneCall",
+        "description": "CreatePhoneCall is a call with the method(s) POST within the \"Call\" service.\nIt takes in \"PhoneCallRequest\" and returns a \"CallResponse\".",
+        "operationId": "Call_CreatePhoneCall",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/callCallResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callPhoneCallRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": [],
+            "OAuth2": [
+              "read",
+              "write"
+            ]
+          }
+        ],
+        "x-irreversible": true
+      }
+    }
+  },
+  "definitions": {
+    "callCallResponse": {
+      "type": "object",
+      "properties": {
+        "media": {
+          "$ref": "#/definitions/callMediaServer"
+        },
+        "session": {
+          "type": "string"
+        }
+      }
+    },
+    "callMediaServer": {
+      "type": "object",
+      "properties": {
+        "ip": {
+          "type": "string"
+        },
+        "sipId": {
+          "type": "string"
+        },
+        "sipPw": {
+          "type": "string"
+        },
+        "publicIp": {
+          "type": "string"
+        },
+        "internalIp": {
+          "type": "string"
+        }
+      }
+    },
+    "callPhoneCallRequest": {
+      "type": "object",
+      "properties": {
+        "fromNumber": {
+          "type": "string"
+        },
+        "toNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
