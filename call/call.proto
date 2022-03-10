@@ -13,9 +13,11 @@ service Call {
   // {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
   // It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
   //
-  rpc CreatePhoneCall(PhoneCallRequest) returns (CallResponse) {
+
+  // Sip router, ion-sfu, dw(장기적인 관점에선 grpc, as-i -> rest API)
+  rpc CreateMeet(PhoneRequest) returns (SessionInfo) {
     option (google.api.http) = {
-      post: "/api/phoneCall"
+      post: "/api/call"
       body: "*"
       // body 넣지 않으면 "form-x-www-urlencoded"
       // body "*" 이면 "application/json"
@@ -42,22 +44,33 @@ service Call {
       }
     };
   }
+
+  rpc GetAoRInfo(AoRRequest) returns (AoRResponse) {}
 }
 
-message PhoneCallRequest {
+message PhoneRequest {
   string fromNumber = 1;
   string toNumber = 2;
+  string sipUri = 3;
 }
 
-message MediaServer {
-  string ip = 1;
+message Sfu {
+  string id = 1;
   string sipId = 2;
   string sipPw = 3;
-  string publicIp = 4;
-  string internalIp = 5;
+  string ip = 4;
 }
 
-message CallResponse {
-  MediaServer media = 1;
+message SessionInfo {
+  Sfu sfu = 1;
   string session = 2;
+}
+
+message AoRRequest {
+  string sipURI = 1;
+  string source = 2;
+}
+
+message AoRResponse {
+  Sfu media = 1;
 }

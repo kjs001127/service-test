@@ -18,12 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CallClient interface {
-	// CreatePhoneCall
-	//
-	// {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
-	// It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
-	//
-	CreatePhoneCall(ctx context.Context, in *PhoneCallRequest, opts ...grpc.CallOption) (*CallResponse, error)
+	// Sip router, ion-sfu, dw(장기적인 관점에선 grpc, as-i -> rest API)
+	CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*SessionInfo, error)
+	GetAoRInfo(ctx context.Context, in *AoRRequest, opts ...grpc.CallOption) (*AoRResponse, error)
 }
 
 type callClient struct {
@@ -34,9 +31,18 @@ func NewCallClient(cc grpc.ClientConnInterface) CallClient {
 	return &callClient{cc}
 }
 
-func (c *callClient) CreatePhoneCall(ctx context.Context, in *PhoneCallRequest, opts ...grpc.CallOption) (*CallResponse, error) {
-	out := new(CallResponse)
-	err := c.cc.Invoke(ctx, "/call.Call/CreatePhoneCall", in, out, opts...)
+func (c *callClient) CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*SessionInfo, error) {
+	out := new(SessionInfo)
+	err := c.cc.Invoke(ctx, "/call.Call/CreateMeet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *callClient) GetAoRInfo(ctx context.Context, in *AoRRequest, opts ...grpc.CallOption) (*AoRResponse, error) {
+	out := new(AoRResponse)
+	err := c.cc.Invoke(ctx, "/call.Call/GetAoRInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,12 +53,9 @@ func (c *callClient) CreatePhoneCall(ctx context.Context, in *PhoneCallRequest, 
 // All implementations must embed UnimplementedCallServer
 // for forward compatibility
 type CallServer interface {
-	// CreatePhoneCall
-	//
-	// {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
-	// It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
-	//
-	CreatePhoneCall(context.Context, *PhoneCallRequest) (*CallResponse, error)
+	// Sip router, ion-sfu, dw(장기적인 관점에선 grpc, as-i -> rest API)
+	CreateMeet(context.Context, *PhoneRequest) (*SessionInfo, error)
+	GetAoRInfo(context.Context, *AoRRequest) (*AoRResponse, error)
 	mustEmbedUnimplementedCallServer()
 }
 
@@ -60,8 +63,11 @@ type CallServer interface {
 type UnimplementedCallServer struct {
 }
 
-func (UnimplementedCallServer) CreatePhoneCall(context.Context, *PhoneCallRequest) (*CallResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePhoneCall not implemented")
+func (UnimplementedCallServer) CreateMeet(context.Context, *PhoneRequest) (*SessionInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMeet not implemented")
+}
+func (UnimplementedCallServer) GetAoRInfo(context.Context, *AoRRequest) (*AoRResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAoRInfo not implemented")
 }
 func (UnimplementedCallServer) mustEmbedUnimplementedCallServer() {}
 
@@ -76,20 +82,38 @@ func RegisterCallServer(s grpc.ServiceRegistrar, srv CallServer) {
 	s.RegisterService(&Call_ServiceDesc, srv)
 }
 
-func _Call_CreatePhoneCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PhoneCallRequest)
+func _Call_CreateMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PhoneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CallServer).CreatePhoneCall(ctx, in)
+		return srv.(CallServer).CreateMeet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/call.Call/CreatePhoneCall",
+		FullMethod: "/call.Call/CreateMeet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CallServer).CreatePhoneCall(ctx, req.(*PhoneCallRequest))
+		return srv.(CallServer).CreateMeet(ctx, req.(*PhoneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Call_GetAoRInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AoRRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CallServer).GetAoRInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/call.Call/GetAoRInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CallServer).GetAoRInfo(ctx, req.(*AoRRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -102,8 +126,12 @@ var Call_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CallServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreatePhoneCall",
-			Handler:    _Call_CreatePhoneCall_Handler,
+			MethodName: "CreateMeet",
+			Handler:    _Call_CreateMeet_Handler,
+		},
+		{
+			MethodName: "GetAoRInfo",
+			Handler:    _Call_GetAoRInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
