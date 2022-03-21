@@ -16,15 +16,48 @@
     "application/json"
   ],
   "paths": {
-    "/api/call": {
+    "/api/hangup": {
       "post": {
-        "summary": "Sip router, ion-sfu, dw(장기적인 관점에선 grpc, as-i -\u003e rest API)",
+        "operationId": "Call_HangUp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callMeetKey"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ]
+      }
+    },
+    "/api/meet": {
+      "post": {
+        "summary": "CreateMeet",
+        "description": "CreateMeet is a call with the method(s) POST within the \"Call\" service.\nIt takes in \"PhoneRequest\" and returns a \"MeetResponse\".",
         "operationId": "Call_CreateMeet",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/callSessionInfo"
+              "$ref": "#/definitions/callMeetResponse"
             }
           },
           "default": {
@@ -58,14 +91,159 @@
         ],
         "x-irreversible": true
       }
+    },
+    "/api/reconnect": {
+      "post": {
+        "operationId": "Call_Reconnect",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callMeetKey"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ]
+      }
+    },
+    "/api/webrtc/join": {
+      "post": {
+        "operationId": "Call_WebRtcJoin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callWebRtcJoinRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ]
+      }
+    },
+    "/api/webrtc/negotiation": {
+      "post": {
+        "operationId": "Call_WebRtcNegotiation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callWebRtcNegotiationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ]
+      }
+    },
+    "/api/webrtc/trickle": {
+      "post": {
+        "operationId": "Call_WebRtcTrickle",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/callWebRtcTrickleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Call"
+        ]
+      }
     }
   },
   "definitions": {
-    "callAoRResponse": {
+    "callMeetKey": {
+      "type": "object",
+      "properties": {
+        "meetId": {
+          "type": "string"
+        },
+        "personId": {
+          "type": "string"
+        },
+        "personType": {
+          "type": "string"
+        }
+      }
+    },
+    "callMeetResponse": {
       "type": "object",
       "properties": {
         "media": {
           "$ref": "#/definitions/callSfu"
+        },
+        "meetKey": {
+          "$ref": "#/definitions/callMeetKey"
         }
       }
     },
@@ -77,27 +255,13 @@
         },
         "toNumber": {
           "type": "string"
-        },
-        "sipUri": {
-          "type": "string"
-        }
-      }
-    },
-    "callSessionInfo": {
-      "type": "object",
-      "properties": {
-        "sfu": {
-          "$ref": "#/definitions/callSfu"
-        },
-        "session": {
-          "type": "string"
         }
       }
     },
     "callSfu": {
       "type": "object",
       "properties": {
-        "id": {
+        "ip": {
           "type": "string"
         },
         "sipId": {
@@ -106,8 +270,62 @@
         "sipPw": {
           "type": "string"
         },
-        "ip": {
+        "publicIp": {
           "type": "string"
+        },
+        "internalIp": {
+          "type": "string"
+        }
+      }
+    },
+    "callWebRtcJoinRequest": {
+      "type": "object",
+      "properties": {
+        "meetKey": {
+          "$ref": "#/definitions/callMeetKey"
+        },
+        "offerSdp": {
+          "type": "string"
+        }
+      }
+    },
+    "callWebRtcNegotiationRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/callWebRtcNegotiationRequestType"
+        },
+        "id": {
+          "type": "string"
+        },
+        "sdp": {
+          "type": "string"
+        }
+      }
+    },
+    "callWebRtcNegotiationRequestType": {
+      "type": "string",
+      "enum": [
+        "OFFER",
+        "ANSWER"
+      ],
+      "default": "OFFER"
+    },
+    "callWebRtcTrickleRequest": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "candidate": {
+          "type": "string"
+        },
+        "sdpMid": {
+          "type": "string"
+        },
+        "sdpMLineIndex": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

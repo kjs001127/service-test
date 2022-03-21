@@ -13,6 +13,14 @@ grpc:
 		--go-grpc_opt=module=github.com/channel-io/ch-proto \
 		--go-grpc_out=. \
 		call/call.proto
+	protoc -I. \
+    		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
+            -I${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.7.3 \
+    		--go_opt=module=github.com/channel-io/ch-proto \
+    		--go_out=. \
+    		--go-grpc_opt=module=github.com/channel-io/ch-proto \
+    		--go-grpc_out=. \
+    		sfu/sfu.proto
 
 grpcGateway:
 	protoc -I. \
@@ -26,6 +34,17 @@ grpcGateway:
 		--openapiv2_opt logtostderr=true \
 		--openapiv2_opt use_go_templates=true \
         call/call.proto
+	protoc -I. \
+		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
+        -I${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.7.3 \
+		--grpc-gateway_out . \
+        --grpc-gateway_opt logtostderr=true \
+        --grpc-gateway_opt paths=source_relative \
+        --grpc-gateway_opt generate_unbound_methods=true \
+        --openapiv2_out . \
+		--openapiv2_opt logtostderr=true \
+		--openapiv2_opt use_go_templates=true \
+        sfu/sfu.proto
 
 # Setup & Install tools
 setupTools:

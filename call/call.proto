@@ -5,19 +5,53 @@ option go_package = "github.com/channel-io/ch-proto/call";
 package call;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 service Call {
-  // CreatePhoneCall
+  rpc WebRtcTrickle(WebRtcTrickleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/webrtc/trickle"
+      body: "*"
+    };
+  }
+
+  rpc WebRtcNegotiation(WebRtcNegotiationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/webrtc/negotiation"
+      body: "*"
+    };
+  }
+
+  rpc WebRtcJoin(WebRtcJoinRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/webrtc/join"
+      body: "*"
+    };
+  }
+
+  rpc HangUp(MeetKey) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/hangup"
+      body: "*"
+    };
+  }
+
+  rpc Reconnect(MeetKey) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/reconnect"
+      body: "*"
+    };
+  }
+
+  // CreateMeet
   //
   // {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
   // It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
   //
-
-  // Sip router, ion-sfu, dw(장기적인 관점에선 grpc, as-i -> rest API)
-  rpc CreateMeet(PhoneRequest) returns (SessionInfo) {
+  rpc CreateMeet(PhoneRequest) returns (MeetResponse) {
     option (google.api.http) = {
-      post: "/api/call"
+      post: "/api/meet"
       body: "*"
       // body 넣지 않으면 "form-x-www-urlencoded"
       // body "*" 이면 "application/json"
@@ -44,33 +78,50 @@ service Call {
       }
     };
   }
+}
 
-  rpc GetAoRInfo(AoRRequest) returns (AoRResponse) {}
+message WebRtcNegotiationRequest {
+  enum Type {
+    OFFER = 0;
+    ANSWER = 1;
+  }
+  Type type = 1;
+  optional string id = 2;
+  string sdp = 3;
+}
+
+message WebRtcTrickleRequest {
+  string target = 1;
+  string candidate = 2;
+  string sdpMid = 3;
+  uint32 sdpMLineIndex = 4;
+}
+
+message WebRtcJoinRequest {
+  MeetKey meetKey = 1;
+  optional string offerSdp = 2;
+}
+
+message MeetKey {
+  string meetId = 1;
+  string personId = 2;
+  string personType = 3;
 }
 
 message PhoneRequest {
   string fromNumber = 1;
   string toNumber = 2;
-  string sipUri = 3;
 }
 
 message Sfu {
-  string id = 1;
+  string ip = 1;
   string sipId = 2;
   string sipPw = 3;
-  string ip = 4;
+  string publicIp = 4;
+  string internalIp = 5;
 }
 
-message SessionInfo {
-  Sfu sfu = 1;
-  string session = 2;
-}
-
-message AoRRequest {
-  string sipURI = 1;
-  string source = 2;
-}
-
-message AoRResponse {
+message MeetResponse {
   Sfu media = 1;
+  MeetKey meetKey = 2;
 }

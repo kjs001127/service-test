@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/ch-proto/sfu";
+
+package sfu;
+
+service Sfu {
+  rpc SfuWebRtcRelay(SubscribeRequest) returns (stream WebRtcRelay) {
+  }
+}
+
+message SubscribeRequest {
+  string ip = 1;
+  string sipId = 2;
+  string sipPw = 3;
+  string publicIp = 4;
+  string internalIp = 5;
+}
+
+message MeetKey {
+  string meetId = 1;
+  string personId = 2;
+  string personType = 3;
+}
+
+message WebRtcRelay {
+  optional string method = 1;
+  optional bytes params = 2;
+  optional MeetKey meetKey = 3;
+}
