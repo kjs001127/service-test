@@ -51,13 +51,13 @@
     "/api/meet": {
       "post": {
         "summary": "CreateMeet",
-        "description": "CreateMeet is a call with the method(s) POST within the \"Call\" service.\nIt takes in \"PhoneRequest\" and returns a \"MeetResponse\".",
+        "description": "CreateMeet is a call with the method(s) POST within the \"Call\" service.\nIt takes in \"PhoneRequest\" and returns a \"MeetKey\".",
         "operationId": "Call_CreateMeet",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/callMeetResponse"
+              "$ref": "#/definitions/callMeetKey"
             }
           },
           "default": {
@@ -236,17 +236,6 @@
         }
       }
     },
-    "callMeetResponse": {
-      "type": "object",
-      "properties": {
-        "media": {
-          "$ref": "#/definitions/callSfu"
-        },
-        "meetKey": {
-          "$ref": "#/definitions/callMeetKey"
-        }
-      }
-    },
     "callPhoneRequest": {
       "type": "object",
       "properties": {
@@ -254,26 +243,6 @@
           "type": "string"
         },
         "toNumber": {
-          "type": "string"
-        }
-      }
-    },
-    "callSfu": {
-      "type": "object",
-      "properties": {
-        "ip": {
-          "type": "string"
-        },
-        "sipId": {
-          "type": "string"
-        },
-        "sipPw": {
-          "type": "string"
-        },
-        "publicIp": {
-          "type": "string"
-        },
-        "internalIp": {
           "type": "string"
         }
       }
@@ -295,11 +264,11 @@
         "type": {
           "$ref": "#/definitions/callWebRtcNegotiationRequestType"
         },
-        "id": {
-          "type": "string"
-        },
         "sdp": {
           "type": "string"
+        },
+        "key": {
+          "$ref": "#/definitions/callMeetKey"
         }
       }
     },
@@ -314,6 +283,9 @@
     "callWebRtcTrickleRequest": {
       "type": "object",
       "properties": {
+        "meetKey": {
+          "$ref": "#/definitions/callMeetKey"
+        },
         "target": {
           "type": "string"
         },

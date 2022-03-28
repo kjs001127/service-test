@@ -29,7 +29,7 @@ type CallClient interface {
 	// {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
 	// It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
 	//
-	CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*MeetResponse, error)
+	CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*MeetKey, error)
 }
 
 type callClient struct {
@@ -85,8 +85,8 @@ func (c *callClient) Reconnect(ctx context.Context, in *MeetKey, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *callClient) CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*MeetResponse, error) {
-	out := new(MeetResponse)
+func (c *callClient) CreateMeet(ctx context.Context, in *PhoneRequest, opts ...grpc.CallOption) (*MeetKey, error) {
+	out := new(MeetKey)
 	err := c.cc.Invoke(ctx, "/call.Call/CreateMeet", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ type CallServer interface {
 	// {{.MethodDescriptorProto.Name}} is a call with the method(s) {{$first := true}}{{range .Bindings}}{{if $first}}{{$first = false}}{{else}}, {{end}}{{.HTTPMethod}}{{end}} within the "{{.Service.Name}}" service.
 	// It takes in "{{.RequestType.Name}}" and returns a "{{.ResponseType.Name}}".
 	//
-	CreateMeet(context.Context, *PhoneRequest) (*MeetResponse, error)
+	CreateMeet(context.Context, *PhoneRequest) (*MeetKey, error)
 	mustEmbedUnimplementedCallServer()
 }
 
@@ -131,7 +131,7 @@ func (UnimplementedCallServer) HangUp(context.Context, *MeetKey) (*emptypb.Empty
 func (UnimplementedCallServer) Reconnect(context.Context, *MeetKey) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reconnect not implemented")
 }
-func (UnimplementedCallServer) CreateMeet(context.Context, *PhoneRequest) (*MeetResponse, error) {
+func (UnimplementedCallServer) CreateMeet(context.Context, *PhoneRequest) (*MeetKey, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMeet not implemented")
 }
 func (UnimplementedCallServer) mustEmbedUnimplementedCallServer() {}
