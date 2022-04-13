@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/ch-proto/sip";
+
+package sip;
+
+service Sip {
+  rpc InviteCall(SipRequest) returns (SipResponse) {
+  }
+  rpc AcceptCall(SipRequest) returns (SipResponse) {
+  }
+  rpc CancelCall(SipRequest) returns (SipResponse) {
+  }
+  rpc EndCall(SipRequest) returns (SipResponse) {
+  }
+}
+
+message SipRequest {
+  string contact = 1;
+  string via = 2;
+  string from = 3;
+  string to = 4;
+  string carrier = 5;
+  optional string callId = 6;
+  optional string sdp = 7;
+}
+
+message SipResponse {
+  string callId = 1;
+}
