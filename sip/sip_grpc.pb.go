@@ -21,7 +21,7 @@ type SipClient interface {
 	InviteCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 	AcceptCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 	CancelCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
-	EndCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
+	ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 }
 
 type sipClient struct {
@@ -59,9 +59,9 @@ func (c *sipClient) CancelCall(ctx context.Context, in *SipRequest, opts ...grpc
 	return out, nil
 }
 
-func (c *sipClient) EndCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error) {
+func (c *sipClient) ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error) {
 	out := new(SipResponse)
-	err := c.cc.Invoke(ctx, "/sip.Sip/EndCall", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sip.Sip/ByeCall", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ type SipServer interface {
 	InviteCall(context.Context, *SipRequest) (*SipResponse, error)
 	AcceptCall(context.Context, *SipRequest) (*SipResponse, error)
 	CancelCall(context.Context, *SipRequest) (*SipResponse, error)
-	EndCall(context.Context, *SipRequest) (*SipResponse, error)
+	ByeCall(context.Context, *SipRequest) (*SipResponse, error)
 	mustEmbedUnimplementedSipServer()
 }
 
@@ -92,8 +92,8 @@ func (UnimplementedSipServer) AcceptCall(context.Context, *SipRequest) (*SipResp
 func (UnimplementedSipServer) CancelCall(context.Context, *SipRequest) (*SipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelCall not implemented")
 }
-func (UnimplementedSipServer) EndCall(context.Context, *SipRequest) (*SipResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EndCall not implemented")
+func (UnimplementedSipServer) ByeCall(context.Context, *SipRequest) (*SipResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ByeCall not implemented")
 }
 func (UnimplementedSipServer) mustEmbedUnimplementedSipServer() {}
 
@@ -162,20 +162,20 @@ func _Sip_CancelCall_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Sip_EndCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Sip_ByeCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SipRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SipServer).EndCall(ctx, in)
+		return srv.(SipServer).ByeCall(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sip.Sip/EndCall",
+		FullMethod: "/sip.Sip/ByeCall",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SipServer).EndCall(ctx, req.(*SipRequest))
+		return srv.(SipServer).ByeCall(ctx, req.(*SipRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,8 +200,8 @@ var Sip_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Sip_CancelCall_Handler,
 		},
 		{
-			MethodName: "EndCall",
-			Handler:    _Sip_EndCall_Handler,
+			MethodName: "ByeCall",
+			Handler:    _Sip_ByeCall_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

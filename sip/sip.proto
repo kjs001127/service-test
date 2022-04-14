@@ -11,18 +11,17 @@ service Sip {
   }
   rpc CancelCall(SipRequest) returns (SipResponse) {
   }
-  rpc EndCall(SipRequest) returns (SipResponse) {
+  rpc ByeCall(SipRequest) returns (SipResponse) {
   }
 }
 
 message SipRequest {
-  string contact = 1;
-  string via = 2;
-  string from = 3;
-  string to = 4;
-  string carrier = 5;
-  optional string callId = 6;
-  optional string sdp = 7;
+  string carrier = 1;
+  string contact = 2;
+  string callId = 3;
+  string from = 4;
+  string to = 5;
+  optional string sdp = 6;
 }
 
 message SipResponse {
