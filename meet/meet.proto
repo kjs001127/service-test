@@ -7,28 +7,88 @@ option java_multiple_files = true;
 package meet;
 
 service MeetService {
-  // sfu -> dw
-  rpc CreateInboundCallMeet(InboundCallRequest) returns (MeetId) {
+  rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse) {
   }
-  // dw -> sfu
-  rpc CreateOutboundCallMeet(OutboundCallRequest) returns (MeetId) {
+  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse) {
+  }
+  rpc LeaveMeetByUser(LeaveMeetRequest) returns (BareResponse) {
+  }
+  rpc LeaveMeetByManager(LeaveMeetRequest) returns (BareResponse) {
+  }
+  rpc AddPeers(AddPeersRequest) returns (AddPeersResponse) {
+  }
+  rpc JoinMeetByUser(JoinMeetRequest) returns (BareResponse) {
+  }
+  rpc JoinMeetByManager(JoinMeetRequest) returns (BareResponse) {
+  }
+  rpc CloseMeet(CloseMeetRequest) returns (BareResponse) {
   }
 }
 
-message InboundCallRequest {
+enum ResponseCode {
+  SUCCESS = 0;
+  UNAUTHORIZED = 1;
+  FORBIDDEN = 2;
+  NOT_FOUND = 3;
+}
+
+message BareResponse {
+  ResponseCode response_code = 1;
+}
+
+message GuideVoice {
+  string name = 1;
+  string url = 2;
+}
+
+message CloseMeetRequest {
+  string meet_id = 1;
+  oneof response {
+    bool has_guide_voice = 2;
+    GuideVoice guide_voice = 3;
+  }
+}
+
+message Person {
+  string person_id = 1;
+  string person_type = 2;
+}
+
+message JoinMeetRequest {
+  Person person = 1;
+  string meet_id = 2;
+}
+
+message AddPeersRequest {
+  repeated Person persons = 1;
+  string meet_id = 2;
+}
+
+message AddPeersResponse {
+  ResponseCode response_code = 1;
+  string meet_id = 2;
+}
+
+message InboundMeetRequest {
   string from = 1;
   string to = 2;
   string carrier = 3;
-  string sfuServerId = 4;
+  string sfu_server_id = 4;
 }
 
-message MeetId {
-  string value = 1;
+message InboundMeetResponse {
+  ResponseCode response_code = 1;
+  string meet_id = 2;
 }
 
-message OutboundCallRequest {
-  string meetId = 1;
+message OutboundMeetRequest {
+  string meet_id = 1;
   string from = 2;
   string to = 3;
   string carrier = 4;
+}
+
+message LeaveMeetRequest {
+  Person person = 1;
+  string meet_id = 2;
 }

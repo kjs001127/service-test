@@ -3,55 +3,55 @@
 
 package io.channel.api.proto;
 
-public interface InboundCallRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.InboundCallRequest)
+public interface OutboundMeetRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.OutboundMeetRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string from = 1;</code>
+   * <code>string meet_id = 1;</code>
+   * @return The meetId.
+   */
+  java.lang.String getMeetId();
+  /**
+   * <code>string meet_id = 1;</code>
+   * @return The bytes for meetId.
+   */
+  com.google.protobuf.ByteString
+      getMeetIdBytes();
+
+  /**
+   * <code>string from = 2;</code>
    * @return The from.
    */
   java.lang.String getFrom();
   /**
-   * <code>string from = 1;</code>
+   * <code>string from = 2;</code>
    * @return The bytes for from.
    */
   com.google.protobuf.ByteString
       getFromBytes();
 
   /**
-   * <code>string to = 2;</code>
+   * <code>string to = 3;</code>
    * @return The to.
    */
   java.lang.String getTo();
   /**
-   * <code>string to = 2;</code>
+   * <code>string to = 3;</code>
    * @return The bytes for to.
    */
   com.google.protobuf.ByteString
       getToBytes();
 
   /**
-   * <code>string carrier = 3;</code>
+   * <code>string carrier = 4;</code>
    * @return The carrier.
    */
   java.lang.String getCarrier();
   /**
-   * <code>string carrier = 3;</code>
+   * <code>string carrier = 4;</code>
    * @return The bytes for carrier.
    */
   com.google.protobuf.ByteString
       getCarrierBytes();
-
-  /**
-   * <code>string sfuServerId = 4;</code>
-   * @return The sfuServerId.
-   */
-  java.lang.String getSfuServerId();
-  /**
-   * <code>string sfuServerId = 4;</code>
-   * @return The bytes for sfuServerId.
-   */
-  com.google.protobuf.ByteString
-      getSfuServerIdBytes();
 }
