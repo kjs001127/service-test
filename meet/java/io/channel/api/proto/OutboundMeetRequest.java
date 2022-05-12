@@ -76,6 +76,19 @@ private static final long serialVersionUID = 0L;
             carrier_ = s;
             break;
           }
+          case 42: {
+            io.channel.api.proto.Person.Builder subBuilder = null;
+            if (user_ != null) {
+              subBuilder = user_.toBuilder();
+            }
+            user_ = input.readMessage(io.channel.api.proto.Person.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(user_);
+              user_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -260,6 +273,32 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int USER_FIELD_NUMBER = 5;
+  private io.channel.api.proto.Person user_;
+  /**
+   * <code>.meet.Person user = 5;</code>
+   * @return Whether the user field is set.
+   */
+  @java.lang.Override
+  public boolean hasUser() {
+    return user_ != null;
+  }
+  /**
+   * <code>.meet.Person user = 5;</code>
+   * @return The user.
+   */
+  @java.lang.Override
+  public io.channel.api.proto.Person getUser() {
+    return user_ == null ? io.channel.api.proto.Person.getDefaultInstance() : user_;
+  }
+  /**
+   * <code>.meet.Person user = 5;</code>
+   */
+  @java.lang.Override
+  public io.channel.api.proto.PersonOrBuilder getUserOrBuilder() {
+    return getUser();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -286,6 +325,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(carrier_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, carrier_);
     }
+    if (user_ != null) {
+      output.writeMessage(5, getUser());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -306,6 +348,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(carrier_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, carrier_);
+    }
+    if (user_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, getUser());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -330,6 +376,11 @@ private static final long serialVersionUID = 0L;
         .equals(other.getTo())) return false;
     if (!getCarrier()
         .equals(other.getCarrier())) return false;
+    if (hasUser() != other.hasUser()) return false;
+    if (hasUser()) {
+      if (!getUser()
+          .equals(other.getUser())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -349,6 +400,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getTo().hashCode();
     hash = (37 * hash) + CARRIER_FIELD_NUMBER;
     hash = (53 * hash) + getCarrier().hashCode();
+    if (hasUser()) {
+      hash = (37 * hash) + USER_FIELD_NUMBER;
+      hash = (53 * hash) + getUser().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -490,6 +545,12 @@ private static final long serialVersionUID = 0L;
 
       carrier_ = "";
 
+      if (userBuilder_ == null) {
+        user_ = null;
+      } else {
+        user_ = null;
+        userBuilder_ = null;
+      }
       return this;
     }
 
@@ -520,6 +581,11 @@ private static final long serialVersionUID = 0L;
       result.from_ = from_;
       result.to_ = to_;
       result.carrier_ = carrier_;
+      if (userBuilder_ == null) {
+        result.user_ = user_;
+      } else {
+        result.user_ = userBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -583,6 +649,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getCarrier().isEmpty()) {
         carrier_ = other.carrier_;
         onChanged();
+      }
+      if (other.hasUser()) {
+        mergeUser(other.getUser());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -915,6 +984,125 @@ private static final long serialVersionUID = 0L;
       carrier_ = value;
       onChanged();
       return this;
+    }
+
+    private io.channel.api.proto.Person user_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder> userBuilder_;
+    /**
+     * <code>.meet.Person user = 5;</code>
+     * @return Whether the user field is set.
+     */
+    public boolean hasUser() {
+      return userBuilder_ != null || user_ != null;
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     * @return The user.
+     */
+    public io.channel.api.proto.Person getUser() {
+      if (userBuilder_ == null) {
+        return user_ == null ? io.channel.api.proto.Person.getDefaultInstance() : user_;
+      } else {
+        return userBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public Builder setUser(io.channel.api.proto.Person value) {
+      if (userBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        user_ = value;
+        onChanged();
+      } else {
+        userBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public Builder setUser(
+        io.channel.api.proto.Person.Builder builderForValue) {
+      if (userBuilder_ == null) {
+        user_ = builderForValue.build();
+        onChanged();
+      } else {
+        userBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public Builder mergeUser(io.channel.api.proto.Person value) {
+      if (userBuilder_ == null) {
+        if (user_ != null) {
+          user_ =
+            io.channel.api.proto.Person.newBuilder(user_).mergeFrom(value).buildPartial();
+        } else {
+          user_ = value;
+        }
+        onChanged();
+      } else {
+        userBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public Builder clearUser() {
+      if (userBuilder_ == null) {
+        user_ = null;
+        onChanged();
+      } else {
+        user_ = null;
+        userBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public io.channel.api.proto.Person.Builder getUserBuilder() {
+      
+      onChanged();
+      return getUserFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    public io.channel.api.proto.PersonOrBuilder getUserOrBuilder() {
+      if (userBuilder_ != null) {
+        return userBuilder_.getMessageOrBuilder();
+      } else {
+        return user_ == null ?
+            io.channel.api.proto.Person.getDefaultInstance() : user_;
+      }
+    }
+    /**
+     * <code>.meet.Person user = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder> 
+        getUserFieldBuilder() {
+      if (userBuilder_ == null) {
+        userBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder>(
+                getUser(),
+                getParentForChildren(),
+                isClean());
+        user_ = null;
+      }
+      return userBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

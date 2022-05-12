@@ -17,6 +17,7 @@ private static final long serialVersionUID = 0L;
   }
   private CloseMeetRequest() {
     meetId_ = "";
+    code_ = 0;
   }
 
   @java.lang.Override
@@ -39,6 +40,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -56,22 +58,22 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 16: {
-            response_ = input.readBool();
-            responseCase_ = 2;
+            int rawValue = input.readEnum();
+
+            code_ = rawValue;
             break;
           }
           case 26: {
             io.channel.api.proto.GuideVoice.Builder subBuilder = null;
-            if (responseCase_ == 3) {
-              subBuilder = ((io.channel.api.proto.GuideVoice) response_).toBuilder();
+            if (((bitField0_ & 0x00000001) != 0)) {
+              subBuilder = guideVoice_.toBuilder();
             }
-            response_ =
-                input.readMessage(io.channel.api.proto.GuideVoice.parser(), extensionRegistry);
+            guideVoice_ = input.readMessage(io.channel.api.proto.GuideVoice.parser(), extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom((io.channel.api.proto.GuideVoice) response_);
-              response_ = subBuilder.buildPartial();
+              subBuilder.mergeFrom(guideVoice_);
+              guideVoice_ = subBuilder.buildPartial();
             }
-            responseCase_ = 3;
+            bitField0_ |= 0x00000001;
             break;
           }
           default: {
@@ -106,47 +108,7 @@ private static final long serialVersionUID = 0L;
             io.channel.api.proto.CloseMeetRequest.class, io.channel.api.proto.CloseMeetRequest.Builder.class);
   }
 
-  private int responseCase_ = 0;
-  private java.lang.Object response_;
-  public enum ResponseCase
-      implements com.google.protobuf.Internal.EnumLite,
-          com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-    HAS_GUIDE_VOICE(2),
-    GUIDE_VOICE(3),
-    RESPONSE_NOT_SET(0);
-    private final int value;
-    private ResponseCase(int value) {
-      this.value = value;
-    }
-    /**
-     * @param value The number of the enum to look for.
-     * @return The enum associated with the given number.
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static ResponseCase valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static ResponseCase forNumber(int value) {
-      switch (value) {
-        case 2: return HAS_GUIDE_VOICE;
-        case 3: return GUIDE_VOICE;
-        case 0: return RESPONSE_NOT_SET;
-        default: return null;
-      }
-    }
-    public int getNumber() {
-      return this.value;
-    }
-  };
-
-  public ResponseCase
-  getResponseCase() {
-    return ResponseCase.forNumber(
-        responseCase_);
-  }
-
+  private int bitField0_;
   public static final int MEET_ID_FIELD_NUMBER = 1;
   private volatile java.lang.Object meetId_;
   /**
@@ -185,56 +147,49 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int HAS_GUIDE_VOICE_FIELD_NUMBER = 2;
+  public static final int CODE_FIELD_NUMBER = 2;
+  private int code_;
   /**
-   * <code>bool has_guide_voice = 2;</code>
-   * @return Whether the hasGuideVoice field is set.
+   * <code>.meet.CloseMeetCode code = 2;</code>
+   * @return The enum numeric value on the wire for code.
    */
-  @java.lang.Override
-  public boolean hasHasGuideVoice() {
-    return responseCase_ == 2;
+  @java.lang.Override public int getCodeValue() {
+    return code_;
   }
   /**
-   * <code>bool has_guide_voice = 2;</code>
-   * @return The hasGuideVoice.
+   * <code>.meet.CloseMeetCode code = 2;</code>
+   * @return The code.
    */
-  @java.lang.Override
-  public boolean getHasGuideVoice() {
-    if (responseCase_ == 2) {
-      return (java.lang.Boolean) response_;
-    }
-    return false;
+  @java.lang.Override public io.channel.api.proto.CloseMeetCode getCode() {
+    @SuppressWarnings("deprecation")
+    io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
+    return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
   }
 
   public static final int GUIDE_VOICE_FIELD_NUMBER = 3;
+  private io.channel.api.proto.GuideVoice guideVoice_;
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    * @return Whether the guideVoice field is set.
    */
   @java.lang.Override
   public boolean hasGuideVoice() {
-    return responseCase_ == 3;
+    return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    * @return The guideVoice.
    */
   @java.lang.Override
   public io.channel.api.proto.GuideVoice getGuideVoice() {
-    if (responseCase_ == 3) {
-       return (io.channel.api.proto.GuideVoice) response_;
-    }
-    return io.channel.api.proto.GuideVoice.getDefaultInstance();
+    return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
   }
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    */
   @java.lang.Override
   public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
-    if (responseCase_ == 3) {
-       return (io.channel.api.proto.GuideVoice) response_;
-    }
-    return io.channel.api.proto.GuideVoice.getDefaultInstance();
+    return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -254,12 +209,11 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, meetId_);
     }
-    if (responseCase_ == 2) {
-      output.writeBool(
-          2, (boolean)((java.lang.Boolean) response_));
+    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
+      output.writeEnum(2, code_);
     }
-    if (responseCase_ == 3) {
-      output.writeMessage(3, (io.channel.api.proto.GuideVoice) response_);
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(3, getGuideVoice());
     }
     unknownFields.writeTo(output);
   }
@@ -273,14 +227,13 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, meetId_);
     }
-    if (responseCase_ == 2) {
+    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBoolSize(
-            2, (boolean)((java.lang.Boolean) response_));
+        .computeEnumSize(2, code_);
     }
-    if (responseCase_ == 3) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, (io.channel.api.proto.GuideVoice) response_);
+        .computeMessageSize(3, getGuideVoice());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -299,18 +252,11 @@ private static final long serialVersionUID = 0L;
 
     if (!getMeetId()
         .equals(other.getMeetId())) return false;
-    if (!getResponseCase().equals(other.getResponseCase())) return false;
-    switch (responseCase_) {
-      case 2:
-        if (getHasGuideVoice()
-            != other.getHasGuideVoice()) return false;
-        break;
-      case 3:
-        if (!getGuideVoice()
-            .equals(other.getGuideVoice())) return false;
-        break;
-      case 0:
-      default:
+    if (code_ != other.code_) return false;
+    if (hasGuideVoice() != other.hasGuideVoice()) return false;
+    if (hasGuideVoice()) {
+      if (!getGuideVoice()
+          .equals(other.getGuideVoice())) return false;
     }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -325,18 +271,11 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
     hash = (53 * hash) + getMeetId().hashCode();
-    switch (responseCase_) {
-      case 2:
-        hash = (37 * hash) + HAS_GUIDE_VOICE_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-            getHasGuideVoice());
-        break;
-      case 3:
-        hash = (37 * hash) + GUIDE_VOICE_FIELD_NUMBER;
-        hash = (53 * hash) + getGuideVoice().hashCode();
-        break;
-      case 0:
-      default:
+    hash = (37 * hash) + CODE_FIELD_NUMBER;
+    hash = (53 * hash) + code_;
+    if (hasGuideVoice()) {
+      hash = (37 * hash) + GUIDE_VOICE_FIELD_NUMBER;
+      hash = (53 * hash) + getGuideVoice().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -466,6 +405,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getGuideVoiceFieldBuilder();
       }
     }
     @java.lang.Override
@@ -473,8 +413,14 @@ private static final long serialVersionUID = 0L;
       super.clear();
       meetId_ = "";
 
-      responseCase_ = 0;
-      response_ = null;
+      code_ = 0;
+
+      if (guideVoiceBuilder_ == null) {
+        guideVoice_ = null;
+      } else {
+        guideVoiceBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -501,18 +447,19 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.channel.api.proto.CloseMeetRequest buildPartial() {
       io.channel.api.proto.CloseMeetRequest result = new io.channel.api.proto.CloseMeetRequest(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.meetId_ = meetId_;
-      if (responseCase_ == 2) {
-        result.response_ = response_;
-      }
-      if (responseCase_ == 3) {
+      result.code_ = code_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
         if (guideVoiceBuilder_ == null) {
-          result.response_ = response_;
+          result.guideVoice_ = guideVoice_;
         } else {
-          result.response_ = guideVoiceBuilder_.build();
+          result.guideVoice_ = guideVoiceBuilder_.build();
         }
+        to_bitField0_ |= 0x00000001;
       }
-      result.responseCase_ = responseCase_;
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -565,18 +512,11 @@ private static final long serialVersionUID = 0L;
         meetId_ = other.meetId_;
         onChanged();
       }
-      switch (other.getResponseCase()) {
-        case HAS_GUIDE_VOICE: {
-          setHasGuideVoice(other.getHasGuideVoice());
-          break;
-        }
-        case GUIDE_VOICE: {
-          mergeGuideVoice(other.getGuideVoice());
-          break;
-        }
-        case RESPONSE_NOT_SET: {
-          break;
-        }
+      if (other.code_ != 0) {
+        setCodeValue(other.getCodeValue());
+      }
+      if (other.hasGuideVoice()) {
+        mergeGuideVoice(other.getGuideVoice());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -606,21 +546,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int responseCase_ = 0;
-    private java.lang.Object response_;
-    public ResponseCase
-        getResponseCase() {
-      return ResponseCase.forNumber(
-          responseCase_);
-    }
-
-    public Builder clearResponse() {
-      responseCase_ = 0;
-      response_ = null;
-      onChanged();
-      return this;
-    }
-
+    private int bitField0_;
 
     private java.lang.Object meetId_ = "";
     /**
@@ -698,185 +624,177 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private int code_ = 0;
     /**
-     * <code>bool has_guide_voice = 2;</code>
-     * @return Whether the hasGuideVoice field is set.
+     * <code>.meet.CloseMeetCode code = 2;</code>
+     * @return The enum numeric value on the wire for code.
      */
-    public boolean hasHasGuideVoice() {
-      return responseCase_ == 2;
+    @java.lang.Override public int getCodeValue() {
+      return code_;
     }
     /**
-     * <code>bool has_guide_voice = 2;</code>
-     * @return The hasGuideVoice.
-     */
-    public boolean getHasGuideVoice() {
-      if (responseCase_ == 2) {
-        return (java.lang.Boolean) response_;
-      }
-      return false;
-    }
-    /**
-     * <code>bool has_guide_voice = 2;</code>
-     * @param value The hasGuideVoice to set.
+     * <code>.meet.CloseMeetCode code = 2;</code>
+     * @param value The enum numeric value on the wire for code to set.
      * @return This builder for chaining.
      */
-    public Builder setHasGuideVoice(boolean value) {
-      responseCase_ = 2;
-      response_ = value;
+    public Builder setCodeValue(int value) {
+      
+      code_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>bool has_guide_voice = 2;</code>
+     * <code>.meet.CloseMeetCode code = 2;</code>
+     * @return The code.
+     */
+    @java.lang.Override
+    public io.channel.api.proto.CloseMeetCode getCode() {
+      @SuppressWarnings("deprecation")
+      io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
+      return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.meet.CloseMeetCode code = 2;</code>
+     * @param value The code to set.
      * @return This builder for chaining.
      */
-    public Builder clearHasGuideVoice() {
-      if (responseCase_ == 2) {
-        responseCase_ = 0;
-        response_ = null;
-        onChanged();
+    public Builder setCode(io.channel.api.proto.CloseMeetCode value) {
+      if (value == null) {
+        throw new NullPointerException();
       }
+      
+      code_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.meet.CloseMeetCode code = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCode() {
+      
+      code_ = 0;
+      onChanged();
       return this;
     }
 
+    private io.channel.api.proto.GuideVoice guideVoice_;
     private com.google.protobuf.SingleFieldBuilderV3<
         io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> guideVoiceBuilder_;
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      * @return Whether the guideVoice field is set.
      */
-    @java.lang.Override
     public boolean hasGuideVoice() {
-      return responseCase_ == 3;
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      * @return The guideVoice.
      */
-    @java.lang.Override
     public io.channel.api.proto.GuideVoice getGuideVoice() {
       if (guideVoiceBuilder_ == null) {
-        if (responseCase_ == 3) {
-          return (io.channel.api.proto.GuideVoice) response_;
-        }
-        return io.channel.api.proto.GuideVoice.getDefaultInstance();
+        return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
       } else {
-        if (responseCase_ == 3) {
-          return guideVoiceBuilder_.getMessage();
-        }
-        return io.channel.api.proto.GuideVoice.getDefaultInstance();
+        return guideVoiceBuilder_.getMessage();
       }
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     public Builder setGuideVoice(io.channel.api.proto.GuideVoice value) {
       if (guideVoiceBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        response_ = value;
+        guideVoice_ = value;
         onChanged();
       } else {
         guideVoiceBuilder_.setMessage(value);
       }
-      responseCase_ = 3;
+      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     public Builder setGuideVoice(
         io.channel.api.proto.GuideVoice.Builder builderForValue) {
       if (guideVoiceBuilder_ == null) {
-        response_ = builderForValue.build();
+        guideVoice_ = builderForValue.build();
         onChanged();
       } else {
         guideVoiceBuilder_.setMessage(builderForValue.build());
       }
-      responseCase_ = 3;
+      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     public Builder mergeGuideVoice(io.channel.api.proto.GuideVoice value) {
       if (guideVoiceBuilder_ == null) {
-        if (responseCase_ == 3 &&
-            response_ != io.channel.api.proto.GuideVoice.getDefaultInstance()) {
-          response_ = io.channel.api.proto.GuideVoice.newBuilder((io.channel.api.proto.GuideVoice) response_)
-              .mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000001) != 0) &&
+            guideVoice_ != null &&
+            guideVoice_ != io.channel.api.proto.GuideVoice.getDefaultInstance()) {
+          guideVoice_ =
+            io.channel.api.proto.GuideVoice.newBuilder(guideVoice_).mergeFrom(value).buildPartial();
         } else {
-          response_ = value;
+          guideVoice_ = value;
         }
         onChanged();
       } else {
-        if (responseCase_ == 3) {
-          guideVoiceBuilder_.mergeFrom(value);
-        }
-        guideVoiceBuilder_.setMessage(value);
+        guideVoiceBuilder_.mergeFrom(value);
       }
-      responseCase_ = 3;
+      bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     public Builder clearGuideVoice() {
       if (guideVoiceBuilder_ == null) {
-        if (responseCase_ == 3) {
-          responseCase_ = 0;
-          response_ = null;
-          onChanged();
-        }
+        guideVoice_ = null;
+        onChanged();
       } else {
-        if (responseCase_ == 3) {
-          responseCase_ = 0;
-          response_ = null;
-        }
         guideVoiceBuilder_.clear();
       }
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     public io.channel.api.proto.GuideVoice.Builder getGuideVoiceBuilder() {
+      bitField0_ |= 0x00000001;
+      onChanged();
       return getGuideVoiceFieldBuilder().getBuilder();
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
-    @java.lang.Override
     public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
-      if ((responseCase_ == 3) && (guideVoiceBuilder_ != null)) {
+      if (guideVoiceBuilder_ != null) {
         return guideVoiceBuilder_.getMessageOrBuilder();
       } else {
-        if (responseCase_ == 3) {
-          return (io.channel.api.proto.GuideVoice) response_;
-        }
-        return io.channel.api.proto.GuideVoice.getDefaultInstance();
+        return guideVoice_ == null ?
+            io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
       }
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 3;</code>
+     * <code>optional .meet.GuideVoice guide_voice = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> 
         getGuideVoiceFieldBuilder() {
       if (guideVoiceBuilder_ == null) {
-        if (!(responseCase_ == 3)) {
-          response_ = io.channel.api.proto.GuideVoice.getDefaultInstance();
-        }
         guideVoiceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder>(
-                (io.channel.api.proto.GuideVoice) response_,
+                getGuideVoice(),
                 getParentForChildren(),
                 isClean());
-        response_ = null;
+        guideVoice_ = null;
       }
-      responseCase_ = 3;
-      onChanged();;
       return guideVoiceBuilder_;
     }
     @java.lang.Override

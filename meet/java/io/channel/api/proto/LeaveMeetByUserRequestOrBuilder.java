@@ -3,24 +3,24 @@
 
 package io.channel.api.proto;
 
-public interface LeaveMeetRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.LeaveMeetRequest)
+public interface LeaveMeetByUserRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.LeaveMeetByUserRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.meet.Person person = 1;</code>
-   * @return Whether the person field is set.
+   * <code>.meet.Peer peer = 1;</code>
+   * @return Whether the peer field is set.
    */
-  boolean hasPerson();
+  boolean hasPeer();
   /**
-   * <code>.meet.Person person = 1;</code>
-   * @return The person.
+   * <code>.meet.Peer peer = 1;</code>
+   * @return The peer.
    */
-  io.channel.api.proto.Person getPerson();
+  io.channel.api.proto.Peer getPeer();
   /**
-   * <code>.meet.Person person = 1;</code>
+   * <code>.meet.Peer peer = 1;</code>
    */
-  io.channel.api.proto.PersonOrBuilder getPersonOrBuilder();
+  io.channel.api.proto.PeerOrBuilder getPeerOrBuilder();
 
   /**
    * <code>string meet_id = 2;</code>

@@ -4,45 +4,37 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf enum {@code meet.ResponseCode}
+ * Protobuf enum {@code meet.CloseMeetCode}
  */
-public enum ResponseCode
+public enum CloseMeetCode
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
-   * <code>SUCCESS = 0;</code>
+   * <code>COMPLETE = 0;</code>
    */
-  SUCCESS(0),
+  COMPLETE(0),
   /**
-   * <code>UNAUTHORIZED = 1;</code>
+   * <code>NOT_IN_OPERATION = 1;</code>
    */
-  UNAUTHORIZED(1),
+  NOT_IN_OPERATION(1),
   /**
-   * <code>FORBIDDEN = 2;</code>
+   * <code>MISSED = 2;</code>
    */
-  FORBIDDEN(2),
-  /**
-   * <code>NOT_FOUND = 3;</code>
-   */
-  NOT_FOUND(3),
+  MISSED(2),
   UNRECOGNIZED(-1),
   ;
 
   /**
-   * <code>SUCCESS = 0;</code>
+   * <code>COMPLETE = 0;</code>
    */
-  public static final int SUCCESS_VALUE = 0;
+  public static final int COMPLETE_VALUE = 0;
   /**
-   * <code>UNAUTHORIZED = 1;</code>
+   * <code>NOT_IN_OPERATION = 1;</code>
    */
-  public static final int UNAUTHORIZED_VALUE = 1;
+  public static final int NOT_IN_OPERATION_VALUE = 1;
   /**
-   * <code>FORBIDDEN = 2;</code>
+   * <code>MISSED = 2;</code>
    */
-  public static final int FORBIDDEN_VALUE = 2;
-  /**
-   * <code>NOT_FOUND = 3;</code>
-   */
-  public static final int NOT_FOUND_VALUE = 3;
+  public static final int MISSED_VALUE = 2;
 
 
   public final int getNumber() {
@@ -59,7 +51,7 @@ public enum ResponseCode
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
-  public static ResponseCode valueOf(int value) {
+  public static CloseMeetCode valueOf(int value) {
     return forNumber(value);
   }
 
@@ -67,25 +59,24 @@ public enum ResponseCode
    * @param value The numeric wire value of the corresponding enum entry.
    * @return The enum associated with the given numeric wire value.
    */
-  public static ResponseCode forNumber(int value) {
+  public static CloseMeetCode forNumber(int value) {
     switch (value) {
-      case 0: return SUCCESS;
-      case 1: return UNAUTHORIZED;
-      case 2: return FORBIDDEN;
-      case 3: return NOT_FOUND;
+      case 0: return COMPLETE;
+      case 1: return NOT_IN_OPERATION;
+      case 2: return MISSED;
       default: return null;
     }
   }
 
-  public static com.google.protobuf.Internal.EnumLiteMap<ResponseCode>
+  public static com.google.protobuf.Internal.EnumLiteMap<CloseMeetCode>
       internalGetValueMap() {
     return internalValueMap;
   }
   private static final com.google.protobuf.Internal.EnumLiteMap<
-      ResponseCode> internalValueMap =
-        new com.google.protobuf.Internal.EnumLiteMap<ResponseCode>() {
-          public ResponseCode findValueByNumber(int number) {
-            return ResponseCode.forNumber(number);
+      CloseMeetCode> internalValueMap =
+        new com.google.protobuf.Internal.EnumLiteMap<CloseMeetCode>() {
+          public CloseMeetCode findValueByNumber(int number) {
+            return CloseMeetCode.forNumber(number);
           }
         };
 
@@ -103,12 +94,12 @@ public enum ResponseCode
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.getDescriptor().getEnumTypes().get(1);
+    return io.channel.api.proto.Meet.getDescriptor().getEnumTypes().get(0);
   }
 
-  private static final ResponseCode[] VALUES = values();
+  private static final CloseMeetCode[] VALUES = values();
 
-  public static ResponseCode valueOf(
+  public static CloseMeetCode valueOf(
       com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
     if (desc.getType() != getDescriptor()) {
       throw new java.lang.IllegalArgumentException(
@@ -122,10 +113,10 @@ public enum ResponseCode
 
   private final int value;
 
-  private ResponseCode(int value) {
+  private CloseMeetCode(int value) {
     this.value = value;
   }
 
-  // @@protoc_insertion_point(enum_scope:meet.ResponseCode)
+  // @@protoc_insertion_point(enum_scope:meet.CloseMeetCode)
 }
 

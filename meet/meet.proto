@@ -7,22 +7,22 @@ option java_multiple_files = true;
 package meet;
 
 service MeetService {
-  rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse) {
-  }
-  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse) {
-  }
-  rpc LeaveMeetByUser(LeaveMeetRequest) returns (BareResponse) {
-  }
-  rpc LeaveMeetByManager(LeaveMeetRequest) returns (BareResponse) {
-  }
-  rpc AddPeers(AddPeersRequest) returns (AddPeersResponse) {
-  }
-  rpc JoinMeetByUser(JoinMeetRequest) returns (BareResponse) {
-  }
-  rpc JoinMeetByManager(JoinMeetRequest) returns (BareResponse) {
-  }
-  rpc CloseMeet(CloseMeetRequest) returns (BareResponse) {
-  }
+  // dw -> sfu
+  rpc CloseMeet(CloseMeetRequest) returns (BareResponse);
+  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
+  rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
+  rpc LeaveMeetByManager(LeaveMeetByManagerRequest) returns (BareResponse);
+
+  // sfu -> dw
+  rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
+  rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
+  rpc LeaveMeetByUser(LeaveMeetByUserRequest) returns (BareResponse);
+}
+
+enum CloseMeetCode {
+  COMPLETE = 0;
+  NOT_IN_OPERATION = 1;
+  MISSED = 2;
 }
 
 enum ResponseCode {
@@ -32,63 +32,80 @@ enum ResponseCode {
   NOT_FOUND = 3;
 }
 
-message BareResponse {
-  ResponseCode response_code = 1;
-}
-
 message GuideVoice {
   string name = 1;
   string url = 2;
 }
 
-message CloseMeetRequest {
-  string meet_id = 1;
-  oneof response {
-    bool has_guide_voice = 2;
-    GuideVoice guide_voice = 3;
-  }
-}
-
 message Person {
-  string person_id = 1;
-  string person_type = 2;
+  string type = 1;
+  string id = 2;
 }
 
-message JoinMeetRequest {
+message Peer {
   Person person = 1;
-  string meet_id = 2;
+  string device_id = 2;
 }
 
-message AddPeersRequest {
-  repeated Person persons = 1;
-  string meet_id = 2;
-}
+// common
 
-message AddPeersResponse {
+message BareResponse {
   ResponseCode response_code = 1;
-  string meet_id = 2;
 }
+
+// sfu -> dw
 
 message InboundMeetRequest {
   string from = 1;
   string to = 2;
   string carrier = 3;
   string sfu_server_id = 4;
+  string device_id = 5;
 }
 
-message InboundMeetResponse {
-  ResponseCode response_code = 1;
+message JoinMeetByUserRequest {
+  Peer peer = 1;
   string meet_id = 2;
 }
+
+message LeaveMeetByManagerRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+// dw -> sfu
 
 message OutboundMeetRequest {
   string meet_id = 1;
   string from = 2;
   string to = 3;
   string carrier = 4;
+  Person user = 5;
 }
 
-message LeaveMeetRequest {
-  Person person = 1;
+message InboundMeetResponse {
+  ResponseCode response_code = 1;
+  string meet_id = 2;
+  Peer peer = 3;
+}
+
+message JoinMeetByManagerRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+message JoinMeetByUserResponse {
+  ResponseCode response_code = 1;
+  Peer peer = 2;
+}
+
+message CloseMeetRequest {
+  string meet_id = 1;
+  CloseMeetCode code = 2;
+  optional GuideVoice guide_voice = 3;
+}
+
+message LeaveMeetByUserRequest {
+  Peer peer = 1;
   string meet_id = 2;
 }

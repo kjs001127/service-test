@@ -3,8 +3,8 @@
 
 package io.channel.api.proto;
 
-public interface AddPeersResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.AddPeersResponse)
+public interface JoinMeetByUserResponseOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.JoinMeetByUserResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -19,14 +19,17 @@ public interface AddPeersResponseOrBuilder extends
   io.channel.api.proto.ResponseCode getResponseCode();
 
   /**
-   * <code>string meet_id = 2;</code>
-   * @return The meetId.
+   * <code>.meet.Peer peer = 2;</code>
+   * @return Whether the peer field is set.
    */
-  java.lang.String getMeetId();
+  boolean hasPeer();
   /**
-   * <code>string meet_id = 2;</code>
-   * @return The bytes for meetId.
+   * <code>.meet.Peer peer = 2;</code>
+   * @return The peer.
    */
-  com.google.protobuf.ByteString
-      getMeetIdBytes();
+  io.channel.api.proto.Peer getPeer();
+  /**
+   * <code>.meet.Peer peer = 2;</code>
+   */
+  io.channel.api.proto.PeerOrBuilder getPeerOrBuilder();
 }

@@ -18,14 +18,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MeetServiceClient interface {
-	CreateInboundMeet(ctx context.Context, in *InboundMeetRequest, opts ...grpc.CallOption) (*InboundMeetResponse, error)
-	CreateOutboundMeet(ctx context.Context, in *OutboundMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
-	LeaveMeetByUser(ctx context.Context, in *LeaveMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
-	LeaveMeetByManager(ctx context.Context, in *LeaveMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
-	AddPeers(ctx context.Context, in *AddPeersRequest, opts ...grpc.CallOption) (*AddPeersResponse, error)
-	JoinMeetByUser(ctx context.Context, in *JoinMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
-	JoinMeetByManager(ctx context.Context, in *JoinMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	// dw -> sfu
 	CloseMeet(ctx context.Context, in *CloseMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	CreateOutboundMeet(ctx context.Context, in *OutboundMeetRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	JoinMeetByManager(ctx context.Context, in *JoinMeetByManagerRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	LeaveMeetByManager(ctx context.Context, in *LeaveMeetByManagerRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	// sfu -> dw
+	CreateInboundMeet(ctx context.Context, in *InboundMeetRequest, opts ...grpc.CallOption) (*InboundMeetResponse, error)
+	JoinMeetByUser(ctx context.Context, in *JoinMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	LeaveMeetByUser(ctx context.Context, in *LeaveMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
 }
 
 type meetServiceClient struct {
@@ -36,9 +37,9 @@ func NewMeetServiceClient(cc grpc.ClientConnInterface) MeetServiceClient {
 	return &meetServiceClient{cc}
 }
 
-func (c *meetServiceClient) CreateInboundMeet(ctx context.Context, in *InboundMeetRequest, opts ...grpc.CallOption) (*InboundMeetResponse, error) {
-	out := new(InboundMeetResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/CreateInboundMeet", in, out, opts...)
+func (c *meetServiceClient) CloseMeet(ctx context.Context, in *CloseMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+	out := new(BareResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/CloseMeet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,43 +55,7 @@ func (c *meetServiceClient) CreateOutboundMeet(ctx context.Context, in *Outbound
 	return out, nil
 }
 
-func (c *meetServiceClient) LeaveMeetByUser(ctx context.Context, in *LeaveMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
-	out := new(BareResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/LeaveMeetByUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meetServiceClient) LeaveMeetByManager(ctx context.Context, in *LeaveMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
-	out := new(BareResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/LeaveMeetByManager", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meetServiceClient) AddPeers(ctx context.Context, in *AddPeersRequest, opts ...grpc.CallOption) (*AddPeersResponse, error) {
-	out := new(AddPeersResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/AddPeers", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meetServiceClient) JoinMeetByUser(ctx context.Context, in *JoinMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
-	out := new(BareResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/JoinMeetByUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meetServiceClient) JoinMeetByManager(ctx context.Context, in *JoinMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+func (c *meetServiceClient) JoinMeetByManager(ctx context.Context, in *JoinMeetByManagerRequest, opts ...grpc.CallOption) (*BareResponse, error) {
 	out := new(BareResponse)
 	err := c.cc.Invoke(ctx, "/meet.MeetService/JoinMeetByManager", in, out, opts...)
 	if err != nil {
@@ -99,9 +64,36 @@ func (c *meetServiceClient) JoinMeetByManager(ctx context.Context, in *JoinMeetR
 	return out, nil
 }
 
-func (c *meetServiceClient) CloseMeet(ctx context.Context, in *CloseMeetRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+func (c *meetServiceClient) LeaveMeetByManager(ctx context.Context, in *LeaveMeetByManagerRequest, opts ...grpc.CallOption) (*BareResponse, error) {
 	out := new(BareResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/CloseMeet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/LeaveMeetByManager", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meetServiceClient) CreateInboundMeet(ctx context.Context, in *InboundMeetRequest, opts ...grpc.CallOption) (*InboundMeetResponse, error) {
+	out := new(InboundMeetResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/CreateInboundMeet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meetServiceClient) JoinMeetByUser(ctx context.Context, in *JoinMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+	out := new(BareResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/JoinMeetByUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meetServiceClient) LeaveMeetByUser(ctx context.Context, in *LeaveMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+	out := new(BareResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/LeaveMeetByUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,14 +104,15 @@ func (c *meetServiceClient) CloseMeet(ctx context.Context, in *CloseMeetRequest,
 // All implementations must embed UnimplementedMeetServiceServer
 // for forward compatibility
 type MeetServiceServer interface {
-	CreateInboundMeet(context.Context, *InboundMeetRequest) (*InboundMeetResponse, error)
-	CreateOutboundMeet(context.Context, *OutboundMeetRequest) (*BareResponse, error)
-	LeaveMeetByUser(context.Context, *LeaveMeetRequest) (*BareResponse, error)
-	LeaveMeetByManager(context.Context, *LeaveMeetRequest) (*BareResponse, error)
-	AddPeers(context.Context, *AddPeersRequest) (*AddPeersResponse, error)
-	JoinMeetByUser(context.Context, *JoinMeetRequest) (*BareResponse, error)
-	JoinMeetByManager(context.Context, *JoinMeetRequest) (*BareResponse, error)
+	// dw -> sfu
 	CloseMeet(context.Context, *CloseMeetRequest) (*BareResponse, error)
+	CreateOutboundMeet(context.Context, *OutboundMeetRequest) (*BareResponse, error)
+	JoinMeetByManager(context.Context, *JoinMeetByManagerRequest) (*BareResponse, error)
+	LeaveMeetByManager(context.Context, *LeaveMeetByManagerRequest) (*BareResponse, error)
+	// sfu -> dw
+	CreateInboundMeet(context.Context, *InboundMeetRequest) (*InboundMeetResponse, error)
+	JoinMeetByUser(context.Context, *JoinMeetByUserRequest) (*BareResponse, error)
+	LeaveMeetByUser(context.Context, *LeaveMeetByUserRequest) (*BareResponse, error)
 	mustEmbedUnimplementedMeetServiceServer()
 }
 
@@ -127,29 +120,26 @@ type MeetServiceServer interface {
 type UnimplementedMeetServiceServer struct {
 }
 
-func (UnimplementedMeetServiceServer) CreateInboundMeet(context.Context, *InboundMeetRequest) (*InboundMeetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateInboundMeet not implemented")
+func (UnimplementedMeetServiceServer) CloseMeet(context.Context, *CloseMeetRequest) (*BareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseMeet not implemented")
 }
 func (UnimplementedMeetServiceServer) CreateOutboundMeet(context.Context, *OutboundMeetRequest) (*BareResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOutboundMeet not implemented")
 }
-func (UnimplementedMeetServiceServer) LeaveMeetByUser(context.Context, *LeaveMeetRequest) (*BareResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LeaveMeetByUser not implemented")
-}
-func (UnimplementedMeetServiceServer) LeaveMeetByManager(context.Context, *LeaveMeetRequest) (*BareResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LeaveMeetByManager not implemented")
-}
-func (UnimplementedMeetServiceServer) AddPeers(context.Context, *AddPeersRequest) (*AddPeersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddPeers not implemented")
-}
-func (UnimplementedMeetServiceServer) JoinMeetByUser(context.Context, *JoinMeetRequest) (*BareResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method JoinMeetByUser not implemented")
-}
-func (UnimplementedMeetServiceServer) JoinMeetByManager(context.Context, *JoinMeetRequest) (*BareResponse, error) {
+func (UnimplementedMeetServiceServer) JoinMeetByManager(context.Context, *JoinMeetByManagerRequest) (*BareResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JoinMeetByManager not implemented")
 }
-func (UnimplementedMeetServiceServer) CloseMeet(context.Context, *CloseMeetRequest) (*BareResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CloseMeet not implemented")
+func (UnimplementedMeetServiceServer) LeaveMeetByManager(context.Context, *LeaveMeetByManagerRequest) (*BareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LeaveMeetByManager not implemented")
+}
+func (UnimplementedMeetServiceServer) CreateInboundMeet(context.Context, *InboundMeetRequest) (*InboundMeetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateInboundMeet not implemented")
+}
+func (UnimplementedMeetServiceServer) JoinMeetByUser(context.Context, *JoinMeetByUserRequest) (*BareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JoinMeetByUser not implemented")
+}
+func (UnimplementedMeetServiceServer) LeaveMeetByUser(context.Context, *LeaveMeetByUserRequest) (*BareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LeaveMeetByUser not implemented")
 }
 func (UnimplementedMeetServiceServer) mustEmbedUnimplementedMeetServiceServer() {}
 
@@ -164,20 +154,20 @@ func RegisterMeetServiceServer(s grpc.ServiceRegistrar, srv MeetServiceServer) {
 	s.RegisterService(&MeetService_ServiceDesc, srv)
 }
 
-func _MeetService_CreateInboundMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InboundMeetRequest)
+func _MeetService_CloseMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseMeetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MeetServiceServer).CreateInboundMeet(ctx, in)
+		return srv.(MeetServiceServer).CloseMeet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/meet.MeetService/CreateInboundMeet",
+		FullMethod: "/meet.MeetService/CloseMeet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).CreateInboundMeet(ctx, req.(*InboundMeetRequest))
+		return srv.(MeetServiceServer).CloseMeet(ctx, req.(*CloseMeetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,80 +190,8 @@ func _MeetService_CreateOutboundMeet_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MeetService_LeaveMeetByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LeaveMeetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeetServiceServer).LeaveMeetByUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/meet.MeetService/LeaveMeetByUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).LeaveMeetByUser(ctx, req.(*LeaveMeetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeetService_LeaveMeetByManager_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LeaveMeetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeetServiceServer).LeaveMeetByManager(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/meet.MeetService/LeaveMeetByManager",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).LeaveMeetByManager(ctx, req.(*LeaveMeetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeetService_AddPeers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddPeersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeetServiceServer).AddPeers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/meet.MeetService/AddPeers",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).AddPeers(ctx, req.(*AddPeersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeetService_JoinMeetByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(JoinMeetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeetServiceServer).JoinMeetByUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/meet.MeetService/JoinMeetByUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).JoinMeetByUser(ctx, req.(*JoinMeetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _MeetService_JoinMeetByManager_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(JoinMeetRequest)
+	in := new(JoinMeetByManagerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -285,25 +203,79 @@ func _MeetService_JoinMeetByManager_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/meet.MeetService/JoinMeetByManager",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).JoinMeetByManager(ctx, req.(*JoinMeetRequest))
+		return srv.(MeetServiceServer).JoinMeetByManager(ctx, req.(*JoinMeetByManagerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MeetService_CloseMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CloseMeetRequest)
+func _MeetService_LeaveMeetByManager_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeaveMeetByManagerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MeetServiceServer).CloseMeet(ctx, in)
+		return srv.(MeetServiceServer).LeaveMeetByManager(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/meet.MeetService/CloseMeet",
+		FullMethod: "/meet.MeetService/LeaveMeetByManager",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).CloseMeet(ctx, req.(*CloseMeetRequest))
+		return srv.(MeetServiceServer).LeaveMeetByManager(ctx, req.(*LeaveMeetByManagerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeetService_CreateInboundMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InboundMeetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeetServiceServer).CreateInboundMeet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meet.MeetService/CreateInboundMeet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeetServiceServer).CreateInboundMeet(ctx, req.(*InboundMeetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeetService_JoinMeetByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JoinMeetByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeetServiceServer).JoinMeetByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meet.MeetService/JoinMeetByUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeetServiceServer).JoinMeetByUser(ctx, req.(*JoinMeetByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeetService_LeaveMeetByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeaveMeetByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeetServiceServer).LeaveMeetByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meet.MeetService/LeaveMeetByUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeetServiceServer).LeaveMeetByUser(ctx, req.(*LeaveMeetByUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -316,36 +288,32 @@ var MeetService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*MeetServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateInboundMeet",
-			Handler:    _MeetService_CreateInboundMeet_Handler,
+			MethodName: "CloseMeet",
+			Handler:    _MeetService_CloseMeet_Handler,
 		},
 		{
 			MethodName: "CreateOutboundMeet",
 			Handler:    _MeetService_CreateOutboundMeet_Handler,
 		},
 		{
-			MethodName: "LeaveMeetByUser",
-			Handler:    _MeetService_LeaveMeetByUser_Handler,
+			MethodName: "JoinMeetByManager",
+			Handler:    _MeetService_JoinMeetByManager_Handler,
 		},
 		{
 			MethodName: "LeaveMeetByManager",
 			Handler:    _MeetService_LeaveMeetByManager_Handler,
 		},
 		{
-			MethodName: "AddPeers",
-			Handler:    _MeetService_AddPeers_Handler,
+			MethodName: "CreateInboundMeet",
+			Handler:    _MeetService_CreateInboundMeet_Handler,
 		},
 		{
 			MethodName: "JoinMeetByUser",
 			Handler:    _MeetService_JoinMeetByUser_Handler,
 		},
 		{
-			MethodName: "JoinMeetByManager",
-			Handler:    _MeetService_JoinMeetByManager_Handler,
-		},
-		{
-			MethodName: "CloseMeet",
-			Handler:    _MeetService_CloseMeet_Handler,
+			MethodName: "LeaveMeetByUser",
+			Handler:    _MeetService_LeaveMeetByUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

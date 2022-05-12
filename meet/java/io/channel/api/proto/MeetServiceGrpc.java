@@ -15,35 +15,35 @@ public final class MeetServiceGrpc {
   public static final String SERVICE_NAME = "meet.MeetService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest,
-      io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod;
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest,
+      io.channel.api.proto.BareResponse> getCloseMeetMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "CreateInboundMeet",
-      requestType = io.channel.api.proto.InboundMeetRequest.class,
-      responseType = io.channel.api.proto.InboundMeetResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "CloseMeet",
+      requestType = io.channel.api.proto.CloseMeetRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest,
-      io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest, io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod;
-    if ((getCreateInboundMeetMethod = MeetServiceGrpc.getCreateInboundMeetMethod) == null) {
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest,
+      io.channel.api.proto.BareResponse> getCloseMeetMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest, io.channel.api.proto.BareResponse> getCloseMeetMethod;
+    if ((getCloseMeetMethod = MeetServiceGrpc.getCloseMeetMethod) == null) {
       synchronized (MeetServiceGrpc.class) {
-        if ((getCreateInboundMeetMethod = MeetServiceGrpc.getCreateInboundMeetMethod) == null) {
-          MeetServiceGrpc.getCreateInboundMeetMethod = getCreateInboundMeetMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.InboundMeetRequest, io.channel.api.proto.InboundMeetResponse>newBuilder()
+        if ((getCloseMeetMethod = MeetServiceGrpc.getCloseMeetMethod) == null) {
+          MeetServiceGrpc.getCloseMeetMethod = getCloseMeetMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.CloseMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreateInboundMeet"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CloseMeet"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.InboundMeetRequest.getDefaultInstance()))
+                  io.channel.api.proto.CloseMeetRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.InboundMeetResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CreateInboundMeet"))
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CloseMeet"))
               .build();
         }
       }
     }
-    return getCreateInboundMeetMethod;
+    return getCloseMeetMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.OutboundMeetRequest,
@@ -77,151 +77,27 @@ public final class MeetServiceGrpc {
     return getCreateOutboundMeetMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest,
-      io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "LeaveMeetByUser",
-      requestType = io.channel.api.proto.LeaveMeetRequest.class,
-      responseType = io.channel.api.proto.BareResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest,
-      io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest, io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod;
-    if ((getLeaveMeetByUserMethod = MeetServiceGrpc.getLeaveMeetByUserMethod) == null) {
-      synchronized (MeetServiceGrpc.class) {
-        if ((getLeaveMeetByUserMethod = MeetServiceGrpc.getLeaveMeetByUserMethod) == null) {
-          MeetServiceGrpc.getLeaveMeetByUserMethod = getLeaveMeetByUserMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.LeaveMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LeaveMeetByUser"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.LeaveMeetRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.BareResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("LeaveMeetByUser"))
-              .build();
-        }
-      }
-    }
-    return getLeaveMeetByUserMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest,
-      io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "LeaveMeetByManager",
-      requestType = io.channel.api.proto.LeaveMeetRequest.class,
-      responseType = io.channel.api.proto.BareResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest,
-      io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetRequest, io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod;
-    if ((getLeaveMeetByManagerMethod = MeetServiceGrpc.getLeaveMeetByManagerMethod) == null) {
-      synchronized (MeetServiceGrpc.class) {
-        if ((getLeaveMeetByManagerMethod = MeetServiceGrpc.getLeaveMeetByManagerMethod) == null) {
-          MeetServiceGrpc.getLeaveMeetByManagerMethod = getLeaveMeetByManagerMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.LeaveMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LeaveMeetByManager"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.LeaveMeetRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.BareResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("LeaveMeetByManager"))
-              .build();
-        }
-      }
-    }
-    return getLeaveMeetByManagerMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.AddPeersRequest,
-      io.channel.api.proto.AddPeersResponse> getAddPeersMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "AddPeers",
-      requestType = io.channel.api.proto.AddPeersRequest.class,
-      responseType = io.channel.api.proto.AddPeersResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.AddPeersRequest,
-      io.channel.api.proto.AddPeersResponse> getAddPeersMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.AddPeersRequest, io.channel.api.proto.AddPeersResponse> getAddPeersMethod;
-    if ((getAddPeersMethod = MeetServiceGrpc.getAddPeersMethod) == null) {
-      synchronized (MeetServiceGrpc.class) {
-        if ((getAddPeersMethod = MeetServiceGrpc.getAddPeersMethod) == null) {
-          MeetServiceGrpc.getAddPeersMethod = getAddPeersMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.AddPeersRequest, io.channel.api.proto.AddPeersResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "AddPeers"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.AddPeersRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.AddPeersResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("AddPeers"))
-              .build();
-        }
-      }
-    }
-    return getAddPeersMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest,
-      io.channel.api.proto.BareResponse> getJoinMeetByUserMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "JoinMeetByUser",
-      requestType = io.channel.api.proto.JoinMeetRequest.class,
-      responseType = io.channel.api.proto.BareResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest,
-      io.channel.api.proto.BareResponse> getJoinMeetByUserMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest, io.channel.api.proto.BareResponse> getJoinMeetByUserMethod;
-    if ((getJoinMeetByUserMethod = MeetServiceGrpc.getJoinMeetByUserMethod) == null) {
-      synchronized (MeetServiceGrpc.class) {
-        if ((getJoinMeetByUserMethod = MeetServiceGrpc.getJoinMeetByUserMethod) == null) {
-          MeetServiceGrpc.getJoinMeetByUserMethod = getJoinMeetByUserMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.JoinMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "JoinMeetByUser"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.JoinMeetRequest.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.BareResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("JoinMeetByUser"))
-              .build();
-        }
-      }
-    }
-    return getJoinMeetByUserMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest,
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByManagerRequest,
       io.channel.api.proto.BareResponse> getJoinMeetByManagerMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "JoinMeetByManager",
-      requestType = io.channel.api.proto.JoinMeetRequest.class,
+      requestType = io.channel.api.proto.JoinMeetByManagerRequest.class,
       responseType = io.channel.api.proto.BareResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest,
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByManagerRequest,
       io.channel.api.proto.BareResponse> getJoinMeetByManagerMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetRequest, io.channel.api.proto.BareResponse> getJoinMeetByManagerMethod;
+    io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByManagerRequest, io.channel.api.proto.BareResponse> getJoinMeetByManagerMethod;
     if ((getJoinMeetByManagerMethod = MeetServiceGrpc.getJoinMeetByManagerMethod) == null) {
       synchronized (MeetServiceGrpc.class) {
         if ((getJoinMeetByManagerMethod = MeetServiceGrpc.getJoinMeetByManagerMethod) == null) {
           MeetServiceGrpc.getJoinMeetByManagerMethod = getJoinMeetByManagerMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.JoinMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
+              io.grpc.MethodDescriptor.<io.channel.api.proto.JoinMeetByManagerRequest, io.channel.api.proto.BareResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "JoinMeetByManager"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.JoinMeetRequest.getDefaultInstance()))
+                  io.channel.api.proto.JoinMeetByManagerRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   io.channel.api.proto.BareResponse.getDefaultInstance()))
               .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("JoinMeetByManager"))
@@ -232,35 +108,128 @@ public final class MeetServiceGrpc {
     return getJoinMeetByManagerMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest,
-      io.channel.api.proto.BareResponse> getCloseMeetMethod;
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByManagerRequest,
+      io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "CloseMeet",
-      requestType = io.channel.api.proto.CloseMeetRequest.class,
+      fullMethodName = SERVICE_NAME + '/' + "LeaveMeetByManager",
+      requestType = io.channel.api.proto.LeaveMeetByManagerRequest.class,
       responseType = io.channel.api.proto.BareResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest,
-      io.channel.api.proto.BareResponse> getCloseMeetMethod() {
-    io.grpc.MethodDescriptor<io.channel.api.proto.CloseMeetRequest, io.channel.api.proto.BareResponse> getCloseMeetMethod;
-    if ((getCloseMeetMethod = MeetServiceGrpc.getCloseMeetMethod) == null) {
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByManagerRequest,
+      io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByManagerRequest, io.channel.api.proto.BareResponse> getLeaveMeetByManagerMethod;
+    if ((getLeaveMeetByManagerMethod = MeetServiceGrpc.getLeaveMeetByManagerMethod) == null) {
       synchronized (MeetServiceGrpc.class) {
-        if ((getCloseMeetMethod = MeetServiceGrpc.getCloseMeetMethod) == null) {
-          MeetServiceGrpc.getCloseMeetMethod = getCloseMeetMethod =
-              io.grpc.MethodDescriptor.<io.channel.api.proto.CloseMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
+        if ((getLeaveMeetByManagerMethod = MeetServiceGrpc.getLeaveMeetByManagerMethod) == null) {
+          MeetServiceGrpc.getLeaveMeetByManagerMethod = getLeaveMeetByManagerMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.LeaveMeetByManagerRequest, io.channel.api.proto.BareResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CloseMeet"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LeaveMeetByManager"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  io.channel.api.proto.CloseMeetRequest.getDefaultInstance()))
+                  io.channel.api.proto.LeaveMeetByManagerRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   io.channel.api.proto.BareResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CloseMeet"))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("LeaveMeetByManager"))
               .build();
         }
       }
     }
-    return getCloseMeetMethod;
+    return getLeaveMeetByManagerMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest,
+      io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateInboundMeet",
+      requestType = io.channel.api.proto.InboundMeetRequest.class,
+      responseType = io.channel.api.proto.InboundMeetResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest,
+      io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest, io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod;
+    if ((getCreateInboundMeetMethod = MeetServiceGrpc.getCreateInboundMeetMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getCreateInboundMeetMethod = MeetServiceGrpc.getCreateInboundMeetMethod) == null) {
+          MeetServiceGrpc.getCreateInboundMeetMethod = getCreateInboundMeetMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.InboundMeetRequest, io.channel.api.proto.InboundMeetResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreateInboundMeet"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.InboundMeetRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.InboundMeetResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CreateInboundMeet"))
+              .build();
+        }
+      }
+    }
+    return getCreateInboundMeetMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getJoinMeetByUserMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "JoinMeetByUser",
+      requestType = io.channel.api.proto.JoinMeetByUserRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getJoinMeetByUserMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByUserRequest, io.channel.api.proto.BareResponse> getJoinMeetByUserMethod;
+    if ((getJoinMeetByUserMethod = MeetServiceGrpc.getJoinMeetByUserMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getJoinMeetByUserMethod = MeetServiceGrpc.getJoinMeetByUserMethod) == null) {
+          MeetServiceGrpc.getJoinMeetByUserMethod = getJoinMeetByUserMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.JoinMeetByUserRequest, io.channel.api.proto.BareResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "JoinMeetByUser"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.JoinMeetByUserRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("JoinMeetByUser"))
+              .build();
+        }
+      }
+    }
+    return getJoinMeetByUserMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "LeaveMeetByUser",
+      requestType = io.channel.api.proto.LeaveMeetByUserRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.LeaveMeetByUserRequest, io.channel.api.proto.BareResponse> getLeaveMeetByUserMethod;
+    if ((getLeaveMeetByUserMethod = MeetServiceGrpc.getLeaveMeetByUserMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getLeaveMeetByUserMethod = MeetServiceGrpc.getLeaveMeetByUserMethod) == null) {
+          MeetServiceGrpc.getLeaveMeetByUserMethod = getLeaveMeetByUserMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.LeaveMeetByUserRequest, io.channel.api.proto.BareResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "LeaveMeetByUser"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.LeaveMeetByUserRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("LeaveMeetByUser"))
+              .build();
+        }
+      }
+    }
+    return getLeaveMeetByUserMethod;
   }
 
   /**
@@ -312,10 +281,13 @@ public final class MeetServiceGrpc {
   public static abstract class MeetServiceImplBase implements io.grpc.BindableService {
 
     /**
+     * <pre>
+     * dw -&gt; sfu
+     * </pre>
      */
-    public void createInboundMeet(io.channel.api.proto.InboundMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateInboundMeetMethod(), responseObserver);
+    public void closeMeet(io.channel.api.proto.CloseMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCloseMeetMethod(), responseObserver);
     }
 
     /**
@@ -327,55 +299,51 @@ public final class MeetServiceGrpc {
 
     /**
      */
-    public void leaveMeetByUser(io.channel.api.proto.LeaveMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLeaveMeetByUserMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void leaveMeetByManager(io.channel.api.proto.LeaveMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLeaveMeetByManagerMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void addPeers(io.channel.api.proto.AddPeersRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.AddPeersResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getAddPeersMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void joinMeetByUser(io.channel.api.proto.JoinMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getJoinMeetByUserMethod(), responseObserver);
-    }
-
-    /**
-     */
-    public void joinMeetByManager(io.channel.api.proto.JoinMeetRequest request,
+    public void joinMeetByManager(io.channel.api.proto.JoinMeetByManagerRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getJoinMeetByManagerMethod(), responseObserver);
     }
 
     /**
      */
-    public void closeMeet(io.channel.api.proto.CloseMeetRequest request,
+    public void leaveMeetByManager(io.channel.api.proto.LeaveMeetByManagerRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCloseMeetMethod(), responseObserver);
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLeaveMeetByManagerMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * sfu -&gt; dw
+     * </pre>
+     */
+    public void createInboundMeet(io.channel.api.proto.InboundMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateInboundMeetMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void joinMeetByUser(io.channel.api.proto.JoinMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getJoinMeetByUserMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void leaveMeetByUser(io.channel.api.proto.LeaveMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getLeaveMeetByUserMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-            getCreateInboundMeetMethod(),
+            getCloseMeetMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.InboundMeetRequest,
-                io.channel.api.proto.InboundMeetResponse>(
-                  this, METHODID_CREATE_INBOUND_MEET)))
+                io.channel.api.proto.CloseMeetRequest,
+                io.channel.api.proto.BareResponse>(
+                  this, METHODID_CLOSE_MEET)))
           .addMethod(
             getCreateOutboundMeetMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -384,47 +352,40 @@ public final class MeetServiceGrpc {
                 io.channel.api.proto.BareResponse>(
                   this, METHODID_CREATE_OUTBOUND_MEET)))
           .addMethod(
-            getLeaveMeetByUserMethod(),
+            getJoinMeetByManagerMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.LeaveMeetRequest,
+                io.channel.api.proto.JoinMeetByManagerRequest,
                 io.channel.api.proto.BareResponse>(
-                  this, METHODID_LEAVE_MEET_BY_USER)))
+                  this, METHODID_JOIN_MEET_BY_MANAGER)))
           .addMethod(
             getLeaveMeetByManagerMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.LeaveMeetRequest,
+                io.channel.api.proto.LeaveMeetByManagerRequest,
                 io.channel.api.proto.BareResponse>(
                   this, METHODID_LEAVE_MEET_BY_MANAGER)))
           .addMethod(
-            getAddPeersMethod(),
+            getCreateInboundMeetMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.AddPeersRequest,
-                io.channel.api.proto.AddPeersResponse>(
-                  this, METHODID_ADD_PEERS)))
+                io.channel.api.proto.InboundMeetRequest,
+                io.channel.api.proto.InboundMeetResponse>(
+                  this, METHODID_CREATE_INBOUND_MEET)))
           .addMethod(
             getJoinMeetByUserMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.JoinMeetRequest,
+                io.channel.api.proto.JoinMeetByUserRequest,
                 io.channel.api.proto.BareResponse>(
                   this, METHODID_JOIN_MEET_BY_USER)))
           .addMethod(
-            getJoinMeetByManagerMethod(),
+            getLeaveMeetByUserMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                io.channel.api.proto.JoinMeetRequest,
+                io.channel.api.proto.LeaveMeetByUserRequest,
                 io.channel.api.proto.BareResponse>(
-                  this, METHODID_JOIN_MEET_BY_MANAGER)))
-          .addMethod(
-            getCloseMeetMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                io.channel.api.proto.CloseMeetRequest,
-                io.channel.api.proto.BareResponse>(
-                  this, METHODID_CLOSE_MEET)))
+                  this, METHODID_LEAVE_MEET_BY_USER)))
           .build();
     }
   }
@@ -444,11 +405,14 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     * <pre>
+     * dw -&gt; sfu
+     * </pre>
      */
-    public void createInboundMeet(io.channel.api.proto.InboundMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse> responseObserver) {
+    public void closeMeet(io.channel.api.proto.CloseMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getCreateInboundMeetMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getCloseMeetMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -461,39 +425,7 @@ public final class MeetServiceGrpc {
 
     /**
      */
-    public void leaveMeetByUser(io.channel.api.proto.LeaveMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getLeaveMeetByUserMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void leaveMeetByManager(io.channel.api.proto.LeaveMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getLeaveMeetByManagerMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void addPeers(io.channel.api.proto.AddPeersRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.AddPeersResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getAddPeersMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void joinMeetByUser(io.channel.api.proto.JoinMeetRequest request,
-        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getJoinMeetByUserMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
-    public void joinMeetByManager(io.channel.api.proto.JoinMeetRequest request,
+    public void joinMeetByManager(io.channel.api.proto.JoinMeetByManagerRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getJoinMeetByManagerMethod(), getCallOptions()), request, responseObserver);
@@ -501,10 +433,37 @@ public final class MeetServiceGrpc {
 
     /**
      */
-    public void closeMeet(io.channel.api.proto.CloseMeetRequest request,
+    public void leaveMeetByManager(io.channel.api.proto.LeaveMeetByManagerRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getCloseMeetMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getLeaveMeetByManagerMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * sfu -&gt; dw
+     * </pre>
+     */
+    public void createInboundMeet(io.channel.api.proto.InboundMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateInboundMeetMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void joinMeetByUser(io.channel.api.proto.JoinMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getJoinMeetByUserMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void leaveMeetByUser(io.channel.api.proto.LeaveMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getLeaveMeetByUserMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -523,10 +482,13 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     * <pre>
+     * dw -&gt; sfu
+     * </pre>
      */
-    public io.channel.api.proto.InboundMeetResponse createInboundMeet(io.channel.api.proto.InboundMeetRequest request) {
+    public io.channel.api.proto.BareResponse closeMeet(io.channel.api.proto.CloseMeetRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getCreateInboundMeetMethod(), getCallOptions(), request);
+          getChannel(), getCloseMeetMethod(), getCallOptions(), request);
     }
 
     /**
@@ -538,44 +500,40 @@ public final class MeetServiceGrpc {
 
     /**
      */
-    public io.channel.api.proto.BareResponse leaveMeetByUser(io.channel.api.proto.LeaveMeetRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getLeaveMeetByUserMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public io.channel.api.proto.BareResponse leaveMeetByManager(io.channel.api.proto.LeaveMeetRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getLeaveMeetByManagerMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public io.channel.api.proto.AddPeersResponse addPeers(io.channel.api.proto.AddPeersRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getAddPeersMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public io.channel.api.proto.BareResponse joinMeetByUser(io.channel.api.proto.JoinMeetRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getJoinMeetByUserMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public io.channel.api.proto.BareResponse joinMeetByManager(io.channel.api.proto.JoinMeetRequest request) {
+    public io.channel.api.proto.BareResponse joinMeetByManager(io.channel.api.proto.JoinMeetByManagerRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getJoinMeetByManagerMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public io.channel.api.proto.BareResponse closeMeet(io.channel.api.proto.CloseMeetRequest request) {
+    public io.channel.api.proto.BareResponse leaveMeetByManager(io.channel.api.proto.LeaveMeetByManagerRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getCloseMeetMethod(), getCallOptions(), request);
+          getChannel(), getLeaveMeetByManagerMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * sfu -&gt; dw
+     * </pre>
+     */
+    public io.channel.api.proto.InboundMeetResponse createInboundMeet(io.channel.api.proto.InboundMeetRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateInboundMeetMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.BareResponse joinMeetByUser(io.channel.api.proto.JoinMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getJoinMeetByUserMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.BareResponse leaveMeetByUser(io.channel.api.proto.LeaveMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getLeaveMeetByUserMethod(), getCallOptions(), request);
     }
   }
 
@@ -594,11 +552,14 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     * <pre>
+     * dw -&gt; sfu
+     * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.InboundMeetResponse> createInboundMeet(
-        io.channel.api.proto.InboundMeetRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> closeMeet(
+        io.channel.api.proto.CloseMeetRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getCreateInboundMeetMethod(), getCallOptions()), request);
+          getChannel().newCall(getCloseMeetMethod(), getCallOptions()), request);
     }
 
     /**
@@ -611,61 +572,55 @@ public final class MeetServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> leaveMeetByUser(
-        io.channel.api.proto.LeaveMeetRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getLeaveMeetByUserMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> leaveMeetByManager(
-        io.channel.api.proto.LeaveMeetRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getLeaveMeetByManagerMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.AddPeersResponse> addPeers(
-        io.channel.api.proto.AddPeersRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getAddPeersMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> joinMeetByUser(
-        io.channel.api.proto.JoinMeetRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getJoinMeetByUserMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
     public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> joinMeetByManager(
-        io.channel.api.proto.JoinMeetRequest request) {
+        io.channel.api.proto.JoinMeetByManagerRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getJoinMeetByManagerMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> closeMeet(
-        io.channel.api.proto.CloseMeetRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> leaveMeetByManager(
+        io.channel.api.proto.LeaveMeetByManagerRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getCloseMeetMethod(), getCallOptions()), request);
+          getChannel().newCall(getLeaveMeetByManagerMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * sfu -&gt; dw
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.InboundMeetResponse> createInboundMeet(
+        io.channel.api.proto.InboundMeetRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateInboundMeetMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> joinMeetByUser(
+        io.channel.api.proto.JoinMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getJoinMeetByUserMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> leaveMeetByUser(
+        io.channel.api.proto.LeaveMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getLeaveMeetByUserMethod(), getCallOptions()), request);
     }
   }
 
-  private static final int METHODID_CREATE_INBOUND_MEET = 0;
+  private static final int METHODID_CLOSE_MEET = 0;
   private static final int METHODID_CREATE_OUTBOUND_MEET = 1;
-  private static final int METHODID_LEAVE_MEET_BY_USER = 2;
+  private static final int METHODID_JOIN_MEET_BY_MANAGER = 2;
   private static final int METHODID_LEAVE_MEET_BY_MANAGER = 3;
-  private static final int METHODID_ADD_PEERS = 4;
+  private static final int METHODID_CREATE_INBOUND_MEET = 4;
   private static final int METHODID_JOIN_MEET_BY_USER = 5;
-  private static final int METHODID_JOIN_MEET_BY_MANAGER = 6;
-  private static final int METHODID_CLOSE_MEET = 7;
+  private static final int METHODID_LEAVE_MEET_BY_USER = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -684,36 +639,32 @@ public final class MeetServiceGrpc {
     @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
-        case METHODID_CREATE_INBOUND_MEET:
-          serviceImpl.createInboundMeet((io.channel.api.proto.InboundMeetRequest) request,
-              (io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse>) responseObserver);
+        case METHODID_CLOSE_MEET:
+          serviceImpl.closeMeet((io.channel.api.proto.CloseMeetRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
         case METHODID_CREATE_OUTBOUND_MEET:
           serviceImpl.createOutboundMeet((io.channel.api.proto.OutboundMeetRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
-        case METHODID_LEAVE_MEET_BY_USER:
-          serviceImpl.leaveMeetByUser((io.channel.api.proto.LeaveMeetRequest) request,
+        case METHODID_JOIN_MEET_BY_MANAGER:
+          serviceImpl.joinMeetByManager((io.channel.api.proto.JoinMeetByManagerRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
         case METHODID_LEAVE_MEET_BY_MANAGER:
-          serviceImpl.leaveMeetByManager((io.channel.api.proto.LeaveMeetRequest) request,
+          serviceImpl.leaveMeetByManager((io.channel.api.proto.LeaveMeetByManagerRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
-        case METHODID_ADD_PEERS:
-          serviceImpl.addPeers((io.channel.api.proto.AddPeersRequest) request,
-              (io.grpc.stub.StreamObserver<io.channel.api.proto.AddPeersResponse>) responseObserver);
+        case METHODID_CREATE_INBOUND_MEET:
+          serviceImpl.createInboundMeet((io.channel.api.proto.InboundMeetRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse>) responseObserver);
           break;
         case METHODID_JOIN_MEET_BY_USER:
-          serviceImpl.joinMeetByUser((io.channel.api.proto.JoinMeetRequest) request,
+          serviceImpl.joinMeetByUser((io.channel.api.proto.JoinMeetByUserRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
-        case METHODID_JOIN_MEET_BY_MANAGER:
-          serviceImpl.joinMeetByManager((io.channel.api.proto.JoinMeetRequest) request,
-              (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
-          break;
-        case METHODID_CLOSE_MEET:
-          serviceImpl.closeMeet((io.channel.api.proto.CloseMeetRequest) request,
+        case METHODID_LEAVE_MEET_BY_USER:
+          serviceImpl.leaveMeetByUser((io.channel.api.proto.LeaveMeetByUserRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
         default:
@@ -777,14 +728,13 @@ public final class MeetServiceGrpc {
         if (result == null) {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new MeetServiceFileDescriptorSupplier())
-              .addMethod(getCreateInboundMeetMethod())
-              .addMethod(getCreateOutboundMeetMethod())
-              .addMethod(getLeaveMeetByUserMethod())
-              .addMethod(getLeaveMeetByManagerMethod())
-              .addMethod(getAddPeersMethod())
-              .addMethod(getJoinMeetByUserMethod())
-              .addMethod(getJoinMeetByManagerMethod())
               .addMethod(getCloseMeetMethod())
+              .addMethod(getCreateOutboundMeetMethod())
+              .addMethod(getJoinMeetByManagerMethod())
+              .addMethod(getLeaveMeetByManagerMethod())
+              .addMethod(getCreateInboundMeetMethod())
+              .addMethod(getJoinMeetByUserMethod())
+              .addMethod(getLeaveMeetByUserMethod())
               .build();
         }
       }

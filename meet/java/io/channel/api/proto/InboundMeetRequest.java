@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     to_ = "";
     carrier_ = "";
     sfuServerId_ = "";
+    deviceId_ = "";
   }
 
   @java.lang.Override
@@ -74,6 +75,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             sfuServerId_ = s;
+            break;
+          }
+          case 42: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            deviceId_ = s;
             break;
           }
           default: {
@@ -260,6 +267,44 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int DEVICE_ID_FIELD_NUMBER = 5;
+  private volatile java.lang.Object deviceId_;
+  /**
+   * <code>string device_id = 5;</code>
+   * @return The deviceId.
+   */
+  @java.lang.Override
+  public java.lang.String getDeviceId() {
+    java.lang.Object ref = deviceId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      deviceId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string device_id = 5;</code>
+   * @return The bytes for deviceId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getDeviceIdBytes() {
+    java.lang.Object ref = deviceId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      deviceId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -286,6 +331,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sfuServerId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, sfuServerId_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, deviceId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -306,6 +354,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(sfuServerId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, sfuServerId_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, deviceId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -330,6 +381,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getCarrier())) return false;
     if (!getSfuServerId()
         .equals(other.getSfuServerId())) return false;
+    if (!getDeviceId()
+        .equals(other.getDeviceId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -349,6 +402,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getCarrier().hashCode();
     hash = (37 * hash) + SFU_SERVER_ID_FIELD_NUMBER;
     hash = (53 * hash) + getSfuServerId().hashCode();
+    hash = (37 * hash) + DEVICE_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getDeviceId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -490,6 +545,8 @@ private static final long serialVersionUID = 0L;
 
       sfuServerId_ = "";
 
+      deviceId_ = "";
+
       return this;
     }
 
@@ -520,6 +577,7 @@ private static final long serialVersionUID = 0L;
       result.to_ = to_;
       result.carrier_ = carrier_;
       result.sfuServerId_ = sfuServerId_;
+      result.deviceId_ = deviceId_;
       onBuilt();
       return result;
     }
@@ -582,6 +640,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getSfuServerId().isEmpty()) {
         sfuServerId_ = other.sfuServerId_;
+        onChanged();
+      }
+      if (!other.getDeviceId().isEmpty()) {
+        deviceId_ = other.deviceId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -913,6 +975,82 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       sfuServerId_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object deviceId_ = "";
+    /**
+     * <code>string device_id = 5;</code>
+     * @return The deviceId.
+     */
+    public java.lang.String getDeviceId() {
+      java.lang.Object ref = deviceId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        deviceId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string device_id = 5;</code>
+     * @return The bytes for deviceId.
+     */
+    public com.google.protobuf.ByteString
+        getDeviceIdBytes() {
+      java.lang.Object ref = deviceId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        deviceId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string device_id = 5;</code>
+     * @param value The deviceId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDeviceId(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      deviceId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string device_id = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDeviceId() {
+      
+      deviceId_ = getDefaultInstance().getDeviceId();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string device_id = 5;</code>
+     * @param value The bytes for deviceId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDeviceIdBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      deviceId_ = value;
       onChanged();
       return this;
     }

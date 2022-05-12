@@ -15,60 +15,70 @@ public final class Meet {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_BareResponse_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_BareResponse_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_meet_GuideVoice_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_meet_GuideVoice_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_CloseMeetRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_CloseMeetRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_meet_Person_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_meet_Person_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_JoinMeetRequest_descriptor;
+    internal_static_meet_Peer_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_JoinMeetRequest_fieldAccessorTable;
+      internal_static_meet_Peer_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_AddPeersRequest_descriptor;
+    internal_static_meet_BareResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_AddPeersRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_AddPeersResponse_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_AddPeersResponse_fieldAccessorTable;
+      internal_static_meet_BareResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_meet_InboundMeetRequest_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_meet_InboundMeetRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_InboundMeetResponse_descriptor;
+    internal_static_meet_JoinMeetByUserRequest_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_InboundMeetResponse_fieldAccessorTable;
+      internal_static_meet_JoinMeetByUserRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_LeaveMeetByManagerRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_LeaveMeetByManagerRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_meet_OutboundMeetRequest_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_meet_OutboundMeetRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_meet_LeaveMeetRequest_descriptor;
+    internal_static_meet_InboundMeetResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_meet_LeaveMeetRequest_fieldAccessorTable;
+      internal_static_meet_InboundMeetResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_JoinMeetByManagerRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_JoinMeetByManagerRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_JoinMeetByUserResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_JoinMeetByUserResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_CloseMeetRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_CloseMeetRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_LeaveMeetByUserRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_LeaveMeetByUserRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -78,115 +88,134 @@ public final class Meet {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017meet/meet.proto\022\004meet\"9\n\014BareResponse\022" +
-      ")\n\rresponse_code\030\001 \001(\0162\022.meet.ResponseCo" +
-      "de\"\'\n\nGuideVoice\022\014\n\004name\030\001 \001(\t\022\013\n\003url\030\002 " +
-      "\001(\t\"s\n\020CloseMeetRequest\022\017\n\007meet_id\030\001 \001(\t" +
-      "\022\031\n\017has_guide_voice\030\002 \001(\010H\000\022\'\n\013guide_voi" +
-      "ce\030\003 \001(\0132\020.meet.GuideVoiceH\000B\n\n\010response" +
-      "\"0\n\006Person\022\021\n\tperson_id\030\001 \001(\t\022\023\n\013person_" +
-      "type\030\002 \001(\t\"@\n\017JoinMeetRequest\022\034\n\006person\030" +
-      "\001 \001(\0132\014.meet.Person\022\017\n\007meet_id\030\002 \001(\t\"A\n\017" +
-      "AddPeersRequest\022\035\n\007persons\030\001 \003(\0132\014.meet." +
-      "Person\022\017\n\007meet_id\030\002 \001(\t\"N\n\020AddPeersRespo" +
-      "nse\022)\n\rresponse_code\030\001 \001(\0162\022.meet.Respon" +
-      "seCode\022\017\n\007meet_id\030\002 \001(\t\"V\n\022InboundMeetRe" +
-      "quest\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007carri" +
-      "er\030\003 \001(\t\022\025\n\rsfu_server_id\030\004 \001(\t\"Q\n\023Inbou" +
-      "ndMeetResponse\022)\n\rresponse_code\030\001 \001(\0162\022." +
-      "meet.ResponseCode\022\017\n\007meet_id\030\002 \001(\t\"Q\n\023Ou" +
-      "tboundMeetRequest\022\017\n\007meet_id\030\001 \001(\t\022\014\n\004fr" +
-      "om\030\002 \001(\t\022\n\n\002to\030\003 \001(\t\022\017\n\007carrier\030\004 \001(\t\"A\n" +
-      "\020LeaveMeetRequest\022\034\n\006person\030\001 \001(\0132\014.meet" +
-      ".Person\022\017\n\007meet_id\030\002 \001(\t*K\n\014ResponseCode" +
-      "\022\013\n\007SUCCESS\020\000\022\020\n\014UNAUTHORIZED\020\001\022\r\n\tFORBI" +
-      "DDEN\020\002\022\r\n\tNOT_FOUND\020\0032\236\004\n\013MeetService\022J\n" +
-      "\021CreateInboundMeet\022\030.meet.InboundMeetReq" +
-      "uest\032\031.meet.InboundMeetResponse\"\000\022E\n\022Cre" +
-      "ateOutboundMeet\022\031.meet.OutboundMeetReque" +
-      "st\032\022.meet.BareResponse\"\000\022?\n\017LeaveMeetByU" +
-      "ser\022\026.meet.LeaveMeetRequest\032\022.meet.BareR" +
-      "esponse\"\000\022B\n\022LeaveMeetByManager\022\026.meet.L" +
-      "eaveMeetRequest\032\022.meet.BareResponse\"\000\022;\n" +
-      "\010AddPeers\022\025.meet.AddPeersRequest\032\026.meet." +
-      "AddPeersResponse\"\000\022=\n\016JoinMeetByUser\022\025.m" +
-      "eet.JoinMeetRequest\032\022.meet.BareResponse\"" +
-      "\000\022@\n\021JoinMeetByManager\022\025.meet.JoinMeetRe" +
-      "quest\032\022.meet.BareResponse\"\000\0229\n\tCloseMeet" +
-      "\022\026.meet.CloseMeetRequest\032\022.meet.BareResp" +
-      "onse\"\000B=\n\024io.channel.api.protoP\001Z#github" +
-      ".com/channel-io/ch-proto/meetb\006proto3"
+      "\n\017meet/meet.proto\022\004meet\"\'\n\nGuideVoice\022\014\n" +
+      "\004name\030\001 \001(\t\022\013\n\003url\030\002 \001(\t\"\"\n\006Person\022\014\n\004ty" +
+      "pe\030\001 \001(\t\022\n\n\002id\030\002 \001(\t\"7\n\004Peer\022\034\n\006person\030\001" +
+      " \001(\0132\014.meet.Person\022\021\n\tdevice_id\030\002 \001(\t\"9\n" +
+      "\014BareResponse\022)\n\rresponse_code\030\001 \001(\0162\022.m" +
+      "eet.ResponseCode\"i\n\022InboundMeetRequest\022\014" +
+      "\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007carrier\030\003 \001(" +
+      "\t\022\025\n\rsfu_server_id\030\004 \001(\t\022\021\n\tdevice_id\030\005 " +
+      "\001(\t\"B\n\025JoinMeetByUserRequest\022\030\n\004peer\030\001 \001" +
+      "(\0132\n.meet.Peer\022\017\n\007meet_id\030\002 \001(\t\"F\n\031Leave" +
+      "MeetByManagerRequest\022\030\n\004peer\030\001 \001(\0132\n.mee" +
+      "t.Peer\022\017\n\007meet_id\030\002 \001(\t\"m\n\023OutboundMeetR" +
+      "equest\022\017\n\007meet_id\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n" +
+      "\002to\030\003 \001(\t\022\017\n\007carrier\030\004 \001(\t\022\032\n\004user\030\005 \001(\013" +
+      "2\014.meet.Person\"k\n\023InboundMeetResponse\022)\n" +
+      "\rresponse_code\030\001 \001(\0162\022.meet.ResponseCode" +
+      "\022\017\n\007meet_id\030\002 \001(\t\022\030\n\004peer\030\003 \001(\0132\n.meet.P" +
+      "eer\"E\n\030JoinMeetByManagerRequest\022\030\n\004peer\030" +
+      "\001 \001(\0132\n.meet.Peer\022\017\n\007meet_id\030\002 \001(\t\"]\n\026Jo" +
+      "inMeetByUserResponse\022)\n\rresponse_code\030\001 " +
+      "\001(\0162\022.meet.ResponseCode\022\030\n\004peer\030\002 \001(\0132\n." +
+      "meet.Peer\"\202\001\n\020CloseMeetRequest\022\017\n\007meet_i" +
+      "d\030\001 \001(\t\022!\n\004code\030\002 \001(\0162\023.meet.CloseMeetCo" +
+      "de\022*\n\013guide_voice\030\003 \001(\0132\020.meet.GuideVoic" +
+      "eH\000\210\001\001B\016\n\014_guide_voice\"C\n\026LeaveMeetByUse" +
+      "rRequest\022\030\n\004peer\030\001 \001(\0132\n.meet.Peer\022\017\n\007me" +
+      "et_id\030\002 \001(\t*?\n\rCloseMeetCode\022\014\n\010COMPLETE" +
+      "\020\000\022\024\n\020NOT_IN_OPERATION\020\001\022\n\n\006MISSED\020\002*K\n\014" +
+      "ResponseCode\022\013\n\007SUCCESS\020\000\022\020\n\014UNAUTHORIZE" +
+      "D\020\001\022\r\n\tFORBIDDEN\020\002\022\r\n\tNOT_FOUND\020\0032\361\003\n\013Me" +
+      "etService\0227\n\tCloseMeet\022\026.meet.CloseMeetR" +
+      "equest\032\022.meet.BareResponse\022C\n\022CreateOutb" +
+      "oundMeet\022\031.meet.OutboundMeetRequest\032\022.me" +
+      "et.BareResponse\022G\n\021JoinMeetByManager\022\036.m" +
+      "eet.JoinMeetByManagerRequest\032\022.meet.Bare" +
+      "Response\022I\n\022LeaveMeetByManager\022\037.meet.Le" +
+      "aveMeetByManagerRequest\032\022.meet.BareRespo" +
+      "nse\022H\n\021CreateInboundMeet\022\030.meet.InboundM" +
+      "eetRequest\032\031.meet.InboundMeetResponse\022A\n" +
+      "\016JoinMeetByUser\022\033.meet.JoinMeetByUserReq" +
+      "uest\032\022.meet.BareResponse\022C\n\017LeaveMeetByU" +
+      "ser\022\034.meet.LeaveMeetByUserRequest\032\022.meet" +
+      ".BareResponseB=\n\024io.channel.api.protoP\001Z" +
+      "#github.com/channel-io/ch-proto/meetb\006pr" +
+      "oto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_meet_BareResponse_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_meet_BareResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_BareResponse_descriptor,
-        new java.lang.String[] { "ResponseCode", });
     internal_static_meet_GuideVoice_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(0);
     internal_static_meet_GuideVoice_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_GuideVoice_descriptor,
         new java.lang.String[] { "Name", "Url", });
-    internal_static_meet_CloseMeetRequest_descriptor =
-      getDescriptor().getMessageTypes().get(2);
-    internal_static_meet_CloseMeetRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_CloseMeetRequest_descriptor,
-        new java.lang.String[] { "MeetId", "HasGuideVoice", "GuideVoice", "Response", });
     internal_static_meet_Person_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_meet_Person_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_Person_descriptor,
-        new java.lang.String[] { "PersonId", "PersonType", });
-    internal_static_meet_JoinMeetRequest_descriptor =
-      getDescriptor().getMessageTypes().get(4);
-    internal_static_meet_JoinMeetRequest_fieldAccessorTable = new
+        new java.lang.String[] { "Type", "Id", });
+    internal_static_meet_Peer_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_meet_Peer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_JoinMeetRequest_descriptor,
-        new java.lang.String[] { "Person", "MeetId", });
-    internal_static_meet_AddPeersRequest_descriptor =
-      getDescriptor().getMessageTypes().get(5);
-    internal_static_meet_AddPeersRequest_fieldAccessorTable = new
+        internal_static_meet_Peer_descriptor,
+        new java.lang.String[] { "Person", "DeviceId", });
+    internal_static_meet_BareResponse_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_meet_BareResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_AddPeersRequest_descriptor,
-        new java.lang.String[] { "Persons", "MeetId", });
-    internal_static_meet_AddPeersResponse_descriptor =
-      getDescriptor().getMessageTypes().get(6);
-    internal_static_meet_AddPeersResponse_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_AddPeersResponse_descriptor,
-        new java.lang.String[] { "ResponseCode", "MeetId", });
+        internal_static_meet_BareResponse_descriptor,
+        new java.lang.String[] { "ResponseCode", });
     internal_static_meet_InboundMeetRequest_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_meet_InboundMeetRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_InboundMeetRequest_descriptor,
-        new java.lang.String[] { "From", "To", "Carrier", "SfuServerId", });
+        new java.lang.String[] { "From", "To", "Carrier", "SfuServerId", "DeviceId", });
+    internal_static_meet_JoinMeetByUserRequest_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_meet_JoinMeetByUserRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_JoinMeetByUserRequest_descriptor,
+        new java.lang.String[] { "Peer", "MeetId", });
+    internal_static_meet_LeaveMeetByManagerRequest_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_meet_LeaveMeetByManagerRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_LeaveMeetByManagerRequest_descriptor,
+        new java.lang.String[] { "Peer", "MeetId", });
+    internal_static_meet_OutboundMeetRequest_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_meet_OutboundMeetRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_OutboundMeetRequest_descriptor,
+        new java.lang.String[] { "MeetId", "From", "To", "Carrier", "User", });
     internal_static_meet_InboundMeetResponse_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_meet_InboundMeetResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_InboundMeetResponse_descriptor,
-        new java.lang.String[] { "ResponseCode", "MeetId", });
-    internal_static_meet_OutboundMeetRequest_descriptor =
+        new java.lang.String[] { "ResponseCode", "MeetId", "Peer", });
+    internal_static_meet_JoinMeetByManagerRequest_descriptor =
       getDescriptor().getMessageTypes().get(9);
-    internal_static_meet_OutboundMeetRequest_fieldAccessorTable = new
+    internal_static_meet_JoinMeetByManagerRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_OutboundMeetRequest_descriptor,
-        new java.lang.String[] { "MeetId", "From", "To", "Carrier", });
-    internal_static_meet_LeaveMeetRequest_descriptor =
+        internal_static_meet_JoinMeetByManagerRequest_descriptor,
+        new java.lang.String[] { "Peer", "MeetId", });
+    internal_static_meet_JoinMeetByUserResponse_descriptor =
       getDescriptor().getMessageTypes().get(10);
-    internal_static_meet_LeaveMeetRequest_fieldAccessorTable = new
+    internal_static_meet_JoinMeetByUserResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_meet_LeaveMeetRequest_descriptor,
-        new java.lang.String[] { "Person", "MeetId", });
+        internal_static_meet_JoinMeetByUserResponse_descriptor,
+        new java.lang.String[] { "ResponseCode", "Peer", });
+    internal_static_meet_CloseMeetRequest_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_meet_CloseMeetRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_CloseMeetRequest_descriptor,
+        new java.lang.String[] { "MeetId", "Code", "GuideVoice", "GuideVoice", });
+    internal_static_meet_LeaveMeetByUserRequest_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_meet_LeaveMeetByUserRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_LeaveMeetByUserRequest_descriptor,
+        new java.lang.String[] { "Peer", "MeetId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

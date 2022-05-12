@@ -54,4 +54,19 @@ public interface OutboundMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getCarrierBytes();
+
+  /**
+   * <code>.meet.Person user = 5;</code>
+   * @return Whether the user field is set.
+   */
+  boolean hasUser();
+  /**
+   * <code>.meet.Person user = 5;</code>
+   * @return The user.
+   */
+  io.channel.api.proto.Person getUser();
+  /**
+   * <code>.meet.Person user = 5;</code>
+   */
+  io.channel.api.proto.PersonOrBuilder getUserOrBuilder();
 }

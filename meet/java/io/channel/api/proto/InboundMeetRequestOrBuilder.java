@@ -54,4 +54,16 @@ public interface InboundMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getSfuServerIdBytes();
+
+  /**
+   * <code>string device_id = 5;</code>
+   * @return The deviceId.
+   */
+  java.lang.String getDeviceId();
+  /**
+   * <code>string device_id = 5;</code>
+   * @return The bytes for deviceId.
+   */
+  com.google.protobuf.ByteString
+      getDeviceIdBytes();
 }

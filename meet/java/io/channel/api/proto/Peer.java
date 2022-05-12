@@ -4,27 +4,26 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.Person}
+ * Protobuf type {@code meet.Peer}
  */
-public final class Person extends
+public final class Peer extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.Person)
-    PersonOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.Peer)
+    PeerOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use Person.newBuilder() to construct.
-  private Person(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use Peer.newBuilder() to construct.
+  private Peer(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private Person() {
-    type_ = "";
-    id_ = "";
+  private Peer() {
+    deviceId_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new Person();
+    return new Peer();
   }
 
   @java.lang.Override
@@ -32,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private Person(
+  private Peer(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -51,15 +50,22 @@ private static final long serialVersionUID = 0L;
             done = true;
             break;
           case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+            io.channel.api.proto.Person.Builder subBuilder = null;
+            if (person_ != null) {
+              subBuilder = person_.toBuilder();
+            }
+            person_ = input.readMessage(io.channel.api.proto.Person.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(person_);
+              person_ = subBuilder.buildPartial();
+            }
 
-            type_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            id_ = s;
+            deviceId_ = s;
             break;
           }
           default: {
@@ -83,87 +89,75 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_Person_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_Peer_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_Person_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_Peer_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.Person.class, io.channel.api.proto.Person.Builder.class);
+            io.channel.api.proto.Peer.class, io.channel.api.proto.Peer.Builder.class);
   }
 
-  public static final int TYPE_FIELD_NUMBER = 1;
-  private volatile java.lang.Object type_;
+  public static final int PERSON_FIELD_NUMBER = 1;
+  private io.channel.api.proto.Person person_;
   /**
-   * <code>string type = 1;</code>
-   * @return The type.
+   * <code>.meet.Person person = 1;</code>
+   * @return Whether the person field is set.
    */
   @java.lang.Override
-  public java.lang.String getType() {
-    java.lang.Object ref = type_;
+  public boolean hasPerson() {
+    return person_ != null;
+  }
+  /**
+   * <code>.meet.Person person = 1;</code>
+   * @return The person.
+   */
+  @java.lang.Override
+  public io.channel.api.proto.Person getPerson() {
+    return person_ == null ? io.channel.api.proto.Person.getDefaultInstance() : person_;
+  }
+  /**
+   * <code>.meet.Person person = 1;</code>
+   */
+  @java.lang.Override
+  public io.channel.api.proto.PersonOrBuilder getPersonOrBuilder() {
+    return getPerson();
+  }
+
+  public static final int DEVICE_ID_FIELD_NUMBER = 2;
+  private volatile java.lang.Object deviceId_;
+  /**
+   * <code>string device_id = 2;</code>
+   * @return The deviceId.
+   */
+  @java.lang.Override
+  public java.lang.String getDeviceId() {
+    java.lang.Object ref = deviceId_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      type_ = s;
+      deviceId_ = s;
       return s;
     }
   }
   /**
-   * <code>string type = 1;</code>
-   * @return The bytes for type.
+   * <code>string device_id = 2;</code>
+   * @return The bytes for deviceId.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getTypeBytes() {
-    java.lang.Object ref = type_;
+      getDeviceIdBytes() {
+    java.lang.Object ref = deviceId_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      type_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object id_;
-  /**
-   * <code>string id = 2;</code>
-   * @return The id.
-   */
-  @java.lang.Override
-  public java.lang.String getId() {
-    java.lang.Object ref = id_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      id_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string id = 2;</code>
-   * @return The bytes for id.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getIdBytes() {
-    java.lang.Object ref = id_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      id_ = b;
+      deviceId_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -184,11 +178,11 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, type_);
+    if (person_ != null) {
+      output.writeMessage(1, getPerson());
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, id_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, deviceId_);
     }
     unknownFields.writeTo(output);
   }
@@ -199,11 +193,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(type_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, type_);
+    if (person_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(1, getPerson());
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, id_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, deviceId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -215,15 +210,18 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.Person)) {
+    if (!(obj instanceof io.channel.api.proto.Peer)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.Person other = (io.channel.api.proto.Person) obj;
+    io.channel.api.proto.Peer other = (io.channel.api.proto.Peer) obj;
 
-    if (!getType()
-        .equals(other.getType())) return false;
-    if (!getId()
-        .equals(other.getId())) return false;
+    if (hasPerson() != other.hasPerson()) return false;
+    if (hasPerson()) {
+      if (!getPerson()
+          .equals(other.getPerson())) return false;
+    }
+    if (!getDeviceId()
+        .equals(other.getDeviceId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -235,78 +233,80 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + TYPE_FIELD_NUMBER;
-    hash = (53 * hash) + getType().hashCode();
-    hash = (37 * hash) + ID_FIELD_NUMBER;
-    hash = (53 * hash) + getId().hashCode();
+    if (hasPerson()) {
+      hash = (37 * hash) + PERSON_FIELD_NUMBER;
+      hash = (53 * hash) + getPerson().hashCode();
+    }
+    hash = (37 * hash) + DEVICE_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getDeviceId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.Person parseFrom(byte[] data)
+  public static io.channel.api.proto.Peer parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.Person parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.Peer parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.Person parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.Peer parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.Person parseDelimitedFrom(
+  public static io.channel.api.proto.Peer parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.Person parseFrom(
+  public static io.channel.api.proto.Peer parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -319,7 +319,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.Person prototype) {
+  public static Builder newBuilder(io.channel.api.proto.Peer prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -335,26 +335,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.Person}
+   * Protobuf type {@code meet.Peer}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.Person)
-      io.channel.api.proto.PersonOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.Peer)
+      io.channel.api.proto.PeerOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_Person_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_Peer_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_Person_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_Peer_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.Person.class, io.channel.api.proto.Person.Builder.class);
+              io.channel.api.proto.Peer.class, io.channel.api.proto.Peer.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.Person.newBuilder()
+    // Construct using io.channel.api.proto.Peer.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -372,9 +372,13 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      type_ = "";
-
-      id_ = "";
+      if (personBuilder_ == null) {
+        person_ = null;
+      } else {
+        person_ = null;
+        personBuilder_ = null;
+      }
+      deviceId_ = "";
 
       return this;
     }
@@ -382,17 +386,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_Person_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_Peer_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.Person getDefaultInstanceForType() {
-      return io.channel.api.proto.Person.getDefaultInstance();
+    public io.channel.api.proto.Peer getDefaultInstanceForType() {
+      return io.channel.api.proto.Peer.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.Person build() {
-      io.channel.api.proto.Person result = buildPartial();
+    public io.channel.api.proto.Peer build() {
+      io.channel.api.proto.Peer result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -400,10 +404,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.Person buildPartial() {
-      io.channel.api.proto.Person result = new io.channel.api.proto.Person(this);
-      result.type_ = type_;
-      result.id_ = id_;
+    public io.channel.api.proto.Peer buildPartial() {
+      io.channel.api.proto.Peer result = new io.channel.api.proto.Peer(this);
+      if (personBuilder_ == null) {
+        result.person_ = person_;
+      } else {
+        result.person_ = personBuilder_.build();
+      }
+      result.deviceId_ = deviceId_;
       onBuilt();
       return result;
     }
@@ -442,22 +450,21 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.Person) {
-        return mergeFrom((io.channel.api.proto.Person)other);
+      if (other instanceof io.channel.api.proto.Peer) {
+        return mergeFrom((io.channel.api.proto.Peer)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.Person other) {
-      if (other == io.channel.api.proto.Person.getDefaultInstance()) return this;
-      if (!other.getType().isEmpty()) {
-        type_ = other.type_;
-        onChanged();
+    public Builder mergeFrom(io.channel.api.proto.Peer other) {
+      if (other == io.channel.api.proto.Peer.getDefaultInstance()) return this;
+      if (other.hasPerson()) {
+        mergePerson(other.getPerson());
       }
-      if (!other.getId().isEmpty()) {
-        id_ = other.id_;
+      if (!other.getDeviceId().isEmpty()) {
+        deviceId_ = other.deviceId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -475,11 +482,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.Person parsedMessage = null;
+      io.channel.api.proto.Peer parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.Person) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.Peer) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -489,154 +496,197 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object type_ = "";
+    private io.channel.api.proto.Person person_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder> personBuilder_;
     /**
-     * <code>string type = 1;</code>
-     * @return The type.
+     * <code>.meet.Person person = 1;</code>
+     * @return Whether the person field is set.
      */
-    public java.lang.String getType() {
-      java.lang.Object ref = type_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        type_ = s;
-        return s;
+    public boolean hasPerson() {
+      return personBuilder_ != null || person_ != null;
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     * @return The person.
+     */
+    public io.channel.api.proto.Person getPerson() {
+      if (personBuilder_ == null) {
+        return person_ == null ? io.channel.api.proto.Person.getDefaultInstance() : person_;
       } else {
-        return (java.lang.String) ref;
+        return personBuilder_.getMessage();
       }
     }
     /**
-     * <code>string type = 1;</code>
-     * @return The bytes for type.
+     * <code>.meet.Person person = 1;</code>
      */
-    public com.google.protobuf.ByteString
-        getTypeBytes() {
-      java.lang.Object ref = type_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        type_ = b;
-        return b;
+    public Builder setPerson(io.channel.api.proto.Person value) {
+      if (personBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        person_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        personBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     */
+    public Builder setPerson(
+        io.channel.api.proto.Person.Builder builderForValue) {
+      if (personBuilder_ == null) {
+        person_ = builderForValue.build();
+        onChanged();
+      } else {
+        personBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     */
+    public Builder mergePerson(io.channel.api.proto.Person value) {
+      if (personBuilder_ == null) {
+        if (person_ != null) {
+          person_ =
+            io.channel.api.proto.Person.newBuilder(person_).mergeFrom(value).buildPartial();
+        } else {
+          person_ = value;
+        }
+        onChanged();
+      } else {
+        personBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     */
+    public Builder clearPerson() {
+      if (personBuilder_ == null) {
+        person_ = null;
+        onChanged();
+      } else {
+        person_ = null;
+        personBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     */
+    public io.channel.api.proto.Person.Builder getPersonBuilder() {
+      
+      onChanged();
+      return getPersonFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.Person person = 1;</code>
+     */
+    public io.channel.api.proto.PersonOrBuilder getPersonOrBuilder() {
+      if (personBuilder_ != null) {
+        return personBuilder_.getMessageOrBuilder();
+      } else {
+        return person_ == null ?
+            io.channel.api.proto.Person.getDefaultInstance() : person_;
       }
     }
     /**
-     * <code>string type = 1;</code>
-     * @param value The type to set.
-     * @return This builder for chaining.
+     * <code>.meet.Person person = 1;</code>
      */
-    public Builder setType(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      type_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string type = 1;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearType() {
-      
-      type_ = getDefaultInstance().getType();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string type = 1;</code>
-     * @param value The bytes for type to set.
-     * @return This builder for chaining.
-     */
-    public Builder setTypeBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      type_ = value;
-      onChanged();
-      return this;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder> 
+        getPersonFieldBuilder() {
+      if (personBuilder_ == null) {
+        personBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.Person, io.channel.api.proto.Person.Builder, io.channel.api.proto.PersonOrBuilder>(
+                getPerson(),
+                getParentForChildren(),
+                isClean());
+        person_ = null;
+      }
+      return personBuilder_;
     }
 
-    private java.lang.Object id_ = "";
+    private java.lang.Object deviceId_ = "";
     /**
-     * <code>string id = 2;</code>
-     * @return The id.
+     * <code>string device_id = 2;</code>
+     * @return The deviceId.
      */
-    public java.lang.String getId() {
-      java.lang.Object ref = id_;
+    public java.lang.String getDeviceId() {
+      java.lang.Object ref = deviceId_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        id_ = s;
+        deviceId_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string id = 2;</code>
-     * @return The bytes for id.
+     * <code>string device_id = 2;</code>
+     * @return The bytes for deviceId.
      */
     public com.google.protobuf.ByteString
-        getIdBytes() {
-      java.lang.Object ref = id_;
+        getDeviceIdBytes() {
+      java.lang.Object ref = deviceId_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        id_ = b;
+        deviceId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string id = 2;</code>
-     * @param value The id to set.
+     * <code>string device_id = 2;</code>
+     * @param value The deviceId to set.
      * @return This builder for chaining.
      */
-    public Builder setId(
+    public Builder setDeviceId(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      id_ = value;
+      deviceId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string id = 2;</code>
+     * <code>string device_id = 2;</code>
      * @return This builder for chaining.
      */
-    public Builder clearId() {
+    public Builder clearDeviceId() {
       
-      id_ = getDefaultInstance().getId();
+      deviceId_ = getDefaultInstance().getDeviceId();
       onChanged();
       return this;
     }
     /**
-     * <code>string id = 2;</code>
-     * @param value The bytes for id to set.
+     * <code>string device_id = 2;</code>
+     * @param value The bytes for deviceId to set.
      * @return This builder for chaining.
      */
-    public Builder setIdBytes(
+    public Builder setDeviceIdBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      id_ = value;
+      deviceId_ = value;
       onChanged();
       return this;
     }
@@ -653,41 +703,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.Person)
+    // @@protoc_insertion_point(builder_scope:meet.Peer)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.Person)
-  private static final io.channel.api.proto.Person DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.Peer)
+  private static final io.channel.api.proto.Peer DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.Person();
+    DEFAULT_INSTANCE = new io.channel.api.proto.Peer();
   }
 
-  public static io.channel.api.proto.Person getDefaultInstance() {
+  public static io.channel.api.proto.Peer getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<Person>
-      PARSER = new com.google.protobuf.AbstractParser<Person>() {
+  private static final com.google.protobuf.Parser<Peer>
+      PARSER = new com.google.protobuf.AbstractParser<Peer>() {
     @java.lang.Override
-    public Person parsePartialFrom(
+    public Peer parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new Person(input, extensionRegistry);
+      return new Peer(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<Person> parser() {
+  public static com.google.protobuf.Parser<Peer> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<Person> getParserForType() {
+  public com.google.protobuf.Parser<Peer> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.Person getDefaultInstanceForType() {
+  public io.channel.api.proto.Peer getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

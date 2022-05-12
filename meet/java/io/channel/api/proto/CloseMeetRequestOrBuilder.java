@@ -20,30 +20,28 @@ public interface CloseMeetRequestOrBuilder extends
       getMeetIdBytes();
 
   /**
-   * <code>bool has_guide_voice = 2;</code>
-   * @return Whether the hasGuideVoice field is set.
+   * <code>.meet.CloseMeetCode code = 2;</code>
+   * @return The enum numeric value on the wire for code.
    */
-  boolean hasHasGuideVoice();
+  int getCodeValue();
   /**
-   * <code>bool has_guide_voice = 2;</code>
-   * @return The hasGuideVoice.
+   * <code>.meet.CloseMeetCode code = 2;</code>
+   * @return The code.
    */
-  boolean getHasGuideVoice();
+  io.channel.api.proto.CloseMeetCode getCode();
 
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    * @return Whether the guideVoice field is set.
    */
   boolean hasGuideVoice();
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    * @return The guideVoice.
    */
   io.channel.api.proto.GuideVoice getGuideVoice();
   /**
-   * <code>.meet.GuideVoice guide_voice = 3;</code>
+   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
    */
   io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder();
-
-  public io.channel.api.proto.CloseMeetRequest.ResponseCase getResponseCase();
 }

@@ -8,26 +8,26 @@ public interface PersonOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string person_id = 1;</code>
-   * @return The personId.
+   * <code>string type = 1;</code>
+   * @return The type.
    */
-  java.lang.String getPersonId();
+  java.lang.String getType();
   /**
-   * <code>string person_id = 1;</code>
-   * @return The bytes for personId.
+   * <code>string type = 1;</code>
+   * @return The bytes for type.
    */
   com.google.protobuf.ByteString
-      getPersonIdBytes();
+      getTypeBytes();
 
   /**
-   * <code>string person_type = 2;</code>
-   * @return The personType.
+   * <code>string id = 2;</code>
+   * @return The id.
    */
-  java.lang.String getPersonType();
+  java.lang.String getId();
   /**
-   * <code>string person_type = 2;</code>
-   * @return The bytes for personType.
+   * <code>string id = 2;</code>
+   * @return The bytes for id.
    */
   com.google.protobuf.ByteString
-      getPersonTypeBytes();
+      getIdBytes();
 }

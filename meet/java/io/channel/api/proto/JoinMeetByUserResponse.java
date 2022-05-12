@@ -4,27 +4,26 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.InboundMeetResponse}
+ * Protobuf type {@code meet.JoinMeetByUserResponse}
  */
-public final class InboundMeetResponse extends
+public final class JoinMeetByUserResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.InboundMeetResponse)
-    InboundMeetResponseOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.JoinMeetByUserResponse)
+    JoinMeetByUserResponseOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use InboundMeetResponse.newBuilder() to construct.
-  private InboundMeetResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use JoinMeetByUserResponse.newBuilder() to construct.
+  private JoinMeetByUserResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private InboundMeetResponse() {
+  private JoinMeetByUserResponse() {
     responseCode_ = 0;
-    meetId_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new InboundMeetResponse();
+    return new JoinMeetByUserResponse();
   }
 
   @java.lang.Override
@@ -32,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private InboundMeetResponse(
+  private JoinMeetByUserResponse(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -57,12 +56,6 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            meetId_ = s;
-            break;
-          }
-          case 26: {
             io.channel.api.proto.Peer.Builder subBuilder = null;
             if (peer_ != null) {
               subBuilder = peer_.toBuilder();
@@ -96,15 +89,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_InboundMeetResponse_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_JoinMeetByUserResponse_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_InboundMeetResponse_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_JoinMeetByUserResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.InboundMeetResponse.class, io.channel.api.proto.InboundMeetResponse.Builder.class);
+            io.channel.api.proto.JoinMeetByUserResponse.class, io.channel.api.proto.JoinMeetByUserResponse.Builder.class);
   }
 
   public static final int RESPONSE_CODE_FIELD_NUMBER = 1;
@@ -126,48 +119,10 @@ private static final long serialVersionUID = 0L;
     return result == null ? io.channel.api.proto.ResponseCode.UNRECOGNIZED : result;
   }
 
-  public static final int MEET_ID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object meetId_;
-  /**
-   * <code>string meet_id = 2;</code>
-   * @return The meetId.
-   */
-  @java.lang.Override
-  public java.lang.String getMeetId() {
-    java.lang.Object ref = meetId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      meetId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string meet_id = 2;</code>
-   * @return The bytes for meetId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getMeetIdBytes() {
-    java.lang.Object ref = meetId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      meetId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int PEER_FIELD_NUMBER = 3;
+  public static final int PEER_FIELD_NUMBER = 2;
   private io.channel.api.proto.Peer peer_;
   /**
-   * <code>.meet.Peer peer = 3;</code>
+   * <code>.meet.Peer peer = 2;</code>
    * @return Whether the peer field is set.
    */
   @java.lang.Override
@@ -175,7 +130,7 @@ private static final long serialVersionUID = 0L;
     return peer_ != null;
   }
   /**
-   * <code>.meet.Peer peer = 3;</code>
+   * <code>.meet.Peer peer = 2;</code>
    * @return The peer.
    */
   @java.lang.Override
@@ -183,7 +138,7 @@ private static final long serialVersionUID = 0L;
     return peer_ == null ? io.channel.api.proto.Peer.getDefaultInstance() : peer_;
   }
   /**
-   * <code>.meet.Peer peer = 3;</code>
+   * <code>.meet.Peer peer = 2;</code>
    */
   @java.lang.Override
   public io.channel.api.proto.PeerOrBuilder getPeerOrBuilder() {
@@ -207,11 +162,8 @@ private static final long serialVersionUID = 0L;
     if (responseCode_ != io.channel.api.proto.ResponseCode.SUCCESS.getNumber()) {
       output.writeEnum(1, responseCode_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, meetId_);
-    }
     if (peer_ != null) {
-      output.writeMessage(3, getPeer());
+      output.writeMessage(2, getPeer());
     }
     unknownFields.writeTo(output);
   }
@@ -226,12 +178,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(1, responseCode_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, meetId_);
-    }
     if (peer_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getPeer());
+        .computeMessageSize(2, getPeer());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -243,14 +192,12 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.InboundMeetResponse)) {
+    if (!(obj instanceof io.channel.api.proto.JoinMeetByUserResponse)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.InboundMeetResponse other = (io.channel.api.proto.InboundMeetResponse) obj;
+    io.channel.api.proto.JoinMeetByUserResponse other = (io.channel.api.proto.JoinMeetByUserResponse) obj;
 
     if (responseCode_ != other.responseCode_) return false;
-    if (!getMeetId()
-        .equals(other.getMeetId())) return false;
     if (hasPeer() != other.hasPeer()) return false;
     if (hasPeer()) {
       if (!getPeer()
@@ -269,8 +216,6 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + RESPONSE_CODE_FIELD_NUMBER;
     hash = (53 * hash) + responseCode_;
-    hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getMeetId().hashCode();
     if (hasPeer()) {
       hash = (37 * hash) + PEER_FIELD_NUMBER;
       hash = (53 * hash) + getPeer().hashCode();
@@ -280,69 +225,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(byte[] data)
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.JoinMeetByUserResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseDelimitedFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.InboundMeetResponse parseFrom(
+  public static io.channel.api.proto.JoinMeetByUserResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -355,7 +300,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.InboundMeetResponse prototype) {
+  public static Builder newBuilder(io.channel.api.proto.JoinMeetByUserResponse prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -371,26 +316,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.InboundMeetResponse}
+   * Protobuf type {@code meet.JoinMeetByUserResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.InboundMeetResponse)
-      io.channel.api.proto.InboundMeetResponseOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.JoinMeetByUserResponse)
+      io.channel.api.proto.JoinMeetByUserResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_InboundMeetResponse_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_JoinMeetByUserResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_InboundMeetResponse_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_JoinMeetByUserResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.InboundMeetResponse.class, io.channel.api.proto.InboundMeetResponse.Builder.class);
+              io.channel.api.proto.JoinMeetByUserResponse.class, io.channel.api.proto.JoinMeetByUserResponse.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.InboundMeetResponse.newBuilder()
+    // Construct using io.channel.api.proto.JoinMeetByUserResponse.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -410,8 +355,6 @@ private static final long serialVersionUID = 0L;
       super.clear();
       responseCode_ = 0;
 
-      meetId_ = "";
-
       if (peerBuilder_ == null) {
         peer_ = null;
       } else {
@@ -424,17 +367,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_InboundMeetResponse_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_JoinMeetByUserResponse_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.InboundMeetResponse getDefaultInstanceForType() {
-      return io.channel.api.proto.InboundMeetResponse.getDefaultInstance();
+    public io.channel.api.proto.JoinMeetByUserResponse getDefaultInstanceForType() {
+      return io.channel.api.proto.JoinMeetByUserResponse.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.InboundMeetResponse build() {
-      io.channel.api.proto.InboundMeetResponse result = buildPartial();
+    public io.channel.api.proto.JoinMeetByUserResponse build() {
+      io.channel.api.proto.JoinMeetByUserResponse result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -442,10 +385,9 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.InboundMeetResponse buildPartial() {
-      io.channel.api.proto.InboundMeetResponse result = new io.channel.api.proto.InboundMeetResponse(this);
+    public io.channel.api.proto.JoinMeetByUserResponse buildPartial() {
+      io.channel.api.proto.JoinMeetByUserResponse result = new io.channel.api.proto.JoinMeetByUserResponse(this);
       result.responseCode_ = responseCode_;
-      result.meetId_ = meetId_;
       if (peerBuilder_ == null) {
         result.peer_ = peer_;
       } else {
@@ -489,22 +431,18 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.InboundMeetResponse) {
-        return mergeFrom((io.channel.api.proto.InboundMeetResponse)other);
+      if (other instanceof io.channel.api.proto.JoinMeetByUserResponse) {
+        return mergeFrom((io.channel.api.proto.JoinMeetByUserResponse)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.InboundMeetResponse other) {
-      if (other == io.channel.api.proto.InboundMeetResponse.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.JoinMeetByUserResponse other) {
+      if (other == io.channel.api.proto.JoinMeetByUserResponse.getDefaultInstance()) return this;
       if (other.responseCode_ != 0) {
         setResponseCodeValue(other.getResponseCodeValue());
-      }
-      if (!other.getMeetId().isEmpty()) {
-        meetId_ = other.meetId_;
-        onChanged();
       }
       if (other.hasPeer()) {
         mergePeer(other.getPeer());
@@ -524,11 +462,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.InboundMeetResponse parsedMessage = null;
+      io.channel.api.proto.JoinMeetByUserResponse parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.InboundMeetResponse) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.JoinMeetByUserResponse) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -592,94 +530,18 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object meetId_ = "";
-    /**
-     * <code>string meet_id = 2;</code>
-     * @return The meetId.
-     */
-    public java.lang.String getMeetId() {
-      java.lang.Object ref = meetId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        meetId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string meet_id = 2;</code>
-     * @return The bytes for meetId.
-     */
-    public com.google.protobuf.ByteString
-        getMeetIdBytes() {
-      java.lang.Object ref = meetId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        meetId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string meet_id = 2;</code>
-     * @param value The meetId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setMeetId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      meetId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string meet_id = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearMeetId() {
-      
-      meetId_ = getDefaultInstance().getMeetId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string meet_id = 2;</code>
-     * @param value The bytes for meetId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setMeetIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      meetId_ = value;
-      onChanged();
-      return this;
-    }
-
     private io.channel.api.proto.Peer peer_;
     private com.google.protobuf.SingleFieldBuilderV3<
         io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> peerBuilder_;
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      * @return Whether the peer field is set.
      */
     public boolean hasPeer() {
       return peerBuilder_ != null || peer_ != null;
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      * @return The peer.
      */
     public io.channel.api.proto.Peer getPeer() {
@@ -690,7 +552,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public Builder setPeer(io.channel.api.proto.Peer value) {
       if (peerBuilder_ == null) {
@@ -706,7 +568,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public Builder setPeer(
         io.channel.api.proto.Peer.Builder builderForValue) {
@@ -720,7 +582,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public Builder mergePeer(io.channel.api.proto.Peer value) {
       if (peerBuilder_ == null) {
@@ -738,7 +600,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public Builder clearPeer() {
       if (peerBuilder_ == null) {
@@ -752,7 +614,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public io.channel.api.proto.Peer.Builder getPeerBuilder() {
       
@@ -760,7 +622,7 @@ private static final long serialVersionUID = 0L;
       return getPeerFieldBuilder().getBuilder();
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     public io.channel.api.proto.PeerOrBuilder getPeerOrBuilder() {
       if (peerBuilder_ != null) {
@@ -771,7 +633,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>.meet.Peer peer = 3;</code>
+     * <code>.meet.Peer peer = 2;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> 
@@ -799,41 +661,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.InboundMeetResponse)
+    // @@protoc_insertion_point(builder_scope:meet.JoinMeetByUserResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.InboundMeetResponse)
-  private static final io.channel.api.proto.InboundMeetResponse DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.JoinMeetByUserResponse)
+  private static final io.channel.api.proto.JoinMeetByUserResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.InboundMeetResponse();
+    DEFAULT_INSTANCE = new io.channel.api.proto.JoinMeetByUserResponse();
   }
 
-  public static io.channel.api.proto.InboundMeetResponse getDefaultInstance() {
+  public static io.channel.api.proto.JoinMeetByUserResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<InboundMeetResponse>
-      PARSER = new com.google.protobuf.AbstractParser<InboundMeetResponse>() {
+  private static final com.google.protobuf.Parser<JoinMeetByUserResponse>
+      PARSER = new com.google.protobuf.AbstractParser<JoinMeetByUserResponse>() {
     @java.lang.Override
-    public InboundMeetResponse parsePartialFrom(
+    public JoinMeetByUserResponse parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new InboundMeetResponse(input, extensionRegistry);
+      return new JoinMeetByUserResponse(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<InboundMeetResponse> parser() {
+  public static com.google.protobuf.Parser<JoinMeetByUserResponse> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<InboundMeetResponse> getParserForType() {
+  public com.google.protobuf.Parser<JoinMeetByUserResponse> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.InboundMeetResponse getDefaultInstanceForType() {
+  public io.channel.api.proto.JoinMeetByUserResponse getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

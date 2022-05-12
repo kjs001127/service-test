@@ -29,4 +29,19 @@ public interface InboundMeetResponseOrBuilder extends
    */
   com.google.protobuf.ByteString
       getMeetIdBytes();
+
+  /**
+   * <code>.meet.Peer peer = 3;</code>
+   * @return Whether the peer field is set.
+   */
+  boolean hasPeer();
+  /**
+   * <code>.meet.Peer peer = 3;</code>
+   * @return The peer.
+   */
+  io.channel.api.proto.Peer getPeer();
+  /**
+   * <code>.meet.Peer peer = 3;</code>
+   */
+  io.channel.api.proto.PeerOrBuilder getPeerOrBuilder();
 }
