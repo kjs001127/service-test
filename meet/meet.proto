@@ -12,6 +12,7 @@ service MeetService {
   rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
   rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
   rpc LeaveMeetByManager(LeaveMeetByManagerRequest) returns (BareResponse);
+  rpc CreatePrivateMeet(PrivateMeetRequest) returns (BareResponse);
 
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
@@ -30,6 +31,7 @@ enum ResponseCode {
   UNAUTHORIZED = 1;
   FORBIDDEN = 2;
   NOT_FOUND = 3;
+  UNKNOWN = 4;
 }
 
 message GuideVoice {
@@ -81,12 +83,18 @@ message OutboundMeetRequest {
   string to = 3;
   string carrier = 4;
   Person user = 5;
+  Peer manager = 6;
 }
 
 message InboundMeetResponse {
   ResponseCode response_code = 1;
   string meet_id = 2;
   Peer peer = 3;
+}
+
+message PrivateMeetRequest {
+  string meet_id = 1;
+  Peer manager = 2;
 }
 
 message JoinMeetByManagerRequest {
