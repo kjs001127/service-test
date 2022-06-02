@@ -16,8 +16,8 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private GuideVoice() {
-    name_ = "";
-    url_ = "";
+    bucket_ = "";
+    key_ = "";
   }
 
   @java.lang.Override
@@ -53,13 +53,13 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            name_ = s;
+            bucket_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            url_ = s;
+            key_ = s;
             break;
           }
           default: {
@@ -94,76 +94,76 @@ private static final long serialVersionUID = 0L;
             io.channel.api.proto.GuideVoice.class, io.channel.api.proto.GuideVoice.Builder.class);
   }
 
-  public static final int NAME_FIELD_NUMBER = 1;
-  private volatile java.lang.Object name_;
+  public static final int BUCKET_FIELD_NUMBER = 1;
+  private volatile java.lang.Object bucket_;
   /**
-   * <code>string name = 1;</code>
-   * @return The name.
+   * <code>string bucket = 1;</code>
+   * @return The bucket.
    */
   @java.lang.Override
-  public java.lang.String getName() {
-    java.lang.Object ref = name_;
+  public java.lang.String getBucket() {
+    java.lang.Object ref = bucket_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      name_ = s;
+      bucket_ = s;
       return s;
     }
   }
   /**
-   * <code>string name = 1;</code>
-   * @return The bytes for name.
+   * <code>string bucket = 1;</code>
+   * @return The bytes for bucket.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getNameBytes() {
-    java.lang.Object ref = name_;
+      getBucketBytes() {
+    java.lang.Object ref = bucket_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      name_ = b;
+      bucket_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int URL_FIELD_NUMBER = 2;
-  private volatile java.lang.Object url_;
+  public static final int KEY_FIELD_NUMBER = 2;
+  private volatile java.lang.Object key_;
   /**
-   * <code>string url = 2;</code>
-   * @return The url.
+   * <code>string key = 2;</code>
+   * @return The key.
    */
   @java.lang.Override
-  public java.lang.String getUrl() {
-    java.lang.Object ref = url_;
+  public java.lang.String getKey() {
+    java.lang.Object ref = key_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      url_ = s;
+      key_ = s;
       return s;
     }
   }
   /**
-   * <code>string url = 2;</code>
-   * @return The bytes for url.
+   * <code>string key = 2;</code>
+   * @return The bytes for key.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getUrlBytes() {
-    java.lang.Object ref = url_;
+      getKeyBytes() {
+    java.lang.Object ref = key_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      url_ = b;
+      key_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -184,11 +184,11 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, bucket_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(url_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, url_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
     }
     unknownFields.writeTo(output);
   }
@@ -199,11 +199,11 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, bucket_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(url_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, url_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -220,10 +220,10 @@ private static final long serialVersionUID = 0L;
     }
     io.channel.api.proto.GuideVoice other = (io.channel.api.proto.GuideVoice) obj;
 
-    if (!getName()
-        .equals(other.getName())) return false;
-    if (!getUrl()
-        .equals(other.getUrl())) return false;
+    if (!getBucket()
+        .equals(other.getBucket())) return false;
+    if (!getKey()
+        .equals(other.getKey())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -235,10 +235,10 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + NAME_FIELD_NUMBER;
-    hash = (53 * hash) + getName().hashCode();
-    hash = (37 * hash) + URL_FIELD_NUMBER;
-    hash = (53 * hash) + getUrl().hashCode();
+    hash = (37 * hash) + BUCKET_FIELD_NUMBER;
+    hash = (53 * hash) + getBucket().hashCode();
+    hash = (37 * hash) + KEY_FIELD_NUMBER;
+    hash = (53 * hash) + getKey().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -372,9 +372,9 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      name_ = "";
+      bucket_ = "";
 
-      url_ = "";
+      key_ = "";
 
       return this;
     }
@@ -402,8 +402,8 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.channel.api.proto.GuideVoice buildPartial() {
       io.channel.api.proto.GuideVoice result = new io.channel.api.proto.GuideVoice(this);
-      result.name_ = name_;
-      result.url_ = url_;
+      result.bucket_ = bucket_;
+      result.key_ = key_;
       onBuilt();
       return result;
     }
@@ -452,12 +452,12 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(io.channel.api.proto.GuideVoice other) {
       if (other == io.channel.api.proto.GuideVoice.getDefaultInstance()) return this;
-      if (!other.getName().isEmpty()) {
-        name_ = other.name_;
+      if (!other.getBucket().isEmpty()) {
+        bucket_ = other.bucket_;
         onChanged();
       }
-      if (!other.getUrl().isEmpty()) {
-        url_ = other.url_;
+      if (!other.getKey().isEmpty()) {
+        key_ = other.key_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -489,154 +489,154 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object name_ = "";
+    private java.lang.Object bucket_ = "";
     /**
-     * <code>string name = 1;</code>
-     * @return The name.
+     * <code>string bucket = 1;</code>
+     * @return The bucket.
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
+    public java.lang.String getBucket() {
+      java.lang.Object ref = bucket_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        name_ = s;
+        bucket_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string name = 1;</code>
-     * @return The bytes for name.
+     * <code>string bucket = 1;</code>
+     * @return The bytes for bucket.
      */
     public com.google.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
+        getBucketBytes() {
+      java.lang.Object ref = bucket_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        name_ = b;
+        bucket_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string name = 1;</code>
-     * @param value The name to set.
+     * <code>string bucket = 1;</code>
+     * @param value The bucket to set.
      * @return This builder for chaining.
      */
-    public Builder setName(
+    public Builder setBucket(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      name_ = value;
+      bucket_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string name = 1;</code>
+     * <code>string bucket = 1;</code>
      * @return This builder for chaining.
      */
-    public Builder clearName() {
+    public Builder clearBucket() {
       
-      name_ = getDefaultInstance().getName();
+      bucket_ = getDefaultInstance().getBucket();
       onChanged();
       return this;
     }
     /**
-     * <code>string name = 1;</code>
-     * @param value The bytes for name to set.
+     * <code>string bucket = 1;</code>
+     * @param value The bytes for bucket to set.
      * @return This builder for chaining.
      */
-    public Builder setNameBytes(
+    public Builder setBucketBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      name_ = value;
+      bucket_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object url_ = "";
+    private java.lang.Object key_ = "";
     /**
-     * <code>string url = 2;</code>
-     * @return The url.
+     * <code>string key = 2;</code>
+     * @return The key.
      */
-    public java.lang.String getUrl() {
-      java.lang.Object ref = url_;
+    public java.lang.String getKey() {
+      java.lang.Object ref = key_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        url_ = s;
+        key_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string url = 2;</code>
-     * @return The bytes for url.
+     * <code>string key = 2;</code>
+     * @return The bytes for key.
      */
     public com.google.protobuf.ByteString
-        getUrlBytes() {
-      java.lang.Object ref = url_;
+        getKeyBytes() {
+      java.lang.Object ref = key_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        url_ = b;
+        key_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string url = 2;</code>
-     * @param value The url to set.
+     * <code>string key = 2;</code>
+     * @param value The key to set.
      * @return This builder for chaining.
      */
-    public Builder setUrl(
+    public Builder setKey(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      url_ = value;
+      key_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string url = 2;</code>
+     * <code>string key = 2;</code>
      * @return This builder for chaining.
      */
-    public Builder clearUrl() {
+    public Builder clearKey() {
       
-      url_ = getDefaultInstance().getUrl();
+      key_ = getDefaultInstance().getKey();
       onChanged();
       return this;
     }
     /**
-     * <code>string url = 2;</code>
-     * @param value The bytes for url to set.
+     * <code>string key = 2;</code>
+     * @param value The bytes for key to set.
      * @return This builder for chaining.
      */
-    public Builder setUrlBytes(
+    public Builder setKeyBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      url_ = value;
+      key_ = value;
       onChanged();
       return this;
     }

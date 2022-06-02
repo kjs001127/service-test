@@ -35,8 +35,8 @@ enum ResponseCode {
 }
 
 message GuideVoice {
-  string name = 1;
-  string url = 2;
+  string bucket = 1;
+  string key = 2;
 }
 
 message Person {
