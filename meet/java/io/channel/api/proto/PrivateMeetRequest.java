@@ -4,27 +4,26 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.GuideVoice}
+ * Protobuf type {@code meet.PrivateMeetRequest}
  */
-public final class GuideVoice extends
+public final class PrivateMeetRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.GuideVoice)
-    GuideVoiceOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.PrivateMeetRequest)
+    PrivateMeetRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use GuideVoice.newBuilder() to construct.
-  private GuideVoice(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use PrivateMeetRequest.newBuilder() to construct.
+  private PrivateMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private GuideVoice() {
-    bucket_ = "";
-    key_ = "";
+  private PrivateMeetRequest() {
+    meetId_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new GuideVoice();
+    return new PrivateMeetRequest();
   }
 
   @java.lang.Override
@@ -32,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private GuideVoice(
+  private PrivateMeetRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -53,13 +52,20 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            bucket_ = s;
+            meetId_ = s;
             break;
           }
           case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
+            io.channel.api.proto.Peer.Builder subBuilder = null;
+            if (manager_ != null) {
+              subBuilder = manager_.toBuilder();
+            }
+            manager_ = input.readMessage(io.channel.api.proto.Peer.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(manager_);
+              manager_ = subBuilder.buildPartial();
+            }
 
-            key_ = s;
             break;
           }
           default: {
@@ -83,91 +89,79 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_PrivateMeetRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_PrivateMeetRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.GuideVoice.class, io.channel.api.proto.GuideVoice.Builder.class);
+            io.channel.api.proto.PrivateMeetRequest.class, io.channel.api.proto.PrivateMeetRequest.Builder.class);
   }
 
-  public static final int BUCKET_FIELD_NUMBER = 1;
-  private volatile java.lang.Object bucket_;
+  public static final int MEET_ID_FIELD_NUMBER = 1;
+  private volatile java.lang.Object meetId_;
   /**
-   * <code>string bucket = 1;</code>
-   * @return The bucket.
+   * <code>string meet_id = 1;</code>
+   * @return The meetId.
    */
   @java.lang.Override
-  public java.lang.String getBucket() {
-    java.lang.Object ref = bucket_;
+  public java.lang.String getMeetId() {
+    java.lang.Object ref = meetId_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      bucket_ = s;
+      meetId_ = s;
       return s;
     }
   }
   /**
-   * <code>string bucket = 1;</code>
-   * @return The bytes for bucket.
+   * <code>string meet_id = 1;</code>
+   * @return The bytes for meetId.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getBucketBytes() {
-    java.lang.Object ref = bucket_;
+      getMeetIdBytes() {
+    java.lang.Object ref = meetId_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      bucket_ = b;
+      meetId_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int KEY_FIELD_NUMBER = 2;
-  private volatile java.lang.Object key_;
+  public static final int MANAGER_FIELD_NUMBER = 2;
+  private io.channel.api.proto.Peer manager_;
   /**
-   * <code>string key = 2;</code>
-   * @return The key.
+   * <code>.meet.Peer manager = 2;</code>
+   * @return Whether the manager field is set.
    */
   @java.lang.Override
-  public java.lang.String getKey() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      key_ = s;
-      return s;
-    }
+  public boolean hasManager() {
+    return manager_ != null;
   }
   /**
-   * <code>string key = 2;</code>
-   * @return The bytes for key.
+   * <code>.meet.Peer manager = 2;</code>
+   * @return The manager.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getKeyBytes() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      key_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public io.channel.api.proto.Peer getManager() {
+    return manager_ == null ? io.channel.api.proto.Peer.getDefaultInstance() : manager_;
+  }
+  /**
+   * <code>.meet.Peer manager = 2;</code>
+   */
+  @java.lang.Override
+  public io.channel.api.proto.PeerOrBuilder getManagerOrBuilder() {
+    return getManager();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -184,11 +178,11 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, bucket_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, meetId_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
+    if (manager_ != null) {
+      output.writeMessage(2, getManager());
     }
     unknownFields.writeTo(output);
   }
@@ -199,11 +193,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, bucket_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, meetId_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
+    if (manager_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getManager());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -215,15 +210,18 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.GuideVoice)) {
+    if (!(obj instanceof io.channel.api.proto.PrivateMeetRequest)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.GuideVoice other = (io.channel.api.proto.GuideVoice) obj;
+    io.channel.api.proto.PrivateMeetRequest other = (io.channel.api.proto.PrivateMeetRequest) obj;
 
-    if (!getBucket()
-        .equals(other.getBucket())) return false;
-    if (!getKey()
-        .equals(other.getKey())) return false;
+    if (!getMeetId()
+        .equals(other.getMeetId())) return false;
+    if (hasManager() != other.hasManager()) return false;
+    if (hasManager()) {
+      if (!getManager()
+          .equals(other.getManager())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -235,78 +233,80 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + BUCKET_FIELD_NUMBER;
-    hash = (53 * hash) + getBucket().hashCode();
-    hash = (37 * hash) + KEY_FIELD_NUMBER;
-    hash = (53 * hash) + getKey().hashCode();
+    hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getMeetId().hashCode();
+    if (hasManager()) {
+      hash = (37 * hash) + MANAGER_FIELD_NUMBER;
+      hash = (53 * hash) + getManager().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(byte[] data)
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.PrivateMeetRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseDelimitedFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.PrivateMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -319,7 +319,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.GuideVoice prototype) {
+  public static Builder newBuilder(io.channel.api.proto.PrivateMeetRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -335,26 +335,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.GuideVoice}
+   * Protobuf type {@code meet.PrivateMeetRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.GuideVoice)
-      io.channel.api.proto.GuideVoiceOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.PrivateMeetRequest)
+      io.channel.api.proto.PrivateMeetRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_PrivateMeetRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_PrivateMeetRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.GuideVoice.class, io.channel.api.proto.GuideVoice.Builder.class);
+              io.channel.api.proto.PrivateMeetRequest.class, io.channel.api.proto.PrivateMeetRequest.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.GuideVoice.newBuilder()
+    // Construct using io.channel.api.proto.PrivateMeetRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -372,27 +372,31 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      bucket_ = "";
+      meetId_ = "";
 
-      key_ = "";
-
+      if (managerBuilder_ == null) {
+        manager_ = null;
+      } else {
+        manager_ = null;
+        managerBuilder_ = null;
+      }
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_PrivateMeetRequest_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice getDefaultInstanceForType() {
-      return io.channel.api.proto.GuideVoice.getDefaultInstance();
+    public io.channel.api.proto.PrivateMeetRequest getDefaultInstanceForType() {
+      return io.channel.api.proto.PrivateMeetRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice build() {
-      io.channel.api.proto.GuideVoice result = buildPartial();
+    public io.channel.api.proto.PrivateMeetRequest build() {
+      io.channel.api.proto.PrivateMeetRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -400,10 +404,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice buildPartial() {
-      io.channel.api.proto.GuideVoice result = new io.channel.api.proto.GuideVoice(this);
-      result.bucket_ = bucket_;
-      result.key_ = key_;
+    public io.channel.api.proto.PrivateMeetRequest buildPartial() {
+      io.channel.api.proto.PrivateMeetRequest result = new io.channel.api.proto.PrivateMeetRequest(this);
+      result.meetId_ = meetId_;
+      if (managerBuilder_ == null) {
+        result.manager_ = manager_;
+      } else {
+        result.manager_ = managerBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -442,23 +450,22 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.GuideVoice) {
-        return mergeFrom((io.channel.api.proto.GuideVoice)other);
+      if (other instanceof io.channel.api.proto.PrivateMeetRequest) {
+        return mergeFrom((io.channel.api.proto.PrivateMeetRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.GuideVoice other) {
-      if (other == io.channel.api.proto.GuideVoice.getDefaultInstance()) return this;
-      if (!other.getBucket().isEmpty()) {
-        bucket_ = other.bucket_;
+    public Builder mergeFrom(io.channel.api.proto.PrivateMeetRequest other) {
+      if (other == io.channel.api.proto.PrivateMeetRequest.getDefaultInstance()) return this;
+      if (!other.getMeetId().isEmpty()) {
+        meetId_ = other.meetId_;
         onChanged();
       }
-      if (!other.getKey().isEmpty()) {
-        key_ = other.key_;
-        onChanged();
+      if (other.hasManager()) {
+        mergeManager(other.getManager());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -475,11 +482,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.GuideVoice parsedMessage = null;
+      io.channel.api.proto.PrivateMeetRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.GuideVoice) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.PrivateMeetRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -489,156 +496,199 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object bucket_ = "";
+    private java.lang.Object meetId_ = "";
     /**
-     * <code>string bucket = 1;</code>
-     * @return The bucket.
+     * <code>string meet_id = 1;</code>
+     * @return The meetId.
      */
-    public java.lang.String getBucket() {
-      java.lang.Object ref = bucket_;
+    public java.lang.String getMeetId() {
+      java.lang.Object ref = meetId_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        bucket_ = s;
+        meetId_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string bucket = 1;</code>
-     * @return The bytes for bucket.
+     * <code>string meet_id = 1;</code>
+     * @return The bytes for meetId.
      */
     public com.google.protobuf.ByteString
-        getBucketBytes() {
-      java.lang.Object ref = bucket_;
+        getMeetIdBytes() {
+      java.lang.Object ref = meetId_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        bucket_ = b;
+        meetId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string bucket = 1;</code>
-     * @param value The bucket to set.
+     * <code>string meet_id = 1;</code>
+     * @param value The meetId to set.
      * @return This builder for chaining.
      */
-    public Builder setBucket(
+    public Builder setMeetId(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      bucket_ = value;
+      meetId_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string bucket = 1;</code>
+     * <code>string meet_id = 1;</code>
      * @return This builder for chaining.
      */
-    public Builder clearBucket() {
+    public Builder clearMeetId() {
       
-      bucket_ = getDefaultInstance().getBucket();
+      meetId_ = getDefaultInstance().getMeetId();
       onChanged();
       return this;
     }
     /**
-     * <code>string bucket = 1;</code>
-     * @param value The bytes for bucket to set.
+     * <code>string meet_id = 1;</code>
+     * @param value The bytes for meetId to set.
      * @return This builder for chaining.
      */
-    public Builder setBucketBytes(
+    public Builder setMeetIdBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      bucket_ = value;
+      meetId_ = value;
       onChanged();
       return this;
     }
 
-    private java.lang.Object key_ = "";
+    private io.channel.api.proto.Peer manager_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> managerBuilder_;
     /**
-     * <code>string key = 2;</code>
-     * @return The key.
+     * <code>.meet.Peer manager = 2;</code>
+     * @return Whether the manager field is set.
      */
-    public java.lang.String getKey() {
-      java.lang.Object ref = key_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        key_ = s;
-        return s;
+    public boolean hasManager() {
+      return managerBuilder_ != null || manager_ != null;
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     * @return The manager.
+     */
+    public io.channel.api.proto.Peer getManager() {
+      if (managerBuilder_ == null) {
+        return manager_ == null ? io.channel.api.proto.Peer.getDefaultInstance() : manager_;
       } else {
-        return (java.lang.String) ref;
+        return managerBuilder_.getMessage();
       }
     }
     /**
-     * <code>string key = 2;</code>
-     * @return The bytes for key.
+     * <code>.meet.Peer manager = 2;</code>
      */
-    public com.google.protobuf.ByteString
-        getKeyBytes() {
-      java.lang.Object ref = key_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        key_ = b;
-        return b;
+    public Builder setManager(io.channel.api.proto.Peer value) {
+      if (managerBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        manager_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        managerBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     */
+    public Builder setManager(
+        io.channel.api.proto.Peer.Builder builderForValue) {
+      if (managerBuilder_ == null) {
+        manager_ = builderForValue.build();
+        onChanged();
+      } else {
+        managerBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     */
+    public Builder mergeManager(io.channel.api.proto.Peer value) {
+      if (managerBuilder_ == null) {
+        if (manager_ != null) {
+          manager_ =
+            io.channel.api.proto.Peer.newBuilder(manager_).mergeFrom(value).buildPartial();
+        } else {
+          manager_ = value;
+        }
+        onChanged();
+      } else {
+        managerBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     */
+    public Builder clearManager() {
+      if (managerBuilder_ == null) {
+        manager_ = null;
+        onChanged();
+      } else {
+        manager_ = null;
+        managerBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     */
+    public io.channel.api.proto.Peer.Builder getManagerBuilder() {
+      
+      onChanged();
+      return getManagerFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.Peer manager = 2;</code>
+     */
+    public io.channel.api.proto.PeerOrBuilder getManagerOrBuilder() {
+      if (managerBuilder_ != null) {
+        return managerBuilder_.getMessageOrBuilder();
+      } else {
+        return manager_ == null ?
+            io.channel.api.proto.Peer.getDefaultInstance() : manager_;
       }
     }
     /**
-     * <code>string key = 2;</code>
-     * @param value The key to set.
-     * @return This builder for chaining.
+     * <code>.meet.Peer manager = 2;</code>
      */
-    public Builder setKey(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      key_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string key = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearKey() {
-      
-      key_ = getDefaultInstance().getKey();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string key = 2;</code>
-     * @param value The bytes for key to set.
-     * @return This builder for chaining.
-     */
-    public Builder setKeyBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      key_ = value;
-      onChanged();
-      return this;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> 
+        getManagerFieldBuilder() {
+      if (managerBuilder_ == null) {
+        managerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder>(
+                getManager(),
+                getParentForChildren(),
+                isClean());
+        manager_ = null;
+      }
+      return managerBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
@@ -653,41 +703,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.GuideVoice)
+    // @@protoc_insertion_point(builder_scope:meet.PrivateMeetRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.GuideVoice)
-  private static final io.channel.api.proto.GuideVoice DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.PrivateMeetRequest)
+  private static final io.channel.api.proto.PrivateMeetRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.GuideVoice();
+    DEFAULT_INSTANCE = new io.channel.api.proto.PrivateMeetRequest();
   }
 
-  public static io.channel.api.proto.GuideVoice getDefaultInstance() {
+  public static io.channel.api.proto.PrivateMeetRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<GuideVoice>
-      PARSER = new com.google.protobuf.AbstractParser<GuideVoice>() {
+  private static final com.google.protobuf.Parser<PrivateMeetRequest>
+      PARSER = new com.google.protobuf.AbstractParser<PrivateMeetRequest>() {
     @java.lang.Override
-    public GuideVoice parsePartialFrom(
+    public PrivateMeetRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new GuideVoice(input, extensionRegistry);
+      return new PrivateMeetRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<GuideVoice> parser() {
+  public static com.google.protobuf.Parser<PrivateMeetRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<GuideVoice> getParserForType() {
+  public com.google.protobuf.Parser<PrivateMeetRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.GuideVoice getDefaultInstanceForType() {
+  public io.channel.api.proto.PrivateMeetRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

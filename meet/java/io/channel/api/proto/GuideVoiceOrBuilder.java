@@ -8,26 +8,26 @@ public interface GuideVoiceOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string name = 1;</code>
-   * @return The name.
+   * <code>string bucket = 1;</code>
+   * @return The bucket.
    */
-  java.lang.String getName();
+  java.lang.String getBucket();
   /**
-   * <code>string name = 1;</code>
-   * @return The bytes for name.
+   * <code>string bucket = 1;</code>
+   * @return The bytes for bucket.
    */
   com.google.protobuf.ByteString
-      getNameBytes();
+      getBucketBytes();
 
   /**
-   * <code>string url = 2;</code>
-   * @return The url.
+   * <code>string key = 2;</code>
+   * @return The key.
    */
-  java.lang.String getUrl();
+  java.lang.String getKey();
   /**
-   * <code>string url = 2;</code>
-   * @return The bytes for url.
+   * <code>string key = 2;</code>
+   * @return The bytes for key.
    */
   com.google.protobuf.ByteString
-      getUrlBytes();
+      getKeyBytes();
 }

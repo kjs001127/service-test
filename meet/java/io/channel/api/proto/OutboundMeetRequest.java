@@ -89,6 +89,19 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 50: {
+            io.channel.api.proto.Peer.Builder subBuilder = null;
+            if (manager_ != null) {
+              subBuilder = manager_.toBuilder();
+            }
+            manager_ = input.readMessage(io.channel.api.proto.Peer.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(manager_);
+              manager_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -299,6 +312,32 @@ private static final long serialVersionUID = 0L;
     return getUser();
   }
 
+  public static final int MANAGER_FIELD_NUMBER = 6;
+  private io.channel.api.proto.Peer manager_;
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   * @return Whether the manager field is set.
+   */
+  @java.lang.Override
+  public boolean hasManager() {
+    return manager_ != null;
+  }
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   * @return The manager.
+   */
+  @java.lang.Override
+  public io.channel.api.proto.Peer getManager() {
+    return manager_ == null ? io.channel.api.proto.Peer.getDefaultInstance() : manager_;
+  }
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   */
+  @java.lang.Override
+  public io.channel.api.proto.PeerOrBuilder getManagerOrBuilder() {
+    return getManager();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -328,6 +367,9 @@ private static final long serialVersionUID = 0L;
     if (user_ != null) {
       output.writeMessage(5, getUser());
     }
+    if (manager_ != null) {
+      output.writeMessage(6, getManager());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -352,6 +394,10 @@ private static final long serialVersionUID = 0L;
     if (user_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(5, getUser());
+    }
+    if (manager_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, getManager());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -381,6 +427,11 @@ private static final long serialVersionUID = 0L;
       if (!getUser()
           .equals(other.getUser())) return false;
     }
+    if (hasManager() != other.hasManager()) return false;
+    if (hasManager()) {
+      if (!getManager()
+          .equals(other.getManager())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -403,6 +454,10 @@ private static final long serialVersionUID = 0L;
     if (hasUser()) {
       hash = (37 * hash) + USER_FIELD_NUMBER;
       hash = (53 * hash) + getUser().hashCode();
+    }
+    if (hasManager()) {
+      hash = (37 * hash) + MANAGER_FIELD_NUMBER;
+      hash = (53 * hash) + getManager().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -551,6 +606,12 @@ private static final long serialVersionUID = 0L;
         user_ = null;
         userBuilder_ = null;
       }
+      if (managerBuilder_ == null) {
+        manager_ = null;
+      } else {
+        manager_ = null;
+        managerBuilder_ = null;
+      }
       return this;
     }
 
@@ -585,6 +646,11 @@ private static final long serialVersionUID = 0L;
         result.user_ = user_;
       } else {
         result.user_ = userBuilder_.build();
+      }
+      if (managerBuilder_ == null) {
+        result.manager_ = manager_;
+      } else {
+        result.manager_ = managerBuilder_.build();
       }
       onBuilt();
       return result;
@@ -652,6 +718,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasUser()) {
         mergeUser(other.getUser());
+      }
+      if (other.hasManager()) {
+        mergeManager(other.getManager());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1103,6 +1172,125 @@ private static final long serialVersionUID = 0L;
         user_ = null;
       }
       return userBuilder_;
+    }
+
+    private io.channel.api.proto.Peer manager_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> managerBuilder_;
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     * @return Whether the manager field is set.
+     */
+    public boolean hasManager() {
+      return managerBuilder_ != null || manager_ != null;
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     * @return The manager.
+     */
+    public io.channel.api.proto.Peer getManager() {
+      if (managerBuilder_ == null) {
+        return manager_ == null ? io.channel.api.proto.Peer.getDefaultInstance() : manager_;
+      } else {
+        return managerBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public Builder setManager(io.channel.api.proto.Peer value) {
+      if (managerBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        manager_ = value;
+        onChanged();
+      } else {
+        managerBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public Builder setManager(
+        io.channel.api.proto.Peer.Builder builderForValue) {
+      if (managerBuilder_ == null) {
+        manager_ = builderForValue.build();
+        onChanged();
+      } else {
+        managerBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public Builder mergeManager(io.channel.api.proto.Peer value) {
+      if (managerBuilder_ == null) {
+        if (manager_ != null) {
+          manager_ =
+            io.channel.api.proto.Peer.newBuilder(manager_).mergeFrom(value).buildPartial();
+        } else {
+          manager_ = value;
+        }
+        onChanged();
+      } else {
+        managerBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public Builder clearManager() {
+      if (managerBuilder_ == null) {
+        manager_ = null;
+        onChanged();
+      } else {
+        manager_ = null;
+        managerBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public io.channel.api.proto.Peer.Builder getManagerBuilder() {
+      
+      onChanged();
+      return getManagerFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    public io.channel.api.proto.PeerOrBuilder getManagerOrBuilder() {
+      if (managerBuilder_ != null) {
+        return managerBuilder_.getMessageOrBuilder();
+      } else {
+        return manager_ == null ?
+            io.channel.api.proto.Peer.getDefaultInstance() : manager_;
+      }
+    }
+    /**
+     * <code>.meet.Peer manager = 6;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder> 
+        getManagerFieldBuilder() {
+      if (managerBuilder_ == null) {
+        managerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.Peer, io.channel.api.proto.Peer.Builder, io.channel.api.proto.PeerOrBuilder>(
+                getManager(),
+                getParentForChildren(),
+                isClean());
+        manager_ = null;
+      }
+      return managerBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

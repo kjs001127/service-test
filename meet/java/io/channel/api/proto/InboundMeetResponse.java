@@ -75,6 +75,19 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 34: {
+            io.channel.api.proto.GuideVoice.Builder subBuilder = null;
+            if (guideVoice_ != null) {
+              subBuilder = guideVoice_.toBuilder();
+            }
+            guideVoice_ = input.readMessage(io.channel.api.proto.GuideVoice.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(guideVoice_);
+              guideVoice_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -190,6 +203,32 @@ private static final long serialVersionUID = 0L;
     return getPeer();
   }
 
+  public static final int GUIDE_VOICE_FIELD_NUMBER = 4;
+  private io.channel.api.proto.GuideVoice guideVoice_;
+  /**
+   * <code>.meet.GuideVoice guide_voice = 4;</code>
+   * @return Whether the guideVoice field is set.
+   */
+  @java.lang.Override
+  public boolean hasGuideVoice() {
+    return guideVoice_ != null;
+  }
+  /**
+   * <code>.meet.GuideVoice guide_voice = 4;</code>
+   * @return The guideVoice.
+   */
+  @java.lang.Override
+  public io.channel.api.proto.GuideVoice getGuideVoice() {
+    return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
+  }
+  /**
+   * <code>.meet.GuideVoice guide_voice = 4;</code>
+   */
+  @java.lang.Override
+  public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
+    return getGuideVoice();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -213,6 +252,9 @@ private static final long serialVersionUID = 0L;
     if (peer_ != null) {
       output.writeMessage(3, getPeer());
     }
+    if (guideVoice_ != null) {
+      output.writeMessage(4, getGuideVoice());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -232,6 +274,10 @@ private static final long serialVersionUID = 0L;
     if (peer_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, getPeer());
+    }
+    if (guideVoice_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getGuideVoice());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -256,6 +302,11 @@ private static final long serialVersionUID = 0L;
       if (!getPeer()
           .equals(other.getPeer())) return false;
     }
+    if (hasGuideVoice() != other.hasGuideVoice()) return false;
+    if (hasGuideVoice()) {
+      if (!getGuideVoice()
+          .equals(other.getGuideVoice())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -274,6 +325,10 @@ private static final long serialVersionUID = 0L;
     if (hasPeer()) {
       hash = (37 * hash) + PEER_FIELD_NUMBER;
       hash = (53 * hash) + getPeer().hashCode();
+    }
+    if (hasGuideVoice()) {
+      hash = (37 * hash) + GUIDE_VOICE_FIELD_NUMBER;
+      hash = (53 * hash) + getGuideVoice().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -418,6 +473,12 @@ private static final long serialVersionUID = 0L;
         peer_ = null;
         peerBuilder_ = null;
       }
+      if (guideVoiceBuilder_ == null) {
+        guideVoice_ = null;
+      } else {
+        guideVoice_ = null;
+        guideVoiceBuilder_ = null;
+      }
       return this;
     }
 
@@ -450,6 +511,11 @@ private static final long serialVersionUID = 0L;
         result.peer_ = peer_;
       } else {
         result.peer_ = peerBuilder_.build();
+      }
+      if (guideVoiceBuilder_ == null) {
+        result.guideVoice_ = guideVoice_;
+      } else {
+        result.guideVoice_ = guideVoiceBuilder_.build();
       }
       onBuilt();
       return result;
@@ -508,6 +574,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasPeer()) {
         mergePeer(other.getPeer());
+      }
+      if (other.hasGuideVoice()) {
+        mergeGuideVoice(other.getGuideVoice());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -785,6 +854,125 @@ private static final long serialVersionUID = 0L;
         peer_ = null;
       }
       return peerBuilder_;
+    }
+
+    private io.channel.api.proto.GuideVoice guideVoice_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> guideVoiceBuilder_;
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * @return Whether the guideVoice field is set.
+     */
+    public boolean hasGuideVoice() {
+      return guideVoiceBuilder_ != null || guideVoice_ != null;
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * @return The guideVoice.
+     */
+    public io.channel.api.proto.GuideVoice getGuideVoice() {
+      if (guideVoiceBuilder_ == null) {
+        return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
+      } else {
+        return guideVoiceBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public Builder setGuideVoice(io.channel.api.proto.GuideVoice value) {
+      if (guideVoiceBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        guideVoice_ = value;
+        onChanged();
+      } else {
+        guideVoiceBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public Builder setGuideVoice(
+        io.channel.api.proto.GuideVoice.Builder builderForValue) {
+      if (guideVoiceBuilder_ == null) {
+        guideVoice_ = builderForValue.build();
+        onChanged();
+      } else {
+        guideVoiceBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public Builder mergeGuideVoice(io.channel.api.proto.GuideVoice value) {
+      if (guideVoiceBuilder_ == null) {
+        if (guideVoice_ != null) {
+          guideVoice_ =
+            io.channel.api.proto.GuideVoice.newBuilder(guideVoice_).mergeFrom(value).buildPartial();
+        } else {
+          guideVoice_ = value;
+        }
+        onChanged();
+      } else {
+        guideVoiceBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public Builder clearGuideVoice() {
+      if (guideVoiceBuilder_ == null) {
+        guideVoice_ = null;
+        onChanged();
+      } else {
+        guideVoice_ = null;
+        guideVoiceBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public io.channel.api.proto.GuideVoice.Builder getGuideVoiceBuilder() {
+      
+      onChanged();
+      return getGuideVoiceFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
+      if (guideVoiceBuilder_ != null) {
+        return guideVoiceBuilder_.getMessageOrBuilder();
+      } else {
+        return guideVoice_ == null ?
+            io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
+      }
+    }
+    /**
+     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> 
+        getGuideVoiceFieldBuilder() {
+      if (guideVoiceBuilder_ == null) {
+        guideVoiceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder>(
+                getGuideVoice(),
+                getParentForChildren(),
+                isClean());
+        guideVoice_ = null;
+      }
+      return guideVoiceBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -139,6 +139,37 @@ public final class MeetServiceGrpc {
     return getLeaveMeetByManagerMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.PrivateMeetRequest,
+      io.channel.api.proto.BareResponse> getCreatePrivateMeetMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreatePrivateMeet",
+      requestType = io.channel.api.proto.PrivateMeetRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.PrivateMeetRequest,
+      io.channel.api.proto.BareResponse> getCreatePrivateMeetMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.PrivateMeetRequest, io.channel.api.proto.BareResponse> getCreatePrivateMeetMethod;
+    if ((getCreatePrivateMeetMethod = MeetServiceGrpc.getCreatePrivateMeetMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getCreatePrivateMeetMethod = MeetServiceGrpc.getCreatePrivateMeetMethod) == null) {
+          MeetServiceGrpc.getCreatePrivateMeetMethod = getCreatePrivateMeetMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.PrivateMeetRequest, io.channel.api.proto.BareResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreatePrivateMeet"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.PrivateMeetRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CreatePrivateMeet"))
+              .build();
+        }
+      }
+    }
+    return getCreatePrivateMeetMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.InboundMeetRequest,
       io.channel.api.proto.InboundMeetResponse> getCreateInboundMeetMethod;
 
@@ -312,6 +343,13 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     */
+    public void createPrivateMeet(io.channel.api.proto.PrivateMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreatePrivateMeetMethod(), responseObserver);
+    }
+
+    /**
      * <pre>
      * sfu -&gt; dw
      * </pre>
@@ -365,6 +403,13 @@ public final class MeetServiceGrpc {
                 io.channel.api.proto.LeaveMeetByManagerRequest,
                 io.channel.api.proto.BareResponse>(
                   this, METHODID_LEAVE_MEET_BY_MANAGER)))
+          .addMethod(
+            getCreatePrivateMeetMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                io.channel.api.proto.PrivateMeetRequest,
+                io.channel.api.proto.BareResponse>(
+                  this, METHODID_CREATE_PRIVATE_MEET)))
           .addMethod(
             getCreateInboundMeetMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -440,6 +485,14 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     */
+    public void createPrivateMeet(io.channel.api.proto.PrivateMeetRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreatePrivateMeetMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
      * <pre>
      * sfu -&gt; dw
      * </pre>
@@ -510,6 +563,13 @@ public final class MeetServiceGrpc {
     public io.channel.api.proto.BareResponse leaveMeetByManager(io.channel.api.proto.LeaveMeetByManagerRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getLeaveMeetByManagerMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.BareResponse createPrivateMeet(io.channel.api.proto.PrivateMeetRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreatePrivateMeetMethod(), getCallOptions(), request);
     }
 
     /**
@@ -587,6 +647,14 @@ public final class MeetServiceGrpc {
     }
 
     /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> createPrivateMeet(
+        io.channel.api.proto.PrivateMeetRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreatePrivateMeetMethod(), getCallOptions()), request);
+    }
+
+    /**
      * <pre>
      * sfu -&gt; dw
      * </pre>
@@ -618,9 +686,10 @@ public final class MeetServiceGrpc {
   private static final int METHODID_CREATE_OUTBOUND_MEET = 1;
   private static final int METHODID_JOIN_MEET_BY_MANAGER = 2;
   private static final int METHODID_LEAVE_MEET_BY_MANAGER = 3;
-  private static final int METHODID_CREATE_INBOUND_MEET = 4;
-  private static final int METHODID_JOIN_MEET_BY_USER = 5;
-  private static final int METHODID_LEAVE_MEET_BY_USER = 6;
+  private static final int METHODID_CREATE_PRIVATE_MEET = 4;
+  private static final int METHODID_CREATE_INBOUND_MEET = 5;
+  private static final int METHODID_JOIN_MEET_BY_USER = 6;
+  private static final int METHODID_LEAVE_MEET_BY_USER = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -653,6 +722,10 @@ public final class MeetServiceGrpc {
           break;
         case METHODID_LEAVE_MEET_BY_MANAGER:
           serviceImpl.leaveMeetByManager((io.channel.api.proto.LeaveMeetByManagerRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
+          break;
+        case METHODID_CREATE_PRIVATE_MEET:
+          serviceImpl.createPrivateMeet((io.channel.api.proto.PrivateMeetRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
         case METHODID_CREATE_INBOUND_MEET:
@@ -732,6 +805,7 @@ public final class MeetServiceGrpc {
               .addMethod(getCreateOutboundMeetMethod())
               .addMethod(getJoinMeetByManagerMethod())
               .addMethod(getLeaveMeetByManagerMethod())
+              .addMethod(getCreatePrivateMeetMethod())
               .addMethod(getCreateInboundMeetMethod())
               .addMethod(getJoinMeetByUserMethod())
               .addMethod(getLeaveMeetByUserMethod())
