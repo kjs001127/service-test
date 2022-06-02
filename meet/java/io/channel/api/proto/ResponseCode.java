@@ -24,6 +24,10 @@ public enum ResponseCode
    * <code>NOT_FOUND = 3;</code>
    */
   NOT_FOUND(3),
+  /**
+   * <code>UNKNOWN = 4;</code>
+   */
+  UNKNOWN(4),
   UNRECOGNIZED(-1),
   ;
 
@@ -43,6 +47,10 @@ public enum ResponseCode
    * <code>NOT_FOUND = 3;</code>
    */
   public static final int NOT_FOUND_VALUE = 3;
+  /**
+   * <code>UNKNOWN = 4;</code>
+   */
+  public static final int UNKNOWN_VALUE = 4;
 
 
   public final int getNumber() {
@@ -73,6 +81,7 @@ public enum ResponseCode
       case 1: return UNAUTHORIZED;
       case 2: return FORBIDDEN;
       case 3: return NOT_FOUND;
+      case 4: return UNKNOWN;
       default: return null;
     }
   }

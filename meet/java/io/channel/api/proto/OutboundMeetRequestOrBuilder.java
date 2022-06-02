@@ -69,4 +69,19 @@ public interface OutboundMeetRequestOrBuilder extends
    * <code>.meet.Person user = 5;</code>
    */
   io.channel.api.proto.PersonOrBuilder getUserOrBuilder();
+
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   * @return Whether the manager field is set.
+   */
+  boolean hasManager();
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   * @return The manager.
+   */
+  io.channel.api.proto.Peer getManager();
+  /**
+   * <code>.meet.Peer manager = 6;</code>
+   */
+  io.channel.api.proto.PeerOrBuilder getManagerOrBuilder();
 }
