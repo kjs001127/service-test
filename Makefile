@@ -9,7 +9,7 @@ grpc:
 	mkdir -p meet/java/io/channel/api/proto
 	protoc -I. \
 		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
-		--plugin=protoc-gen-grpc-java=/Users/max/desktop/grpc-java/compiler/build/exe/java_plugin/protoc-gen-grpc-java \
+		--plugin=${GRPC_JAVA_PATH}/protoc-gen-grpc-java \
 		--go_opt=module=github.com/channel-io/ch-proto \
 		--go_out=. \
 		--go-grpc_opt=module=github.com/channel-io/ch-proto \
