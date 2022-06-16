@@ -4,18 +4,18 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.CloseMeetRequest}
+ * Protobuf type {@code meet.TerminateMeetRequest}
  */
-public final class CloseMeetRequest extends
+public final class TerminateMeetRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.CloseMeetRequest)
-    CloseMeetRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.TerminateMeetRequest)
+    TerminateMeetRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use CloseMeetRequest.newBuilder() to construct.
-  private CloseMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use TerminateMeetRequest.newBuilder() to construct.
+  private TerminateMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private CloseMeetRequest() {
+  private TerminateMeetRequest() {
     meetId_ = "";
     code_ = 0;
   }
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new CloseMeetRequest();
+    return new TerminateMeetRequest();
   }
 
   @java.lang.Override
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private CloseMeetRequest(
+  private TerminateMeetRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -97,15 +97,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_CloseMeetRequest_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_CloseMeetRequest_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.CloseMeetRequest.class, io.channel.api.proto.CloseMeetRequest.Builder.class);
+            io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
   }
 
   private int bitField0_;
@@ -245,10 +245,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.CloseMeetRequest)) {
+    if (!(obj instanceof io.channel.api.proto.TerminateMeetRequest)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.CloseMeetRequest other = (io.channel.api.proto.CloseMeetRequest) obj;
+    io.channel.api.proto.TerminateMeetRequest other = (io.channel.api.proto.TerminateMeetRequest) obj;
 
     if (!getMeetId()
         .equals(other.getMeetId())) return false;
@@ -282,69 +282,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(byte[] data)
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseDelimitedFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.CloseMeetRequest parseFrom(
+  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -357,7 +357,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.CloseMeetRequest prototype) {
+  public static Builder newBuilder(io.channel.api.proto.TerminateMeetRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -373,26 +373,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.CloseMeetRequest}
+   * Protobuf type {@code meet.TerminateMeetRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.CloseMeetRequest)
-      io.channel.api.proto.CloseMeetRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.TerminateMeetRequest)
+      io.channel.api.proto.TerminateMeetRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_CloseMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_CloseMeetRequest_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.CloseMeetRequest.class, io.channel.api.proto.CloseMeetRequest.Builder.class);
+              io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.CloseMeetRequest.newBuilder()
+    // Construct using io.channel.api.proto.TerminateMeetRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -427,17 +427,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_CloseMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.CloseMeetRequest getDefaultInstanceForType() {
-      return io.channel.api.proto.CloseMeetRequest.getDefaultInstance();
+    public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
+      return io.channel.api.proto.TerminateMeetRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.CloseMeetRequest build() {
-      io.channel.api.proto.CloseMeetRequest result = buildPartial();
+    public io.channel.api.proto.TerminateMeetRequest build() {
+      io.channel.api.proto.TerminateMeetRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -445,8 +445,8 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.CloseMeetRequest buildPartial() {
-      io.channel.api.proto.CloseMeetRequest result = new io.channel.api.proto.CloseMeetRequest(this);
+    public io.channel.api.proto.TerminateMeetRequest buildPartial() {
+      io.channel.api.proto.TerminateMeetRequest result = new io.channel.api.proto.TerminateMeetRequest(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.meetId_ = meetId_;
@@ -498,16 +498,16 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.CloseMeetRequest) {
-        return mergeFrom((io.channel.api.proto.CloseMeetRequest)other);
+      if (other instanceof io.channel.api.proto.TerminateMeetRequest) {
+        return mergeFrom((io.channel.api.proto.TerminateMeetRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.CloseMeetRequest other) {
-      if (other == io.channel.api.proto.CloseMeetRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.TerminateMeetRequest other) {
+      if (other == io.channel.api.proto.TerminateMeetRequest.getDefaultInstance()) return this;
       if (!other.getMeetId().isEmpty()) {
         meetId_ = other.meetId_;
         onChanged();
@@ -533,11 +533,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.CloseMeetRequest parsedMessage = null;
+      io.channel.api.proto.TerminateMeetRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.CloseMeetRequest) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.TerminateMeetRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -810,41 +810,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.CloseMeetRequest)
+    // @@protoc_insertion_point(builder_scope:meet.TerminateMeetRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.CloseMeetRequest)
-  private static final io.channel.api.proto.CloseMeetRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.TerminateMeetRequest)
+  private static final io.channel.api.proto.TerminateMeetRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.CloseMeetRequest();
+    DEFAULT_INSTANCE = new io.channel.api.proto.TerminateMeetRequest();
   }
 
-  public static io.channel.api.proto.CloseMeetRequest getDefaultInstance() {
+  public static io.channel.api.proto.TerminateMeetRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<CloseMeetRequest>
-      PARSER = new com.google.protobuf.AbstractParser<CloseMeetRequest>() {
+  private static final com.google.protobuf.Parser<TerminateMeetRequest>
+      PARSER = new com.google.protobuf.AbstractParser<TerminateMeetRequest>() {
     @java.lang.Override
-    public CloseMeetRequest parsePartialFrom(
+    public TerminateMeetRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new CloseMeetRequest(input, extensionRegistry);
+      return new TerminateMeetRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<CloseMeetRequest> parser() {
+  public static com.google.protobuf.Parser<TerminateMeetRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<CloseMeetRequest> getParserForType() {
+  public com.google.protobuf.Parser<TerminateMeetRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.CloseMeetRequest getDefaultInstanceForType() {
+  public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

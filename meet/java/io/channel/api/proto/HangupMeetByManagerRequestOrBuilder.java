@@ -3,8 +3,8 @@
 
 package io.channel.api.proto;
 
-public interface LeaveMeetByManagerRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.LeaveMeetByManagerRequest)
+public interface HangUpMeetByManagerRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.HangUpMeetByManagerRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**

@@ -8,16 +8,16 @@ package meet;
 
 service MeetService {
   // dw -> sfu
-  rpc CloseMeet(CloseMeetRequest) returns (BareResponse);
   rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
-  rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
-  rpc LeaveMeetByManager(LeaveMeetByManagerRequest) returns (BareResponse);
   rpc CreatePrivateMeet(PrivateMeetRequest) returns (BareResponse);
+  rpc HangUpMeetByManager(HangUpMeetByManagerRequest) returns (BareResponse);
+  rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
+  rpc TerminateMeet(TerminateMeetRequest) returns (BareResponse);
 
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
-  rpc LeaveMeetByUser(LeaveMeetByUserRequest) returns (BareResponse);
+  rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
 }
 
 enum CloseMeetCode {
@@ -70,7 +70,7 @@ message JoinMeetByUserRequest {
   string meet_id = 2;
 }
 
-message LeaveMeetByManagerRequest {
+message HangUpMeetByManagerRequest {
   Peer peer = 1;
   string meet_id = 2;
 }
@@ -108,13 +108,13 @@ message JoinMeetByUserResponse {
   Peer peer = 2;
 }
 
-message CloseMeetRequest {
+message TerminateMeetRequest {
   string meet_id = 1;
   CloseMeetCode code = 2;
   optional GuideVoice guide_voice = 3;
 }
 
-message LeaveMeetByUserRequest {
+message HangUpMeetByUserRequest {
   Peer peer = 1;
   string meet_id = 2;
 }

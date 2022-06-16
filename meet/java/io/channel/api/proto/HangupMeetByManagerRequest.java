@@ -4,18 +4,18 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.LeaveMeetByUserRequest}
+ * Protobuf type {@code meet.HangUpMeetByManagerRequest}
  */
-public final class LeaveMeetByUserRequest extends
+public final class HangUpMeetByManagerRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.LeaveMeetByUserRequest)
-    LeaveMeetByUserRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.HangUpMeetByManagerRequest)
+    HangUpMeetByManagerRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use LeaveMeetByUserRequest.newBuilder() to construct.
-  private LeaveMeetByUserRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use HangUpMeetByManagerRequest.newBuilder() to construct.
+  private HangUpMeetByManagerRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private LeaveMeetByUserRequest() {
+  private HangUpMeetByManagerRequest() {
     meetId_ = "";
   }
 
@@ -23,7 +23,7 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new LeaveMeetByUserRequest();
+    return new HangUpMeetByManagerRequest();
   }
 
   @java.lang.Override
@@ -31,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private LeaveMeetByUserRequest(
+  private HangUpMeetByManagerRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -89,15 +89,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_LeaveMeetByUserRequest_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_HangUpMeetByManagerRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_LeaveMeetByUserRequest_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_HangUpMeetByManagerRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.LeaveMeetByUserRequest.class, io.channel.api.proto.LeaveMeetByUserRequest.Builder.class);
+            io.channel.api.proto.HangUpMeetByManagerRequest.class, io.channel.api.proto.HangUpMeetByManagerRequest.Builder.class);
   }
 
   public static final int PEER_FIELD_NUMBER = 1;
@@ -210,10 +210,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.LeaveMeetByUserRequest)) {
+    if (!(obj instanceof io.channel.api.proto.HangUpMeetByManagerRequest)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.LeaveMeetByUserRequest other = (io.channel.api.proto.LeaveMeetByUserRequest) obj;
+    io.channel.api.proto.HangUpMeetByManagerRequest other = (io.channel.api.proto.HangUpMeetByManagerRequest) obj;
 
     if (hasPeer() != other.hasPeer()) return false;
     if (hasPeer()) {
@@ -244,69 +244,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(byte[] data)
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseDelimitedFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.LeaveMeetByUserRequest parseFrom(
+  public static io.channel.api.proto.HangUpMeetByManagerRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -319,7 +319,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.LeaveMeetByUserRequest prototype) {
+  public static Builder newBuilder(io.channel.api.proto.HangUpMeetByManagerRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -335,26 +335,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.LeaveMeetByUserRequest}
+   * Protobuf type {@code meet.HangUpMeetByManagerRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.LeaveMeetByUserRequest)
-      io.channel.api.proto.LeaveMeetByUserRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.HangUpMeetByManagerRequest)
+      io.channel.api.proto.HangUpMeetByManagerRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_LeaveMeetByUserRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_HangUpMeetByManagerRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_LeaveMeetByUserRequest_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_HangUpMeetByManagerRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.LeaveMeetByUserRequest.class, io.channel.api.proto.LeaveMeetByUserRequest.Builder.class);
+              io.channel.api.proto.HangUpMeetByManagerRequest.class, io.channel.api.proto.HangUpMeetByManagerRequest.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.LeaveMeetByUserRequest.newBuilder()
+    // Construct using io.channel.api.proto.HangUpMeetByManagerRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -386,17 +386,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_LeaveMeetByUserRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_HangUpMeetByManagerRequest_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.LeaveMeetByUserRequest getDefaultInstanceForType() {
-      return io.channel.api.proto.LeaveMeetByUserRequest.getDefaultInstance();
+    public io.channel.api.proto.HangUpMeetByManagerRequest getDefaultInstanceForType() {
+      return io.channel.api.proto.HangUpMeetByManagerRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.LeaveMeetByUserRequest build() {
-      io.channel.api.proto.LeaveMeetByUserRequest result = buildPartial();
+    public io.channel.api.proto.HangUpMeetByManagerRequest build() {
+      io.channel.api.proto.HangUpMeetByManagerRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -404,8 +404,8 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.LeaveMeetByUserRequest buildPartial() {
-      io.channel.api.proto.LeaveMeetByUserRequest result = new io.channel.api.proto.LeaveMeetByUserRequest(this);
+    public io.channel.api.proto.HangUpMeetByManagerRequest buildPartial() {
+      io.channel.api.proto.HangUpMeetByManagerRequest result = new io.channel.api.proto.HangUpMeetByManagerRequest(this);
       if (peerBuilder_ == null) {
         result.peer_ = peer_;
       } else {
@@ -450,16 +450,16 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.LeaveMeetByUserRequest) {
-        return mergeFrom((io.channel.api.proto.LeaveMeetByUserRequest)other);
+      if (other instanceof io.channel.api.proto.HangUpMeetByManagerRequest) {
+        return mergeFrom((io.channel.api.proto.HangUpMeetByManagerRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.LeaveMeetByUserRequest other) {
-      if (other == io.channel.api.proto.LeaveMeetByUserRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.HangUpMeetByManagerRequest other) {
+      if (other == io.channel.api.proto.HangUpMeetByManagerRequest.getDefaultInstance()) return this;
       if (other.hasPeer()) {
         mergePeer(other.getPeer());
       }
@@ -482,11 +482,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.LeaveMeetByUserRequest parsedMessage = null;
+      io.channel.api.proto.HangUpMeetByManagerRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.LeaveMeetByUserRequest) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.HangUpMeetByManagerRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -703,41 +703,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.LeaveMeetByUserRequest)
+    // @@protoc_insertion_point(builder_scope:meet.HangUpMeetByManagerRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.LeaveMeetByUserRequest)
-  private static final io.channel.api.proto.LeaveMeetByUserRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.HangUpMeetByManagerRequest)
+  private static final io.channel.api.proto.HangUpMeetByManagerRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.LeaveMeetByUserRequest();
+    DEFAULT_INSTANCE = new io.channel.api.proto.HangUpMeetByManagerRequest();
   }
 
-  public static io.channel.api.proto.LeaveMeetByUserRequest getDefaultInstance() {
+  public static io.channel.api.proto.HangUpMeetByManagerRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<LeaveMeetByUserRequest>
-      PARSER = new com.google.protobuf.AbstractParser<LeaveMeetByUserRequest>() {
+  private static final com.google.protobuf.Parser<HangUpMeetByManagerRequest>
+      PARSER = new com.google.protobuf.AbstractParser<HangUpMeetByManagerRequest>() {
     @java.lang.Override
-    public LeaveMeetByUserRequest parsePartialFrom(
+    public HangUpMeetByManagerRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new LeaveMeetByUserRequest(input, extensionRegistry);
+      return new HangUpMeetByManagerRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<LeaveMeetByUserRequest> parser() {
+  public static com.google.protobuf.Parser<HangUpMeetByManagerRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<LeaveMeetByUserRequest> getParserForType() {
+  public com.google.protobuf.Parser<HangUpMeetByManagerRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.LeaveMeetByUserRequest getDefaultInstanceForType() {
+  public io.channel.api.proto.HangUpMeetByManagerRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

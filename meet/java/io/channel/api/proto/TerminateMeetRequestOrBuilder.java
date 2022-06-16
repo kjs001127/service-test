@@ -3,8 +3,8 @@
 
 package io.channel.api.proto;
 
-public interface CloseMeetRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.CloseMeetRequest)
+public interface TerminateMeetRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.TerminateMeetRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
