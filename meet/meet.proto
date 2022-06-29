@@ -82,7 +82,7 @@ message HangUpMeetByManagerRequest {
 }
 
 message GetGreetingRequest {
-	string to = 1;
+  string to = 1;
 }
 
 message CreateMeetRecordRequest {
@@ -99,6 +99,7 @@ message OutboundMeetRequest {
   string carrier = 4;
   Person user = 5;
   Peer manager = 6;
+  string guide_voice_url = 7;
 }
 
 message InboundMeetResponse {
@@ -135,5 +136,5 @@ message HangUpMeetByUserRequest {
 }
 
 message GetGreetingResponse {
-	string guide_voice_url = 1;
+  string guide_voice_url = 1;
 }
