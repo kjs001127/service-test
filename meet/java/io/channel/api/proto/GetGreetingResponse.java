@@ -4,20 +4,18 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.TerminateMeetRequest}
+ * Protobuf type {@code meet.GetGreetingResponse}
  */
-public final class TerminateMeetRequest extends
+public final class GetGreetingResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.TerminateMeetRequest)
-    TerminateMeetRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.GetGreetingResponse)
+    GetGreetingResponseOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use TerminateMeetRequest.newBuilder() to construct.
-  private TerminateMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use GetGreetingResponse.newBuilder() to construct.
+  private GetGreetingResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private TerminateMeetRequest() {
-    meetId_ = "";
-    code_ = 0;
+  private GetGreetingResponse() {
     guideVoiceUrl_ = "";
   }
 
@@ -25,7 +23,7 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new TerminateMeetRequest();
+    return new GetGreetingResponse();
   }
 
   @java.lang.Override
@@ -33,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private TerminateMeetRequest(
+  private GetGreetingResponse(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -41,7 +39,6 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
-    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -55,18 +52,6 @@ private static final long serialVersionUID = 0L;
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            meetId_ = s;
-            break;
-          }
-          case 16: {
-            int rawValue = input.readEnum();
-
-            code_ = rawValue;
-            break;
-          }
-          case 26: {
-            java.lang.String s = input.readStringRequireUtf8();
-            bitField0_ |= 0x00000001;
             guideVoiceUrl_ = s;
             break;
           }
@@ -91,87 +76,21 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_GetGreetingResponse_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_GetGreetingResponse_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
+            io.channel.api.proto.GetGreetingResponse.class, io.channel.api.proto.GetGreetingResponse.Builder.class);
   }
 
-  private int bitField0_;
-  public static final int MEET_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object meetId_;
-  /**
-   * <code>string meet_id = 1;</code>
-   * @return The meetId.
-   */
-  @java.lang.Override
-  public java.lang.String getMeetId() {
-    java.lang.Object ref = meetId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      meetId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string meet_id = 1;</code>
-   * @return The bytes for meetId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-      getMeetIdBytes() {
-    java.lang.Object ref = meetId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      meetId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int CODE_FIELD_NUMBER = 2;
-  private int code_;
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The enum numeric value on the wire for code.
-   */
-  @java.lang.Override public int getCodeValue() {
-    return code_;
-  }
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The code.
-   */
-  @java.lang.Override public io.channel.api.proto.CloseMeetCode getCode() {
-    @SuppressWarnings("deprecation")
-    io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-    return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-  }
-
-  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 3;
+  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 1;
   private volatile java.lang.Object guideVoiceUrl_;
   /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return Whether the guideVoiceUrl field is set.
-   */
-  @java.lang.Override
-  public boolean hasGuideVoiceUrl() {
-    return ((bitField0_ & 0x00000001) != 0);
-  }
-  /**
-   * <code>optional string guide_voice_url = 3;</code>
+   * <code>string guide_voice_url = 1;</code>
    * @return The guideVoiceUrl.
    */
   @java.lang.Override
@@ -188,7 +107,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>optional string guide_voice_url = 3;</code>
+   * <code>string guide_voice_url = 1;</code>
    * @return The bytes for guideVoiceUrl.
    */
   @java.lang.Override
@@ -220,14 +139,8 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, meetId_);
-    }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
-      output.writeEnum(2, code_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, guideVoiceUrl_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, guideVoiceUrl_);
     }
     unknownFields.writeTo(output);
   }
@@ -238,15 +151,8 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, meetId_);
-    }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(2, code_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, guideVoiceUrl_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, guideVoiceUrl_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -258,19 +164,13 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.TerminateMeetRequest)) {
+    if (!(obj instanceof io.channel.api.proto.GetGreetingResponse)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.TerminateMeetRequest other = (io.channel.api.proto.TerminateMeetRequest) obj;
+    io.channel.api.proto.GetGreetingResponse other = (io.channel.api.proto.GetGreetingResponse) obj;
 
-    if (!getMeetId()
-        .equals(other.getMeetId())) return false;
-    if (code_ != other.code_) return false;
-    if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
-    if (hasGuideVoiceUrl()) {
-      if (!getGuideVoiceUrl()
-          .equals(other.getGuideVoiceUrl())) return false;
-    }
+    if (!getGuideVoiceUrl()
+        .equals(other.getGuideVoiceUrl())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -282,82 +182,76 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getMeetId().hashCode();
-    hash = (37 * hash) + CODE_FIELD_NUMBER;
-    hash = (53 * hash) + code_;
-    if (hasGuideVoiceUrl()) {
-      hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
-      hash = (53 * hash) + getGuideVoiceUrl().hashCode();
-    }
+    hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
+    hash = (53 * hash) + getGuideVoiceUrl().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(byte[] data)
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.GetGreetingResponse parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.GetGreetingResponse parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -370,7 +264,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.TerminateMeetRequest prototype) {
+  public static Builder newBuilder(io.channel.api.proto.GetGreetingResponse prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -386,26 +280,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.TerminateMeetRequest}
+   * Protobuf type {@code meet.GetGreetingResponse}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.TerminateMeetRequest)
-      io.channel.api.proto.TerminateMeetRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.GetGreetingResponse)
+      io.channel.api.proto.GetGreetingResponseOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_GetGreetingResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_GetGreetingResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
+              io.channel.api.proto.GetGreetingResponse.class, io.channel.api.proto.GetGreetingResponse.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.TerminateMeetRequest.newBuilder()
+    // Construct using io.channel.api.proto.GetGreetingResponse.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -423,29 +317,25 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      meetId_ = "";
-
-      code_ = 0;
-
       guideVoiceUrl_ = "";
-      bitField0_ = (bitField0_ & ~0x00000001);
+
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_GetGreetingResponse_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
-      return io.channel.api.proto.TerminateMeetRequest.getDefaultInstance();
+    public io.channel.api.proto.GetGreetingResponse getDefaultInstanceForType() {
+      return io.channel.api.proto.GetGreetingResponse.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest build() {
-      io.channel.api.proto.TerminateMeetRequest result = buildPartial();
+    public io.channel.api.proto.GetGreetingResponse build() {
+      io.channel.api.proto.GetGreetingResponse result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -453,17 +343,9 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest buildPartial() {
-      io.channel.api.proto.TerminateMeetRequest result = new io.channel.api.proto.TerminateMeetRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.meetId_ = meetId_;
-      result.code_ = code_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        to_bitField0_ |= 0x00000001;
-      }
+    public io.channel.api.proto.GetGreetingResponse buildPartial() {
+      io.channel.api.proto.GetGreetingResponse result = new io.channel.api.proto.GetGreetingResponse(this);
       result.guideVoiceUrl_ = guideVoiceUrl_;
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -502,25 +384,17 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.TerminateMeetRequest) {
-        return mergeFrom((io.channel.api.proto.TerminateMeetRequest)other);
+      if (other instanceof io.channel.api.proto.GetGreetingResponse) {
+        return mergeFrom((io.channel.api.proto.GetGreetingResponse)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.TerminateMeetRequest other) {
-      if (other == io.channel.api.proto.TerminateMeetRequest.getDefaultInstance()) return this;
-      if (!other.getMeetId().isEmpty()) {
-        meetId_ = other.meetId_;
-        onChanged();
-      }
-      if (other.code_ != 0) {
-        setCodeValue(other.getCodeValue());
-      }
-      if (other.hasGuideVoiceUrl()) {
-        bitField0_ |= 0x00000001;
+    public Builder mergeFrom(io.channel.api.proto.GetGreetingResponse other) {
+      if (other == io.channel.api.proto.GetGreetingResponse.getDefaultInstance()) return this;
+      if (!other.getGuideVoiceUrl().isEmpty()) {
         guideVoiceUrl_ = other.guideVoiceUrl_;
         onChanged();
       }
@@ -539,11 +413,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.TerminateMeetRequest parsedMessage = null;
+      io.channel.api.proto.GetGreetingResponse parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.TerminateMeetRequest) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.GetGreetingResponse) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -552,148 +426,10 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int bitField0_;
-
-    private java.lang.Object meetId_ = "";
-    /**
-     * <code>string meet_id = 1;</code>
-     * @return The meetId.
-     */
-    public java.lang.String getMeetId() {
-      java.lang.Object ref = meetId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        meetId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string meet_id = 1;</code>
-     * @return The bytes for meetId.
-     */
-    public com.google.protobuf.ByteString
-        getMeetIdBytes() {
-      java.lang.Object ref = meetId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        meetId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string meet_id = 1;</code>
-     * @param value The meetId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setMeetId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      meetId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string meet_id = 1;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearMeetId() {
-      
-      meetId_ = getDefaultInstance().getMeetId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string meet_id = 1;</code>
-     * @param value The bytes for meetId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setMeetIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      meetId_ = value;
-      onChanged();
-      return this;
-    }
-
-    private int code_ = 0;
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The enum numeric value on the wire for code.
-     */
-    @java.lang.Override public int getCodeValue() {
-      return code_;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The enum numeric value on the wire for code to set.
-     * @return This builder for chaining.
-     */
-    public Builder setCodeValue(int value) {
-      
-      code_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The code.
-     */
-    @java.lang.Override
-    public io.channel.api.proto.CloseMeetCode getCode() {
-      @SuppressWarnings("deprecation")
-      io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-      return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The code to set.
-     * @return This builder for chaining.
-     */
-    public Builder setCode(io.channel.api.proto.CloseMeetCode value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      
-      code_ = value.getNumber();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearCode() {
-      
-      code_ = 0;
-      onChanged();
-      return this;
-    }
 
     private java.lang.Object guideVoiceUrl_ = "";
     /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @return Whether the guideVoiceUrl field is set.
-     */
-    public boolean hasGuideVoiceUrl() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     * <code>optional string guide_voice_url = 3;</code>
+     * <code>string guide_voice_url = 1;</code>
      * @return The guideVoiceUrl.
      */
     public java.lang.String getGuideVoiceUrl() {
@@ -709,7 +445,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
+     * <code>string guide_voice_url = 1;</code>
      * @return The bytes for guideVoiceUrl.
      */
     public com.google.protobuf.ByteString
@@ -726,7 +462,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
+     * <code>string guide_voice_url = 1;</code>
      * @param value The guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -735,23 +471,23 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000001;
+  
       guideVoiceUrl_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
+     * <code>string guide_voice_url = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearGuideVoiceUrl() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      
       guideVoiceUrl_ = getDefaultInstance().getGuideVoiceUrl();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
+     * <code>string guide_voice_url = 1;</code>
      * @param value The bytes for guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -761,7 +497,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      bitField0_ |= 0x00000001;
+      
       guideVoiceUrl_ = value;
       onChanged();
       return this;
@@ -779,41 +515,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.TerminateMeetRequest)
+    // @@protoc_insertion_point(builder_scope:meet.GetGreetingResponse)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.TerminateMeetRequest)
-  private static final io.channel.api.proto.TerminateMeetRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.GetGreetingResponse)
+  private static final io.channel.api.proto.GetGreetingResponse DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.TerminateMeetRequest();
+    DEFAULT_INSTANCE = new io.channel.api.proto.GetGreetingResponse();
   }
 
-  public static io.channel.api.proto.TerminateMeetRequest getDefaultInstance() {
+  public static io.channel.api.proto.GetGreetingResponse getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TerminateMeetRequest>
-      PARSER = new com.google.protobuf.AbstractParser<TerminateMeetRequest>() {
+  private static final com.google.protobuf.Parser<GetGreetingResponse>
+      PARSER = new com.google.protobuf.AbstractParser<GetGreetingResponse>() {
     @java.lang.Override
-    public TerminateMeetRequest parsePartialFrom(
+    public GetGreetingResponse parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new TerminateMeetRequest(input, extensionRegistry);
+      return new GetGreetingResponse(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<TerminateMeetRequest> parser() {
+  public static com.google.protobuf.Parser<GetGreetingResponse> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<TerminateMeetRequest> getParserForType() {
+  public com.google.protobuf.Parser<GetGreetingResponse> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
+  public io.channel.api.proto.GetGreetingResponse getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

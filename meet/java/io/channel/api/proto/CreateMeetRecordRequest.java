@@ -4,28 +4,26 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.TerminateMeetRequest}
+ * Protobuf type {@code meet.CreateMeetRecordRequest}
  */
-public final class TerminateMeetRequest extends
+public final class CreateMeetRecordRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.TerminateMeetRequest)
-    TerminateMeetRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.CreateMeetRecordRequest)
+    CreateMeetRecordRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use TerminateMeetRequest.newBuilder() to construct.
-  private TerminateMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use CreateMeetRecordRequest.newBuilder() to construct.
+  private CreateMeetRecordRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private TerminateMeetRequest() {
+  private CreateMeetRecordRequest() {
     meetId_ = "";
-    code_ = 0;
-    guideVoiceUrl_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new TerminateMeetRequest();
+    return new CreateMeetRecordRequest();
   }
 
   @java.lang.Override
@@ -33,7 +31,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private TerminateMeetRequest(
+  private CreateMeetRecordRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -41,7 +39,6 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
-    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -58,16 +55,17 @@ private static final long serialVersionUID = 0L;
             meetId_ = s;
             break;
           }
-          case 16: {
-            int rawValue = input.readEnum();
+          case 18: {
+            io.channel.api.proto.AudioFile.Builder subBuilder = null;
+            if (meetRecord_ != null) {
+              subBuilder = meetRecord_.toBuilder();
+            }
+            meetRecord_ = input.readMessage(io.channel.api.proto.AudioFile.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(meetRecord_);
+              meetRecord_ = subBuilder.buildPartial();
+            }
 
-            code_ = rawValue;
-            break;
-          }
-          case 26: {
-            java.lang.String s = input.readStringRequireUtf8();
-            bitField0_ |= 0x00000001;
-            guideVoiceUrl_ = s;
             break;
           }
           default: {
@@ -91,18 +89,17 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_CreateMeetRecordRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_CreateMeetRecordRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
+            io.channel.api.proto.CreateMeetRecordRequest.class, io.channel.api.proto.CreateMeetRecordRequest.Builder.class);
   }
 
-  private int bitField0_;
   public static final int MEET_ID_FIELD_NUMBER = 1;
   private volatile java.lang.Object meetId_;
   /**
@@ -141,69 +138,30 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CODE_FIELD_NUMBER = 2;
-  private int code_;
+  public static final int MEET_RECORD_FIELD_NUMBER = 2;
+  private io.channel.api.proto.AudioFile meetRecord_;
   /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The enum numeric value on the wire for code.
-   */
-  @java.lang.Override public int getCodeValue() {
-    return code_;
-  }
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The code.
-   */
-  @java.lang.Override public io.channel.api.proto.CloseMeetCode getCode() {
-    @SuppressWarnings("deprecation")
-    io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-    return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-  }
-
-  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 3;
-  private volatile java.lang.Object guideVoiceUrl_;
-  /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return Whether the guideVoiceUrl field is set.
+   * <code>.meet.AudioFile meet_record = 2;</code>
+   * @return Whether the meetRecord field is set.
    */
   @java.lang.Override
-  public boolean hasGuideVoiceUrl() {
-    return ((bitField0_ & 0x00000001) != 0);
+  public boolean hasMeetRecord() {
+    return meetRecord_ != null;
   }
   /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return The guideVoiceUrl.
+   * <code>.meet.AudioFile meet_record = 2;</code>
+   * @return The meetRecord.
    */
   @java.lang.Override
-  public java.lang.String getGuideVoiceUrl() {
-    java.lang.Object ref = guideVoiceUrl_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      guideVoiceUrl_ = s;
-      return s;
-    }
+  public io.channel.api.proto.AudioFile getMeetRecord() {
+    return meetRecord_ == null ? io.channel.api.proto.AudioFile.getDefaultInstance() : meetRecord_;
   }
   /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return The bytes for guideVoiceUrl.
+   * <code>.meet.AudioFile meet_record = 2;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getGuideVoiceUrlBytes() {
-    java.lang.Object ref = guideVoiceUrl_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      guideVoiceUrl_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public io.channel.api.proto.AudioFileOrBuilder getMeetRecordOrBuilder() {
+    return getMeetRecord();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -223,11 +181,8 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, meetId_);
     }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
-      output.writeEnum(2, code_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, guideVoiceUrl_);
+    if (meetRecord_ != null) {
+      output.writeMessage(2, getMeetRecord());
     }
     unknownFields.writeTo(output);
   }
@@ -241,12 +196,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, meetId_);
     }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
+    if (meetRecord_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(2, code_);
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, guideVoiceUrl_);
+        .computeMessageSize(2, getMeetRecord());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -258,18 +210,17 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.TerminateMeetRequest)) {
+    if (!(obj instanceof io.channel.api.proto.CreateMeetRecordRequest)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.TerminateMeetRequest other = (io.channel.api.proto.TerminateMeetRequest) obj;
+    io.channel.api.proto.CreateMeetRecordRequest other = (io.channel.api.proto.CreateMeetRecordRequest) obj;
 
     if (!getMeetId()
         .equals(other.getMeetId())) return false;
-    if (code_ != other.code_) return false;
-    if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
-    if (hasGuideVoiceUrl()) {
-      if (!getGuideVoiceUrl()
-          .equals(other.getGuideVoiceUrl())) return false;
+    if (hasMeetRecord() != other.hasMeetRecord()) return false;
+    if (hasMeetRecord()) {
+      if (!getMeetRecord()
+          .equals(other.getMeetRecord())) return false;
     }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -284,80 +235,78 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
     hash = (53 * hash) + getMeetId().hashCode();
-    hash = (37 * hash) + CODE_FIELD_NUMBER;
-    hash = (53 * hash) + code_;
-    if (hasGuideVoiceUrl()) {
-      hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
-      hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    if (hasMeetRecord()) {
+      hash = (37 * hash) + MEET_RECORD_FIELD_NUMBER;
+      hash = (53 * hash) + getMeetRecord().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(byte[] data)
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.CreateMeetRecordRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseDelimitedFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.TerminateMeetRequest parseFrom(
+  public static io.channel.api.proto.CreateMeetRecordRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -370,7 +319,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.TerminateMeetRequest prototype) {
+  public static Builder newBuilder(io.channel.api.proto.CreateMeetRecordRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -386,26 +335,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.TerminateMeetRequest}
+   * Protobuf type {@code meet.CreateMeetRecordRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.TerminateMeetRequest)
-      io.channel.api.proto.TerminateMeetRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.CreateMeetRecordRequest)
+      io.channel.api.proto.CreateMeetRecordRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_CreateMeetRecordRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_CreateMeetRecordRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.TerminateMeetRequest.class, io.channel.api.proto.TerminateMeetRequest.Builder.class);
+              io.channel.api.proto.CreateMeetRecordRequest.class, io.channel.api.proto.CreateMeetRecordRequest.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.TerminateMeetRequest.newBuilder()
+    // Construct using io.channel.api.proto.CreateMeetRecordRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -425,27 +374,29 @@ private static final long serialVersionUID = 0L;
       super.clear();
       meetId_ = "";
 
-      code_ = 0;
-
-      guideVoiceUrl_ = "";
-      bitField0_ = (bitField0_ & ~0x00000001);
+      if (meetRecordBuilder_ == null) {
+        meetRecord_ = null;
+      } else {
+        meetRecord_ = null;
+        meetRecordBuilder_ = null;
+      }
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_TerminateMeetRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_CreateMeetRecordRequest_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
-      return io.channel.api.proto.TerminateMeetRequest.getDefaultInstance();
+    public io.channel.api.proto.CreateMeetRecordRequest getDefaultInstanceForType() {
+      return io.channel.api.proto.CreateMeetRecordRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest build() {
-      io.channel.api.proto.TerminateMeetRequest result = buildPartial();
+    public io.channel.api.proto.CreateMeetRecordRequest build() {
+      io.channel.api.proto.CreateMeetRecordRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -453,17 +404,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.TerminateMeetRequest buildPartial() {
-      io.channel.api.proto.TerminateMeetRequest result = new io.channel.api.proto.TerminateMeetRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
+    public io.channel.api.proto.CreateMeetRecordRequest buildPartial() {
+      io.channel.api.proto.CreateMeetRecordRequest result = new io.channel.api.proto.CreateMeetRecordRequest(this);
       result.meetId_ = meetId_;
-      result.code_ = code_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        to_bitField0_ |= 0x00000001;
+      if (meetRecordBuilder_ == null) {
+        result.meetRecord_ = meetRecord_;
+      } else {
+        result.meetRecord_ = meetRecordBuilder_.build();
       }
-      result.guideVoiceUrl_ = guideVoiceUrl_;
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -502,27 +450,22 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.TerminateMeetRequest) {
-        return mergeFrom((io.channel.api.proto.TerminateMeetRequest)other);
+      if (other instanceof io.channel.api.proto.CreateMeetRecordRequest) {
+        return mergeFrom((io.channel.api.proto.CreateMeetRecordRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.TerminateMeetRequest other) {
-      if (other == io.channel.api.proto.TerminateMeetRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.CreateMeetRecordRequest other) {
+      if (other == io.channel.api.proto.CreateMeetRecordRequest.getDefaultInstance()) return this;
       if (!other.getMeetId().isEmpty()) {
         meetId_ = other.meetId_;
         onChanged();
       }
-      if (other.code_ != 0) {
-        setCodeValue(other.getCodeValue());
-      }
-      if (other.hasGuideVoiceUrl()) {
-        bitField0_ |= 0x00000001;
-        guideVoiceUrl_ = other.guideVoiceUrl_;
-        onChanged();
+      if (other.hasMeetRecord()) {
+        mergeMeetRecord(other.getMeetRecord());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -539,11 +482,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.TerminateMeetRequest parsedMessage = null;
+      io.channel.api.proto.CreateMeetRecordRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.TerminateMeetRequest) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.CreateMeetRecordRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -552,7 +495,6 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
-    private int bitField0_;
 
     private java.lang.Object meetId_ = "";
     /**
@@ -630,141 +572,123 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int code_ = 0;
+    private io.channel.api.proto.AudioFile meetRecord_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.AudioFile, io.channel.api.proto.AudioFile.Builder, io.channel.api.proto.AudioFileOrBuilder> meetRecordBuilder_;
     /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The enum numeric value on the wire for code.
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     * @return Whether the meetRecord field is set.
      */
-    @java.lang.Override public int getCodeValue() {
-      return code_;
+    public boolean hasMeetRecord() {
+      return meetRecordBuilder_ != null || meetRecord_ != null;
     }
     /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The enum numeric value on the wire for code to set.
-     * @return This builder for chaining.
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     * @return The meetRecord.
      */
-    public Builder setCodeValue(int value) {
-      
-      code_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The code.
-     */
-    @java.lang.Override
-    public io.channel.api.proto.CloseMeetCode getCode() {
-      @SuppressWarnings("deprecation")
-      io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-      return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The code to set.
-     * @return This builder for chaining.
-     */
-    public Builder setCode(io.channel.api.proto.CloseMeetCode value) {
-      if (value == null) {
-        throw new NullPointerException();
+    public io.channel.api.proto.AudioFile getMeetRecord() {
+      if (meetRecordBuilder_ == null) {
+        return meetRecord_ == null ? io.channel.api.proto.AudioFile.getDefaultInstance() : meetRecord_;
+      } else {
+        return meetRecordBuilder_.getMessage();
       }
-      
-      code_ = value.getNumber();
-      onChanged();
-      return this;
     }
     /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return This builder for chaining.
+     * <code>.meet.AudioFile meet_record = 2;</code>
      */
-    public Builder clearCode() {
-      
-      code_ = 0;
-      onChanged();
-      return this;
-    }
+    public Builder setMeetRecord(io.channel.api.proto.AudioFile value) {
+      if (meetRecordBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        meetRecord_ = value;
+        onChanged();
+      } else {
+        meetRecordBuilder_.setMessage(value);
+      }
 
-    private java.lang.Object guideVoiceUrl_ = "";
-    /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @return Whether the guideVoiceUrl field is set.
-     */
-    public boolean hasGuideVoiceUrl() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return this;
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @return The guideVoiceUrl.
+     * <code>.meet.AudioFile meet_record = 2;</code>
      */
-    public java.lang.String getGuideVoiceUrl() {
-      java.lang.Object ref = guideVoiceUrl_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        guideVoiceUrl_ = s;
-        return s;
+    public Builder setMeetRecord(
+        io.channel.api.proto.AudioFile.Builder builderForValue) {
+      if (meetRecordBuilder_ == null) {
+        meetRecord_ = builderForValue.build();
+        onChanged();
       } else {
-        return (java.lang.String) ref;
+        meetRecordBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     */
+    public Builder mergeMeetRecord(io.channel.api.proto.AudioFile value) {
+      if (meetRecordBuilder_ == null) {
+        if (meetRecord_ != null) {
+          meetRecord_ =
+            io.channel.api.proto.AudioFile.newBuilder(meetRecord_).mergeFrom(value).buildPartial();
+        } else {
+          meetRecord_ = value;
+        }
+        onChanged();
+      } else {
+        meetRecordBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     */
+    public Builder clearMeetRecord() {
+      if (meetRecordBuilder_ == null) {
+        meetRecord_ = null;
+        onChanged();
+      } else {
+        meetRecord_ = null;
+        meetRecordBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     */
+    public io.channel.api.proto.AudioFile.Builder getMeetRecordBuilder() {
+      
+      onChanged();
+      return getMeetRecordFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.meet.AudioFile meet_record = 2;</code>
+     */
+    public io.channel.api.proto.AudioFileOrBuilder getMeetRecordOrBuilder() {
+      if (meetRecordBuilder_ != null) {
+        return meetRecordBuilder_.getMessageOrBuilder();
+      } else {
+        return meetRecord_ == null ?
+            io.channel.api.proto.AudioFile.getDefaultInstance() : meetRecord_;
       }
     }
     /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @return The bytes for guideVoiceUrl.
+     * <code>.meet.AudioFile meet_record = 2;</code>
      */
-    public com.google.protobuf.ByteString
-        getGuideVoiceUrlBytes() {
-      java.lang.Object ref = guideVoiceUrl_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        guideVoiceUrl_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        io.channel.api.proto.AudioFile, io.channel.api.proto.AudioFile.Builder, io.channel.api.proto.AudioFileOrBuilder> 
+        getMeetRecordFieldBuilder() {
+      if (meetRecordBuilder_ == null) {
+        meetRecordBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            io.channel.api.proto.AudioFile, io.channel.api.proto.AudioFile.Builder, io.channel.api.proto.AudioFileOrBuilder>(
+                getMeetRecord(),
+                getParentForChildren(),
+                isClean());
+        meetRecord_ = null;
       }
-    }
-    /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @param value The guideVoiceUrl to set.
-     * @return This builder for chaining.
-     */
-    public Builder setGuideVoiceUrl(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      guideVoiceUrl_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearGuideVoiceUrl() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      guideVoiceUrl_ = getDefaultInstance().getGuideVoiceUrl();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>optional string guide_voice_url = 3;</code>
-     * @param value The bytes for guideVoiceUrl to set.
-     * @return This builder for chaining.
-     */
-    public Builder setGuideVoiceUrlBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      bitField0_ |= 0x00000001;
-      guideVoiceUrl_ = value;
-      onChanged();
-      return this;
+      return meetRecordBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
@@ -779,41 +703,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.TerminateMeetRequest)
+    // @@protoc_insertion_point(builder_scope:meet.CreateMeetRecordRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.TerminateMeetRequest)
-  private static final io.channel.api.proto.TerminateMeetRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.CreateMeetRecordRequest)
+  private static final io.channel.api.proto.CreateMeetRecordRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.TerminateMeetRequest();
+    DEFAULT_INSTANCE = new io.channel.api.proto.CreateMeetRecordRequest();
   }
 
-  public static io.channel.api.proto.TerminateMeetRequest getDefaultInstance() {
+  public static io.channel.api.proto.CreateMeetRecordRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<TerminateMeetRequest>
-      PARSER = new com.google.protobuf.AbstractParser<TerminateMeetRequest>() {
+  private static final com.google.protobuf.Parser<CreateMeetRecordRequest>
+      PARSER = new com.google.protobuf.AbstractParser<CreateMeetRecordRequest>() {
     @java.lang.Override
-    public TerminateMeetRequest parsePartialFrom(
+    public CreateMeetRecordRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new TerminateMeetRequest(input, extensionRegistry);
+      return new CreateMeetRecordRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<TerminateMeetRequest> parser() {
+  public static com.google.protobuf.Parser<CreateMeetRecordRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<TerminateMeetRequest> getParserForType() {
+  public com.google.protobuf.Parser<CreateMeetRecordRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.TerminateMeetRequest getDefaultInstanceForType() {
+  public io.channel.api.proto.CreateMeetRecordRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

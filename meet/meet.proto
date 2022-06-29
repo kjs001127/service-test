@@ -8,7 +8,7 @@ package meet;
 
 service MeetService {
   // dw -> sfu
-  rpc CreateOutboundMeet(OutboundMeEetRequest) returns (BareResponse);
+  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
   rpc CreatePrivateMeet(PrivateMeetRequest) returns (BareResponse);
   rpc HangUpMeetByManager(HangUpMeetByManagerRequest) returns (BareResponse);
   rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);

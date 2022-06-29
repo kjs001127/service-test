@@ -5,7 +5,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 /**
  */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.48.0-SNAPSHOT)",
+    value = "by gRPC proto compiler (version 1.47.0-SNAPSHOT)",
     comments = "Source: meet/meet.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class MeetServiceGrpc {
@@ -201,6 +201,68 @@ public final class MeetServiceGrpc {
     return getCreateInboundMeetMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.CreateMeetRecordRequest,
+      io.channel.api.proto.BareResponse> getCreateMeetRecordMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateMeetRecord",
+      requestType = io.channel.api.proto.CreateMeetRecordRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.CreateMeetRecordRequest,
+      io.channel.api.proto.BareResponse> getCreateMeetRecordMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.CreateMeetRecordRequest, io.channel.api.proto.BareResponse> getCreateMeetRecordMethod;
+    if ((getCreateMeetRecordMethod = MeetServiceGrpc.getCreateMeetRecordMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getCreateMeetRecordMethod = MeetServiceGrpc.getCreateMeetRecordMethod) == null) {
+          MeetServiceGrpc.getCreateMeetRecordMethod = getCreateMeetRecordMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.CreateMeetRecordRequest, io.channel.api.proto.BareResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreateMeetRecord"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.CreateMeetRecordRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("CreateMeetRecord"))
+              .build();
+        }
+      }
+    }
+    return getCreateMeetRecordMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.GetGreetingRequest,
+      io.channel.api.proto.GetGreetingResponse> getGetGreetingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetGreeting",
+      requestType = io.channel.api.proto.GetGreetingRequest.class,
+      responseType = io.channel.api.proto.GetGreetingResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.GetGreetingRequest,
+      io.channel.api.proto.GetGreetingResponse> getGetGreetingMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.GetGreetingRequest, io.channel.api.proto.GetGreetingResponse> getGetGreetingMethod;
+    if ((getGetGreetingMethod = MeetServiceGrpc.getGetGreetingMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getGetGreetingMethod = MeetServiceGrpc.getGetGreetingMethod) == null) {
+          MeetServiceGrpc.getGetGreetingMethod = getGetGreetingMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.GetGreetingRequest, io.channel.api.proto.GetGreetingResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetGreeting"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.GetGreetingRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.GetGreetingResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("GetGreeting"))
+              .build();
+        }
+      }
+    }
+    return getGetGreetingMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.JoinMeetByUserRequest,
       io.channel.api.proto.BareResponse> getJoinMeetByUserMethod;
 
@@ -361,6 +423,20 @@ public final class MeetServiceGrpc {
 
     /**
      */
+    public void createMeetRecord(io.channel.api.proto.CreateMeetRecordRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateMeetRecordMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void getGreeting(io.channel.api.proto.GetGreetingRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.GetGreetingResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetGreetingMethod(), responseObserver);
+    }
+
+    /**
+     */
     public void joinMeetByUser(io.channel.api.proto.JoinMeetByUserRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getJoinMeetByUserMethod(), responseObserver);
@@ -417,6 +493,20 @@ public final class MeetServiceGrpc {
                 io.channel.api.proto.InboundMeetRequest,
                 io.channel.api.proto.InboundMeetResponse>(
                   this, METHODID_CREATE_INBOUND_MEET)))
+          .addMethod(
+            getCreateMeetRecordMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                io.channel.api.proto.CreateMeetRecordRequest,
+                io.channel.api.proto.BareResponse>(
+                  this, METHODID_CREATE_MEET_RECORD)))
+          .addMethod(
+            getGetGreetingMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                io.channel.api.proto.GetGreetingRequest,
+                io.channel.api.proto.GetGreetingResponse>(
+                  this, METHODID_GET_GREETING)))
           .addMethod(
             getJoinMeetByUserMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -505,6 +595,22 @@ public final class MeetServiceGrpc {
 
     /**
      */
+    public void createMeetRecord(io.channel.api.proto.CreateMeetRecordRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateMeetRecordMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getGreeting(io.channel.api.proto.GetGreetingRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.GetGreetingResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetGreetingMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void joinMeetByUser(io.channel.api.proto.JoinMeetByUserRequest request,
         io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -580,6 +686,20 @@ public final class MeetServiceGrpc {
     public io.channel.api.proto.InboundMeetResponse createInboundMeet(io.channel.api.proto.InboundMeetRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCreateInboundMeetMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.BareResponse createMeetRecord(io.channel.api.proto.CreateMeetRecordRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateMeetRecordMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.GetGreetingResponse getGreeting(io.channel.api.proto.GetGreetingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetGreetingMethod(), getCallOptions(), request);
     }
 
     /**
@@ -667,6 +787,22 @@ public final class MeetServiceGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> createMeetRecord(
+        io.channel.api.proto.CreateMeetRecordRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateMeetRecordMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.GetGreetingResponse> getGreeting(
+        io.channel.api.proto.GetGreetingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetGreetingMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> joinMeetByUser(
         io.channel.api.proto.JoinMeetByUserRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -688,8 +824,10 @@ public final class MeetServiceGrpc {
   private static final int METHODID_JOIN_MEET_BY_MANAGER = 3;
   private static final int METHODID_TERMINATE_MEET = 4;
   private static final int METHODID_CREATE_INBOUND_MEET = 5;
-  private static final int METHODID_JOIN_MEET_BY_USER = 6;
-  private static final int METHODID_HANG_UP_MEET_BY_USER = 7;
+  private static final int METHODID_CREATE_MEET_RECORD = 6;
+  private static final int METHODID_GET_GREETING = 7;
+  private static final int METHODID_JOIN_MEET_BY_USER = 8;
+  private static final int METHODID_HANG_UP_MEET_BY_USER = 9;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -731,6 +869,14 @@ public final class MeetServiceGrpc {
         case METHODID_CREATE_INBOUND_MEET:
           serviceImpl.createInboundMeet((io.channel.api.proto.InboundMeetRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.InboundMeetResponse>) responseObserver);
+          break;
+        case METHODID_CREATE_MEET_RECORD:
+          serviceImpl.createMeetRecord((io.channel.api.proto.CreateMeetRecordRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
+          break;
+        case METHODID_GET_GREETING:
+          serviceImpl.getGreeting((io.channel.api.proto.GetGreetingRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.GetGreetingResponse>) responseObserver);
           break;
         case METHODID_JOIN_MEET_BY_USER:
           serviceImpl.joinMeetByUser((io.channel.api.proto.JoinMeetByUserRequest) request,
@@ -807,6 +953,8 @@ public final class MeetServiceGrpc {
               .addMethod(getJoinMeetByManagerMethod())
               .addMethod(getTerminateMeetMethod())
               .addMethod(getCreateInboundMeetMethod())
+              .addMethod(getCreateMeetRecordMethod())
+              .addMethod(getGetGreetingMethod())
               .addMethod(getJoinMeetByUserMethod())
               .addMethod(getHangUpMeetByUserMethod())
               .build();
