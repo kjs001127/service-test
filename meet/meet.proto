@@ -16,6 +16,7 @@ service MeetService {
 
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
+  rpc CreateMeetRecord(CreateMeetRecordRequest) returns (BareResponse);
   rpc GetGreeting(GetGreetingRequest) returns (GetGreetingResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
@@ -36,7 +37,12 @@ enum ResponseCode {
 }
 
 message AudioFile {
-  // DW 에 있는 audioFile 과 포멧 통일
+  string bucket = 1;
+  string key = 2;
+  string name = 3;
+  string content_type = 4;
+  double duration = 5;
+  int64 size = 6;
 }
 
 message Person {
@@ -77,6 +83,11 @@ message HangUpMeetByManagerRequest {
 
 message GetGreetingRequest {
 	string to = 1;
+}
+
+message CreateMeetRecordRequest {
+  string meet_id = 1;
+  AudioFile meet_record = 2;
 }
 
 // dw -> sfu
