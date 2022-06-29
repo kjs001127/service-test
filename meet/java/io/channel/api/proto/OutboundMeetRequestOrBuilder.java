@@ -84,4 +84,16 @@ public interface OutboundMeetRequestOrBuilder extends
    * <code>.meet.Peer manager = 6;</code>
    */
   io.channel.api.proto.PeerOrBuilder getManagerOrBuilder();
+
+  /**
+   * <code>string guide_voice_url = 7;</code>
+   * @return The guideVoiceUrl.
+   */
+  java.lang.String getGuideVoiceUrl();
+  /**
+   * <code>string guide_voice_url = 7;</code>
+   * @return The bytes for guideVoiceUrl.
+   */
+  com.google.protobuf.ByteString
+      getGuideVoiceUrlBytes();
 }
