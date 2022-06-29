@@ -41,6 +41,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -78,7 +79,7 @@ private static final long serialVersionUID = 0L;
           }
           case 34: {
             java.lang.String s = input.readStringRequireUtf8();
-
+            bitField0_ |= 0x00000001;
             guideVoiceUrl_ = s;
             break;
           }
@@ -114,6 +115,7 @@ private static final long serialVersionUID = 0L;
             io.channel.api.proto.InboundMeetResponse.class, io.channel.api.proto.InboundMeetResponse.Builder.class);
   }
 
+  private int bitField0_;
   public static final int RESPONSE_CODE_FIELD_NUMBER = 1;
   private int responseCode_;
   /**
@@ -200,7 +202,15 @@ private static final long serialVersionUID = 0L;
   public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 4;
   private volatile java.lang.Object guideVoiceUrl_;
   /**
-   * <code>string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return Whether the guideVoiceUrl field is set.
+   */
+  @java.lang.Override
+  public boolean hasGuideVoiceUrl() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
    * @return The guideVoiceUrl.
    */
   @java.lang.Override
@@ -217,7 +227,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 4;</code>
    * @return The bytes for guideVoiceUrl.
    */
   @java.lang.Override
@@ -258,7 +268,7 @@ private static final long serialVersionUID = 0L;
     if (peer_ != null) {
       output.writeMessage(3, getPeer());
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 4, guideVoiceUrl_);
     }
     unknownFields.writeTo(output);
@@ -281,7 +291,7 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, getPeer());
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, guideVoiceUrl_);
     }
     size += unknownFields.getSerializedSize();
@@ -307,8 +317,11 @@ private static final long serialVersionUID = 0L;
       if (!getPeer()
           .equals(other.getPeer())) return false;
     }
-    if (!getGuideVoiceUrl()
-        .equals(other.getGuideVoiceUrl())) return false;
+    if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
+    if (hasGuideVoiceUrl()) {
+      if (!getGuideVoiceUrl()
+          .equals(other.getGuideVoiceUrl())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -328,8 +341,10 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PEER_FIELD_NUMBER;
       hash = (53 * hash) + getPeer().hashCode();
     }
-    hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
-    hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    if (hasGuideVoiceUrl()) {
+      hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
+      hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -474,7 +489,7 @@ private static final long serialVersionUID = 0L;
         peerBuilder_ = null;
       }
       guideVoiceUrl_ = "";
-
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -501,6 +516,8 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.channel.api.proto.InboundMeetResponse buildPartial() {
       io.channel.api.proto.InboundMeetResponse result = new io.channel.api.proto.InboundMeetResponse(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.responseCode_ = responseCode_;
       result.meetId_ = meetId_;
       if (peerBuilder_ == null) {
@@ -508,7 +525,11 @@ private static final long serialVersionUID = 0L;
       } else {
         result.peer_ = peerBuilder_.build();
       }
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        to_bitField0_ |= 0x00000001;
+      }
       result.guideVoiceUrl_ = guideVoiceUrl_;
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -567,7 +588,8 @@ private static final long serialVersionUID = 0L;
       if (other.hasPeer()) {
         mergePeer(other.getPeer());
       }
-      if (!other.getGuideVoiceUrl().isEmpty()) {
+      if (other.hasGuideVoiceUrl()) {
+        bitField0_ |= 0x00000001;
         guideVoiceUrl_ = other.guideVoiceUrl_;
         onChanged();
       }
@@ -599,6 +621,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private int responseCode_ = 0;
     /**
@@ -851,7 +874,14 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object guideVoiceUrl_ = "";
     /**
-     * <code>string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
+     * @return Whether the guideVoiceUrl field is set.
+     */
+    public boolean hasGuideVoiceUrl() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional string guide_voice_url = 4;</code>
      * @return The guideVoiceUrl.
      */
     public java.lang.String getGuideVoiceUrl() {
@@ -867,7 +897,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
      * @return The bytes for guideVoiceUrl.
      */
     public com.google.protobuf.ByteString
@@ -884,7 +914,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
      * @param value The guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -893,23 +923,23 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000001;
       guideVoiceUrl_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
      * @return This builder for chaining.
      */
     public Builder clearGuideVoiceUrl() {
-      
+      bitField0_ = (bitField0_ & ~0x00000001);
       guideVoiceUrl_ = getDefaultInstance().getGuideVoiceUrl();
       onChanged();
       return this;
     }
     /**
-     * <code>string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
      * @param value The bytes for guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -919,7 +949,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+      bitField0_ |= 0x00000001;
       guideVoiceUrl_ = value;
       onChanged();
       return this;

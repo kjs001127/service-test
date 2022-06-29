@@ -105,7 +105,7 @@ message InboundMeetResponse {
   ResponseCode response_code = 1;
   string meet_id = 2;
   Peer peer = 3;
-  string guide_voice_url = 4;
+  optional string guide_voice_url = 4;
 }
 
 message PrivateMeetRequest {
