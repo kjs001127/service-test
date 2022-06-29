@@ -8,7 +8,7 @@ package meet;
 
 service MeetService {
   // dw -> sfu
-  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
+  rpc CreateOutboundMeet(OutboundMeEetRequest) returns (BareResponse);
   rpc CreatePrivateMeet(PrivateMeetRequest) returns (BareResponse);
   rpc HangUpMeetByManager(HangUpMeetByManagerRequest) returns (BareResponse);
   rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
@@ -16,6 +16,7 @@ service MeetService {
 
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
+  rpc GetGreeting(GetGreetingRequest) returns (GetGreetingResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
 }
@@ -34,9 +35,8 @@ enum ResponseCode {
   UNKNOWN = 4;
 }
 
-message GuideVoice {
-  string bucket = 1;
-  string key = 2;
+message AudioFile {
+  // DW 에 있는 audioFile 과 포멧 통일
 }
 
 message Person {
@@ -75,6 +75,10 @@ message HangUpMeetByManagerRequest {
   string meet_id = 2;
 }
 
+message GetGreetingRequest {
+	string to = 1;
+}
+
 // dw -> sfu
 
 message OutboundMeetRequest {
@@ -90,7 +94,7 @@ message InboundMeetResponse {
   ResponseCode response_code = 1;
   string meet_id = 2;
   Peer peer = 3;
-  GuideVoice guide_voice = 4;
+  string guide_voice_url = 4;
 }
 
 message PrivateMeetRequest {
@@ -111,10 +115,14 @@ message JoinMeetByUserResponse {
 message TerminateMeetRequest {
   string meet_id = 1;
   CloseMeetCode code = 2;
-  optional GuideVoice guide_voice = 3;
+  optional string guide_voice_url = 3;
 }
 
 message HangUpMeetByUserRequest {
   Peer peer = 1;
   string meet_id = 2;
+}
+
+message GetGreetingResponse {
+	string guide_voice_url = 1;
 }
