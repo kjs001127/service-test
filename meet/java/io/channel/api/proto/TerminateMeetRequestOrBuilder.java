@@ -31,17 +31,14 @@ public interface TerminateMeetRequestOrBuilder extends
   io.channel.api.proto.CloseMeetCode getCode();
 
   /**
-   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
-   * @return Whether the guideVoice field is set.
+   * <code>string channel_id = 3;</code>
+   * @return The channelId.
    */
-  boolean hasGuideVoice();
+  java.lang.String getChannelId();
   /**
-   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
-   * @return The guideVoice.
+   * <code>string channel_id = 3;</code>
+   * @return The bytes for channelId.
    */
-  io.channel.api.proto.GuideVoice getGuideVoice();
-  /**
-   * <code>optional .meet.GuideVoice guide_voice = 3;</code>
-   */
-  io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder();
+  com.google.protobuf.ByteString
+      getChannelIdBytes();
 }

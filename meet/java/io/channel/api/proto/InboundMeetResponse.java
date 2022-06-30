@@ -18,6 +18,7 @@ private static final long serialVersionUID = 0L;
   private InboundMeetResponse() {
     responseCode_ = 0;
     meetId_ = "";
+    guideVoiceUrl_ = "";
   }
 
   @java.lang.Override
@@ -40,6 +41,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -76,16 +78,9 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 34: {
-            io.channel.api.proto.GuideVoice.Builder subBuilder = null;
-            if (guideVoice_ != null) {
-              subBuilder = guideVoice_.toBuilder();
-            }
-            guideVoice_ = input.readMessage(io.channel.api.proto.GuideVoice.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(guideVoice_);
-              guideVoice_ = subBuilder.buildPartial();
-            }
-
+            java.lang.String s = input.readStringRequireUtf8();
+            bitField0_ |= 0x00000001;
+            guideVoiceUrl_ = s;
             break;
           }
           default: {
@@ -120,6 +115,7 @@ private static final long serialVersionUID = 0L;
             io.channel.api.proto.InboundMeetResponse.class, io.channel.api.proto.InboundMeetResponse.Builder.class);
   }
 
+  private int bitField0_;
   public static final int RESPONSE_CODE_FIELD_NUMBER = 1;
   private int responseCode_;
   /**
@@ -203,30 +199,50 @@ private static final long serialVersionUID = 0L;
     return getPeer();
   }
 
-  public static final int GUIDE_VOICE_FIELD_NUMBER = 4;
-  private io.channel.api.proto.GuideVoice guideVoice_;
+  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 4;
+  private volatile java.lang.Object guideVoiceUrl_;
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
-   * @return Whether the guideVoice field is set.
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return Whether the guideVoiceUrl field is set.
    */
   @java.lang.Override
-  public boolean hasGuideVoice() {
-    return guideVoice_ != null;
+  public boolean hasGuideVoiceUrl() {
+    return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
-   * @return The guideVoice.
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The guideVoiceUrl.
    */
   @java.lang.Override
-  public io.channel.api.proto.GuideVoice getGuideVoice() {
-    return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
+  public java.lang.String getGuideVoiceUrl() {
+    java.lang.Object ref = guideVoiceUrl_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      guideVoiceUrl_ = s;
+      return s;
+    }
   }
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The bytes for guideVoiceUrl.
    */
   @java.lang.Override
-  public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
-    return getGuideVoice();
+  public com.google.protobuf.ByteString
+      getGuideVoiceUrlBytes() {
+    java.lang.Object ref = guideVoiceUrl_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      guideVoiceUrl_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -252,8 +268,8 @@ private static final long serialVersionUID = 0L;
     if (peer_ != null) {
       output.writeMessage(3, getPeer());
     }
-    if (guideVoice_ != null) {
-      output.writeMessage(4, getGuideVoice());
+    if (((bitField0_ & 0x00000001) != 0)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, guideVoiceUrl_);
     }
     unknownFields.writeTo(output);
   }
@@ -275,9 +291,8 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, getPeer());
     }
-    if (guideVoice_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getGuideVoice());
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, guideVoiceUrl_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -302,10 +317,10 @@ private static final long serialVersionUID = 0L;
       if (!getPeer()
           .equals(other.getPeer())) return false;
     }
-    if (hasGuideVoice() != other.hasGuideVoice()) return false;
-    if (hasGuideVoice()) {
-      if (!getGuideVoice()
-          .equals(other.getGuideVoice())) return false;
+    if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
+    if (hasGuideVoiceUrl()) {
+      if (!getGuideVoiceUrl()
+          .equals(other.getGuideVoiceUrl())) return false;
     }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -326,9 +341,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PEER_FIELD_NUMBER;
       hash = (53 * hash) + getPeer().hashCode();
     }
-    if (hasGuideVoice()) {
-      hash = (37 * hash) + GUIDE_VOICE_FIELD_NUMBER;
-      hash = (53 * hash) + getGuideVoice().hashCode();
+    if (hasGuideVoiceUrl()) {
+      hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
+      hash = (53 * hash) + getGuideVoiceUrl().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -473,12 +488,8 @@ private static final long serialVersionUID = 0L;
         peer_ = null;
         peerBuilder_ = null;
       }
-      if (guideVoiceBuilder_ == null) {
-        guideVoice_ = null;
-      } else {
-        guideVoice_ = null;
-        guideVoiceBuilder_ = null;
-      }
+      guideVoiceUrl_ = "";
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -505,6 +516,8 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.channel.api.proto.InboundMeetResponse buildPartial() {
       io.channel.api.proto.InboundMeetResponse result = new io.channel.api.proto.InboundMeetResponse(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.responseCode_ = responseCode_;
       result.meetId_ = meetId_;
       if (peerBuilder_ == null) {
@@ -512,11 +525,11 @@ private static final long serialVersionUID = 0L;
       } else {
         result.peer_ = peerBuilder_.build();
       }
-      if (guideVoiceBuilder_ == null) {
-        result.guideVoice_ = guideVoice_;
-      } else {
-        result.guideVoice_ = guideVoiceBuilder_.build();
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        to_bitField0_ |= 0x00000001;
       }
+      result.guideVoiceUrl_ = guideVoiceUrl_;
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -575,8 +588,10 @@ private static final long serialVersionUID = 0L;
       if (other.hasPeer()) {
         mergePeer(other.getPeer());
       }
-      if (other.hasGuideVoice()) {
-        mergeGuideVoice(other.getGuideVoice());
+      if (other.hasGuideVoiceUrl()) {
+        bitField0_ |= 0x00000001;
+        guideVoiceUrl_ = other.guideVoiceUrl_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -606,6 +621,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private int responseCode_ = 0;
     /**
@@ -856,123 +872,87 @@ private static final long serialVersionUID = 0L;
       return peerBuilder_;
     }
 
-    private io.channel.api.proto.GuideVoice guideVoice_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> guideVoiceBuilder_;
+    private java.lang.Object guideVoiceUrl_ = "";
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
-     * @return Whether the guideVoice field is set.
+     * <code>optional string guide_voice_url = 4;</code>
+     * @return Whether the guideVoiceUrl field is set.
      */
-    public boolean hasGuideVoice() {
-      return guideVoiceBuilder_ != null || guideVoice_ != null;
+    public boolean hasGuideVoiceUrl() {
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
-     * @return The guideVoice.
+     * <code>optional string guide_voice_url = 4;</code>
+     * @return The guideVoiceUrl.
      */
-    public io.channel.api.proto.GuideVoice getGuideVoice() {
-      if (guideVoiceBuilder_ == null) {
-        return guideVoice_ == null ? io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
+    public java.lang.String getGuideVoiceUrl() {
+      java.lang.Object ref = guideVoiceUrl_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        guideVoiceUrl_ = s;
+        return s;
       } else {
-        return guideVoiceBuilder_.getMessage();
+        return (java.lang.String) ref;
       }
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
+     * @return The bytes for guideVoiceUrl.
      */
-    public Builder setGuideVoice(io.channel.api.proto.GuideVoice value) {
-      if (guideVoiceBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        guideVoice_ = value;
-        onChanged();
+    public com.google.protobuf.ByteString
+        getGuideVoiceUrlBytes() {
+      java.lang.Object ref = guideVoiceUrl_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        guideVoiceUrl_ = b;
+        return b;
       } else {
-        guideVoiceBuilder_.setMessage(value);
+        return (com.google.protobuf.ByteString) ref;
       }
-
-      return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
+     * @param value The guideVoiceUrl to set.
+     * @return This builder for chaining.
      */
-    public Builder setGuideVoice(
-        io.channel.api.proto.GuideVoice.Builder builderForValue) {
-      if (guideVoiceBuilder_ == null) {
-        guideVoice_ = builderForValue.build();
-        onChanged();
-      } else {
-        guideVoiceBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
-     */
-    public Builder mergeGuideVoice(io.channel.api.proto.GuideVoice value) {
-      if (guideVoiceBuilder_ == null) {
-        if (guideVoice_ != null) {
-          guideVoice_ =
-            io.channel.api.proto.GuideVoice.newBuilder(guideVoice_).mergeFrom(value).buildPartial();
-        } else {
-          guideVoice_ = value;
-        }
-        onChanged();
-      } else {
-        guideVoiceBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
-     */
-    public Builder clearGuideVoice() {
-      if (guideVoiceBuilder_ == null) {
-        guideVoice_ = null;
-        onChanged();
-      } else {
-        guideVoice_ = null;
-        guideVoiceBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
-     */
-    public io.channel.api.proto.GuideVoice.Builder getGuideVoiceBuilder() {
-      
+    public Builder setGuideVoiceUrl(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+      guideVoiceUrl_ = value;
       onChanged();
-      return getGuideVoiceFieldBuilder().getBuilder();
+      return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
+     * @return This builder for chaining.
      */
-    public io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder() {
-      if (guideVoiceBuilder_ != null) {
-        return guideVoiceBuilder_.getMessageOrBuilder();
-      } else {
-        return guideVoice_ == null ?
-            io.channel.api.proto.GuideVoice.getDefaultInstance() : guideVoice_;
-      }
+    public Builder clearGuideVoiceUrl() {
+      bitField0_ = (bitField0_ & ~0x00000001);
+      guideVoiceUrl_ = getDefaultInstance().getGuideVoiceUrl();
+      onChanged();
+      return this;
     }
     /**
-     * <code>.meet.GuideVoice guide_voice = 4;</code>
+     * <code>optional string guide_voice_url = 4;</code>
+     * @param value The bytes for guideVoiceUrl to set.
+     * @return This builder for chaining.
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder> 
-        getGuideVoiceFieldBuilder() {
-      if (guideVoiceBuilder_ == null) {
-        guideVoiceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            io.channel.api.proto.GuideVoice, io.channel.api.proto.GuideVoice.Builder, io.channel.api.proto.GuideVoiceOrBuilder>(
-                getGuideVoice(),
-                getParentForChildren(),
-                isClean());
-        guideVoice_ = null;
-      }
-      return guideVoiceBuilder_;
+    public Builder setGuideVoiceUrlBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      bitField0_ |= 0x00000001;
+      guideVoiceUrl_ = value;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

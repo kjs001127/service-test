@@ -4,27 +4,29 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.GuideVoice}
+ * Protobuf type {@code meet.AudioFile}
  */
-public final class GuideVoice extends
+public final class AudioFile extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.GuideVoice)
-    GuideVoiceOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.AudioFile)
+    AudioFileOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use GuideVoice.newBuilder() to construct.
-  private GuideVoice(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use AudioFile.newBuilder() to construct.
+  private AudioFile(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private GuideVoice() {
+  private AudioFile() {
     bucket_ = "";
     key_ = "";
+    name_ = "";
+    contentType_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new GuideVoice();
+    return new AudioFile();
   }
 
   @java.lang.Override
@@ -32,7 +34,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private GuideVoice(
+  private AudioFile(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -62,6 +64,28 @@ private static final long serialVersionUID = 0L;
             key_ = s;
             break;
           }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            name_ = s;
+            break;
+          }
+          case 34: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            contentType_ = s;
+            break;
+          }
+          case 41: {
+
+            duration_ = input.readDouble();
+            break;
+          }
+          case 48: {
+
+            size_ = input.readInt64();
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -83,15 +107,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_AudioFile_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_AudioFile_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.GuideVoice.class, io.channel.api.proto.GuideVoice.Builder.class);
+            io.channel.api.proto.AudioFile.class, io.channel.api.proto.AudioFile.Builder.class);
   }
 
   public static final int BUCKET_FIELD_NUMBER = 1;
@@ -170,6 +194,104 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int NAME_FIELD_NUMBER = 3;
+  private volatile java.lang.Object name_;
+  /**
+   * <code>string name = 3;</code>
+   * @return The name.
+   */
+  @java.lang.Override
+  public java.lang.String getName() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      name_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string name = 3;</code>
+   * @return The bytes for name.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNameBytes() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      name_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int CONTENT_TYPE_FIELD_NUMBER = 4;
+  private volatile java.lang.Object contentType_;
+  /**
+   * <code>string content_type = 4;</code>
+   * @return The contentType.
+   */
+  @java.lang.Override
+  public java.lang.String getContentType() {
+    java.lang.Object ref = contentType_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      contentType_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string content_type = 4;</code>
+   * @return The bytes for contentType.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getContentTypeBytes() {
+    java.lang.Object ref = contentType_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      contentType_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int DURATION_FIELD_NUMBER = 5;
+  private double duration_;
+  /**
+   * <code>double duration = 5;</code>
+   * @return The duration.
+   */
+  @java.lang.Override
+  public double getDuration() {
+    return duration_;
+  }
+
+  public static final int SIZE_FIELD_NUMBER = 6;
+  private long size_;
+  /**
+   * <code>int64 size = 6;</code>
+   * @return The size.
+   */
+  @java.lang.Override
+  public long getSize() {
+    return size_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -190,6 +312,18 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, name_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentType_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, contentType_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(duration_) != 0) {
+      output.writeDouble(5, duration_);
+    }
+    if (size_ != 0L) {
+      output.writeInt64(6, size_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -205,6 +339,20 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, name_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentType_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, contentType_);
+    }
+    if (java.lang.Double.doubleToRawLongBits(duration_) != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeDoubleSize(5, duration_);
+    }
+    if (size_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(6, size_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -215,15 +363,24 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.GuideVoice)) {
+    if (!(obj instanceof io.channel.api.proto.AudioFile)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.GuideVoice other = (io.channel.api.proto.GuideVoice) obj;
+    io.channel.api.proto.AudioFile other = (io.channel.api.proto.AudioFile) obj;
 
     if (!getBucket()
         .equals(other.getBucket())) return false;
     if (!getKey()
         .equals(other.getKey())) return false;
+    if (!getName()
+        .equals(other.getName())) return false;
+    if (!getContentType()
+        .equals(other.getContentType())) return false;
+    if (java.lang.Double.doubleToLongBits(getDuration())
+        != java.lang.Double.doubleToLongBits(
+            other.getDuration())) return false;
+    if (getSize()
+        != other.getSize()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -239,74 +396,84 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getBucket().hashCode();
     hash = (37 * hash) + KEY_FIELD_NUMBER;
     hash = (53 * hash) + getKey().hashCode();
+    hash = (37 * hash) + NAME_FIELD_NUMBER;
+    hash = (53 * hash) + getName().hashCode();
+    hash = (37 * hash) + CONTENT_TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getContentType().hashCode();
+    hash = (37 * hash) + DURATION_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        java.lang.Double.doubleToLongBits(getDuration()));
+    hash = (37 * hash) + SIZE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getSize());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(byte[] data)
+  public static io.channel.api.proto.AudioFile parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.AudioFile parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.AudioFile parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseDelimitedFrom(
+  public static io.channel.api.proto.AudioFile parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.GuideVoice parseFrom(
+  public static io.channel.api.proto.AudioFile parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -319,7 +486,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.GuideVoice prototype) {
+  public static Builder newBuilder(io.channel.api.proto.AudioFile prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -335,26 +502,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.GuideVoice}
+   * Protobuf type {@code meet.AudioFile}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.GuideVoice)
-      io.channel.api.proto.GuideVoiceOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.AudioFile)
+      io.channel.api.proto.AudioFileOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_AudioFile_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_AudioFile_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.GuideVoice.class, io.channel.api.proto.GuideVoice.Builder.class);
+              io.channel.api.proto.AudioFile.class, io.channel.api.proto.AudioFile.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.GuideVoice.newBuilder()
+    // Construct using io.channel.api.proto.AudioFile.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -376,23 +543,31 @@ private static final long serialVersionUID = 0L;
 
       key_ = "";
 
+      name_ = "";
+
+      contentType_ = "";
+
+      duration_ = 0D;
+
+      size_ = 0L;
+
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_GuideVoice_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_AudioFile_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice getDefaultInstanceForType() {
-      return io.channel.api.proto.GuideVoice.getDefaultInstance();
+    public io.channel.api.proto.AudioFile getDefaultInstanceForType() {
+      return io.channel.api.proto.AudioFile.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice build() {
-      io.channel.api.proto.GuideVoice result = buildPartial();
+    public io.channel.api.proto.AudioFile build() {
+      io.channel.api.proto.AudioFile result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -400,10 +575,14 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.GuideVoice buildPartial() {
-      io.channel.api.proto.GuideVoice result = new io.channel.api.proto.GuideVoice(this);
+    public io.channel.api.proto.AudioFile buildPartial() {
+      io.channel.api.proto.AudioFile result = new io.channel.api.proto.AudioFile(this);
       result.bucket_ = bucket_;
       result.key_ = key_;
+      result.name_ = name_;
+      result.contentType_ = contentType_;
+      result.duration_ = duration_;
+      result.size_ = size_;
       onBuilt();
       return result;
     }
@@ -442,16 +621,16 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.GuideVoice) {
-        return mergeFrom((io.channel.api.proto.GuideVoice)other);
+      if (other instanceof io.channel.api.proto.AudioFile) {
+        return mergeFrom((io.channel.api.proto.AudioFile)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.GuideVoice other) {
-      if (other == io.channel.api.proto.GuideVoice.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.AudioFile other) {
+      if (other == io.channel.api.proto.AudioFile.getDefaultInstance()) return this;
       if (!other.getBucket().isEmpty()) {
         bucket_ = other.bucket_;
         onChanged();
@@ -459,6 +638,20 @@ private static final long serialVersionUID = 0L;
       if (!other.getKey().isEmpty()) {
         key_ = other.key_;
         onChanged();
+      }
+      if (!other.getName().isEmpty()) {
+        name_ = other.name_;
+        onChanged();
+      }
+      if (!other.getContentType().isEmpty()) {
+        contentType_ = other.contentType_;
+        onChanged();
+      }
+      if (other.getDuration() != 0D) {
+        setDuration(other.getDuration());
+      }
+      if (other.getSize() != 0L) {
+        setSize(other.getSize());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -475,11 +668,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.GuideVoice parsedMessage = null;
+      io.channel.api.proto.AudioFile parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.GuideVoice) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.AudioFile) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -640,6 +833,220 @@ private static final long serialVersionUID = 0L;
       onChanged();
       return this;
     }
+
+    private java.lang.Object name_ = "";
+    /**
+     * <code>string name = 3;</code>
+     * @return The name.
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string name = 3;</code>
+     * @return The bytes for name.
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string name = 3;</code>
+     * @param value The name to set.
+     * @return This builder for chaining.
+     */
+    public Builder setName(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      name_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string name = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearName() {
+      
+      name_ = getDefaultInstance().getName();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string name = 3;</code>
+     * @param value The bytes for name to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      name_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object contentType_ = "";
+    /**
+     * <code>string content_type = 4;</code>
+     * @return The contentType.
+     */
+    public java.lang.String getContentType() {
+      java.lang.Object ref = contentType_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        contentType_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string content_type = 4;</code>
+     * @return The bytes for contentType.
+     */
+    public com.google.protobuf.ByteString
+        getContentTypeBytes() {
+      java.lang.Object ref = contentType_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        contentType_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string content_type = 4;</code>
+     * @param value The contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentType(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      contentType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string content_type = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearContentType() {
+      
+      contentType_ = getDefaultInstance().getContentType();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string content_type = 4;</code>
+     * @param value The bytes for contentType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setContentTypeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      contentType_ = value;
+      onChanged();
+      return this;
+    }
+
+    private double duration_ ;
+    /**
+     * <code>double duration = 5;</code>
+     * @return The duration.
+     */
+    @java.lang.Override
+    public double getDuration() {
+      return duration_;
+    }
+    /**
+     * <code>double duration = 5;</code>
+     * @param value The duration to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDuration(double value) {
+      
+      duration_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>double duration = 5;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearDuration() {
+      
+      duration_ = 0D;
+      onChanged();
+      return this;
+    }
+
+    private long size_ ;
+    /**
+     * <code>int64 size = 6;</code>
+     * @return The size.
+     */
+    @java.lang.Override
+    public long getSize() {
+      return size_;
+    }
+    /**
+     * <code>int64 size = 6;</code>
+     * @param value The size to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSize(long value) {
+      
+      size_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 size = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearSize() {
+      
+      size_ = 0L;
+      onChanged();
+      return this;
+    }
     @java.lang.Override
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -653,41 +1060,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.GuideVoice)
+    // @@protoc_insertion_point(builder_scope:meet.AudioFile)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.GuideVoice)
-  private static final io.channel.api.proto.GuideVoice DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.AudioFile)
+  private static final io.channel.api.proto.AudioFile DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.GuideVoice();
+    DEFAULT_INSTANCE = new io.channel.api.proto.AudioFile();
   }
 
-  public static io.channel.api.proto.GuideVoice getDefaultInstance() {
+  public static io.channel.api.proto.AudioFile getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<GuideVoice>
-      PARSER = new com.google.protobuf.AbstractParser<GuideVoice>() {
+  private static final com.google.protobuf.Parser<AudioFile>
+      PARSER = new com.google.protobuf.AbstractParser<AudioFile>() {
     @java.lang.Override
-    public GuideVoice parsePartialFrom(
+    public AudioFile parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new GuideVoice(input, extensionRegistry);
+      return new AudioFile(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<GuideVoice> parser() {
+  public static com.google.protobuf.Parser<AudioFile> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<GuideVoice> getParserForType() {
+  public com.google.protobuf.Parser<AudioFile> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.GuideVoice getDefaultInstanceForType() {
+  public io.channel.api.proto.AudioFile getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

@@ -46,17 +46,19 @@ public interface InboundMeetResponseOrBuilder extends
   io.channel.api.proto.PeerOrBuilder getPeerOrBuilder();
 
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
-   * @return Whether the guideVoice field is set.
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return Whether the guideVoiceUrl field is set.
    */
-  boolean hasGuideVoice();
+  boolean hasGuideVoiceUrl();
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
-   * @return The guideVoice.
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The guideVoiceUrl.
    */
-  io.channel.api.proto.GuideVoice getGuideVoice();
+  java.lang.String getGuideVoiceUrl();
   /**
-   * <code>.meet.GuideVoice guide_voice = 4;</code>
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The bytes for guideVoiceUrl.
    */
-  io.channel.api.proto.GuideVoiceOrBuilder getGuideVoiceOrBuilder();
+  com.google.protobuf.ByteString
+      getGuideVoiceUrlBytes();
 }
