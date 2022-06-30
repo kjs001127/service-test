@@ -46,4 +46,16 @@ public interface TerminateMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getGuideVoiceUrlBytes();
+
+  /**
+   * <code>string channel_id = 4;</code>
+   * @return The channelId.
+   */
+  java.lang.String getChannelId();
+  /**
+   * <code>string channel_id = 4;</code>
+   * @return The bytes for channelId.
+   */
+  com.google.protobuf.ByteString
+      getChannelIdBytes();
 }
