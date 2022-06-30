@@ -140,8 +140,8 @@ public final class Meet {
       "\001(\0162\022.meet.ResponseCode\022\030\n\004peer\030\002 \001(\0132\n." +
       "meet.Peer\"\220\001\n\024TerminateMeetRequest\022\017\n\007me" +
       "et_id\030\001 \001(\t\022!\n\004code\030\002 \001(\0162\023.meet.CloseMe" +
-      "etCode\022\034\n\017guide_voice_url\030\003 \001(\tH\000\210\001\001\022\022\n\n" +
-      "channel_id\030\004 \001(\tB\022\n\020_guide_voice_url\"D\n\027" +
+      "etCode\022\022\n\nchannel_id\030\003 \001(\t\022\034\n\017guide_voic" +
+      "e_url\030\004 \001(\tH\000\210\001\001B\022\n\020_guide_voice_url\"D\n\027" +
       "HangUpMeetByUserRequest\022\030\n\004peer\030\001 \001(\0132\n." +
       "meet.Peer\022\017\n\007meet_id\030\002 \001(\t\".\n\023GetGreetin" +
       "gResponse\022\027\n\017guide_voice_url\030\001 \001(\t*?\n\rCl" +
@@ -263,7 +263,7 @@ public final class Meet {
     internal_static_meet_TerminateMeetRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_TerminateMeetRequest_descriptor,
-        new java.lang.String[] { "MeetId", "Code", "GuideVoiceUrl", "ChannelId", "GuideVoiceUrl", });
+        new java.lang.String[] { "MeetId", "Code", "ChannelId", "GuideVoiceUrl", "GuideVoiceUrl", });
     internal_static_meet_HangUpMeetByUserRequest_descriptor =
       getDescriptor().getMessageTypes().get(15);
     internal_static_meet_HangUpMeetByUserRequest_fieldAccessorTable = new

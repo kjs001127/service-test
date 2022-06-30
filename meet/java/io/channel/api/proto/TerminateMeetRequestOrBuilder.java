@@ -31,31 +31,31 @@ public interface TerminateMeetRequestOrBuilder extends
   io.channel.api.proto.CloseMeetCode getCode();
 
   /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return Whether the guideVoiceUrl field is set.
-   */
-  boolean hasGuideVoiceUrl();
-  /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return The guideVoiceUrl.
-   */
-  java.lang.String getGuideVoiceUrl();
-  /**
-   * <code>optional string guide_voice_url = 3;</code>
-   * @return The bytes for guideVoiceUrl.
-   */
-  com.google.protobuf.ByteString
-      getGuideVoiceUrlBytes();
-
-  /**
-   * <code>string channel_id = 4;</code>
+   * <code>string channel_id = 3;</code>
    * @return The channelId.
    */
   java.lang.String getChannelId();
   /**
-   * <code>string channel_id = 4;</code>
+   * <code>string channel_id = 3;</code>
    * @return The bytes for channelId.
    */
   com.google.protobuf.ByteString
       getChannelIdBytes();
+
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return Whether the guideVoiceUrl field is set.
+   */
+  boolean hasGuideVoiceUrl();
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The guideVoiceUrl.
+   */
+  java.lang.String getGuideVoiceUrl();
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The bytes for guideVoiceUrl.
+   */
+  com.google.protobuf.ByteString
+      getGuideVoiceUrlBytes();
 }
