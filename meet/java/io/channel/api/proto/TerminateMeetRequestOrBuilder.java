@@ -41,4 +41,21 @@ public interface TerminateMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getChannelIdBytes();
+
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return Whether the guideVoiceUrl field is set.
+   */
+  boolean hasGuideVoiceUrl();
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The guideVoiceUrl.
+   */
+  java.lang.String getGuideVoiceUrl();
+  /**
+   * <code>optional string guide_voice_url = 4;</code>
+   * @return The bytes for guideVoiceUrl.
+   */
+  com.google.protobuf.ByteString
+      getGuideVoiceUrlBytes();
 }

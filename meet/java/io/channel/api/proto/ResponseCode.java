@@ -9,48 +9,104 @@ package io.channel.api.proto;
 public enum ResponseCode
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
+   * <pre>
+   * 200
+   * </pre>
+   *
    * <code>SUCCESS = 0;</code>
    */
   SUCCESS(0),
   /**
-   * <code>UNAUTHORIZED = 1;</code>
+   * <pre>
+   * 400
+   * </pre>
+   *
+   * <code>BAD_REQUEST = 1;</code>
    */
-  UNAUTHORIZED(1),
+  BAD_REQUEST(1),
   /**
-   * <code>FORBIDDEN = 2;</code>
+   * <pre>
+   * 401
+   * </pre>
+   *
+   * <code>UNAUTHORIZED = 2;</code>
    */
-  FORBIDDEN(2),
+  UNAUTHORIZED(2),
   /**
-   * <code>NOT_FOUND = 3;</code>
+   * <pre>
+   * 403
+   * </pre>
+   *
+   * <code>FORBIDDEN = 3;</code>
    */
-  NOT_FOUND(3),
+  FORBIDDEN(3),
   /**
-   * <code>UNKNOWN = 4;</code>
+   * <pre>
+   * 404
+   * </pre>
+   *
+   * <code>NOT_FOUND = 4;</code>
    */
-  UNKNOWN(4),
+  NOT_FOUND(4),
+  /**
+   * <pre>
+   * 500
+   * </pre>
+   *
+   * <code>UNKNOWN = 5;</code>
+   */
+  UNKNOWN(5),
   UNRECOGNIZED(-1),
   ;
 
   /**
+   * <pre>
+   * 200
+   * </pre>
+   *
    * <code>SUCCESS = 0;</code>
    */
   public static final int SUCCESS_VALUE = 0;
   /**
-   * <code>UNAUTHORIZED = 1;</code>
+   * <pre>
+   * 400
+   * </pre>
+   *
+   * <code>BAD_REQUEST = 1;</code>
    */
-  public static final int UNAUTHORIZED_VALUE = 1;
+  public static final int BAD_REQUEST_VALUE = 1;
   /**
-   * <code>FORBIDDEN = 2;</code>
+   * <pre>
+   * 401
+   * </pre>
+   *
+   * <code>UNAUTHORIZED = 2;</code>
    */
-  public static final int FORBIDDEN_VALUE = 2;
+  public static final int UNAUTHORIZED_VALUE = 2;
   /**
-   * <code>NOT_FOUND = 3;</code>
+   * <pre>
+   * 403
+   * </pre>
+   *
+   * <code>FORBIDDEN = 3;</code>
    */
-  public static final int NOT_FOUND_VALUE = 3;
+  public static final int FORBIDDEN_VALUE = 3;
   /**
-   * <code>UNKNOWN = 4;</code>
+   * <pre>
+   * 404
+   * </pre>
+   *
+   * <code>NOT_FOUND = 4;</code>
    */
-  public static final int UNKNOWN_VALUE = 4;
+  public static final int NOT_FOUND_VALUE = 4;
+  /**
+   * <pre>
+   * 500
+   * </pre>
+   *
+   * <code>UNKNOWN = 5;</code>
+   */
+  public static final int UNKNOWN_VALUE = 5;
 
 
   public final int getNumber() {
@@ -78,10 +134,11 @@ public enum ResponseCode
   public static ResponseCode forNumber(int value) {
     switch (value) {
       case 0: return SUCCESS;
-      case 1: return UNAUTHORIZED;
-      case 2: return FORBIDDEN;
-      case 3: return NOT_FOUND;
-      case 4: return UNKNOWN;
+      case 1: return BAD_REQUEST;
+      case 2: return UNAUTHORIZED;
+      case 3: return FORBIDDEN;
+      case 4: return NOT_FOUND;
+      case 5: return UNKNOWN;
       default: return null;
     }
   }
