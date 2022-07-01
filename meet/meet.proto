@@ -29,11 +29,12 @@ enum CloseMeetCode {
 }
 
 enum ResponseCode {
-  SUCCESS = 0;
-  UNAUTHORIZED = 1;
-  FORBIDDEN = 2;
-  NOT_FOUND = 3;
-  UNKNOWN = 4;
+  SUCCESS = 0; // 200
+  BAD_REQUEST = 1; // 400
+  UNAUTHORIZED = 2; // 401
+  FORBIDDEN = 3; // 403
+  NOT_FOUND = 4; // 404
+  UNKNOWN = 5; // 500
 }
 
 message AudioFile {
@@ -128,6 +129,7 @@ message TerminateMeetRequest {
   string meet_id = 1;
   CloseMeetCode code = 2;
   string channel_id = 3;
+  optional string guide_voice_url = 4;
 }
 
 message HangUpMeetByUserRequest {
