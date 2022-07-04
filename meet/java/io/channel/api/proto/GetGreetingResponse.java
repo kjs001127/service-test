@@ -16,6 +16,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private GetGreetingResponse() {
+    status_ = 0;
     guideVoiceUrl_ = "";
   }
 
@@ -39,6 +40,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -49,9 +51,15 @@ private static final long serialVersionUID = 0L;
           case 0:
             done = true;
             break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 8: {
+            int rawValue = input.readEnum();
 
+            status_ = rawValue;
+            break;
+          }
+          case 18: {
+            java.lang.String s = input.readStringRequireUtf8();
+            bitField0_ |= 0x00000001;
             guideVoiceUrl_ = s;
             break;
           }
@@ -87,10 +95,163 @@ private static final long serialVersionUID = 0L;
             io.channel.api.proto.GetGreetingResponse.class, io.channel.api.proto.GetGreetingResponse.Builder.class);
   }
 
-  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 1;
+  /**
+   * Protobuf enum {@code meet.GetGreetingResponse.Status}
+   */
+  public enum Status
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>GREETING = 0;</code>
+     */
+    GREETING(0),
+    /**
+     * <code>NOT_IN_OPERATION = 1;</code>
+     */
+    NOT_IN_OPERATION(1),
+    /**
+     * <pre>
+     * 번호가 매핑되지 않은 경우
+     * </pre>
+     *
+     * <code>NOT_CONNECTED = 2;</code>
+     */
+    NOT_CONNECTED(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>GREETING = 0;</code>
+     */
+    public static final int GREETING_VALUE = 0;
+    /**
+     * <code>NOT_IN_OPERATION = 1;</code>
+     */
+    public static final int NOT_IN_OPERATION_VALUE = 1;
+    /**
+     * <pre>
+     * 번호가 매핑되지 않은 경우
+     * </pre>
+     *
+     * <code>NOT_CONNECTED = 2;</code>
+     */
+    public static final int NOT_CONNECTED_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Status valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static Status forNumber(int value) {
+      switch (value) {
+        case 0: return GREETING;
+        case 1: return NOT_IN_OPERATION;
+        case 2: return NOT_CONNECTED;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Status>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Status> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Status>() {
+            public Status findValueByNumber(int number) {
+              return Status.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return io.channel.api.proto.GetGreetingResponse.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final Status[] VALUES = values();
+
+    public static Status valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private Status(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:meet.GetGreetingResponse.Status)
+  }
+
+  private int bitField0_;
+  public static final int STATUS_FIELD_NUMBER = 1;
+  private int status_;
+  /**
+   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * @return The enum numeric value on the wire for status.
+   */
+  @java.lang.Override public int getStatusValue() {
+    return status_;
+  }
+  /**
+   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * @return The status.
+   */
+  @java.lang.Override public io.channel.api.proto.GetGreetingResponse.Status getStatus() {
+    @SuppressWarnings("deprecation")
+    io.channel.api.proto.GetGreetingResponse.Status result = io.channel.api.proto.GetGreetingResponse.Status.valueOf(status_);
+    return result == null ? io.channel.api.proto.GetGreetingResponse.Status.UNRECOGNIZED : result;
+  }
+
+  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 2;
   private volatile java.lang.Object guideVoiceUrl_;
   /**
-   * <code>string guide_voice_url = 1;</code>
+   * <code>optional string guide_voice_url = 2;</code>
+   * @return Whether the guideVoiceUrl field is set.
+   */
+  @java.lang.Override
+  public boolean hasGuideVoiceUrl() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <code>optional string guide_voice_url = 2;</code>
    * @return The guideVoiceUrl.
    */
   @java.lang.Override
@@ -107,7 +268,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string guide_voice_url = 1;</code>
+   * <code>optional string guide_voice_url = 2;</code>
    * @return The bytes for guideVoiceUrl.
    */
   @java.lang.Override
@@ -139,8 +300,11 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, guideVoiceUrl_);
+    if (status_ != io.channel.api.proto.GetGreetingResponse.Status.GREETING.getNumber()) {
+      output.writeEnum(1, status_);
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, guideVoiceUrl_);
     }
     unknownFields.writeTo(output);
   }
@@ -151,8 +315,12 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, guideVoiceUrl_);
+    if (status_ != io.channel.api.proto.GetGreetingResponse.Status.GREETING.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(1, status_);
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, guideVoiceUrl_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -169,8 +337,12 @@ private static final long serialVersionUID = 0L;
     }
     io.channel.api.proto.GetGreetingResponse other = (io.channel.api.proto.GetGreetingResponse) obj;
 
-    if (!getGuideVoiceUrl()
-        .equals(other.getGuideVoiceUrl())) return false;
+    if (status_ != other.status_) return false;
+    if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
+    if (hasGuideVoiceUrl()) {
+      if (!getGuideVoiceUrl()
+          .equals(other.getGuideVoiceUrl())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -182,8 +354,12 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
-    hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    hash = (37 * hash) + STATUS_FIELD_NUMBER;
+    hash = (53 * hash) + status_;
+    if (hasGuideVoiceUrl()) {
+      hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
+      hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -317,8 +493,10 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      guideVoiceUrl_ = "";
+      status_ = 0;
 
+      guideVoiceUrl_ = "";
+      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -345,7 +523,14 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.channel.api.proto.GetGreetingResponse buildPartial() {
       io.channel.api.proto.GetGreetingResponse result = new io.channel.api.proto.GetGreetingResponse(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      result.status_ = status_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        to_bitField0_ |= 0x00000001;
+      }
       result.guideVoiceUrl_ = guideVoiceUrl_;
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -394,7 +579,11 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(io.channel.api.proto.GetGreetingResponse other) {
       if (other == io.channel.api.proto.GetGreetingResponse.getDefaultInstance()) return this;
-      if (!other.getGuideVoiceUrl().isEmpty()) {
+      if (other.status_ != 0) {
+        setStatusValue(other.getStatusValue());
+      }
+      if (other.hasGuideVoiceUrl()) {
+        bitField0_ |= 0x00000001;
         guideVoiceUrl_ = other.guideVoiceUrl_;
         onChanged();
       }
@@ -426,10 +615,72 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
+
+    private int status_ = 0;
+    /**
+     * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+     * @return The enum numeric value on the wire for status.
+     */
+    @java.lang.Override public int getStatusValue() {
+      return status_;
+    }
+    /**
+     * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+     * @param value The enum numeric value on the wire for status to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStatusValue(int value) {
+      
+      status_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+     * @return The status.
+     */
+    @java.lang.Override
+    public io.channel.api.proto.GetGreetingResponse.Status getStatus() {
+      @SuppressWarnings("deprecation")
+      io.channel.api.proto.GetGreetingResponse.Status result = io.channel.api.proto.GetGreetingResponse.Status.valueOf(status_);
+      return result == null ? io.channel.api.proto.GetGreetingResponse.Status.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+     * @param value The status to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStatus(io.channel.api.proto.GetGreetingResponse.Status value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      
+      status_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearStatus() {
+      
+      status_ = 0;
+      onChanged();
+      return this;
+    }
 
     private java.lang.Object guideVoiceUrl_ = "";
     /**
-     * <code>string guide_voice_url = 1;</code>
+     * <code>optional string guide_voice_url = 2;</code>
+     * @return Whether the guideVoiceUrl field is set.
+     */
+    public boolean hasGuideVoiceUrl() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <code>optional string guide_voice_url = 2;</code>
      * @return The guideVoiceUrl.
      */
     public java.lang.String getGuideVoiceUrl() {
@@ -445,7 +696,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string guide_voice_url = 1;</code>
+     * <code>optional string guide_voice_url = 2;</code>
      * @return The bytes for guideVoiceUrl.
      */
     public com.google.protobuf.ByteString
@@ -462,7 +713,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string guide_voice_url = 1;</code>
+     * <code>optional string guide_voice_url = 2;</code>
      * @param value The guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -471,23 +722,23 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+  bitField0_ |= 0x00000001;
       guideVoiceUrl_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string guide_voice_url = 1;</code>
+     * <code>optional string guide_voice_url = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearGuideVoiceUrl() {
-      
+      bitField0_ = (bitField0_ & ~0x00000001);
       guideVoiceUrl_ = getDefaultInstance().getGuideVoiceUrl();
       onChanged();
       return this;
     }
     /**
-     * <code>string guide_voice_url = 1;</code>
+     * <code>optional string guide_voice_url = 2;</code>
      * @param value The bytes for guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -497,7 +748,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+      bitField0_ |= 0x00000001;
       guideVoiceUrl_ = value;
       onChanged();
       return this;

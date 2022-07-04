@@ -8,12 +8,28 @@ public interface GetGreetingResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string guide_voice_url = 1;</code>
+   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * @return The enum numeric value on the wire for status.
+   */
+  int getStatusValue();
+  /**
+   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * @return The status.
+   */
+  io.channel.api.proto.GetGreetingResponse.Status getStatus();
+
+  /**
+   * <code>optional string guide_voice_url = 2;</code>
+   * @return Whether the guideVoiceUrl field is set.
+   */
+  boolean hasGuideVoiceUrl();
+  /**
+   * <code>optional string guide_voice_url = 2;</code>
    * @return The guideVoiceUrl.
    */
   java.lang.String getGuideVoiceUrl();
   /**
-   * <code>string guide_voice_url = 1;</code>
+   * <code>optional string guide_voice_url = 2;</code>
    * @return The bytes for guideVoiceUrl.
    */
   com.google.protobuf.ByteString

@@ -138,5 +138,11 @@ message HangUpMeetByUserRequest {
 }
 
 message GetGreetingResponse {
-  string guide_voice_url = 1;
+  Status status = 1;
+  optional string guide_voice_url = 2;
+  enum Status {
+	  GREETING = 0;
+	  NOT_IN_OPERATION = 1;
+	  NOT_CONNECTED = 2; // 번호가 매핑되지 않은 경우
+  }
 }
