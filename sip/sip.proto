@@ -9,6 +9,8 @@ service Sip {
   }
   rpc AcceptCall(SipRequest) returns (SipResponse) {
   }
+  rpc DenyCall(SipRequest) returns (SipResponse) {
+  }
   rpc CancelCall(SipRequest) returns (SipResponse) {
   }
   rpc ByeCall(SipRequest) returns (SipResponse) {
@@ -17,11 +19,10 @@ service Sip {
 
 message SipRequest {
   string carrier = 1;
-  string contact = 2;
-  string callId = 3;
-  string from = 4;
-  string to = 5;
-  optional string sdp = 6;
+  string callId = 2;
+  string from = 3;
+  string to = 4;
+  optional string sdp = 5;
 }
 
 message SipResponse {
