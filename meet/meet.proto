@@ -17,7 +17,7 @@ service MeetService {
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
   rpc CreateMeetRecord(CreateMeetRecordRequest) returns (BareResponse);
-  rpc GetGreeting(GetGreetingRequest) returns (GetGreetingResponse);
+  rpc FindGreeting(FindGreetingRequest) returns (FindGreetingResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
 }
@@ -82,7 +82,7 @@ message HangUpMeetByManagerRequest {
   string meet_id = 2;
 }
 
-message GetGreetingRequest {
+message FindGreetingRequest {
   string to = 1;
 }
 
@@ -137,7 +137,7 @@ message HangUpMeetByUserRequest {
   string meet_id = 2;
 }
 
-message GetGreetingResponse {
+message FindGreetingResponse {
   Status status = 1;
   optional string guide_voice_url = 2;
   enum Status {

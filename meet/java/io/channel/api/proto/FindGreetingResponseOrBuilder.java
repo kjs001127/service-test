@@ -3,20 +3,20 @@
 
 package io.channel.api.proto;
 
-public interface GetGreetingResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.GetGreetingResponse)
+public interface FindGreetingResponseOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.FindGreetingResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * <code>.meet.FindGreetingResponse.Status status = 1;</code>
    * @return The enum numeric value on the wire for status.
    */
   int getStatusValue();
   /**
-   * <code>.meet.GetGreetingResponse.Status status = 1;</code>
+   * <code>.meet.FindGreetingResponse.Status status = 1;</code>
    * @return The status.
    */
-  io.channel.api.proto.GetGreetingResponse.Status getStatus();
+  io.channel.api.proto.FindGreetingResponse.Status getStatus();
 
   /**
    * <code>optional string guide_voice_url = 2;</code>
