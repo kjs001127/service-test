@@ -20,40 +20,29 @@ public interface TerminateMeetRequestOrBuilder extends
       getMeetIdBytes();
 
   /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The enum numeric value on the wire for code.
-   */
-  int getCodeValue();
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The code.
-   */
-  io.channel.api.proto.CloseMeetCode getCode();
-
-  /**
-   * <code>string channel_id = 3;</code>
+   * <code>string channel_id = 2;</code>
    * @return The channelId.
    */
   java.lang.String getChannelId();
   /**
-   * <code>string channel_id = 3;</code>
+   * <code>string channel_id = 2;</code>
    * @return The bytes for channelId.
    */
   com.google.protobuf.ByteString
       getChannelIdBytes();
 
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return Whether the guideVoiceUrl field is set.
    */
   boolean hasGuideVoiceUrl();
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return The guideVoiceUrl.
    */
   java.lang.String getGuideVoiceUrl();
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return The bytes for guideVoiceUrl.
    */
   com.google.protobuf.ByteString

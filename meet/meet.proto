@@ -22,12 +22,6 @@ service MeetService {
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
 }
 
-enum CloseMeetCode {
-  COMPLETE = 0;
-  NOT_IN_OPERATION = 1;
-  MISSED = 2;
-}
-
 enum ResponseCode {
   SUCCESS = 0; // 200
   BAD_REQUEST = 1; // 400
@@ -107,7 +101,6 @@ message InboundMeetResponse {
   ResponseCode response_code = 1;
   string meet_id = 2;
   Peer peer = 3;
-  optional string guide_voice_url = 4;
 }
 
 message PrivateMeetRequest {
@@ -127,9 +120,8 @@ message JoinMeetByUserResponse {
 
 message TerminateMeetRequest {
   string meet_id = 1;
-  CloseMeetCode code = 2;
-  string channel_id = 3;
-  optional string guide_voice_url = 4;
+  string channel_id = 2;
+  optional string guide_voice_url = 3;
 }
 
 message HangUpMeetByUserRequest {
@@ -138,11 +130,6 @@ message HangUpMeetByUserRequest {
 }
 
 message FindGreetingResponse {
-  Status status = 1;
-  optional string guide_voice_url = 2;
-  enum Status {
-	  GREETING = 0;
-	  NOT_IN_OPERATION = 1;
-	  NOT_CONNECTED = 2; // 번호가 매핑되지 않은 경우
-  }
+  bool is_meet_available = 1;
+  string guide_voice_url = 2;
 }

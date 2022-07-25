@@ -17,7 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private TerminateMeetRequest() {
     meetId_ = "";
-    code_ = 0;
     channelId_ = "";
     guideVoiceUrl_ = "";
   }
@@ -59,19 +58,13 @@ private static final long serialVersionUID = 0L;
             meetId_ = s;
             break;
           }
-          case 16: {
-            int rawValue = input.readEnum();
-
-            code_ = rawValue;
-            break;
-          }
-          case 26: {
+          case 18: {
             java.lang.String s = input.readStringRequireUtf8();
 
             channelId_ = s;
             break;
           }
-          case 34: {
+          case 26: {
             java.lang.String s = input.readStringRequireUtf8();
             bitField0_ |= 0x00000001;
             guideVoiceUrl_ = s;
@@ -148,29 +141,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int CODE_FIELD_NUMBER = 2;
-  private int code_;
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The enum numeric value on the wire for code.
-   */
-  @java.lang.Override public int getCodeValue() {
-    return code_;
-  }
-  /**
-   * <code>.meet.CloseMeetCode code = 2;</code>
-   * @return The code.
-   */
-  @java.lang.Override public io.channel.api.proto.CloseMeetCode getCode() {
-    @SuppressWarnings("deprecation")
-    io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-    return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-  }
-
-  public static final int CHANNEL_ID_FIELD_NUMBER = 3;
+  public static final int CHANNEL_ID_FIELD_NUMBER = 2;
   private volatile java.lang.Object channelId_;
   /**
-   * <code>string channel_id = 3;</code>
+   * <code>string channel_id = 2;</code>
    * @return The channelId.
    */
   @java.lang.Override
@@ -187,7 +161,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string channel_id = 3;</code>
+   * <code>string channel_id = 2;</code>
    * @return The bytes for channelId.
    */
   @java.lang.Override
@@ -205,10 +179,10 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 4;
+  public static final int GUIDE_VOICE_URL_FIELD_NUMBER = 3;
   private volatile java.lang.Object guideVoiceUrl_;
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return Whether the guideVoiceUrl field is set.
    */
   @java.lang.Override
@@ -216,7 +190,7 @@ private static final long serialVersionUID = 0L;
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return The guideVoiceUrl.
    */
   @java.lang.Override
@@ -233,7 +207,7 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>optional string guide_voice_url = 4;</code>
+   * <code>optional string guide_voice_url = 3;</code>
    * @return The bytes for guideVoiceUrl.
    */
   @java.lang.Override
@@ -268,14 +242,11 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, meetId_);
     }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
-      output.writeEnum(2, code_);
-    }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(channelId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, channelId_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, channelId_);
     }
     if (((bitField0_ & 0x00000001) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, guideVoiceUrl_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, guideVoiceUrl_);
     }
     unknownFields.writeTo(output);
   }
@@ -289,15 +260,11 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, meetId_);
     }
-    if (code_ != io.channel.api.proto.CloseMeetCode.COMPLETE.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(2, code_);
-    }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(channelId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, channelId_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, channelId_);
     }
     if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, guideVoiceUrl_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, guideVoiceUrl_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -316,7 +283,6 @@ private static final long serialVersionUID = 0L;
 
     if (!getMeetId()
         .equals(other.getMeetId())) return false;
-    if (code_ != other.code_) return false;
     if (!getChannelId()
         .equals(other.getChannelId())) return false;
     if (hasGuideVoiceUrl() != other.hasGuideVoiceUrl()) return false;
@@ -337,8 +303,6 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
     hash = (53 * hash) + getMeetId().hashCode();
-    hash = (37 * hash) + CODE_FIELD_NUMBER;
-    hash = (53 * hash) + code_;
     hash = (37 * hash) + CHANNEL_ID_FIELD_NUMBER;
     hash = (53 * hash) + getChannelId().hashCode();
     if (hasGuideVoiceUrl()) {
@@ -480,8 +444,6 @@ private static final long serialVersionUID = 0L;
       super.clear();
       meetId_ = "";
 
-      code_ = 0;
-
       channelId_ = "";
 
       guideVoiceUrl_ = "";
@@ -515,7 +477,6 @@ private static final long serialVersionUID = 0L;
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       result.meetId_ = meetId_;
-      result.code_ = code_;
       result.channelId_ = channelId_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         to_bitField0_ |= 0x00000001;
@@ -573,9 +534,6 @@ private static final long serialVersionUID = 0L;
       if (!other.getMeetId().isEmpty()) {
         meetId_ = other.meetId_;
         onChanged();
-      }
-      if (other.code_ != 0) {
-        setCodeValue(other.getCodeValue());
       }
       if (!other.getChannelId().isEmpty()) {
         channelId_ = other.channelId_;
@@ -692,63 +650,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private int code_ = 0;
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The enum numeric value on the wire for code.
-     */
-    @java.lang.Override public int getCodeValue() {
-      return code_;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The enum numeric value on the wire for code to set.
-     * @return This builder for chaining.
-     */
-    public Builder setCodeValue(int value) {
-      
-      code_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return The code.
-     */
-    @java.lang.Override
-    public io.channel.api.proto.CloseMeetCode getCode() {
-      @SuppressWarnings("deprecation")
-      io.channel.api.proto.CloseMeetCode result = io.channel.api.proto.CloseMeetCode.valueOf(code_);
-      return result == null ? io.channel.api.proto.CloseMeetCode.UNRECOGNIZED : result;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @param value The code to set.
-     * @return This builder for chaining.
-     */
-    public Builder setCode(io.channel.api.proto.CloseMeetCode value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      
-      code_ = value.getNumber();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>.meet.CloseMeetCode code = 2;</code>
-     * @return This builder for chaining.
-     */
-    public Builder clearCode() {
-      
-      code_ = 0;
-      onChanged();
-      return this;
-    }
-
     private java.lang.Object channelId_ = "";
     /**
-     * <code>string channel_id = 3;</code>
+     * <code>string channel_id = 2;</code>
      * @return The channelId.
      */
     public java.lang.String getChannelId() {
@@ -764,7 +668,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string channel_id = 3;</code>
+     * <code>string channel_id = 2;</code>
      * @return The bytes for channelId.
      */
     public com.google.protobuf.ByteString
@@ -781,7 +685,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string channel_id = 3;</code>
+     * <code>string channel_id = 2;</code>
      * @param value The channelId to set.
      * @return This builder for chaining.
      */
@@ -796,7 +700,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string channel_id = 3;</code>
+     * <code>string channel_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearChannelId() {
@@ -806,7 +710,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string channel_id = 3;</code>
+     * <code>string channel_id = 2;</code>
      * @param value The bytes for channelId to set.
      * @return This builder for chaining.
      */
@@ -824,14 +728,14 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object guideVoiceUrl_ = "";
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @return Whether the guideVoiceUrl field is set.
      */
     public boolean hasGuideVoiceUrl() {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @return The guideVoiceUrl.
      */
     public java.lang.String getGuideVoiceUrl() {
@@ -847,7 +751,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @return The bytes for guideVoiceUrl.
      */
     public com.google.protobuf.ByteString
@@ -864,7 +768,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @param value The guideVoiceUrl to set.
      * @return This builder for chaining.
      */
@@ -879,7 +783,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearGuideVoiceUrl() {
@@ -889,7 +793,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>optional string guide_voice_url = 4;</code>
+     * <code>optional string guide_voice_url = 3;</code>
      * @param value The bytes for guideVoiceUrl to set.
      * @return This builder for chaining.
      */

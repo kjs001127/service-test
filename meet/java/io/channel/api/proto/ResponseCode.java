@@ -169,7 +169,7 @@ public enum ResponseCode
   }
   public static final com.google.protobuf.Descriptors.EnumDescriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.getDescriptor().getEnumTypes().get(1);
+    return io.channel.api.proto.Meet.getDescriptor().getEnumTypes().get(0);
   }
 
   private static final ResponseCode[] VALUES = values();
