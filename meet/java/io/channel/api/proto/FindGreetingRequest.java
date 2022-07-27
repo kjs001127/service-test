@@ -17,6 +17,7 @@ private static final long serialVersionUID = 0L;
   }
   private FindGreetingRequest() {
     to_ = "";
+    from_ = "";
   }
 
   @java.lang.Override
@@ -53,6 +54,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             to_ = s;
+            break;
+          }
+          case 18: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            from_ = s;
             break;
           }
           default: {
@@ -125,6 +132,44 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int FROM_FIELD_NUMBER = 2;
+  private volatile java.lang.Object from_;
+  /**
+   * <code>string from = 2;</code>
+   * @return The from.
+   */
+  @java.lang.Override
+  public java.lang.String getFrom() {
+    java.lang.Object ref = from_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      from_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string from = 2;</code>
+   * @return The bytes for from.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getFromBytes() {
+    java.lang.Object ref = from_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      from_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -142,6 +187,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, to_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, from_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -153,6 +201,9 @@ private static final long serialVersionUID = 0L;
     size = 0;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, to_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, from_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -171,6 +222,8 @@ private static final long serialVersionUID = 0L;
 
     if (!getTo()
         .equals(other.getTo())) return false;
+    if (!getFrom()
+        .equals(other.getFrom())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -184,6 +237,8 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + TO_FIELD_NUMBER;
     hash = (53 * hash) + getTo().hashCode();
+    hash = (37 * hash) + FROM_FIELD_NUMBER;
+    hash = (53 * hash) + getFrom().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -319,6 +374,8 @@ private static final long serialVersionUID = 0L;
       super.clear();
       to_ = "";
 
+      from_ = "";
+
       return this;
     }
 
@@ -346,6 +403,7 @@ private static final long serialVersionUID = 0L;
     public io.channel.api.proto.FindGreetingRequest buildPartial() {
       io.channel.api.proto.FindGreetingRequest result = new io.channel.api.proto.FindGreetingRequest(this);
       result.to_ = to_;
+      result.from_ = from_;
       onBuilt();
       return result;
     }
@@ -396,6 +454,10 @@ private static final long serialVersionUID = 0L;
       if (other == io.channel.api.proto.FindGreetingRequest.getDefaultInstance()) return this;
       if (!other.getTo().isEmpty()) {
         to_ = other.to_;
+        onChanged();
+      }
+      if (!other.getFrom().isEmpty()) {
+        from_ = other.from_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -499,6 +561,82 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       to_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object from_ = "";
+    /**
+     * <code>string from = 2;</code>
+     * @return The from.
+     */
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string from = 2;</code>
+     * @return The bytes for from.
+     */
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string from = 2;</code>
+     * @param value The from to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFrom(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      from_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string from = 2;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFrom() {
+      
+      from_ = getDefaultInstance().getFrom();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string from = 2;</code>
+     * @param value The bytes for from to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFromBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      from_ = value;
       onChanged();
       return this;
     }

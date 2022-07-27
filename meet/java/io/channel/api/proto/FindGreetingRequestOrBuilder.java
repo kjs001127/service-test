@@ -18,4 +18,16 @@ public interface FindGreetingRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getToBytes();
+
+  /**
+   * <code>string from = 2;</code>
+   * @return The from.
+   */
+  java.lang.String getFrom();
+  /**
+   * <code>string from = 2;</code>
+   * @return The bytes for from.
+   */
+  com.google.protobuf.ByteString
+      getFromBytes();
 }
