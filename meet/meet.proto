@@ -17,7 +17,7 @@ service MeetService {
   // sfu -> dw
   rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
   rpc CreateMeetRecord(CreateMeetRecordRequest) returns (BareResponse);
-  rpc FindGreeting(FindGreetingRequest) returns (FindGreetingResponse);
+  rpc InitializeInboundMeet(InitializeInboundMeetRequest) returns (InitializeInboundMeetResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
 }
@@ -64,6 +64,7 @@ message InboundMeetRequest {
   string carrier = 3;
   string sfu_server_id = 4;
   string device_id = 5;
+  string meet_id = 6;
 }
 
 message JoinMeetByUserRequest {
@@ -76,7 +77,7 @@ message HangUpMeetByManagerRequest {
   string meet_id = 2;
 }
 
-message FindGreetingRequest {
+message InitializeInboundMeetRequest {
   string to = 1;
   string from = 2;
 }
@@ -130,7 +131,8 @@ message HangUpMeetByUserRequest {
   string meet_id = 2;
 }
 
-message FindGreetingResponse {
+message InitializeInboundMeetResponse {
   bool is_meet_available = 1;
   string guide_voice_url = 2;
+  string meet_id = 3;
 }

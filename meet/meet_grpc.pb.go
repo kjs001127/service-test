@@ -31,7 +31,7 @@ type MeetServiceClient interface {
 	// sfu -> dw
 	CreateInboundMeet(ctx context.Context, in *InboundMeetRequest, opts ...grpc.CallOption) (*InboundMeetResponse, error)
 	CreateMeetRecord(ctx context.Context, in *CreateMeetRecordRequest, opts ...grpc.CallOption) (*BareResponse, error)
-	FindGreeting(ctx context.Context, in *FindGreetingRequest, opts ...grpc.CallOption) (*FindGreetingResponse, error)
+	InitializeInboundMeet(ctx context.Context, in *InitializeInboundMeetRequest, opts ...grpc.CallOption) (*InitializeInboundMeetResponse, error)
 	JoinMeetByUser(ctx context.Context, in *JoinMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
 	HangUpMeetByUser(ctx context.Context, in *HangUpMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
 }
@@ -107,9 +107,9 @@ func (c *meetServiceClient) CreateMeetRecord(ctx context.Context, in *CreateMeet
 	return out, nil
 }
 
-func (c *meetServiceClient) FindGreeting(ctx context.Context, in *FindGreetingRequest, opts ...grpc.CallOption) (*FindGreetingResponse, error) {
-	out := new(FindGreetingResponse)
-	err := c.cc.Invoke(ctx, "/meet.MeetService/FindGreeting", in, out, opts...)
+func (c *meetServiceClient) InitializeInboundMeet(ctx context.Context, in *InitializeInboundMeetRequest, opts ...grpc.CallOption) (*InitializeInboundMeetResponse, error) {
+	out := new(InitializeInboundMeetResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/InitializeInboundMeet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ type MeetServiceServer interface {
 	// sfu -> dw
 	CreateInboundMeet(context.Context, *InboundMeetRequest) (*InboundMeetResponse, error)
 	CreateMeetRecord(context.Context, *CreateMeetRecordRequest) (*BareResponse, error)
-	FindGreeting(context.Context, *FindGreetingRequest) (*FindGreetingResponse, error)
+	InitializeInboundMeet(context.Context, *InitializeInboundMeetRequest) (*InitializeInboundMeetResponse, error)
 	JoinMeetByUser(context.Context, *JoinMeetByUserRequest) (*BareResponse, error)
 	HangUpMeetByUser(context.Context, *HangUpMeetByUserRequest) (*BareResponse, error)
 	mustEmbedUnimplementedMeetServiceServer()
@@ -178,8 +178,8 @@ func (UnimplementedMeetServiceServer) CreateInboundMeet(context.Context, *Inboun
 func (UnimplementedMeetServiceServer) CreateMeetRecord(context.Context, *CreateMeetRecordRequest) (*BareResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMeetRecord not implemented")
 }
-func (UnimplementedMeetServiceServer) FindGreeting(context.Context, *FindGreetingRequest) (*FindGreetingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindGreeting not implemented")
+func (UnimplementedMeetServiceServer) InitializeInboundMeet(context.Context, *InitializeInboundMeetRequest) (*InitializeInboundMeetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InitializeInboundMeet not implemented")
 }
 func (UnimplementedMeetServiceServer) JoinMeetByUser(context.Context, *JoinMeetByUserRequest) (*BareResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JoinMeetByUser not implemented")
@@ -326,20 +326,20 @@ func _MeetService_CreateMeetRecord_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MeetService_FindGreeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FindGreetingRequest)
+func _MeetService_InitializeInboundMeet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitializeInboundMeetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MeetServiceServer).FindGreeting(ctx, in)
+		return srv.(MeetServiceServer).InitializeInboundMeet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/meet.MeetService/FindGreeting",
+		FullMethod: "/meet.MeetService/InitializeInboundMeet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeetServiceServer).FindGreeting(ctx, req.(*FindGreetingRequest))
+		return srv.(MeetServiceServer).InitializeInboundMeet(ctx, req.(*InitializeInboundMeetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -416,8 +416,8 @@ var MeetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MeetService_CreateMeetRecord_Handler,
 		},
 		{
-			MethodName: "FindGreeting",
-			Handler:    _MeetService_FindGreeting_Handler,
+			MethodName: "InitializeInboundMeet",
+			Handler:    _MeetService_InitializeInboundMeet_Handler,
 		},
 		{
 			MethodName: "JoinMeetByUser",

@@ -4,18 +4,18 @@
 package io.channel.api.proto;
 
 /**
- * Protobuf type {@code meet.FindGreetingRequest}
+ * Protobuf type {@code meet.InitializeInboundMeetRequest}
  */
-public final class FindGreetingRequest extends
+public final class InitializeInboundMeetRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:meet.FindGreetingRequest)
-    FindGreetingRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:meet.InitializeInboundMeetRequest)
+    InitializeInboundMeetRequestOrBuilder {
 private static final long serialVersionUID = 0L;
-  // Use FindGreetingRequest.newBuilder() to construct.
-  private FindGreetingRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use InitializeInboundMeetRequest.newBuilder() to construct.
+  private InitializeInboundMeetRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private FindGreetingRequest() {
+  private InitializeInboundMeetRequest() {
     to_ = "";
     from_ = "";
   }
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
-    return new FindGreetingRequest();
+    return new InitializeInboundMeetRequest();
   }
 
   @java.lang.Override
@@ -32,7 +32,7 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private FindGreetingRequest(
+  private InitializeInboundMeetRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -83,15 +83,15 @@ private static final long serialVersionUID = 0L;
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return io.channel.api.proto.Meet.internal_static_meet_FindGreetingRequest_descriptor;
+    return io.channel.api.proto.Meet.internal_static_meet_InitializeInboundMeetRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return io.channel.api.proto.Meet.internal_static_meet_FindGreetingRequest_fieldAccessorTable
+    return io.channel.api.proto.Meet.internal_static_meet_InitializeInboundMeetRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            io.channel.api.proto.FindGreetingRequest.class, io.channel.api.proto.FindGreetingRequest.Builder.class);
+            io.channel.api.proto.InitializeInboundMeetRequest.class, io.channel.api.proto.InitializeInboundMeetRequest.Builder.class);
   }
 
   public static final int TO_FIELD_NUMBER = 1;
@@ -215,10 +215,10 @@ private static final long serialVersionUID = 0L;
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof io.channel.api.proto.FindGreetingRequest)) {
+    if (!(obj instanceof io.channel.api.proto.InitializeInboundMeetRequest)) {
       return super.equals(obj);
     }
-    io.channel.api.proto.FindGreetingRequest other = (io.channel.api.proto.FindGreetingRequest) obj;
+    io.channel.api.proto.InitializeInboundMeetRequest other = (io.channel.api.proto.InitializeInboundMeetRequest) obj;
 
     if (!getTo()
         .equals(other.getTo())) return false;
@@ -244,69 +244,69 @@ private static final long serialVersionUID = 0L;
     return hash;
   }
 
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(byte[] data)
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(java.io.InputStream input)
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseDelimitedFrom(java.io.InputStream input)
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseDelimitedFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static io.channel.api.proto.FindGreetingRequest parseFrom(
+  public static io.channel.api.proto.InitializeInboundMeetRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -319,7 +319,7 @@ private static final long serialVersionUID = 0L;
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(io.channel.api.proto.FindGreetingRequest prototype) {
+  public static Builder newBuilder(io.channel.api.proto.InitializeInboundMeetRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   @java.lang.Override
@@ -335,26 +335,26 @@ private static final long serialVersionUID = 0L;
     return builder;
   }
   /**
-   * Protobuf type {@code meet.FindGreetingRequest}
+   * Protobuf type {@code meet.InitializeInboundMeetRequest}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:meet.FindGreetingRequest)
-      io.channel.api.proto.FindGreetingRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:meet.InitializeInboundMeetRequest)
+      io.channel.api.proto.InitializeInboundMeetRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.channel.api.proto.Meet.internal_static_meet_FindGreetingRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_InitializeInboundMeetRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.channel.api.proto.Meet.internal_static_meet_FindGreetingRequest_fieldAccessorTable
+      return io.channel.api.proto.Meet.internal_static_meet_InitializeInboundMeetRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              io.channel.api.proto.FindGreetingRequest.class, io.channel.api.proto.FindGreetingRequest.Builder.class);
+              io.channel.api.proto.InitializeInboundMeetRequest.class, io.channel.api.proto.InitializeInboundMeetRequest.Builder.class);
     }
 
-    // Construct using io.channel.api.proto.FindGreetingRequest.newBuilder()
+    // Construct using io.channel.api.proto.InitializeInboundMeetRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -382,17 +382,17 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return io.channel.api.proto.Meet.internal_static_meet_FindGreetingRequest_descriptor;
+      return io.channel.api.proto.Meet.internal_static_meet_InitializeInboundMeetRequest_descriptor;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.FindGreetingRequest getDefaultInstanceForType() {
-      return io.channel.api.proto.FindGreetingRequest.getDefaultInstance();
+    public io.channel.api.proto.InitializeInboundMeetRequest getDefaultInstanceForType() {
+      return io.channel.api.proto.InitializeInboundMeetRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public io.channel.api.proto.FindGreetingRequest build() {
-      io.channel.api.proto.FindGreetingRequest result = buildPartial();
+    public io.channel.api.proto.InitializeInboundMeetRequest build() {
+      io.channel.api.proto.InitializeInboundMeetRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -400,8 +400,8 @@ private static final long serialVersionUID = 0L;
     }
 
     @java.lang.Override
-    public io.channel.api.proto.FindGreetingRequest buildPartial() {
-      io.channel.api.proto.FindGreetingRequest result = new io.channel.api.proto.FindGreetingRequest(this);
+    public io.channel.api.proto.InitializeInboundMeetRequest buildPartial() {
+      io.channel.api.proto.InitializeInboundMeetRequest result = new io.channel.api.proto.InitializeInboundMeetRequest(this);
       result.to_ = to_;
       result.from_ = from_;
       onBuilt();
@@ -442,16 +442,16 @@ private static final long serialVersionUID = 0L;
     }
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof io.channel.api.proto.FindGreetingRequest) {
-        return mergeFrom((io.channel.api.proto.FindGreetingRequest)other);
+      if (other instanceof io.channel.api.proto.InitializeInboundMeetRequest) {
+        return mergeFrom((io.channel.api.proto.InitializeInboundMeetRequest)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(io.channel.api.proto.FindGreetingRequest other) {
-      if (other == io.channel.api.proto.FindGreetingRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(io.channel.api.proto.InitializeInboundMeetRequest other) {
+      if (other == io.channel.api.proto.InitializeInboundMeetRequest.getDefaultInstance()) return this;
       if (!other.getTo().isEmpty()) {
         to_ = other.to_;
         onChanged();
@@ -475,11 +475,11 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      io.channel.api.proto.FindGreetingRequest parsedMessage = null;
+      io.channel.api.proto.InitializeInboundMeetRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (io.channel.api.proto.FindGreetingRequest) e.getUnfinishedMessage();
+        parsedMessage = (io.channel.api.proto.InitializeInboundMeetRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -653,41 +653,41 @@ private static final long serialVersionUID = 0L;
     }
 
 
-    // @@protoc_insertion_point(builder_scope:meet.FindGreetingRequest)
+    // @@protoc_insertion_point(builder_scope:meet.InitializeInboundMeetRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:meet.FindGreetingRequest)
-  private static final io.channel.api.proto.FindGreetingRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:meet.InitializeInboundMeetRequest)
+  private static final io.channel.api.proto.InitializeInboundMeetRequest DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new io.channel.api.proto.FindGreetingRequest();
+    DEFAULT_INSTANCE = new io.channel.api.proto.InitializeInboundMeetRequest();
   }
 
-  public static io.channel.api.proto.FindGreetingRequest getDefaultInstance() {
+  public static io.channel.api.proto.InitializeInboundMeetRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<FindGreetingRequest>
-      PARSER = new com.google.protobuf.AbstractParser<FindGreetingRequest>() {
+  private static final com.google.protobuf.Parser<InitializeInboundMeetRequest>
+      PARSER = new com.google.protobuf.AbstractParser<InitializeInboundMeetRequest>() {
     @java.lang.Override
-    public FindGreetingRequest parsePartialFrom(
+    public InitializeInboundMeetRequest parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new FindGreetingRequest(input, extensionRegistry);
+      return new InitializeInboundMeetRequest(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<FindGreetingRequest> parser() {
+  public static com.google.protobuf.Parser<InitializeInboundMeetRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<FindGreetingRequest> getParserForType() {
+  public com.google.protobuf.Parser<InitializeInboundMeetRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public io.channel.api.proto.FindGreetingRequest getDefaultInstanceForType() {
+  public io.channel.api.proto.InitializeInboundMeetRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

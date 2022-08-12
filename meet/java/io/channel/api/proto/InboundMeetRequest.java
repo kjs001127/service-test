@@ -21,6 +21,7 @@ private static final long serialVersionUID = 0L;
     carrier_ = "";
     sfuServerId_ = "";
     deviceId_ = "";
+    meetId_ = "";
   }
 
   @java.lang.Override
@@ -81,6 +82,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             deviceId_ = s;
+            break;
+          }
+          case 50: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            meetId_ = s;
             break;
           }
           default: {
@@ -305,6 +312,44 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int MEET_ID_FIELD_NUMBER = 6;
+  private volatile java.lang.Object meetId_;
+  /**
+   * <code>string meet_id = 6;</code>
+   * @return The meetId.
+   */
+  @java.lang.Override
+  public java.lang.String getMeetId() {
+    java.lang.Object ref = meetId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      meetId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string meet_id = 6;</code>
+   * @return The bytes for meetId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getMeetIdBytes() {
+    java.lang.Object ref = meetId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      meetId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -334,6 +379,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 5, deviceId_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, meetId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -357,6 +405,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(deviceId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, deviceId_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(meetId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, meetId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -383,6 +434,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getSfuServerId())) return false;
     if (!getDeviceId()
         .equals(other.getDeviceId())) return false;
+    if (!getMeetId()
+        .equals(other.getMeetId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -404,6 +457,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getSfuServerId().hashCode();
     hash = (37 * hash) + DEVICE_ID_FIELD_NUMBER;
     hash = (53 * hash) + getDeviceId().hashCode();
+    hash = (37 * hash) + MEET_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getMeetId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -547,6 +602,8 @@ private static final long serialVersionUID = 0L;
 
       deviceId_ = "";
 
+      meetId_ = "";
+
       return this;
     }
 
@@ -578,6 +635,7 @@ private static final long serialVersionUID = 0L;
       result.carrier_ = carrier_;
       result.sfuServerId_ = sfuServerId_;
       result.deviceId_ = deviceId_;
+      result.meetId_ = meetId_;
       onBuilt();
       return result;
     }
@@ -644,6 +702,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getDeviceId().isEmpty()) {
         deviceId_ = other.deviceId_;
+        onChanged();
+      }
+      if (!other.getMeetId().isEmpty()) {
+        meetId_ = other.meetId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -1051,6 +1113,82 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       deviceId_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object meetId_ = "";
+    /**
+     * <code>string meet_id = 6;</code>
+     * @return The meetId.
+     */
+    public java.lang.String getMeetId() {
+      java.lang.Object ref = meetId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        meetId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string meet_id = 6;</code>
+     * @return The bytes for meetId.
+     */
+    public com.google.protobuf.ByteString
+        getMeetIdBytes() {
+      java.lang.Object ref = meetId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        meetId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string meet_id = 6;</code>
+     * @param value The meetId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMeetId(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      meetId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string meet_id = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearMeetId() {
+      
+      meetId_ = getDefaultInstance().getMeetId();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string meet_id = 6;</code>
+     * @param value The bytes for meetId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setMeetIdBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      meetId_ = value;
       onChanged();
       return this;
     }

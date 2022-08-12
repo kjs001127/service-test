@@ -66,4 +66,16 @@ public interface InboundMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDeviceIdBytes();
+
+  /**
+   * <code>string meet_id = 6;</code>
+   * @return The meetId.
+   */
+  java.lang.String getMeetId();
+  /**
+   * <code>string meet_id = 6;</code>
+   * @return The bytes for meetId.
+   */
+  com.google.protobuf.ByteString
+      getMeetIdBytes();
 }

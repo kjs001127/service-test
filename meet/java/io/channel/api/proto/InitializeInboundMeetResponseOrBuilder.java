@@ -3,8 +3,8 @@
 
 package io.channel.api.proto;
 
-public interface FindGreetingResponseOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.FindGreetingResponse)
+public interface InitializeInboundMeetResponseOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.InitializeInboundMeetResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -24,4 +24,16 @@ public interface FindGreetingResponseOrBuilder extends
    */
   com.google.protobuf.ByteString
       getGuideVoiceUrlBytes();
+
+  /**
+   * <code>string meet_id = 3;</code>
+   * @return The meetId.
+   */
+  java.lang.String getMeetId();
+  /**
+   * <code>string meet_id = 3;</code>
+   * @return The bytes for meetId.
+   */
+  com.google.protobuf.ByteString
+      getMeetIdBytes();
 }

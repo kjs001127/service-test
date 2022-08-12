@@ -3,8 +3,8 @@
 
 package io.channel.api.proto;
 
-public interface FindGreetingRequestOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:meet.FindGreetingRequest)
+public interface InitializeInboundMeetRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:meet.InitializeInboundMeetRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
