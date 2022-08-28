@@ -25,6 +25,14 @@ grpc:
 		--go-grpc_opt=module=github.com/channel-io/ch-proto \
 		--go-grpc_out=. \
 		sip/sip.proto
+	protoc -I. \
+		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
+		-I${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.7.3 \
+		--go_opt=module=github.com/channel-io/ch-proto \
+		--go_out=. \
+		--go-grpc_opt=module=github.com/channel-io/ch-proto \
+		--go-grpc_out=. \
+		health/health.proto
 # Setup & Install tools
 setupTools:
 	go mod download
