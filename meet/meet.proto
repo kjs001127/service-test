@@ -20,6 +20,7 @@ service MeetService {
   rpc InitializeInboundMeet(InitializeInboundMeetRequest) returns (InitializeInboundMeetResponse);
   rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
   rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
+  rpc RejectMeetByUser(RejectMeetByUserRequest) returns (BareResponse);
 }
 
 enum ResponseCode {
@@ -135,4 +136,9 @@ message InitializeInboundMeetResponse {
   bool is_meet_available = 1;
   string guide_voice_url = 2;
   string meet_id = 3;
+}
+
+message RejectMeetByUserRequest {
+  Person person = 1;
+  string meet_id = 2;
 }

@@ -34,6 +34,7 @@ type MeetServiceClient interface {
 	InitializeInboundMeet(ctx context.Context, in *InitializeInboundMeetRequest, opts ...grpc.CallOption) (*InitializeInboundMeetResponse, error)
 	JoinMeetByUser(ctx context.Context, in *JoinMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
 	HangUpMeetByUser(ctx context.Context, in *HangUpMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
+	RejectMeetByUser(ctx context.Context, in *RejectMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error)
 }
 
 type meetServiceClient struct {
@@ -134,6 +135,15 @@ func (c *meetServiceClient) HangUpMeetByUser(ctx context.Context, in *HangUpMeet
 	return out, nil
 }
 
+func (c *meetServiceClient) RejectMeetByUser(ctx context.Context, in *RejectMeetByUserRequest, opts ...grpc.CallOption) (*BareResponse, error) {
+	out := new(BareResponse)
+	err := c.cc.Invoke(ctx, "/meet.MeetService/RejectMeetByUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MeetServiceServer is the server API for MeetService service.
 // All implementations must embed UnimplementedMeetServiceServer
 // for forward compatibility
@@ -150,6 +160,7 @@ type MeetServiceServer interface {
 	InitializeInboundMeet(context.Context, *InitializeInboundMeetRequest) (*InitializeInboundMeetResponse, error)
 	JoinMeetByUser(context.Context, *JoinMeetByUserRequest) (*BareResponse, error)
 	HangUpMeetByUser(context.Context, *HangUpMeetByUserRequest) (*BareResponse, error)
+	RejectMeetByUser(context.Context, *RejectMeetByUserRequest) (*BareResponse, error)
 	mustEmbedUnimplementedMeetServiceServer()
 }
 
@@ -186,6 +197,9 @@ func (UnimplementedMeetServiceServer) JoinMeetByUser(context.Context, *JoinMeetB
 }
 func (UnimplementedMeetServiceServer) HangUpMeetByUser(context.Context, *HangUpMeetByUserRequest) (*BareResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HangUpMeetByUser not implemented")
+}
+func (UnimplementedMeetServiceServer) RejectMeetByUser(context.Context, *RejectMeetByUserRequest) (*BareResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RejectMeetByUser not implemented")
 }
 func (UnimplementedMeetServiceServer) mustEmbedUnimplementedMeetServiceServer() {}
 
@@ -380,6 +394,24 @@ func _MeetService_HangUpMeetByUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MeetService_RejectMeetByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectMeetByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeetServiceServer).RejectMeetByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/meet.MeetService/RejectMeetByUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeetServiceServer).RejectMeetByUser(ctx, req.(*RejectMeetByUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MeetService_ServiceDesc is the grpc.ServiceDesc for MeetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -426,6 +458,10 @@ var MeetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HangUpMeetByUser",
 			Handler:    _MeetService_HangUpMeetByUser_Handler,
+		},
+		{
+			MethodName: "RejectMeetByUser",
+			Handler:    _MeetService_RejectMeetByUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

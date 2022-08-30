@@ -325,6 +325,37 @@ public final class MeetServiceGrpc {
     return getHangUpMeetByUserMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<io.channel.api.proto.RejectMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getRejectMeetByUserMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RejectMeetByUser",
+      requestType = io.channel.api.proto.RejectMeetByUserRequest.class,
+      responseType = io.channel.api.proto.BareResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.channel.api.proto.RejectMeetByUserRequest,
+      io.channel.api.proto.BareResponse> getRejectMeetByUserMethod() {
+    io.grpc.MethodDescriptor<io.channel.api.proto.RejectMeetByUserRequest, io.channel.api.proto.BareResponse> getRejectMeetByUserMethod;
+    if ((getRejectMeetByUserMethod = MeetServiceGrpc.getRejectMeetByUserMethod) == null) {
+      synchronized (MeetServiceGrpc.class) {
+        if ((getRejectMeetByUserMethod = MeetServiceGrpc.getRejectMeetByUserMethod) == null) {
+          MeetServiceGrpc.getRejectMeetByUserMethod = getRejectMeetByUserMethod =
+              io.grpc.MethodDescriptor.<io.channel.api.proto.RejectMeetByUserRequest, io.channel.api.proto.BareResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RejectMeetByUser"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.RejectMeetByUserRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.channel.api.proto.BareResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new MeetServiceMethodDescriptorSupplier("RejectMeetByUser"))
+              .build();
+        }
+      }
+    }
+    return getRejectMeetByUserMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -449,6 +480,13 @@ public final class MeetServiceGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getHangUpMeetByUserMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void rejectMeetByUser(io.channel.api.proto.RejectMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRejectMeetByUserMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -521,6 +559,13 @@ public final class MeetServiceGrpc {
                 io.channel.api.proto.HangUpMeetByUserRequest,
                 io.channel.api.proto.BareResponse>(
                   this, METHODID_HANG_UP_MEET_BY_USER)))
+          .addMethod(
+            getRejectMeetByUserMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                io.channel.api.proto.RejectMeetByUserRequest,
+                io.channel.api.proto.BareResponse>(
+                  this, METHODID_REJECT_MEET_BY_USER)))
           .build();
     }
   }
@@ -624,6 +669,14 @@ public final class MeetServiceGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getHangUpMeetByUserMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void rejectMeetByUser(io.channel.api.proto.RejectMeetByUserRequest request,
+        io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRejectMeetByUserMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -714,6 +767,13 @@ public final class MeetServiceGrpc {
     public io.channel.api.proto.BareResponse hangUpMeetByUser(io.channel.api.proto.HangUpMeetByUserRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getHangUpMeetByUserMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public io.channel.api.proto.BareResponse rejectMeetByUser(io.channel.api.proto.RejectMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRejectMeetByUserMethod(), getCallOptions(), request);
     }
   }
 
@@ -816,6 +876,14 @@ public final class MeetServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getHangUpMeetByUserMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.channel.api.proto.BareResponse> rejectMeetByUser(
+        io.channel.api.proto.RejectMeetByUserRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRejectMeetByUserMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_OUTBOUND_MEET = 0;
@@ -828,6 +896,7 @@ public final class MeetServiceGrpc {
   private static final int METHODID_INITIALIZE_INBOUND_MEET = 7;
   private static final int METHODID_JOIN_MEET_BY_USER = 8;
   private static final int METHODID_HANG_UP_MEET_BY_USER = 9;
+  private static final int METHODID_REJECT_MEET_BY_USER = 10;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -884,6 +953,10 @@ public final class MeetServiceGrpc {
           break;
         case METHODID_HANG_UP_MEET_BY_USER:
           serviceImpl.hangUpMeetByUser((io.channel.api.proto.HangUpMeetByUserRequest) request,
+              (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
+          break;
+        case METHODID_REJECT_MEET_BY_USER:
+          serviceImpl.rejectMeetByUser((io.channel.api.proto.RejectMeetByUserRequest) request,
               (io.grpc.stub.StreamObserver<io.channel.api.proto.BareResponse>) responseObserver);
           break;
         default:
@@ -957,6 +1030,7 @@ public final class MeetServiceGrpc {
               .addMethod(getInitializeInboundMeetMethod())
               .addMethod(getJoinMeetByUserMethod())
               .addMethod(getHangUpMeetByUserMethod())
+              .addMethod(getRejectMeetByUserMethod())
               .build();
         }
       }

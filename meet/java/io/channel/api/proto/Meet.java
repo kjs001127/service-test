@@ -99,6 +99,11 @@ public final class Meet {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_meet_InitializeInboundMeetResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_meet_RejectMeetByUserRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_meet_RejectMeetByUserRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -145,30 +150,33 @@ public final class Meet {
       "eer\022\017\n\007meet_id\030\002 \001(\t\"d\n\035InitializeInboun" +
       "dMeetResponse\022\031\n\021is_meet_available\030\001 \001(\010" +
       "\022\027\n\017guide_voice_url\030\002 \001(\t\022\017\n\007meet_id\030\003 \001" +
-      "(\t*i\n\014ResponseCode\022\013\n\007SUCCESS\020\000\022\017\n\013BAD_R" +
-      "EQUEST\020\001\022\020\n\014UNAUTHORIZED\020\002\022\r\n\tFORBIDDEN\020" +
-      "\003\022\r\n\tNOT_FOUND\020\004\022\013\n\007UNKNOWN\020\0052\351\005\n\013MeetSe" +
-      "rvice\022C\n\022CreateOutboundMeet\022\031.meet.Outbo" +
-      "undMeetRequest\032\022.meet.BareResponse\022A\n\021Cr" +
-      "eatePrivateMeet\022\030.meet.PrivateMeetReques" +
-      "t\032\022.meet.BareResponse\022K\n\023HangUpMeetByMan" +
-      "ager\022 .meet.HangUpMeetByManagerRequest\032\022" +
-      ".meet.BareResponse\022G\n\021JoinMeetByManager\022" +
-      "\036.meet.JoinMeetByManagerRequest\032\022.meet.B" +
-      "areResponse\022?\n\rTerminateMeet\022\032.meet.Term" +
-      "inateMeetRequest\032\022.meet.BareResponse\022H\n\021" +
-      "CreateInboundMeet\022\030.meet.InboundMeetRequ" +
-      "est\032\031.meet.InboundMeetResponse\022E\n\020Create" +
-      "MeetRecord\022\035.meet.CreateMeetRecordReques" +
-      "t\032\022.meet.BareResponse\022`\n\025InitializeInbou" +
-      "ndMeet\022\".meet.InitializeInboundMeetReque" +
-      "st\032#.meet.InitializeInboundMeetResponse\022" +
-      "A\n\016JoinMeetByUser\022\033.meet.JoinMeetByUserR" +
-      "equest\032\022.meet.BareResponse\022E\n\020HangUpMeet" +
-      "ByUser\022\035.meet.HangUpMeetByUserRequest\032\022." +
-      "meet.BareResponseB=\n\024io.channel.api.prot" +
-      "oP\001Z#github.com/channel-io/ch-proto/meet" +
-      "b\006proto3"
+      "(\t\"H\n\027RejectMeetByUserRequest\022\034\n\006person\030" +
+      "\001 \001(\0132\014.meet.Person\022\017\n\007meet_id\030\002 \001(\t*i\n\014" +
+      "ResponseCode\022\013\n\007SUCCESS\020\000\022\017\n\013BAD_REQUEST" +
+      "\020\001\022\020\n\014UNAUTHORIZED\020\002\022\r\n\tFORBIDDEN\020\003\022\r\n\tN" +
+      "OT_FOUND\020\004\022\013\n\007UNKNOWN\020\0052\260\006\n\013MeetService\022" +
+      "C\n\022CreateOutboundMeet\022\031.meet.OutboundMee" +
+      "tRequest\032\022.meet.BareResponse\022A\n\021CreatePr" +
+      "ivateMeet\022\030.meet.PrivateMeetRequest\032\022.me" +
+      "et.BareResponse\022K\n\023HangUpMeetByManager\022 " +
+      ".meet.HangUpMeetByManagerRequest\032\022.meet." +
+      "BareResponse\022G\n\021JoinMeetByManager\022\036.meet" +
+      ".JoinMeetByManagerRequest\032\022.meet.BareRes" +
+      "ponse\022?\n\rTerminateMeet\022\032.meet.TerminateM" +
+      "eetRequest\032\022.meet.BareResponse\022H\n\021Create" +
+      "InboundMeet\022\030.meet.InboundMeetRequest\032\031." +
+      "meet.InboundMeetResponse\022E\n\020CreateMeetRe" +
+      "cord\022\035.meet.CreateMeetRecordRequest\032\022.me" +
+      "et.BareResponse\022`\n\025InitializeInboundMeet" +
+      "\022\".meet.InitializeInboundMeetRequest\032#.m" +
+      "eet.InitializeInboundMeetResponse\022A\n\016Joi" +
+      "nMeetByUser\022\033.meet.JoinMeetByUserRequest" +
+      "\032\022.meet.BareResponse\022E\n\020HangUpMeetByUser" +
+      "\022\035.meet.HangUpMeetByUserRequest\032\022.meet.B" +
+      "areResponse\022E\n\020RejectMeetByUser\022\035.meet.R" +
+      "ejectMeetByUserRequest\032\022.meet.BareRespon" +
+      "seB=\n\024io.channel.api.protoP\001Z#github.com" +
+      "/channel-io/ch-proto/meetb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -276,6 +284,12 @@ public final class Meet {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_InitializeInboundMeetResponse_descriptor,
         new java.lang.String[] { "IsMeetAvailable", "GuideVoiceUrl", "MeetId", });
+    internal_static_meet_RejectMeetByUserRequest_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_meet_RejectMeetByUserRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_meet_RejectMeetByUserRequest_descriptor,
+        new java.lang.String[] { "Person", "MeetId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
