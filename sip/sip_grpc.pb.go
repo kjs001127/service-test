@@ -22,9 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SipClient interface {
-	InviteCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
-	AcceptCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
-	DenyCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
+	// 전화를 deny 하는 경우 InviteResponse를 보내지 않고 비정상에 따른 rpc response code 를 보냄
+	InviteCall(ctx context.Context, in *InviteRequest, opts ...grpc.CallOption) (*InviteResponse, error)
 	CancelCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 	ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 }
@@ -37,27 +36,9 @@ func NewSipClient(cc grpc.ClientConnInterface) SipClient {
 	return &sipClient{cc}
 }
 
-func (c *sipClient) InviteCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error) {
-	out := new(SipResponse)
+func (c *sipClient) InviteCall(ctx context.Context, in *InviteRequest, opts ...grpc.CallOption) (*InviteResponse, error) {
+	out := new(InviteResponse)
 	err := c.cc.Invoke(ctx, "/sip.Sip/InviteCall", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sipClient) AcceptCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error) {
-	out := new(SipResponse)
-	err := c.cc.Invoke(ctx, "/sip.Sip/AcceptCall", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sipClient) DenyCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error) {
-	out := new(SipResponse)
-	err := c.cc.Invoke(ctx, "/sip.Sip/DenyCall", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +67,8 @@ func (c *sipClient) ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.Ca
 // All implementations must embed UnimplementedSipServer
 // for forward compatibility
 type SipServer interface {
-	InviteCall(context.Context, *SipRequest) (*SipResponse, error)
-	AcceptCall(context.Context, *SipRequest) (*SipResponse, error)
-	DenyCall(context.Context, *SipRequest) (*SipResponse, error)
+	// 전화를 deny 하는 경우 InviteResponse를 보내지 않고 비정상에 따른 rpc response code 를 보냄
+	InviteCall(context.Context, *InviteRequest) (*InviteResponse, error)
 	CancelCall(context.Context, *SipRequest) (*SipResponse, error)
 	ByeCall(context.Context, *SipRequest) (*SipResponse, error)
 	mustEmbedUnimplementedSipServer()
@@ -98,14 +78,8 @@ type SipServer interface {
 type UnimplementedSipServer struct {
 }
 
-func (UnimplementedSipServer) InviteCall(context.Context, *SipRequest) (*SipResponse, error) {
+func (UnimplementedSipServer) InviteCall(context.Context, *InviteRequest) (*InviteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteCall not implemented")
-}
-func (UnimplementedSipServer) AcceptCall(context.Context, *SipRequest) (*SipResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AcceptCall not implemented")
-}
-func (UnimplementedSipServer) DenyCall(context.Context, *SipRequest) (*SipResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DenyCall not implemented")
 }
 func (UnimplementedSipServer) CancelCall(context.Context, *SipRequest) (*SipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelCall not implemented")
@@ -127,7 +101,7 @@ func RegisterSipServer(s grpc.ServiceRegistrar, srv SipServer) {
 }
 
 func _Sip_InviteCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SipRequest)
+	in := new(InviteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -139,43 +113,7 @@ func _Sip_InviteCall_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/sip.Sip/InviteCall",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SipServer).InviteCall(ctx, req.(*SipRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Sip_AcceptCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SipRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SipServer).AcceptCall(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/sip.Sip/AcceptCall",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SipServer).AcceptCall(ctx, req.(*SipRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Sip_DenyCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SipRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SipServer).DenyCall(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/sip.Sip/DenyCall",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SipServer).DenyCall(ctx, req.(*SipRequest))
+		return srv.(SipServer).InviteCall(ctx, req.(*InviteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,14 +164,6 @@ var Sip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InviteCall",
 			Handler:    _Sip_InviteCall_Handler,
-		},
-		{
-			MethodName: "AcceptCall",
-			Handler:    _Sip_AcceptCall_Handler,
-		},
-		{
-			MethodName: "DenyCall",
-			Handler:    _Sip_DenyCall_Handler,
 		},
 		{
 			MethodName: "CancelCall",
