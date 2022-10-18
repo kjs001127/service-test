@@ -27,6 +27,12 @@ grpc:
 		sip/sip.proto
 	protoc -I. \
 		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
+		--plugin=${GRPC_JAVA_PATH}/protoc-gen-grpc-java \
+		--java_out=task/java \
+		--grpc-java_out=task/java \
+		task/task.proto
+	protoc -I. \
+		-I${GOPATH}/pkg/mod/github.com/googleapis/googleapis@v0.0.0-20220201063650-f78745822aad \
 		-I${GOPATH}/pkg/mod/github.com/grpc-ecosystem/grpc-gateway/v2@v2.7.3 \
 		--go_opt=module=github.com/channel-io/ch-proto \
 		--go_out=. \

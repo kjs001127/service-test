@@ -5,7 +5,7 @@ submodule은 채널톡 전체 도메인에서 사용되는 모델을 기준으�
 
 - `/meet`: 컨퍼런스콜 모델인 `Meet` 과 연관된 rpc
 - `/sip`: 전화연동을 위한 프로토콜인 `sip` 를 처리하는 rpc
-
+- `/task`: Task Queue에 보내는 프로토콜인 `task` 를 처리하는 rpc
 ### Getting started
 
 1. proto 빌드가 가능하도록 로컬에 세팅하기

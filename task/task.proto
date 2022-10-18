@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option java_package = "io.channel.api.proto";
+option java_multiple_files = true;
+
+package task;
+
+import "google/protobuf/duration.proto";
+
+service TaskQueueService {
+  // dw -> task queue
+  rpc show(ShowTaskRequest) returns (TaskResponse);
+  rpc submit(SubmitTaskRequest) returns (TaskResponse);
+  rpc updateTask(UpdateTaskRequest) returns (TaskResponse);
+  rpc delete(DeleteTaskRequest) returns (TaskResponse);
+}
+
+enum QueueName {
+  AUTOMATION_RULE = 0;
+  MARKETING = 1;
+  MEET = 2;
+  MEET_SESSION = 3;
+  POST_LOG = 4;
+  USER = 5;
+  USER_CHAT = 6;
+  MANAGER = 7;
+}
+
+message Task {
+  string id = 1;
+  string shard_name = 2;
+  string run_key = 3;
+  QueueName queue_name = 4;
+  string data = 5;
+}
+
+message TaskResponse {
+  Task task = 1;
+}
+
+message ShowTaskRequest {
+  QueueName queue_name = 1;
+  string id = 2;
+}
+
+message SubmitTaskRequest {
+  QueueName queue_name = 1;
+  string data = 2;
+  string delay = 3;
+}
+
+message UpdateTaskRequest {
+  QueueName queue_name = 1;
+  string id = 2;
+  google.protobuf.Duration data = 3;
+}
+
+message DeleteTaskRequest {
+  QueueName queue_name = 1;
+  string id = 2;
+}
