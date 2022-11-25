@@ -21,6 +21,7 @@ private static final long serialVersionUID = 0L;
     to_ = "";
     carrier_ = "";
     guideVoiceUrl_ = "";
+    pAssertedIdentity_ = "";
   }
 
   @java.lang.Override
@@ -107,6 +108,12 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             guideVoiceUrl_ = s;
+            break;
+          }
+          case 66: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            pAssertedIdentity_ = s;
             break;
           }
           default: {
@@ -383,6 +390,44 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int P_ASSERTED_IDENTITY_FIELD_NUMBER = 8;
+  private volatile java.lang.Object pAssertedIdentity_;
+  /**
+   * <code>string p_asserted_identity = 8;</code>
+   * @return The pAssertedIdentity.
+   */
+  @java.lang.Override
+  public java.lang.String getPAssertedIdentity() {
+    java.lang.Object ref = pAssertedIdentity_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      pAssertedIdentity_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string p_asserted_identity = 8;</code>
+   * @return The bytes for pAssertedIdentity.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPAssertedIdentityBytes() {
+    java.lang.Object ref = pAssertedIdentity_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      pAssertedIdentity_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -418,6 +463,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, guideVoiceUrl_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pAssertedIdentity_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, pAssertedIdentity_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -449,6 +497,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(guideVoiceUrl_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, guideVoiceUrl_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pAssertedIdentity_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, pAssertedIdentity_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -485,6 +536,8 @@ private static final long serialVersionUID = 0L;
     }
     if (!getGuideVoiceUrl()
         .equals(other.getGuideVoiceUrl())) return false;
+    if (!getPAssertedIdentity()
+        .equals(other.getPAssertedIdentity())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -514,6 +567,8 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + GUIDE_VOICE_URL_FIELD_NUMBER;
     hash = (53 * hash) + getGuideVoiceUrl().hashCode();
+    hash = (37 * hash) + P_ASSERTED_IDENTITY_FIELD_NUMBER;
+    hash = (53 * hash) + getPAssertedIdentity().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -669,6 +724,8 @@ private static final long serialVersionUID = 0L;
       }
       guideVoiceUrl_ = "";
 
+      pAssertedIdentity_ = "";
+
       return this;
     }
 
@@ -710,6 +767,7 @@ private static final long serialVersionUID = 0L;
         result.manager_ = managerBuilder_.build();
       }
       result.guideVoiceUrl_ = guideVoiceUrl_;
+      result.pAssertedIdentity_ = pAssertedIdentity_;
       onBuilt();
       return result;
     }
@@ -782,6 +840,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getGuideVoiceUrl().isEmpty()) {
         guideVoiceUrl_ = other.guideVoiceUrl_;
+        onChanged();
+      }
+      if (!other.getPAssertedIdentity().isEmpty()) {
+        pAssertedIdentity_ = other.pAssertedIdentity_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -1427,6 +1489,82 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       guideVoiceUrl_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object pAssertedIdentity_ = "";
+    /**
+     * <code>string p_asserted_identity = 8;</code>
+     * @return The pAssertedIdentity.
+     */
+    public java.lang.String getPAssertedIdentity() {
+      java.lang.Object ref = pAssertedIdentity_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pAssertedIdentity_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string p_asserted_identity = 8;</code>
+     * @return The bytes for pAssertedIdentity.
+     */
+    public com.google.protobuf.ByteString
+        getPAssertedIdentityBytes() {
+      java.lang.Object ref = pAssertedIdentity_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        pAssertedIdentity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string p_asserted_identity = 8;</code>
+     * @param value The pAssertedIdentity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPAssertedIdentity(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      pAssertedIdentity_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string p_asserted_identity = 8;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPAssertedIdentity() {
+      
+      pAssertedIdentity_ = getDefaultInstance().getPAssertedIdentity();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string p_asserted_identity = 8;</code>
+     * @param value The bytes for pAssertedIdentity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPAssertedIdentityBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      pAssertedIdentity_ = value;
       onChanged();
       return this;
     }

@@ -130,53 +130,54 @@ public final class Meet {
       "lizeInboundMeetRequest\022\n\n\002to\030\001 \001(\t\022\014\n\004fr" +
       "om\030\002 \001(\t\"P\n\027CreateMeetRecordRequest\022\017\n\007m" +
       "eet_id\030\001 \001(\t\022$\n\013meet_record\030\002 \001(\0132\017.meet" +
-      ".AudioFile\"\243\001\n\023OutboundMeetRequest\022\017\n\007me" +
+      ".AudioFile\"\300\001\n\023OutboundMeetRequest\022\017\n\007me" +
       "et_id\030\001 \001(\t\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001(\t\022\017\n" +
       "\007carrier\030\004 \001(\t\022\032\n\004user\030\005 \001(\0132\014.meet.Pers" +
       "on\022\033\n\007manager\030\006 \001(\0132\n.meet.Peer\022\027\n\017guide" +
-      "_voice_url\030\007 \001(\t\"k\n\023InboundMeetResponse\022" +
+      "_voice_url\030\007 \001(\t\022\033\n\023p_asserted_identity\030" +
+      "\010 \001(\t\"k\n\023InboundMeetResponse\022)\n\rresponse" +
+      "_code\030\001 \001(\0162\022.meet.ResponseCode\022\017\n\007meet_" +
+      "id\030\002 \001(\t\022\030\n\004peer\030\003 \001(\0132\n.meet.Peer\"B\n\022Pr" +
+      "ivateMeetRequest\022\017\n\007meet_id\030\001 \001(\t\022\033\n\007man" +
+      "ager\030\002 \001(\0132\n.meet.Peer\"E\n\030JoinMeetByMana" +
+      "gerRequest\022\030\n\004peer\030\001 \001(\0132\n.meet.Peer\022\017\n\007" +
+      "meet_id\030\002 \001(\t\"]\n\026JoinMeetByUserResponse\022" +
       ")\n\rresponse_code\030\001 \001(\0162\022.meet.ResponseCo" +
-      "de\022\017\n\007meet_id\030\002 \001(\t\022\030\n\004peer\030\003 \001(\0132\n.meet" +
-      ".Peer\"B\n\022PrivateMeetRequest\022\017\n\007meet_id\030\001" +
-      " \001(\t\022\033\n\007manager\030\002 \001(\0132\n.meet.Peer\"E\n\030Joi" +
-      "nMeetByManagerRequest\022\030\n\004peer\030\001 \001(\0132\n.me" +
-      "et.Peer\022\017\n\007meet_id\030\002 \001(\t\"]\n\026JoinMeetByUs" +
-      "erResponse\022)\n\rresponse_code\030\001 \001(\0162\022.meet" +
-      ".ResponseCode\022\030\n\004peer\030\002 \001(\0132\n.meet.Peer\"" +
-      "m\n\024TerminateMeetRequest\022\017\n\007meet_id\030\001 \001(\t" +
-      "\022\022\n\nchannel_id\030\002 \001(\t\022\034\n\017guide_voice_url\030" +
-      "\003 \001(\tH\000\210\001\001B\022\n\020_guide_voice_url\"D\n\027HangUp" +
-      "MeetByUserRequest\022\030\n\004peer\030\001 \001(\0132\n.meet.P" +
-      "eer\022\017\n\007meet_id\030\002 \001(\t\"d\n\035InitializeInboun" +
-      "dMeetResponse\022\031\n\021is_meet_available\030\001 \001(\010" +
-      "\022\027\n\017guide_voice_url\030\002 \001(\t\022\017\n\007meet_id\030\003 \001" +
-      "(\t\"H\n\027RejectMeetByUserRequest\022\034\n\006person\030" +
-      "\001 \001(\0132\014.meet.Person\022\017\n\007meet_id\030\002 \001(\t*i\n\014" +
-      "ResponseCode\022\013\n\007SUCCESS\020\000\022\017\n\013BAD_REQUEST" +
-      "\020\001\022\020\n\014UNAUTHORIZED\020\002\022\r\n\tFORBIDDEN\020\003\022\r\n\tN" +
-      "OT_FOUND\020\004\022\013\n\007UNKNOWN\020\0052\260\006\n\013MeetService\022" +
-      "C\n\022CreateOutboundMeet\022\031.meet.OutboundMee" +
-      "tRequest\032\022.meet.BareResponse\022A\n\021CreatePr" +
-      "ivateMeet\022\030.meet.PrivateMeetRequest\032\022.me" +
-      "et.BareResponse\022K\n\023HangUpMeetByManager\022 " +
-      ".meet.HangUpMeetByManagerRequest\032\022.meet." +
-      "BareResponse\022G\n\021JoinMeetByManager\022\036.meet" +
-      ".JoinMeetByManagerRequest\032\022.meet.BareRes" +
-      "ponse\022?\n\rTerminateMeet\022\032.meet.TerminateM" +
-      "eetRequest\032\022.meet.BareResponse\022H\n\021Create" +
-      "InboundMeet\022\030.meet.InboundMeetRequest\032\031." +
-      "meet.InboundMeetResponse\022E\n\020CreateMeetRe" +
-      "cord\022\035.meet.CreateMeetRecordRequest\032\022.me" +
-      "et.BareResponse\022`\n\025InitializeInboundMeet" +
-      "\022\".meet.InitializeInboundMeetRequest\032#.m" +
-      "eet.InitializeInboundMeetResponse\022A\n\016Joi" +
-      "nMeetByUser\022\033.meet.JoinMeetByUserRequest" +
-      "\032\022.meet.BareResponse\022E\n\020HangUpMeetByUser" +
-      "\022\035.meet.HangUpMeetByUserRequest\032\022.meet.B" +
-      "areResponse\022E\n\020RejectMeetByUser\022\035.meet.R" +
-      "ejectMeetByUserRequest\032\022.meet.BareRespon" +
-      "seB=\n\024io.channel.api.protoP\001Z#github.com" +
-      "/channel-io/ch-proto/meetb\006proto3"
+      "de\022\030\n\004peer\030\002 \001(\0132\n.meet.Peer\"m\n\024Terminat" +
+      "eMeetRequest\022\017\n\007meet_id\030\001 \001(\t\022\022\n\nchannel" +
+      "_id\030\002 \001(\t\022\034\n\017guide_voice_url\030\003 \001(\tH\000\210\001\001B" +
+      "\022\n\020_guide_voice_url\"D\n\027HangUpMeetByUserR" +
+      "equest\022\030\n\004peer\030\001 \001(\0132\n.meet.Peer\022\017\n\007meet" +
+      "_id\030\002 \001(\t\"d\n\035InitializeInboundMeetRespon" +
+      "se\022\031\n\021is_meet_available\030\001 \001(\010\022\027\n\017guide_v" +
+      "oice_url\030\002 \001(\t\022\017\n\007meet_id\030\003 \001(\t\"H\n\027Rejec" +
+      "tMeetByUserRequest\022\034\n\006person\030\001 \001(\0132\014.mee" +
+      "t.Person\022\017\n\007meet_id\030\002 \001(\t*i\n\014ResponseCod" +
+      "e\022\013\n\007SUCCESS\020\000\022\017\n\013BAD_REQUEST\020\001\022\020\n\014UNAUT" +
+      "HORIZED\020\002\022\r\n\tFORBIDDEN\020\003\022\r\n\tNOT_FOUND\020\004\022" +
+      "\013\n\007UNKNOWN\020\0052\260\006\n\013MeetService\022C\n\022CreateOu" +
+      "tboundMeet\022\031.meet.OutboundMeetRequest\032\022." +
+      "meet.BareResponse\022A\n\021CreatePrivateMeet\022\030" +
+      ".meet.PrivateMeetRequest\032\022.meet.BareResp" +
+      "onse\022K\n\023HangUpMeetByManager\022 .meet.HangU" +
+      "pMeetByManagerRequest\032\022.meet.BareRespons" +
+      "e\022G\n\021JoinMeetByManager\022\036.meet.JoinMeetBy" +
+      "ManagerRequest\032\022.meet.BareResponse\022?\n\rTe" +
+      "rminateMeet\022\032.meet.TerminateMeetRequest\032" +
+      "\022.meet.BareResponse\022H\n\021CreateInboundMeet" +
+      "\022\030.meet.InboundMeetRequest\032\031.meet.Inboun" +
+      "dMeetResponse\022E\n\020CreateMeetRecord\022\035.meet" +
+      ".CreateMeetRecordRequest\032\022.meet.BareResp" +
+      "onse\022`\n\025InitializeInboundMeet\022\".meet.Ini" +
+      "tializeInboundMeetRequest\032#.meet.Initial" +
+      "izeInboundMeetResponse\022A\n\016JoinMeetByUser" +
+      "\022\033.meet.JoinMeetByUserRequest\032\022.meet.Bar" +
+      "eResponse\022E\n\020HangUpMeetByUser\022\035.meet.Han" +
+      "gUpMeetByUserRequest\032\022.meet.BareResponse" +
+      "\022E\n\020RejectMeetByUser\022\035.meet.RejectMeetBy" +
+      "UserRequest\032\022.meet.BareResponseB=\n\024io.ch" +
+      "annel.api.protoP\001Z#github.com/channel-io" +
+      "/ch-proto/meetb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -241,7 +242,7 @@ public final class Meet {
     internal_static_meet_OutboundMeetRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_meet_OutboundMeetRequest_descriptor,
-        new java.lang.String[] { "MeetId", "From", "To", "Carrier", "User", "Manager", "GuideVoiceUrl", });
+        new java.lang.String[] { "MeetId", "From", "To", "Carrier", "User", "Manager", "GuideVoiceUrl", "PAssertedIdentity", });
     internal_static_meet_InboundMeetResponse_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_meet_InboundMeetResponse_fieldAccessorTable = new
