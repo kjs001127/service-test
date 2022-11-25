@@ -96,4 +96,16 @@ public interface OutboundMeetRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getGuideVoiceUrlBytes();
+
+  /**
+   * <code>string p_asserted_identity = 8;</code>
+   * @return The pAssertedIdentity.
+   */
+  java.lang.String getPAssertedIdentity();
+  /**
+   * <code>string p_asserted_identity = 8;</code>
+   * @return The bytes for pAssertedIdentity.
+   */
+  com.google.protobuf.ByteString
+      getPAssertedIdentityBytes();
 }

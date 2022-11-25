@@ -98,6 +98,7 @@ message OutboundMeetRequest {
   Person user = 5;
   Peer manager = 6;
   string guide_voice_url = 7;
+  string p_asserted_identity = 8;
 }
 
 message InboundMeetResponse {

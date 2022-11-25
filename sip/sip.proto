@@ -25,6 +25,7 @@ message InviteRequest {
   string from = 3;
   string to = 4;
   optional string sdp = 5;
+  optional string p_asserted_identity = 6;
 }
 
 message InviteResponse {
