@@ -26,6 +26,7 @@ type SipClient interface {
 	InviteCall(ctx context.Context, in *InviteRequest, opts ...grpc.CallOption) (*InviteResponse, error)
 	CancelCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
 	ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.CallOption) (*SipResponse, error)
+	GetCallSession(ctx context.Context, in *CallSessionRequest, opts ...grpc.CallOption) (*CallSessionResponse, error)
 }
 
 type sipClient struct {
@@ -63,6 +64,15 @@ func (c *sipClient) ByeCall(ctx context.Context, in *SipRequest, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *sipClient) GetCallSession(ctx context.Context, in *CallSessionRequest, opts ...grpc.CallOption) (*CallSessionResponse, error) {
+	out := new(CallSessionResponse)
+	err := c.cc.Invoke(ctx, "/sip.Sip/GetCallSession", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SipServer is the server API for Sip service.
 // All implementations must embed UnimplementedSipServer
 // for forward compatibility
@@ -71,6 +81,7 @@ type SipServer interface {
 	InviteCall(context.Context, *InviteRequest) (*InviteResponse, error)
 	CancelCall(context.Context, *SipRequest) (*SipResponse, error)
 	ByeCall(context.Context, *SipRequest) (*SipResponse, error)
+	GetCallSession(context.Context, *CallSessionRequest) (*CallSessionResponse, error)
 	mustEmbedUnimplementedSipServer()
 }
 
@@ -86,6 +97,9 @@ func (UnimplementedSipServer) CancelCall(context.Context, *SipRequest) (*SipResp
 }
 func (UnimplementedSipServer) ByeCall(context.Context, *SipRequest) (*SipResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ByeCall not implemented")
+}
+func (UnimplementedSipServer) GetCallSession(context.Context, *CallSessionRequest) (*CallSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCallSession not implemented")
 }
 func (UnimplementedSipServer) mustEmbedUnimplementedSipServer() {}
 
@@ -154,6 +168,24 @@ func _Sip_ByeCall_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Sip_GetCallSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CallSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SipServer).GetCallSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sip.Sip/GetCallSession",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SipServer).GetCallSession(ctx, req.(*CallSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Sip_ServiceDesc is the grpc.ServiceDesc for Sip service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -172,6 +204,10 @@ var Sip_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ByeCall",
 			Handler:    _Sip_ByeCall_Handler,
+		},
+		{
+			MethodName: "GetCallSession",
+			Handler:    _Sip_GetCallSession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
