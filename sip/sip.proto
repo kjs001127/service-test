@@ -6,8 +6,8 @@ package sip;
 
 service Sip {
   // 전화를 deny 하는 경우 InviteResponse를 보내지 않고 비정상에 따른 rpc response code 를 보냄
-  rpc InviteCall(InviteRequest) returns (InviteResponse);
-  rpc CancelCall(SipRequest) returns (SipResponse);
+  rpc InviteCall(InviteRequest) returns (SipResponse);
+  rpc AcceptCall(AcceptRequest) returns (SipResponse);
   rpc ByeCall(SipRequest) returns (SipResponse);
   rpc GetCallSession(CallSessionRequest) returns (CallSessionResponse);
 }
@@ -16,24 +16,18 @@ message SipRequest {
   string call_id = 1;
 }
 
-
 message InviteRequest {
   string carrier = 1;
   string call_id = 2;
   string from = 3;
   string to = 4;
-  optional string sdp = 5;
+  string sdp = 5;
   optional string p_asserted_identity = 6;
 }
 
-message InviteResponse {
-  enum Result {
-    ACCEPTED = 0;
-    DENIED = 1;
-  }
-  Result result = 1;
-  string call_id = 2;
-  string sdp = 3;
+message AcceptRequest {
+  string call_id = 1;
+  string sdp = 2;
 }
 
 message SipResponse {
