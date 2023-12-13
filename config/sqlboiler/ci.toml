@@ -1,0 +1,8 @@
+[psql]
+host = "localhost"
+dbname = "channel"
+schema = ""
+user = "ci"
+pass = "1234"
+port = "5432"
+sslmode = "disable"
