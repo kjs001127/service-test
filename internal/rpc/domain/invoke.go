@@ -15,5 +15,5 @@ type Invoker interface {
 }
 
 type InvokerRepository interface {
-	Fetch(ctx context.Context, appId string) (Invoker, error)
+	Fetch(ctx context.Context, appID string) (Invoker, error)
 }

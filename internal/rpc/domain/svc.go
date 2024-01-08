@@ -11,21 +11,21 @@ type RpcService struct {
 }
 
 type RpcRequest struct {
-	AppId string
+	AppID string
 	InvokeRequest
 }
 
 func (s *RpcService) Invoke(ctx context.Context, req RpcRequest) (Result, error) {
-	rpc, err := s.rpcRepo.Fetch(ctx, Key{AppId: req.AppId, Name: req.Name})
+	rpc, err := s.rpcRepo.Fetch(ctx, Key{AppID: req.AppID, Name: req.Name})
 	if err != nil {
 		return nil, fmt.Errorf("find rpc. req: %v, cause: %w", req, err)
 	}
 
 	if err := rpc.ValidateParams(req.Params); err != nil {
-		return nil, fmt.Errorf("validate fail. req: %v, cause: %w", req, err)
+		return nil, fmt.Errorf("param validate. req: %v, cause: %w", req, err)
 	}
 
-	invoker, err := s.invokerRepo.Fetch(ctx, req.AppId)
+	invoker, err := s.invokerRepo.Fetch(ctx, req.AppID)
 	if err != nil {
 		return nil, fmt.Errorf("find invoker. req: %v, cause: %w", req, err)
 	}

@@ -18,6 +18,6 @@ type RpcRepository interface {
 }
 
 type Key struct {
-	AppId string
+	AppID string
 	Name  string
 }
