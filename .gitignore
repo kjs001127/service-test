@@ -19,3 +19,13 @@
 
 # Go workspace file
 go.work
+
+# report files
+report.html
+report.json
+
+# generated files
+generated
+
+# IDE files
+.idea
