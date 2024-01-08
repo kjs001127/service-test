@@ -14,10 +14,10 @@ func NewQueryService(repo CommandRepository) *QueryService {
 }
 
 type CommandView struct {
-	AppID string
-	Name  string
+	AppID        string
+	FunctionName string
 
-	Title       string
+	Name        string
 	Description string
 }
 
@@ -36,5 +36,5 @@ func (s *QueryService) QueryCommands(ctx context.Context, query Query) ([]*Comma
 }
 
 func (s *QueryService) viewOf(cmd *Command) *CommandView {
-	return &CommandView{AppID: cmd.AppID, Name: cmd.Name, Title: cmd.Title, Description: cmd.Description}
+	return &CommandView{AppID: cmd.AppID, Name: cmd.Name, FunctionName: cmd.FunctionName, Description: cmd.Description}
 }
