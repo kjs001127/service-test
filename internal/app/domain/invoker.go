@@ -3,8 +3,6 @@ package domain
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	"github.com/channel-io/ch-app-store/internal/rpc/domain"
 )
 
@@ -28,10 +26,5 @@ type AppInvoker struct {
 }
 
 func (i *AppInvoker) Invoke(ctx context.Context, req domain.InvokeRequest) (domain.Result, error) {
-	res, err := i.app.SendRequest(ctx, req.Context, req.Params)
-	if err != nil {
-		return nil, errors.Wrap(err, "app invoke error")
-	}
-
-	return res, nil
+	panic("")
 }

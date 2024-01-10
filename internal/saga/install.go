@@ -9,69 +9,98 @@ import (
 	appChannel "github.com/channel-io/ch-app-store/internal/appchannel/domain"
 )
 
-// InstallSaga defines operation & relation between app and appChannel
-type InstallSaga interface {
-	Install(context.Context, appChannel.AppChannelIdentifier) (*app.App, *appChannel.AppChannel, error)
-	Uninstall(context.Context, appChannel.AppChannelIdentifier) error
-	SetConfig(context.Context, appChannel.AppChannelIdentifier, map[string]any) (map[string]string, error)
+type InstallSaga struct {
+	appChInstallSvc *appChannel.InstallSvc
+	appChCfgSvc     *appChannel.ConfigSvc
+
+	appCfgSvc    *app.ConfigSvc
+	appNotifySvc *app.NotifySvc
+	appQuerySvc  *app.QuerySvc
 }
 
-type InstallSagaImpl struct {
-	appChannelRepo appChannel.AppChannelRepository
-	appChannelSvc  appChannel.AppChannelSvc
-	appRepo        app.AppRepository
+func NewInstallSaga(
+	appChInstallSvc *appChannel.InstallSvc,
+	appChCfgSvc *appChannel.ConfigSvc,
+	appCfgSvc *app.ConfigSvc,
+	notifySvc *app.NotifySvc,
+	appQuerySvc *app.QuerySvc,
+) *InstallSaga {
+	return &InstallSaga{
+		appChInstallSvc: appChInstallSvc,
+		appChCfgSvc:     appChCfgSvc,
+		appCfgSvc:       appCfgSvc,
+		appNotifySvc:    notifySvc,
+		appQuerySvc:     appQuerySvc,
+	}
 }
 
-func (s *InstallSagaImpl) Install(
-	ctx context.Context,
-	identifier appChannel.AppChannelIdentifier,
-) (*app.App, *appChannel.AppChannel, error) {
-	appTarget, err := s.appRepo.Fetch(ctx, identifier.AppID)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "error while fetching app")
+func (s *InstallSaga) Uninstall(ctx context.Context, identifier appChannel.AppChannelIdentifier) error {
+	if err := s.appChInstallSvc.Uninstall(ctx, identifier); err != nil {
+		return err
 	}
 
-	// App 의 active 상태를 최초 1회 체크해야할 듯
-
-	created, err := s.appChannelRepo.Create(ctx, appChannel.AppChannel{
-		AppID:     identifier.AppID,
-		ChannelID: identifier.ChannelID,
-		Active:    false,
-		Configs:   map[string]string{},
-	})
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return &appTarget, &created, nil
-}
-
-func (s *InstallSagaImpl) Uninstall(ctx context.Context, identifier appChannel.AppChannelIdentifier) error {
-	if err := s.appChannelSvc.Uninstall(ctx, identifier); err != nil {
+	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
+	if err := s.appNotifySvc.NotifyUnInstall(ctx, install); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *InstallSagaImpl) SetConfig(
+func (s *InstallSaga) Install(ctx context.Context, identifier appChannel.AppChannelIdentifier) (*appChannel.AppChannel, error) {
+	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
+
+	res, err := s.appQuerySvc.CheckInstallable(ctx, install)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot install app to channel")
+	} else if !res.Result {
+		return nil, errors.Wrap(errors.New(res.Message.String), "cannot install app to channel")
+	}
+
+	defaultCfg := s.appCfgSvc.DefaultConfigOf(ctx, install)
+
+	created, err := s.appChInstallSvc.Install(ctx, identifier, toMap(defaultCfg))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.appNotifySvc.NotifyInstall(ctx, install); err != nil {
+		return nil, err
+	}
+
+	return created, nil
+}
+
+func (s *InstallSaga) SetConfig(
 	ctx context.Context,
 	identifier appChannel.AppChannelIdentifier,
-	newConfig map[string]string,
-) (map[string]string, error) {
-	appChannelTarget, err := s.appChannelRepo.Fetch(ctx, identifier)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while fetching appChannel")
+	newConfig appChannel.ConfigMap,
+) error {
+	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
+
+	if err := s.appCfgSvc.ValidateConfigs(ctx, install, toConfigInput(newConfig)); err != nil {
+		return errors.Wrap(err, "error while fetching app")
 	}
 
-	appTarget, err := s.appRepo.Fetch(ctx, identifier.AppID)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while fetching app")
+	if err := s.appChCfgSvc.SetConfig(ctx, identifier, newConfig); err != nil {
+		return err
 	}
 
-	// config validation
+	return nil
+}
 
-	appChannelTarget.Configs = newConfig
+func toConfigInput(input map[string]string) []*app.ConfigValue {
+	var ret []*app.ConfigValue
+	for key, val := range input {
+		ret = append(ret, &app.ConfigValue{Key: key, Value: val})
+	}
+	return ret
+}
 
-	return appChannelTarget.Configs, nil
+func toMap(configs []*app.ConfigValue) map[string]string {
+	ret := make(map[string]string)
+	for _, config := range configs {
+		ret[config.Key] = config.Value
+	}
+	return ret
 }

@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/channel-io/ch-app-store/internal/rpc/domain"
+	rpc "github.com/channel-io/ch-app-store/internal/rpc/domain"
 )
 
 type Params map[string]any
 type ParamType string
+type ParamInput map[string]any
 
 const (
 	ParamTypeNumber = ParamType("number")
@@ -46,6 +47,7 @@ func (p ParamType) isAssignable(param any) bool {
 }
 
 type ParamDefinition struct {
+	Key      string
 	Name     string
 	Type     ParamType
 	Required bool
@@ -55,8 +57,8 @@ func (d ParamDefinition) validate() error {
 	if !d.Type.isDefined() {
 		return fmt.Errorf("paramType %v is not valid", d.Type)
 	}
-	if len(d.Name) <= 0 {
-		return fmt.Errorf("param name must not be empty")
+	if len(d.Key) <= 0 || len(d.Name) <= 0 {
+		return fmt.Errorf("param name, key must not be empty")
 	}
 	return nil
 }
@@ -72,16 +74,16 @@ func (d ParamDefinitions) validate() error {
 
 	dupCheck := make(map[string]bool)
 	for _, def := range d {
-		if dupCheck[def.Name] {
-			return fmt.Errorf("duplicate param name %s", def.Name)
+		if dupCheck[def.Key] {
+			return fmt.Errorf("duplicate param name %s", def.Key)
 		}
-		dupCheck[def.Name] = true
+		dupCheck[def.Key] = true
 	}
 
 	return nil
 }
 
-func (d ParamDefinitions) validateParamInput(params domain.Params) error {
+func (d ParamDefinitions) validateParamInput(params rpc.Params) error {
 	if err := d.validateRequiredParams(params); err != nil {
 		return err
 	}
@@ -93,24 +95,24 @@ func (d ParamDefinitions) validateParamInput(params domain.Params) error {
 	return nil
 }
 
-func (d ParamDefinitions) validateRequiredParams(params domain.Params) error {
+func (d ParamDefinitions) validateRequiredParams(params rpc.Params) error {
 	for _, def := range d {
 		if !def.Required {
 			continue
 		}
 
-		if _, ok := params[def.Name]; !ok {
+		if _, ok := params[def.Key]; !ok {
 			return fmt.Errorf("required param does not exists, required: %v", def)
 		}
 
-		if !def.Type.isAssignable(params[def.Name]) {
-			return fmt.Errorf("param type does not matches, required: %v, offered: %v", def, params[def.Name])
+		if !def.Type.isAssignable(params[def.Key]) {
+			return fmt.Errorf("param type does not matches, required: %v, offered: %v", def, params[def.Key])
 		}
 	}
 	return nil
 }
 
-func (d ParamDefinitions) validateOptionalParams(params domain.Params) error {
+func (d ParamDefinitions) validateOptionalParams(params rpc.Params) error {
 	for name, value := range params {
 		if _, ok := d[name]; !ok {
 			return fmt.Errorf("param does not exist in paramDefinition, key: %v", name)

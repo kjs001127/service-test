@@ -33,7 +33,6 @@ CREATE TABLE commands
     updated_at        TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX unique_index_commands_on_app_id_and_function_name ON commands USING btree (app_id, function_name);
 CREATE UNIQUE INDEX unique_index_commands_on_app_id_and_scope_and_name ON commands USING btree (app_id, scope, name);
 
 

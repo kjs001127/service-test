@@ -2,8 +2,6 @@ package domain
 
 import (
 	"time"
-
-	"github.com/channel-io/ch-app-store/internal/resource/domain"
 )
 
 type Wam struct {
@@ -14,8 +12,4 @@ type Wam struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-type WamRepository interface {
-	domain.ResourceRepository[*Wam]
 }

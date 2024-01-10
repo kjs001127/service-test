@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+
+	rpc "github.com/channel-io/ch-app-store/internal/rpc/domain"
 )
 
 type ActionType string
@@ -25,7 +27,7 @@ func NewActionValidator(actions map[ActionType]reflect.Type) *ActionValidator {
 	return &ActionValidator{validActions: actions}
 }
 
-func (v *ActionValidator) validate(ret []byte) error {
+func (v *ActionValidator) validate(ret rpc.Result) error {
 	var inputAction Action
 	if err := json.Unmarshal(ret, &inputAction); err != nil {
 		return fmt.Errorf("failed to marshal to action. cause:%w", err)

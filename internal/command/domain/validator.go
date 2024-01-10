@@ -3,7 +3,6 @@ package domain
 import (
 	"context"
 
-	rsrc "github.com/channel-io/ch-app-store/internal/resource/domain"
 	rpc "github.com/channel-io/ch-app-store/internal/rpc/domain"
 )
 
@@ -18,7 +17,7 @@ func NewRpcRepository(repo CommandRepository, resultValidator *ActionValidator) 
 }
 
 func (r *RpcRepository) Fetch(ctx context.Context, key rpc.Key) (rpc.Rpc, error) {
-	cmd, err := r.repo.Fetch(ctx, rsrc.Key{AppID: key.AppID, Name: key.Name})
+	cmd, err := r.repo.Fetch(ctx, Key{AppID: key.AppID, Name: key.Name})
 	if err != nil {
 		return nil, err
 	}

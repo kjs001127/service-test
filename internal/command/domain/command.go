@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-
-	"github.com/channel-io/ch-app-store/internal/resource/domain"
 )
 
 type Scope string
@@ -27,43 +25,18 @@ func (s Scope) isDefined() bool {
 }
 
 type Command struct {
-	ID           string
-	AppID        string
-	FunctionName string
+	ID string
 
+	AppID string
 	Name  string
 	Scope Scope
 
-	Description string
-
+	FunctionName     string
 	ParamDefinitions ParamDefinitions
+	Description      string
 
 	UpdatedAt time.Time
 	CreatedAt time.Time
-}
-
-func (c *Command) GetID() string {
-	return c.ID
-}
-
-func (c *Command) SetID(s string) {
-	c.ID = s
-}
-
-func (c *Command) GetAppID() string {
-	return c.AppID
-}
-
-func (c *Command) SetAppID(s string) {
-	c.AppID = s
-}
-
-func (c *Command) GetName() string {
-	return c.Name
-}
-
-func (c *Command) SetName(s string) {
-	c.Name = s
 }
 
 func (c *Command) Validate() error {
@@ -91,7 +64,16 @@ type Query struct {
 	Limit int
 }
 
+type Key struct {
+	AppID string
+	Name  string
+}
+
 type CommandRepository interface {
 	FetchByQuery(ctx context.Context, query Query) ([]*Command, error)
-	domain.ResourceRepository[*Command]
+	Fetch(ctx context.Context, key Key) (*Command, error)
+	FetchAllByAppID(ctx context.Context, appID string) ([]*Command, error)
+
+	Delete(ctx context.Context, key Key) error
+	Save(ctx context.Context, resource *Command) (*Command, error)
 }

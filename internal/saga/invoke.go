@@ -8,7 +8,7 @@ import (
 )
 
 type InstallAwareInvoker struct {
-	repo   appChannel.AppChannelRepository
+	repo   *appChannel.InstallSvc
 	rpcSvc domain.RpcService
 }
 
@@ -18,8 +18,7 @@ type InstallAwareInvokeRequest struct {
 }
 
 func (i *InstallAwareInvoker) Invoke(ctx context.Context, req InstallAwareInvokeRequest) (domain.Result, error) {
-	_, err := i.repo.Fetch(ctx, req.Identifier)
-	if err != nil {
+	if _, err := i.repo.CheckInstall(ctx, req.Identifier); err != nil {
 		return nil, err
 	}
 

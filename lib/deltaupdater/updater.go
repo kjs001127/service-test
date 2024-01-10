@@ -1,18 +1,18 @@
-package domain
+package deltaupdater
 
 import (
 	"context"
 )
 
-type DeltaUpdater[T any] struct {
-	IDOf func(T) string
+type DeltaUpdater[T any, ID comparable] struct {
+	IDOf func(T) ID
 
 	DoUpdate func(ctx context.Context, oldbie T, newbie T) error
 	DoInsert func(ctx context.Context, newbie T) error
 	DoDelete func(ctx context.Context, oldbie T) error
 }
 
-func (u *DeltaUpdater[T]) Update(ctx context.Context, oldbies []T, newbies []T) error {
+func (u *DeltaUpdater[T, ID]) Update(ctx context.Context, oldbies []T, newbies []T) error {
 	if err := u.deltaUpsert(ctx, oldbies, newbies); err != nil {
 		return err
 	}
@@ -22,8 +22,8 @@ func (u *DeltaUpdater[T]) Update(ctx context.Context, oldbies []T, newbies []T) 
 	return nil
 }
 
-func (u *DeltaUpdater[T]) deltaUpsert(ctx context.Context, oldbies []T, newbies []T) error {
-	oldbieMap := make(map[string]T)
+func (u *DeltaUpdater[T, ID]) deltaUpsert(ctx context.Context, oldbies []T, newbies []T) error {
+	oldbieMap := make(map[ID]T)
 	for _, oldbie := range oldbies {
 		oldbieMap[u.IDOf(oldbie)] = oldbie
 	}
@@ -42,8 +42,8 @@ func (u *DeltaUpdater[T]) deltaUpsert(ctx context.Context, oldbies []T, newbies 
 	return nil
 }
 
-func (u *DeltaUpdater[T]) deltaDelete(ctx context.Context, oldbies []T, newbies []T) error {
-	newbieMap := make(map[string]T)
+func (u *DeltaUpdater[T, ID]) deltaDelete(ctx context.Context, oldbies []T, newbies []T) error {
+	newbieMap := make(map[ID]T)
 	for _, newbie := range newbies {
 		newbieMap[u.IDOf(newbie)] = newbie
 	}
