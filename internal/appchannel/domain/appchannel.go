@@ -20,6 +20,7 @@ type AppChannelIdentifier struct {
 
 type AppChannelRepository interface {
 	Fetch(ctx context.Context, identifier AppChannelIdentifier) (*AppChannel, error)
+	FindAllByChannel(ctx context.Context, channelID string) ([]*AppChannel, error)
 	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
 	Delete(ctx context.Context, identifier AppChannelIdentifier) error
 }

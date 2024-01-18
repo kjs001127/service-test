@@ -47,10 +47,10 @@ func (p ParamType) isAssignable(param any) bool {
 }
 
 type ParamDefinition struct {
-	Key      string
-	Name     string
-	Type     ParamType
-	Required bool
+	Key      string    `json:"key"`
+	Name     string    `json:"name"`
+	Type     ParamType `json:"type"`
+	Required bool      `json:"required"`
 }
 
 func (d ParamDefinition) validate() error {

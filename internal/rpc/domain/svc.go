@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type RpcService struct {
+type RpcSvc struct {
 	invokerRepo InvokerRepository
 	rpcRepo     RpcRepository
 }
@@ -15,7 +15,7 @@ type RpcRequest struct {
 	InvokeRequest
 }
 
-func (s *RpcService) Invoke(ctx context.Context, req RpcRequest) (Result, error) {
+func (s *RpcSvc) Invoke(ctx context.Context, req RpcRequest) (Result, error) {
 	rpc, err := s.rpcRepo.Fetch(ctx, Key{AppID: req.AppID, Name: req.Name})
 	if err != nil {
 		return nil, fmt.Errorf("find rpc. req: %v, cause: %w", req, err)

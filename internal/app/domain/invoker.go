@@ -17,7 +17,7 @@ func (r *InvokerRepository) Fetch(ctx context.Context, appId string) (domain.Inv
 	}
 
 	return &AppInvoker{
-		app: app,
+		app: *app,
 	}, nil
 }
 

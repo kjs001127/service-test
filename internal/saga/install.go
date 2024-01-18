@@ -3,8 +3,6 @@ package saga
 import (
 	"context"
 
-	"github.com/pkg/errors"
-
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	appChannel "github.com/channel-io/ch-app-store/internal/appchannel/domain"
 )
@@ -52,9 +50,9 @@ func (s *InstallSaga) Install(ctx context.Context, identifier appChannel.AppChan
 
 	res, err := s.appQuerySvc.CheckInstallable(ctx, install)
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot install app to channel")
+		return nil, err
 	} else if !res.Result {
-		return nil, errors.Wrap(errors.New(res.Message.String), "cannot install app to channel")
+		return nil, err
 	}
 
 	defaultCfg := s.appCfgSvc.DefaultConfigOf(ctx, install)
@@ -79,7 +77,7 @@ func (s *InstallSaga) SetConfig(
 	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
 
 	if err := s.appCfgSvc.ValidateConfigs(ctx, install, toConfigInput(newConfig)); err != nil {
-		return errors.Wrap(err, "error while fetching app")
+		return err
 	}
 
 	if err := s.appChCfgSvc.SetConfig(ctx, identifier, newConfig); err != nil {

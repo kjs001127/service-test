@@ -25,18 +25,18 @@ func (s Scope) isDefined() bool {
 }
 
 type Command struct {
-	ID string
+	ID string `json:"id"`
 
-	AppID string
-	Name  string
-	Scope Scope
+	AppID string `json:"appID"`
+	Name  string `json:"name"`
+	Scope Scope  `json:"-"`
 
-	FunctionName     string
-	ParamDefinitions ParamDefinitions
-	Description      string
+	FunctionName     string           `json:"-"`
+	ParamDefinitions ParamDefinitions `json:"arguments"`
+	Description      string           `json:"description"`
 
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	UpdatedAt time.Time `json:"-"`
+	CreatedAt time.Time `json:"-"`
 }
 
 func (c *Command) Validate() error {

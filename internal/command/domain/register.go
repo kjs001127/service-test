@@ -10,20 +10,20 @@ import (
 	"github.com/channel-io/ch-app-store/lib/deltaupdater"
 )
 
-type RegisterService struct {
+type RegisterSvc struct {
 	repo CommandRepository
 }
 
-func NewRegisterService(repo CommandRepository) *RegisterService {
-	return &RegisterService{repo: repo}
+func NewRegisterService(repo CommandRepository) *RegisterSvc {
+	return &RegisterSvc{repo: repo}
 }
 
 type RegisterRequest struct {
-	AppID     string
-	Resources []*Command
+	AppID    string
+	Commands []*Command
 }
 
-func (s *RegisterService) Register(ctx context.Context, req RegisterRequest) error {
+func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
 	if err := s.validateRequest(req); err != nil {
 		return err
 	}
@@ -40,11 +40,11 @@ func (s *RegisterService) Register(ctx context.Context, req RegisterRequest) err
 		DoDelete: s.deleteResource,
 	}
 
-	return updater.Update(ctx, oldbies, req.Resources)
+	return updater.Update(ctx, oldbies, req.Commands)
 }
 
-func (s *RegisterService) validateRequest(req RegisterRequest) error {
-	for _, resource := range req.Resources {
+func (s *RegisterSvc) validateRequest(req RegisterRequest) error {
+	for _, resource := range req.Commands {
 		if resource.AppID != req.AppID {
 			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of resource: %s", req.AppID, resource.AppID))
 		}
@@ -61,11 +61,11 @@ type UpdateKey struct {
 	Name  string
 }
 
-func (s *RegisterService) updateKey(resource *Command) UpdateKey {
+func (s *RegisterSvc) updateKey(resource *Command) UpdateKey {
 	return UpdateKey{Scope: resource.Scope, Name: resource.Name}
 }
 
-func (s *RegisterService) insertResource(ctx context.Context, newbie *Command) error {
+func (s *RegisterSvc) insertResource(ctx context.Context, newbie *Command) error {
 	newbie.ID = uid.New().Hex()
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save command fail. cmd: %v, cause: %w", newbie, err)
@@ -73,7 +73,7 @@ func (s *RegisterService) insertResource(ctx context.Context, newbie *Command) e
 	return nil
 }
 
-func (s *RegisterService) updateResource(ctx context.Context, oldbie *Command, newbie *Command) error {
+func (s *RegisterSvc) updateResource(ctx context.Context, oldbie *Command, newbie *Command) error {
 	newbie.ID = oldbie.ID
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save command fail. cmd: %v, cause: %w", newbie, err)
@@ -81,7 +81,7 @@ func (s *RegisterService) updateResource(ctx context.Context, oldbie *Command, n
 	return nil
 }
 
-func (s *RegisterService) deleteResource(ctx context.Context, oldbie *Command) error {
+func (s *RegisterSvc) deleteResource(ctx context.Context, oldbie *Command) error {
 	key := Key{
 		AppID: oldbie.AppID,
 		Name:  oldbie.Name,

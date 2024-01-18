@@ -9,7 +9,7 @@ import (
 
 type InstallAwareInvoker struct {
 	repo   *appChannel.InstallSvc
-	rpcSvc domain.RpcService
+	rpcSvc *domain.RpcSvc
 }
 
 type InstallAwareInvokeRequest struct {

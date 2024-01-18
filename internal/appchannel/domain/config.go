@@ -29,7 +29,7 @@ func (s *ConfigSvc) SetConfig(
 	return nil
 }
 
-func (s ConfigSvc) GetConfig(
+func (s *ConfigSvc) GetConfig(
 	ctx context.Context,
 	identifier AppChannelIdentifier,
 ) (ConfigMap, error) {
@@ -39,4 +39,18 @@ func (s ConfigSvc) GetConfig(
 	}
 
 	return appCh.Configs, nil
+}
+
+func (s *ConfigSvc) GetConfigByChannel(ctx context.Context, channelID string) ([]ConfigMap, error) {
+	appChs, err := s.repo.FindAllByChannel(ctx, channelID)
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch while get config fail")
+	}
+
+	var configMaps []ConfigMap
+	for _, appCh := range appChs {
+		configMaps = append(configMaps, appCh.Configs)
+	}
+
+	return configMaps, nil
 }

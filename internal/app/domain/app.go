@@ -10,5 +10,9 @@ type App struct {
 }
 
 type AppRepository interface {
-	Fetch(ctx context.Context, appId string) (App, error)
+	Index(ctx context.Context, since string, limit int) ([]*App, error)
+	Fetch(ctx context.Context, appID string) (*App, error)
+	Save(ctx context.Context, app *App) (*App, error)
+	Update(ctx context.Context, app *App) (*App, error)
+	Delete(ctx context.Context, appID string) error
 }

@@ -1,15 +1,22 @@
 package domain
 
 import (
-	"time"
+	"context"
 )
 
-type Wam struct {
-	ID string
+type WamSvc struct {
+}
 
+type WamKey struct {
 	AppID string
 	Name  string
+}
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
+func (s *WamSvc) GetWamUrl(ctx context.Context, key WamKey) string {
+	return "" // cloudfront URL
+}
+
+func (s *WamSvc) UpdateWam(ctx context.Context, key WamKey) error {
+	// invalidate cloudfront cache
+	return nil
 }

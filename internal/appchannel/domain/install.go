@@ -2,9 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 type InstallSvc struct {
@@ -32,11 +29,11 @@ func (s *InstallSvc) Install(
 func (s *InstallSvc) Uninstall(ctx context.Context, identifier AppChannelIdentifier) error {
 	_, err := s.repo.Fetch(ctx, identifier)
 	if err != nil {
-		return errors.Wrap(err, "error while fetching appChannel")
+		return err
 	}
 
 	if err := s.repo.Delete(ctx, identifier); err != nil {
-		return errors.New(fmt.Sprintf("delete error %v", err))
+		return err
 	}
 
 	return nil
@@ -45,7 +42,7 @@ func (s *InstallSvc) Uninstall(ctx context.Context, identifier AppChannelIdentif
 func (s *InstallSvc) CheckInstall(ctx context.Context, identifier AppChannelIdentifier) (*AppChannel, error) {
 	appChan, err := s.repo.Fetch(ctx, identifier)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while fetching appChannel")
+		return nil, err
 	}
 	return appChan, nil
 }
