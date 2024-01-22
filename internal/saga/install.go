@@ -11,24 +11,21 @@ type InstallSaga struct {
 	appChInstallSvc *appChannel.InstallSvc
 	appChCfgSvc     *appChannel.ConfigSvc
 
-	appCfgSvc    *app.ConfigSvc
-	appNotifySvc *app.NotifySvc
-	appQuerySvc  *app.QuerySvc
+	appCfgSvc     *app.ConfigSvc
+	appInstallSvc *app.InstallSvc
 }
 
 func NewInstallSaga(
 	appChInstallSvc *appChannel.InstallSvc,
 	appChCfgSvc *appChannel.ConfigSvc,
 	appCfgSvc *app.ConfigSvc,
-	notifySvc *app.NotifySvc,
-	appQuerySvc *app.QuerySvc,
+	appInstallSvc *app.InstallSvc,
 ) *InstallSaga {
 	return &InstallSaga{
 		appChInstallSvc: appChInstallSvc,
 		appChCfgSvc:     appChCfgSvc,
 		appCfgSvc:       appCfgSvc,
-		appNotifySvc:    notifySvc,
-		appQuerySvc:     appQuerySvc,
+		appInstallSvc:   appInstallSvc,
 	}
 }
 
@@ -37,8 +34,13 @@ func (s *InstallSaga) Uninstall(ctx context.Context, identifier appChannel.AppCh
 		return err
 	}
 
-	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
-	if err := s.appNotifySvc.NotifyUnInstall(ctx, install); err != nil {
+	if err := s.appInstallSvc.NotifyUnInstall(
+		ctx,
+		app.InstallInfo{
+			AppID:     identifier.AppID,
+			ChannelID: identifier.ChannelID,
+		},
+	); err != nil {
 		return err
 	}
 
@@ -46,23 +48,26 @@ func (s *InstallSaga) Uninstall(ctx context.Context, identifier appChannel.AppCh
 }
 
 func (s *InstallSaga) Install(ctx context.Context, identifier appChannel.AppChannelIdentifier) (*appChannel.AppChannel, error) {
-	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
+	install := app.InstallInfo{AppID: identifier.AppID, ChannelID: identifier.ChannelID}
 
-	res, err := s.appQuerySvc.CheckInstallable(ctx, install)
+	res, err := s.appInstallSvc.CheckInstallable(ctx, install)
 	if err != nil {
 		return nil, err
 	} else if !res.Result {
 		return nil, err
 	}
 
-	defaultCfg := s.appCfgSvc.DefaultConfigOf(ctx, install)
-
-	created, err := s.appChInstallSvc.Install(ctx, identifier, toMap(defaultCfg))
+	defaultCfg, err := s.appCfgSvc.DefaultConfigOf(ctx, install)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := s.appNotifySvc.NotifyInstall(ctx, install); err != nil {
+	created, err := s.appChInstallSvc.Install(ctx, identifier, appChannel.ConfigMap(defaultCfg))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.appInstallSvc.NotifyUnInstall(ctx, install); err != nil {
 		return nil, err
 	}
 
@@ -73,32 +78,20 @@ func (s *InstallSaga) SetConfig(
 	ctx context.Context,
 	identifier appChannel.AppChannelIdentifier,
 	newConfig appChannel.ConfigMap,
-) error {
-	install := app.InstallInfo{AppId: identifier.AppID, ChannelId: identifier.ChannelID}
+) (app.CheckReturn, error) {
+	install := app.InstallInfo{AppID: identifier.AppID, ChannelID: identifier.ChannelID}
 
-	if err := s.appCfgSvc.ValidateConfigs(ctx, install, toConfigInput(newConfig)); err != nil {
-		return err
+	ret, err := s.appCfgSvc.CheckConfig(ctx, install, app.ConfigMap(newConfig))
+	if err != nil {
+		return ret, err
+	}
+	if !ret.Success {
+		return ret, nil
 	}
 
 	if err := s.appChCfgSvc.SetConfig(ctx, identifier, newConfig); err != nil {
-		return err
+		return app.CheckReturn{}, err
 	}
 
-	return nil
-}
-
-func toConfigInput(input map[string]string) []*app.ConfigValue {
-	var ret []*app.ConfigValue
-	for key, val := range input {
-		ret = append(ret, &app.ConfigValue{Key: key, Value: val})
-	}
-	return ret
-}
-
-func toMap(configs []*app.ConfigValue) map[string]string {
-	ret := make(map[string]string)
-	for _, config := range configs {
-		ret[config.Key] = config.Value
-	}
-	return ret
+	return ret, nil
 }

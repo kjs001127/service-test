@@ -1,45 +1,36 @@
 package domain
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 
-	rpc "github.com/channel-io/ch-app-store/internal/rpc/domain"
+	"github.com/friendsofgo/errors"
 )
 
-type ActionType string
-type Attributes []string
+type ActionType reflect.Type
 
 // Action is a result of Command.
 // Must contain Type and Attributes according to that Type.
 type Action struct {
-	Type       ActionType      `json:"type"`
-	Attributes json.RawMessage `json:"attributes"`
+	Type       TypeKey
+	Attributes map[string]any
 }
 
-// ActionValidator checks if certain string is a JSON representation of Action
 type ActionValidator struct {
-	validActions map[ActionType]reflect.Type
+	typeValidator *TypeValidator
 }
 
-func NewActionValidator(actions map[ActionType]reflect.Type) *ActionValidator {
-	return &ActionValidator{validActions: actions}
+func NewActionValidator(typeValidator *TypeValidator) *ActionValidator {
+	return &ActionValidator{typeValidator: typeValidator}
 }
 
-func (v *ActionValidator) validate(ret rpc.Result) error {
-	var inputAction Action
-	if err := json.Unmarshal(ret, &inputAction); err != nil {
-		return fmt.Errorf("failed to marshal to action. cause:%w", err)
+func (v *ActionValidator) ValidateAction(input Action) error {
+
+	if len(input.Type) <= 0 {
+		return errors.New("type must not be empty")
 	}
 
-	requiredAttrType, ok := v.validActions[inputAction.Type]
-	if !ok {
-		return fmt.Errorf("no action type found. input: %v", inputAction.Type)
-	}
-	requiredAttr := reflect.Zero(requiredAttrType)
-	if err := json.Unmarshal(inputAction.Attributes, &requiredAttr); err != nil {
-		return fmt.Errorf("failed to marshal attributes. cause:%w", err)
+	if err := v.typeValidator.Validate(input.Type, input.Attributes); err != nil {
+		return errors.Wrap(err, "action attribute parse fail")
 	}
 
 	return nil

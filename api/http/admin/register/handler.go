@@ -2,20 +2,20 @@ package register
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/saga"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appRegisterSvc *app.RegisterSvc
+	registerSaga *saga.RegisterSaga
 }
 
 func NewHandler(
-	appRegisterSvc *app.RegisterSvc,
+	registerSaga *saga.RegisterSaga,
 ) *Handler {
 	return &Handler{
-		appRegisterSvc: appRegisterSvc,
+		registerSaga: registerSaga,
 	}
 }
 

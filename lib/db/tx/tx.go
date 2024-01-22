@@ -16,7 +16,22 @@ func SetDB(newDB *sql.DB) {
 	txDB = newDB
 }
 
-func Run[R any](
+func Run(
+	ctx context.Context,
+	body func(context.Context) error,
+	sqlOptions ...Option,
+) error {
+	_, err := RunWithReturn(
+		ctx,
+		func(ctx context.Context) (interface{}, error) {
+			return nil, body(ctx)
+		},
+		sqlOptions...,
+	)
+	return err
+}
+
+func RunWithReturn[R any](
 	ctx context.Context,
 	body func(context.Context) (R, error),
 	sqlOptions ...Option,

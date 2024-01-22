@@ -4,23 +4,33 @@ import (
 	"context"
 
 	appChannel "github.com/channel-io/ch-app-store/internal/appchannel/domain"
-	"github.com/channel-io/ch-app-store/internal/rpc/domain"
+	invoke "github.com/channel-io/ch-app-store/internal/rpc/domain"
 )
 
-type InstallAwareInvoker struct {
-	repo   *appChannel.InstallSvc
-	rpcSvc *domain.RpcSvc
+type InstallAwareInvokeSaga[REQ any, RET any] struct {
+	repo      *appChannel.InstallSvc
+	invokeSvc invoke.InvokeSvc[REQ, RET]
 }
 
-type InstallAwareInvokeRequest struct {
+func NewInstallAwareInvokeSaga[REQ any, RET any](
+	installSvc *appChannel.InstallSvc,
+	invokeSvc invoke.InvokeSvc[REQ, RET],
+) *InstallAwareInvokeSaga[REQ, RET] {
+	return &InstallAwareInvokeSaga[REQ, RET]{
+		repo:      installSvc,
+		invokeSvc: invokeSvc,
+	}
+}
+
+type InstallAwareRequest[REQ any] struct {
 	Identifier appChannel.AppChannelIdentifier
-	Request    domain.RpcRequest
+	Req        REQ
 }
 
-func (i *InstallAwareInvoker) Invoke(ctx context.Context, req InstallAwareInvokeRequest) (domain.Result, error) {
+func (i *InstallAwareInvokeSaga[REQ, RET]) Invoke(ctx context.Context, req InstallAwareRequest[REQ]) (RET, error) {
 	if _, err := i.repo.CheckInstall(ctx, req.Identifier); err != nil {
 		return nil, err
 	}
 
-	return i.rpcSvc.Invoke(ctx, req.Request)
+	return i.invokeSvc.Invoke(ctx, req.Req)
 }

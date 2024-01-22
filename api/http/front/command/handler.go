@@ -11,12 +11,12 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	commandQuerySvc *command.QuerySvc
-	invoker         *saga.InstallAwareInvoker
+	invoker         *saga.InstallAwareInvokeSaga[any, any]
 }
 
 func NewHandler(
 	commandQuerySvc *command.QuerySvc,
-	invoker *saga.InstallAwareInvoker,
+	invoker *saga.InstallAwareInvokeSaga[any, any],
 ) *Handler {
 	return &Handler{
 		commandQuerySvc: commandQuerySvc,

@@ -1,39 +1,49 @@
 CREATE TABLE apps
 (
-    id            CHARACTER VARYING PRIMARY KEY NOT NULL,
+    id                 CHARACTER VARYING PRIMARY KEY NOT NULL,
 
-    title         CHARACTER VARYING             NOT NULL,
-    description   CHARACTER VARYING,
-    avatar_url    CHARACTER VARYING,
+    client_id          CHARACTER VARYING             NOT NULL,
+    secret             CHARACTER VARYING             NOT NULL,
 
-    wam_uri       CHARACTER VARYING,
-    rpc_uri       CHARACTER VARYING,
-    install_uri   CHARACTER VARYING             NOT NULL,
-    check_uri     CHARACTER VARYING,
-    state         CHARACTER VARYING             NOT NULL,
-    config_scheme JSONB,
+    title              CHARACTER VARYING             NOT NULL,
+    description        CHARACTER VARYING,
+    detail_description JSONB,
+    detail_image_urls  CHARACTER VARYING,
+    avatar_url         CHARACTER VARYING,
 
-    created_at    TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW(),
-    updated_at    TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW()
+    wam_url            CHARACTER VARYING,
+    function_url       CHARACTER VARYING,
+    hook_url           CHARACTER VARYING,
+    check_url          CHARACTER VARYING,
+
+    state              CHARACTER VARYING             NOT NULL,
+    config_schema      JSONB,
+
+    created_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW()
 );
 
 
 CREATE TABLE commands
 (
-    id                CHARACTER VARYING PRIMARY KEY          NOT NULL,
-    app_id            CHARACTER VARYING REFERENCES apps (id) NOT NULL,
-    function_name     CHARACTER VARYING                      NOT NULL,
+    id                         CHARACTER VARYING PRIMARY KEY          NOT NULL,
 
-    name              CHARACTER VARYING                      NOT NULL,
-    scope             CHARACTER VARYING                      NOT NULL,
-    description       CHARACTER VARYING,
-    param_definitions JSONB,
+    app_id                     CHARACTER VARYING REFERENCES apps (id) NOT NULL,
+    name                       CHARACTER VARYING                      NOT NULL,
+    scope                      CHARACTER VARYING                      NOT NULL,
 
-    created_at        TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW(),
-    updated_at        TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW()
+    function_name              CHARACTER VARYING                      NOT NULL,
+    autocomplete_function_name CHARACTER VARYING,
+    param_definitions          JSONB                                  NOT NULL,
+
+    description                CHARACTER VARYING,
+
+    created_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW(),
+    updated_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW()
 );
 
 CREATE UNIQUE INDEX unique_index_commands_on_app_id_and_scope_and_name ON commands USING btree (app_id, scope, name);
+
 
 CREATE TABLE app_channels
 (

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/volatiletech/null/v8"
 )
 
 type Scope string
@@ -31,9 +33,11 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"-"`
 
-	FunctionName     string           `json:"-"`
-	ParamDefinitions ParamDefinitions `json:"arguments"`
-	Description      string           `json:"description"`
+	Description null.String `json:"description"`
+
+	FunctionName             string           `json:"-"`
+	AutoCompleteFunctionName null.String      `json:"-"`
+	ParamDefinitions         ParamDefinitions `json:"arguments"`
 
 	UpdatedAt time.Time `json:"-"`
 	CreatedAt time.Time `json:"-"`
@@ -48,24 +52,17 @@ func (c *Command) Validate() error {
 		return fmt.Errorf("scope %s is not defined", c.Scope)
 	}
 
-	if err := c.ParamDefinitions.validate(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
 type Query struct {
-	AppID string
-	Scope Scope
-	Query string
-
-	Since string
-	Limit int
+	AppIDs []string
+	Scope  Scope
 }
 
 type Key struct {
 	AppID string
+	Scope string
 	Name  string
 }
 

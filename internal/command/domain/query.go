@@ -21,3 +21,7 @@ func (s *QuerySvc) QueryCommands(ctx context.Context, query Query) ([]*Command, 
 
 	return cmds, nil
 }
+
+func (s *QuerySvc) QueryCommand(ctx context.Context, key Key) (*Command, error) {
+	return s.repo.Fetch(ctx, key)
+}

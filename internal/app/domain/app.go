@@ -2,11 +2,36 @@ package domain
 
 import (
 	"context"
+
+	"github.com/volatiletech/null/v8"
+)
+
+type AppState string
+
+const (
+	AppStateActive   = AppState("active")
+	AppStateInActive = AppState("inactive")
 )
 
 type App struct {
-	ID      string
-	Configs map[string]string
+	ID     string
+	RoleId string
+	State  AppState
+
+	AvatarUrl   null.String
+	Title       string
+	Description null.String
+
+	ManualUrl         null.String
+	DetailDescription null.String
+	DetailImageUrls   null.String
+
+	HookUrl     null.String
+	FunctionUrl null.String
+	WamUrl      null.String
+	CheckUrl    null.String
+
+	ConfigSchemas ConfigSchemas
 }
 
 type AppRepository interface {

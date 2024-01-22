@@ -16,7 +16,7 @@ func (h *Handler) registerCommand(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.appRegisterSvc.Register(ctx, request); err != nil {
+	if err := h.registerSaga.Register(ctx, request); err != nil {
 		_ = ctx.Error(err)
 		return
 	}

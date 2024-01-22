@@ -10,12 +10,12 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	invoker       *saga.InstallAwareInvoker
+	invoker       *saga.InstallAwareInvokeSaga[any, any]
 	appChannelSvc *appchannel.ConfigSvc
 }
 
 func NewHandler(
-	invoker *saga.InstallAwareInvoker,
+	invoker *saga.InstallAwareInvokeSaga[any, any],
 ) *Handler {
 	return &Handler{
 		invoker: invoker,

@@ -70,16 +70,11 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.installSaga.SetConfig(ctx, identifier, configMap); err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	cfg, err := h.appChannelConfigSvc.GetConfig(ctx, identifier)
+	ret, err := h.installSaga.SetConfig(ctx, identifier, configMap)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, cfg)
+	ctx.JSON(http.StatusOK, ret)
 }

@@ -11,16 +11,17 @@ import (
 )
 
 type RegisterSvc struct {
-	repo CommandRepository
+	repo           CommandRepository
+	paramValidator *ParamValidator
 }
 
-func NewRegisterService(repo CommandRepository) *RegisterSvc {
-	return &RegisterSvc{repo: repo}
+func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) *RegisterSvc {
+	return &RegisterSvc{repo: repo, paramValidator: paramValidator}
 }
 
 type RegisterRequest struct {
-	AppID    string
-	Commands []*Command
+	AppID     string
+	Resources []*Command
 }
 
 func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
@@ -40,15 +41,18 @@ func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
 		DoDelete: s.deleteResource,
 	}
 
-	return updater.Update(ctx, oldbies, req.Commands)
+	return updater.Update(ctx, oldbies, req.Resources)
 }
 
 func (s *RegisterSvc) validateRequest(req RegisterRequest) error {
-	for _, resource := range req.Commands {
-		if resource.AppID != req.AppID {
-			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of resource: %s", req.AppID, resource.AppID))
+	for _, cmd := range req.Resources {
+		if cmd.AppID != req.AppID {
+			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", req.AppID, cmd.AppID))
 		}
-		if err := resource.Validate(); err != nil {
+		if err := cmd.Validate(); err != nil {
+			return apierr.BadRequest(err)
+		}
+		if err := s.paramValidator.ValidateDefs(cmd.ParamDefinitions); err != nil {
 			return apierr.BadRequest(err)
 		}
 	}
