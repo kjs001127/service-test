@@ -15,21 +15,24 @@ const (
 
 type App struct {
 	ID     string
-	RoleId string
+	RoleID string
 	State  AppState
+	Secret string
 
-	AvatarUrl   null.String
+	ClientID string
+
+	AvatarURL   null.String
 	Title       string
 	Description null.String
 
-	ManualUrl         null.String
-	DetailDescription null.String
-	DetailImageUrls   null.String
+	ManualURL         null.String
+	DetailDescription null.JSON
+	DetailImageURLs   null.String
 
-	HookUrl     null.String
-	FunctionUrl null.String
-	WamUrl      null.String
-	CheckUrl    null.String
+	HookURL     null.String
+	FunctionURL null.String
+	WamURL      null.String
+	CheckURL    null.String
 
 	ConfigSchemas ConfigSchemas
 }

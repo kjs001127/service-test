@@ -5,6 +5,8 @@ CREATE TABLE apps
     client_id          CHARACTER VARYING             NOT NULL,
     secret             CHARACTER VARYING             NOT NULL,
 
+    role_id             CHARACTER VARYING            NOT NULL,
+
     title              CHARACTER VARYING             NOT NULL,
     description        CHARACTER VARYING,
     detail_description JSONB,
@@ -15,6 +17,7 @@ CREATE TABLE apps
     function_url       CHARACTER VARYING,
     hook_url           CHARACTER VARYING,
     check_url          CHARACTER VARYING,
+    manual_url         CHARACTER VARYING,
 
     state              CHARACTER VARYING             NOT NULL,
     config_schema      JSONB,
