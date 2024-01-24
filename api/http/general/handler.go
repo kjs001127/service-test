@@ -1,6 +1,8 @@
 package general
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/shared"
 	appchannel "github.com/channel-io/ch-app-store/internal/appchannel/domain"
@@ -23,6 +25,9 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
+	router.GET("/ping", func(ctx *gin.Context) {
+		ctx.String(200, "pong")
+	})
 	group := router.Group("/general/v1")
 
 	group.PUT("/channels/:channelId/app-channels/:appId/functions/:name", shared.ExecuteRpc(h.invoker))

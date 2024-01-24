@@ -34,13 +34,14 @@ type RpcInvokeSvc[REQ any, RES any] struct {
 
 func (s *RpcInvokeSvc[REQ, RES]) Invoke(ctx context.Context, originReq REQ) (RES, error) {
 	handler, err := s.handlerFactory.NewHandler(ctx, originReq)
+	var empty RES
 	if err != nil {
-		return nil, errors.Wrap(err, "fetch resolver fail")
+		return empty, errors.Wrap(err, "fetch resolver fail")
 	}
 
 	res, err := handler.Handle(ctx, s.requester, originReq)
 	if err != nil {
-		return nil, errors.Wrap(err, "handle fail")
+		return empty, errors.Wrap(err, "handle fail")
 	}
 
 	return res, nil

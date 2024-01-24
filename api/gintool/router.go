@@ -12,7 +12,7 @@ type Router interface {
 	gin.IRouter
 }
 
-func NewGinRouter(routes []RouteRegistrant) *gin.Engine {
+func NewGinEngine(routes []RouteRegistrant) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(cors.Default())

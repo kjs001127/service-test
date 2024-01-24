@@ -1,11 +1,19 @@
 package front
 
 import (
+	"go.uber.org/fx"
+
+	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/front/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/front/command"
 )
 
-var HandlerConstructors = []any{
-	appchannel.NewHandler,
-	command.NewHandler,
+func HttpModule() fx.Option {
+	return fx.Module(
+		"frontHttpModule",
+		fx.Provide(
+			gintool.AddTag(appchannel.NewHandler),
+			gintool.AddTag(command.NewHandler),
+		),
+	)
 }

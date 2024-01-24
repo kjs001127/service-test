@@ -18,10 +18,10 @@ func (f *FunctionRequestSvc) SendRequest(ctx context.Context, req domain.RpcRequ
 	if err != nil {
 		return errors.Wrap(err, "app fetch fail")
 	}
-	if !app.FunctionUrl.Valid {
+	if !app.FunctionURL.Valid {
 		return errors.New("functionUrl is empty")
 	}
-	if err := f.requester.Request(ctx, app.FunctionUrl.String, req, ret); err != nil {
+	if err := f.requester.Request(ctx, app.FunctionURL.String, req, ret); err != nil {
 		return errors.Wrap(err, "http request fail")
 	}
 

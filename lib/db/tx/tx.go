@@ -36,8 +36,9 @@ func RunWithReturn[R any](
 	body func(context.Context) (R, error),
 	sqlOptions ...Option,
 ) (ret R, retErr error) {
+	var empty R
 	if txDB == nil {
-		return nil, fmt.Errorf("txDB does not exist")
+		return empty, fmt.Errorf("txDB does not exist")
 	}
 
 	txOptions := sql.TxOptions{Isolation: sql.LevelDefault, ReadOnly: false}
@@ -47,7 +48,7 @@ func RunWithReturn[R any](
 
 	tx, err := txDB.BeginTx(ctx, &txOptions)
 	if err != nil {
-		return nil, err
+		return empty, err
 	}
 
 	defer func() {
@@ -63,20 +64,20 @@ func RunWithReturn[R any](
 	if ctx.Value(txKey) == nil {
 		ctx = context.WithValue(ctx, txKey, tx)
 	} else if _, ok := ctx.Value(txKey).(db.Conn); !ok {
-		return nil, fmt.Errorf("found conn in context, but is not db.Conn")
+		return empty, fmt.Errorf("found conn in context, but is not db.Conn")
 	}
 
 	result, err := body(ctx)
 
 	if err != nil {
 		if txErr := tx.Rollback(); txErr != nil {
-			return nil, fmt.Errorf("rollback fail. err: %v. cause: %w", txErr, err)
+			return empty, fmt.Errorf("rollback fail. err: %v. cause: %w", txErr, err)
 		}
-		return nil, err
+		return empty, err
 	}
 
 	if err := tx.Commit(); err != nil {
-		return nil, fmt.Errorf("tx commit fail. cause: %w", err)
+		return empty, fmt.Errorf("tx commit fail. cause: %w", err)
 	}
 
 	return result, nil

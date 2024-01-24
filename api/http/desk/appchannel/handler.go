@@ -29,7 +29,7 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/desk/v6/channels/:channelId/app-channels")
+	group := router.Group("/desk/channels/:channelId/app-channels")
 
 	group.GET("/", shared.GetAllWithApp(h.appRepo, h.appChannelRepo))
 	group.POST("/", h.install)

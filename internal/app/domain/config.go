@@ -45,13 +45,13 @@ func (s *ConfigSvc) CheckConfig(ctx context.Context, install InstallInfo, input 
 		return CheckReturn{}, errors.Wrap(err, "app fetch fail")
 	}
 
-	if !app.CheckUrl.Valid {
+	if !app.CheckURL.Valid {
 		return CheckReturn{}, apierr.BadRequest(errors.New("app checkUrl is empty"))
 	}
 
 	return s.checker.Request(
 		ctx,
-		app.CheckUrl.String,
+		app.CheckURL.String,
 		CheckRequest{
 			Type: CheckTypeConfig,
 			Data: input,

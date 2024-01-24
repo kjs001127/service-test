@@ -28,12 +28,12 @@ func (s *InstallSvc) NotifyInstall(ctx context.Context, install InstallInfo) err
 		return errors.Wrap(err, "app fetch fail")
 	}
 
-	if !app.HookUrl.Valid {
+	if !app.HookURL.Valid {
 		return apierr.BadRequest(errors.New("app checkUrl is empty"))
 	}
 
 	return s.hookSender.SendHook(ctx,
-		app.HookUrl.String,
+		app.HookURL.String,
 		HookEvent{
 			Type:       HookTypeInstall,
 			Attributes: install,
@@ -46,12 +46,12 @@ func (s *InstallSvc) NotifyUnInstall(ctx context.Context, install InstallInfo) e
 		return errors.Wrap(err, "app fetch fail")
 	}
 
-	if !app.HookUrl.Valid {
+	if !app.HookURL.Valid {
 		return apierr.BadRequest(errors.New("app checkUrl is empty"))
 	}
 
 	return s.hookSender.SendHook(ctx,
-		app.HookUrl.String,
+		app.HookURL.String,
 		HookEvent{
 			Type:       HookTypeUnInstall,
 			Attributes: install,

@@ -56,6 +56,17 @@ func (a *AppDAO) Fetch(ctx context.Context, appID string) (*app.App, error) {
 	return a.unmarshal(appTarget)
 }
 
+func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*app.App, error) {
+	conn, err := a.db.New(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	apps, err := models.Apps(qm.OrIn("id", appIDs)).All(ctx, conn)
+
+	return a.unmarshalAll(apps)
+}
+
 func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 	conn, err := a.db.New(ctx)
 	if err != nil {

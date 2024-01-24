@@ -28,8 +28,9 @@ type InstallAwareRequest[REQ any] struct {
 }
 
 func (i *InstallAwareInvokeSaga[REQ, RET]) Invoke(ctx context.Context, req InstallAwareRequest[REQ]) (RET, error) {
+	var empty RET
 	if _, err := i.repo.CheckInstall(ctx, req.Identifier); err != nil {
-		return nil, err
+		return empty, err
 	}
 
 	return i.invokeSvc.Invoke(ctx, req.Req)
