@@ -1,6 +1,8 @@
 package gintool
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -13,10 +15,11 @@ type ApiServer struct {
 }
 
 func NewApiServer(gin *gin.Engine) *ApiServer {
+	cfg := config.Get()
 	return &ApiServer{
-		config:  nil, // config.Get(),
+		config:  cfg,
 		router:  gin,
-		address: "localhost:3000", // config.Get().HOST,
+		address: fmt.Sprintf("localhost:%d", cfg.Port),
 	}
 }
 

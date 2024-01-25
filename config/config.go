@@ -14,8 +14,8 @@ import (
 
 var (
 	cfg          *Config
-	cfgExtension = "json"
-	validStages  = []string{"dev", "test", "exp", "production"}
+	cfgExtension = "yaml"
+	validStages  = []string{"development", "test", "exp", "production"}
 )
 
 //go:embed *
@@ -23,6 +23,7 @@ var configFiles embed.FS
 
 type Config struct {
 	Stage string `required:"true"`
+	Port  uint16 `required:"true"`
 }
 
 func Get() *Config {
@@ -59,7 +60,11 @@ func configAsString() string {
 }
 
 func currentStage() string {
-	return fmt.Sprintf("%s.%s", os.Getenv("GO_ENV"), cfgExtension)
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "development"
+	}
+	return env
 }
 
 // replaceEnvVars replaces ${ANY_ENV_VAR} in config file to the environment variable ANY_ENV_VAR
