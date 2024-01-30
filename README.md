@@ -12,7 +12,7 @@
 - Simply use `make init` to install [sqlboiler](https://github.com/volatiletech/sqlboiler), [mockery](https://github.com/vektra/mockery), [swaggo](https://github.com/swaggo/swag) & dependencies.
 
 ```bash
-make installTools
+make init
 ```
 
 ### Generate database schema & mock files 
