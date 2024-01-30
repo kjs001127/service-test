@@ -18,5 +18,5 @@ func NewHandler(invoker app.Invoker[json.RawMessage, json.RawMessage]) *Handler 
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.POST("/admin/v1/apps/:appID/:name", h.invoke)
+	router.POST("/admin/apps/:appID/functions/:name", h.invoke)
 }

@@ -17,7 +17,7 @@ import (
 //	@Param		channelID	path		string	true	"channelID"
 //
 //	@Success	200			{object}	object
-//	@Router		/admin/v1/channels/{channelID}/apps [get]
+//	@Router		/admin/channels/{channelID}/apps [get]
 func (h *Handler) query(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 

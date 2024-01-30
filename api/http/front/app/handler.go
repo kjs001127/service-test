@@ -23,7 +23,7 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/front/v6/apps/:appID")
+	group := router.Group("/front/v1/apps/:appID")
 	group.PUT("/commands/:name", h.executeCommand)
 	group.PUT("/commands/:name/auto-complete", h.autoComplete)
 	group.PUT("/wams/*path", h.downloadWAM)

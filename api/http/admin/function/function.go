@@ -10,6 +10,17 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
+// invoke godoc
+//
+//	@Summary	invoke Function
+//	@Tags		Admin
+//
+//	@Param		appID			path	string			true	"id of App to invoke Function"
+//	@Param		name			path	string			true	"name of Function to invoke"
+//	@Param		json.RawMessage	body	json.RawMessage	true	"body of Function to invoke"
+//
+//	@Success	204
+//	@Router		/admin/apps/{appID}/functions/{name} [post]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name := ctx.Param("appID"), ctx.Param("name")
 

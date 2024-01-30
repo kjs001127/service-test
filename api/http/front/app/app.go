@@ -22,7 +22,7 @@ const scope = command.ScopeFront
 //	@Param		name	path		string	true	"name of Command to execute"
 //
 //	@Success	200		{object}	object
-//	@Router		/front/v6/apps/{appID}/commands/{name} [put]
+//	@Router		/front/v1/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ArgumentsAndContext
 	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
@@ -57,7 +57,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Param		name	path		string	true	"name of Command to execute autoComplete"
 //
 //	@Success	200		{object}	object
-//	@Router		/front/v6/apps/{appID}/commands/{name}/auto-complete [put]
+//	@Router		/front/v1/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
 	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
@@ -97,7 +97,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		path	path		string	true	"file path"
 //
 //	@Success	200		{object}	object
-//	@Router		/front/v6/apps/{appID}/wams/{path} [get]
+//	@Router		/front/v1/apps/{appID}/wams/{path} [get]
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
 
