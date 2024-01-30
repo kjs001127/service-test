@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/channel-io/ch-app-store/api/http/general/swagger"
+	_ "github.com/channel-io/ch-app-store/api/http/swagger"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 )
@@ -26,7 +26,7 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 // ping godoc
 //
 //	@Summary	send ping to server
-//	@Tags		util
+//	@Tags		Util
 //	@Success	200	{string}	string
 //	@Router		/ping [get]
 func (h *Handler) ping(ctx *gin.Context) {

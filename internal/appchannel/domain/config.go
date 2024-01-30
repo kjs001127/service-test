@@ -13,7 +13,7 @@ type ConfigSvc struct {
 func (s *ConfigSvc) SetConfig(
 	ctx context.Context,
 	identifier AppChannelIdentifier,
-	newConfig ConfigMap,
+	newConfig Configs,
 ) error {
 	appCh, err := s.repo.Fetch(ctx, identifier)
 	if err != nil {
@@ -32,7 +32,7 @@ func (s *ConfigSvc) SetConfig(
 func (s *ConfigSvc) GetConfig(
 	ctx context.Context,
 	identifier AppChannelIdentifier,
-) (ConfigMap, error) {
+) (Configs, error) {
 	appCh, err := s.repo.Fetch(ctx, identifier)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch while get config fail")
@@ -41,13 +41,13 @@ func (s *ConfigSvc) GetConfig(
 	return appCh.Configs, nil
 }
 
-func (s *ConfigSvc) GetConfigByChannel(ctx context.Context, channelID string) ([]ConfigMap, error) {
+func (s *ConfigSvc) GetConfigByChannel(ctx context.Context, channelID string) ([]Configs, error) {
 	appChs, err := s.repo.FindAllByChannel(ctx, channelID)
 	if err != nil {
 		return nil, errors.Wrap(err, "fetch while get config fail")
 	}
 
-	var configMaps []ConfigMap
+	var configMaps []Configs
 	for _, appCh := range appChs {
 		configMaps = append(configMaps, appCh.Configs)
 	}

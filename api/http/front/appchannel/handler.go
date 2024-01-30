@@ -1,6 +1,8 @@
 package appchannel
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/shared"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -27,5 +29,20 @@ func NewHandler(
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/front/v6/channels/:channelId/app-channels")
 
-	group.GET("/", shared.GetAllWithApp(h.appRepo, h.appChannelRepo))
+	group.GET("/", h.getAllWithApp())
+}
+
+// getAllWithApp godoc
+//
+//	@Summary		get App(s) and AppChannel(s)
+//	@Tags			Front
+//	@Description	get App and AppChannel installed to channel. If appId is empty, it will return all Apps and AppChannels
+//
+//	@Param			channelId	path		string	true	"id of Channel"
+//	@Param			appId		query		string	false	"id of App"
+//
+//	@Success		200			{object}	dto.AppAndAppChannel
+//	@Router			/front/v6/channels/{channelId}/app-channels [get]
+func (h *Handler) getAllWithApp() func(ctx *gin.Context) {
+	return shared.GetAllWithApp(h.appRepo, h.appChannelRepo)
 }

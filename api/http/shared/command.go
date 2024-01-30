@@ -21,13 +21,6 @@ func QueryCommands(
 ) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		channelID := ctx.Param("channelId")
-		//since, limit := ctx.Query("since"), ctx.Query("limit")
-		//limitNumber, err := strconv.Atoi(limit)
-		//if err != nil {
-		//	_ = ctx.Error(err)
-		//	return
-		//}
-
 		appChannels, err := appChannelRepo.FindAllByChannel(ctx, channelID)
 		if err != nil {
 			_ = ctx.Error(err)

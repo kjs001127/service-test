@@ -84,11 +84,7 @@ clean-bin:
 docs: docs-gen docs-fmt
 
 docs-gen:
-	# api/http/{front|desk|admin}/handler/util/handler.go 파일의 swaggerInstanceName 상수와 instanceName 옵션의 값이 동일해야 합니다.
-#	swag init -d api/http/front -g module.go -o api/http/front/swagger --instanceName swagger_front --pd
-#	swag init -d api/http/desk -g module.go -o api/http/desk/swagger --instanceName swagger_desk --pd
-#	swag init -d api/http/admin  -g module.go -o api/http/admin/swagger  --instanceName swagger_admin  --pd
-	swag init -d api/http/general  -g module.go -o api/http/general/swagger  --instanceName swagger_general  --pd
+	swag init -d api/http -g module.go -o api/http/swagger --pd
 
 docs-fmt:
 	swag fmt -d api/http

@@ -103,7 +103,7 @@ func (a AppChannelDao) Delete(ctx context.Context, identifier appChannel.AppChan
 }
 
 func unmarshal(channel *models.AppChannel) (*appChannel.AppChannel, error) {
-	cfgMap := make(appChannel.ConfigMap)
+	cfgMap := make(appChannel.Configs)
 	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
 		return nil, err
 	}

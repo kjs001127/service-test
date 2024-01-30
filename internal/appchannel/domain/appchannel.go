@@ -4,13 +4,13 @@ import (
 	"context"
 )
 
-type ConfigMap map[string]string
+type Configs map[string]string
 
 type AppChannel struct {
 	AppID     string
 	ChannelID string
 	Active    bool
-	Configs   ConfigMap
+	Configs   Configs
 }
 
 type AppChannelIdentifier struct {

@@ -62,7 +62,7 @@ func (s *InstallSaga) Install(ctx context.Context, identifier appChannel.AppChan
 		return nil, err
 	}
 
-	created, err := s.appChInstallSvc.Install(ctx, identifier, appChannel.ConfigMap(defaultCfg))
+	created, err := s.appChInstallSvc.Install(ctx, identifier, appChannel.Configs(defaultCfg))
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (s *InstallSaga) Install(ctx context.Context, identifier appChannel.AppChan
 func (s *InstallSaga) SetConfig(
 	ctx context.Context,
 	identifier appChannel.AppChannelIdentifier,
-	newConfig appChannel.ConfigMap,
+	newConfig appChannel.Configs,
 ) (app.CheckReturn, error) {
 	install := app.InstallInfo{AppID: identifier.AppID, ChannelID: identifier.ChannelID}
 

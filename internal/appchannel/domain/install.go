@@ -11,7 +11,7 @@ type InstallSvc struct {
 func (s *InstallSvc) Install(
 	ctx context.Context,
 	identifier AppChannelIdentifier,
-	configs ConfigMap,
+	configs Configs,
 ) (*AppChannel, error) {
 	created, err := s.repo.Save(ctx, &AppChannel{
 		AppID:     identifier.AppID,

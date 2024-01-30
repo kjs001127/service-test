@@ -24,7 +24,7 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/desk/app-store/apps")
+	group := router.Group("/app-store/apps")
 
-	group.GET("/", h.getApps)
+	group.GET("/desk", h.getApps)
 }
