@@ -16,24 +16,20 @@ import (
 )
 
 type CommandDao struct {
-	src db.Source
+	db db.DB
 }
 
-func NewCommandDao(src db.Source) *CommandDao {
-	return &CommandDao{src: src}
+func NewCommandDao(src db.DB) *CommandDao {
+	return &CommandDao{db: src}
 }
 
 func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*domain.Command, error) {
-	conn, err := c.src.New(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	cmds, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("scope = $1", query.Scope),
 		qm.AndIn("app_id IN $2", query.AppIDs),
-	).All(ctx, conn)
+	).All(ctx, c.db)
 	if err != nil {
 		return nil, err
 	}
@@ -42,17 +38,12 @@ func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*d
 }
 
 func (c CommandDao) Fetch(ctx context.Context, key domain.Key) (*domain.Command, error) {
-	conn, err := c.src.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	model, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("scope = $2", key.Scope),
 		qm.Where("name = $3", key.Name),
-	).One(ctx, conn)
+	).One(ctx, c.db)
 
 	if err == sql.ErrNoRows {
 		return nil, apierr.NotFound(err)
@@ -62,15 +53,10 @@ func (c CommandDao) Fetch(ctx context.Context, key domain.Key) (*domain.Command,
 }
 
 func (c CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*domain.Command, error) {
-	conn, err := c.src.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	cmds, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
-	).All(ctx, conn)
+	).All(ctx, c.db)
 	if err != nil {
 		return nil, err
 	}
@@ -79,23 +65,19 @@ func (c CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*domai
 }
 
 func (c CommandDao) Delete(ctx context.Context, key domain.Key) error {
-	conn, err := c.src.New(ctx)
-	if err != nil {
-		return err
-	}
 
 	model, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("scope = $2", key.Scope),
 		qm.Where("name = $3", key.Name),
-	).One(ctx, conn)
+	).One(ctx, c.db)
 
 	if err == sql.ErrNoRows {
 		return apierr.NotFound(err)
 	}
 
-	if _, err := model.Delete(ctx, conn); err != nil {
+	if _, err := model.Delete(ctx, c.db); err != nil {
 		return err
 	}
 
@@ -103,11 +85,6 @@ func (c CommandDao) Delete(ctx context.Context, key domain.Key) error {
 }
 
 func (c CommandDao) Save(ctx context.Context, resource *domain.Command) (*domain.Command, error) {
-	conn, err := c.src.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	model, err := unmarshal(resource)
 	if err != nil {
 		return nil, err
@@ -115,7 +92,7 @@ func (c CommandDao) Save(ctx context.Context, resource *domain.Command) (*domain
 
 	if err := model.Upsert(
 		ctx,
-		conn,
+		c.db,
 		true,
 		[]string{"id"},
 		boil.Blacklist("id", "app_id", "scope", "name"),
@@ -125,6 +102,18 @@ func (c CommandDao) Save(ctx context.Context, resource *domain.Command) (*domain
 	}
 
 	return resource, nil
+}
+
+func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*domain.Command, error) {
+	cmds, err := models.Commands(
+		qm.Select("*"),
+		qm.AndIn("app_id IN $1", appIDs),
+	).All(ctx, c.db)
+	if err != nil {
+		return nil, err
+	}
+
+	return marshalAll(cmds)
 }
 
 func unmarshal(cmd *domain.Command) (*models.Command, error) {
@@ -138,7 +127,7 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		Name:                     cmd.Name,
 		AppID:                    cmd.AppID,
 		Scope:                    string(cmd.Scope),
-		FunctionName:             cmd.FunctionName,
+		ActionFunctionName:       cmd.ActionFunctionName,
 		AutocompleteFunctionName: cmd.AutoCompleteFunctionName,
 		Description:              cmd.Description,
 		ParamDefinitions:         bytes,
@@ -156,7 +145,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		Name:                     c.Name,
 		AppID:                    c.AppID,
 		Scope:                    domain.Scope(c.Scope),
-		FunctionName:             c.FunctionName,
+		ActionFunctionName:       c.ActionFunctionName,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName,
 		Description:              c.Description,
 		ParamDefinitions:         paramDefs,

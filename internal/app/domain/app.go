@@ -2,46 +2,100 @@ package domain
 
 import (
 	"context"
+	"io"
 
 	"github.com/volatiletech/null/v8"
 )
 
+type AppRepository interface {
+	FindApps(ctx context.Context, appIDs []string) ([]App, error)
+	FindApp(ctx context.Context, appID string) (App, error)
+	Index(ctx context.Context, since string, limit int) ([]App, error)
+}
+
+type App interface {
+	Data() *AppData
+
+	CheckInstallable(ctx context.Context, channelID string) error
+	OnInstall(ctx context.Context, channelID string) error
+	OnUnInstall(ctx context.Context, channelID string) error
+
+	OnConfigSet(ctx context.Context, channelID string, input ConfigMap) error
+
+	StreamFile(ctx context.Context, path string, writer io.Writer) error
+	Invoke(ctx context.Context, function string, input null.JSON) (null.JSON, error)
+}
+
+type ConfigSchemas []ConfigSchema
+
+type ConfigSchema struct {
+	Name       string
+	Type       string
+	Key        string
+	Default    null.String
+	Help       null.String
+	Attributes map[string]any
+}
+
+func (s ConfigSchemas) DefaultConfig() ConfigMap {
+	ret := make(ConfigMap)
+	for _, schema := range s {
+		if !schema.Default.Valid {
+			continue
+		}
+		ret[schema.Name] = schema.Default.String
+	}
+	return ret
+}
+
 type AppState string
 
 const (
-	AppStateActive   = AppState("active")
-	AppStateInActive = AppState("inactive")
+	AppStateStable   = AppState("stable")
+	AppStateUnStable = AppState("unstable")
 )
 
-type App struct {
-	ID     string
-	RoleID string
-	State  AppState
-	Secret string
+type AppData struct {
+	ID    string
+	State AppState
 
-	ClientID string
-
-	AvatarURL   null.String
 	Title       string
+	AvatarURL   null.String
 	Description null.String
 
 	ManualURL         null.String
 	DetailDescription null.JSON
 	DetailImageURLs   null.String
 
-	HookURL     null.String
-	FunctionURL null.String
-	WamURL      null.String
-	CheckURL    null.String
-
 	ConfigSchemas ConfigSchemas
 }
 
-type AppRepository interface {
-	Index(ctx context.Context, since string, limit int) ([]*App, error)
-	Fetch(ctx context.Context, appID string) (*App, error)
-	FindAll(ctx context.Context, appIDs []string) ([]*App, error)
-	Save(ctx context.Context, app *App) (*App, error)
-	Update(ctx context.Context, app *App) (*App, error)
-	Delete(ctx context.Context, appID string) error
+type ConfigMap map[string]string
+
+type AppChannel struct {
+	AppID     string
+	ChannelID string
+	Configs   ConfigMap
+}
+
+type Install struct {
+	AppID     string
+	ChannelID string
+}
+
+type AppChannelRepository interface {
+	Fetch(ctx context.Context, identifier Install) (*AppChannel, error)
+	FindAllByChannel(ctx context.Context, channelID string) ([]*AppChannel, error)
+	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
+	Delete(ctx context.Context, identifier Install) error
+}
+
+type InstalledApps struct {
+	Apps        []*AppData
+	AppChannels []*AppChannel
+}
+
+type InstalledApp struct {
+	App        *AppData
+	AppChannel *AppChannel
 }

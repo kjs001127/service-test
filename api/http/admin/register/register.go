@@ -18,7 +18,7 @@ import (
 //	@Param		command.RegisterRequest	body	command.RegisterRequest	true	"data of Command to register"
 //
 //	@Success	204
-//	@Router		/admin/app-store/v1/apps/{id}/commands [post]
+//	@Router		/admin/apps/{id}/commands [post]
 func (h *Handler) registerCommand(ctx *gin.Context) {
 	var request command.RegisterRequest
 	if err := ctx.ShouldBindBodyWith(request, binding.JSON); err != nil {

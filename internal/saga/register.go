@@ -14,6 +14,6 @@ type RegisterSaga struct {
 
 func (s *RegisterSaga) Register(ctx context.Context, req domain.RegisterRequest) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
-		return s.Register(ctx, req)
+		return s.svc.Register(ctx, req)
 	}, tx.WithIsolation(sql.LevelSerializable))
 }

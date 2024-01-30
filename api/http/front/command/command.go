@@ -10,18 +10,18 @@ import (
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
-const scope = command.ScopeDesk
+const scope = command.ScopeFront
 
-// queryCommands godoc
+// getCommands godoc
 //
-//	@Summary	get Commands of Channel
-//	@Tags		Desk
+//	@Summary	query Commands and Apps installed on channel
+//	@Tags		Front
 //
-//	@Param		channelId	path		string	true	"id of Channel"
+//	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	dto.AppsAndCommands
-//	@Router		/desk/channels/{channelId}/commands [get]
-func (h *Handler) queryChannelCommands(ctx *gin.Context) {
+//	@Success	200			{object}	object
+//	@Router		/front/v6/channels/{channelID}/commands [get]
+func (h *Handler) getCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
 	installedApps, err := h.appQuerySvc.QueryAll(ctx, channelID)
@@ -34,11 +34,15 @@ func (h *Handler) queryChannelCommands(ctx *gin.Context) {
 		AppIDs: app.AppIDsOf(installedApps.AppChannels),
 		Scope:  scope,
 	}
-	commands, err := h.commandQuerySvc.FetchByQuery(ctx, query)
+	commands, err := h.cmdRepo.FetchByQuery(ctx, query)
+
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Commands: dto.NewCommandDTOs(commands), Apps: installedApps.Apps})
+	ctx.JSON(http.StatusOK, dto.AppsAndCommands{
+		Apps:     installedApps.Apps,
+		Commands: dto.NewCommandDTOs(commands),
+	})
 }

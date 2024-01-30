@@ -2,89 +2,34 @@ package domain
 
 import (
 	"context"
-
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 )
-
-type ConfigMap map[string]string
-type ConfigSchemas []ConfigSchema
-
-type ConfigSchema struct {
-	Name       string
-	Type       string
-	Key        string
-	Default    null.String
-	Help       null.String
-	Attributes map[string]any
-}
-
-func (s ConfigSchemas) Default() ConfigMap {
-	ret := make(map[string]string)
-	for _, schema := range s {
-		if schema.Default.Valid {
-			ret[schema.Key] = schema.Default.String
-		}
-	}
-	return ret
-}
 
 type ConfigSvc struct {
-	repo    AppRepository
-	checker HttpAppChecker
+	appChRepo AppChannelRepository
+	appRepo   AppRepository
 }
 
-func NewConfigSvc(repo AppRepository) *ConfigSvc {
-	return &ConfigSvc{repo: repo}
-}
-
-func (s *ConfigSvc) CheckConfig(ctx context.Context, install InstallInfo, input ConfigMap) (CheckReturn, error) {
-	app, err := s.repo.Fetch(ctx, install.AppID)
+func (s *ConfigSvc) SetConfig(ctx context.Context, install Install, input ConfigMap) (*AppChannel, error) {
+	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
-		return CheckReturn{}, errors.Wrap(err, "app fetch fail")
+		return nil, err
 	}
 
-	if !app.CheckURL.Valid {
-		return CheckReturn{}, apierr.BadRequest(errors.New("app checkUrl is empty"))
-	}
-
-	return s.checker.Request(
-		ctx,
-		app.CheckURL.String,
-		CheckRequest{
-			Type: CheckTypeConfig,
-			Data: input,
-		},
-	)
-}
-
-func (s *ConfigSvc) DefaultConfigOf(ctx context.Context, install InstallInfo) (ConfigMap, error) {
-	app, err := s.repo.Fetch(ctx, install.AppID)
+	app, err := s.appRepo.FindApp(ctx, install.AppID)
 	if err != nil {
-		return nil, errors.Wrap(err, "app fetch fail")
+		return nil, err
 	}
 
-	return app.ConfigSchemas.Default(), nil
-}
+	if err := app.OnConfigSet(ctx, install.ChannelID, input); err != nil {
+		return nil, err
+	}
 
-type CheckType string
+	appCh.Configs = input
 
-const (
-	CheckTypeConfig = CheckType("config")
-)
+	saved, err := s.appChRepo.Save(ctx, appCh)
+	if err != nil {
+		return nil, err
+	}
 
-type CheckRequest struct {
-	ChannelId string
-	Type      CheckType
-	Data      any
-}
-
-type CheckReturn struct {
-	Success  bool
-	Messages map[string]any
-}
-
-type HttpAppChecker interface {
-	Request(ctx context.Context, url string, req CheckRequest) (CheckReturn, error)
+	return saved, nil
 }

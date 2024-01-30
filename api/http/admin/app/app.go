@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/api/http/admin/dto"
+	app "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
 // create godoc
@@ -17,7 +18,7 @@ import (
 //	@Param		app.App	body		app.App	true	"App to create"
 //
 //	@Success	201		{object}	app.App
-//	@Router		/admin/app-store/v1/apps [post]
+//	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
 	var target app.App
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
@@ -43,7 +44,7 @@ func (h *Handler) create(ctx *gin.Context) {
 //	@Param		app.App	body		app.App	true	"App to create"
 //
 //	@Success	200		{object}	app.App
-//	@Router		/admin/app-store/v1/apps/{id} [patch]
+//	@Router		/admin/apps/{id} [patch]
 func (h *Handler) update(ctx *gin.Context) {
 	ID := ctx.Param("id")
 	var target app.App
@@ -70,7 +71,7 @@ func (h *Handler) update(ctx *gin.Context) {
 //	@Param		id	path	string	true	"id of App to delete"
 //
 //	@Success	204
-//	@Router		/admin/app-store/v1/apps/{id} [delete]
+//	@Router		/admin/apps/{id} [delete]
 func (h *Handler) delete(ctx *gin.Context) {
 	ID := ctx.Param("id")
 
@@ -81,4 +82,32 @@ func (h *Handler) delete(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (h *Handler) query(ctx *gin.Context) {
+	appID := ctx.Param("appID")
+
+	found, err := h.appRepo.Fetch(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	brief, err := h.briefRepo.Fetch(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	cmds, err := h.commandRepo.FetchAllByAppID(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.AppResource{
+		App:      found.Data(),
+		Commands: cmds,
+		Brief:    brief,
+	})
 }

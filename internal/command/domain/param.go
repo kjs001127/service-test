@@ -4,16 +4,19 @@ import (
 	"fmt"
 
 	"github.com/friendsofgo/errors"
+
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 type ParamName string
 type ParamDefinitions map[ParamName]*ParamDefinition
 
 type ParamDefinition struct {
-	Name       ParamName      `json:"name"`
-	Type       TypeKey        `json:"type"`
-	Required   bool           `json:"required"`
-	Attributes map[string]any `json:"attributes"`
+	Name           ParamName      `json:"name"`
+	Type           TypeKey        `json:"type"`
+	Required       bool           `json:"required"`
+	Attributes     map[string]any `json:"attributes"`
+	AlfDescription string         `json:"alfDescription"`
 }
 
 type ParamValidator struct {
@@ -44,6 +47,10 @@ func (v *ParamValidator) ValidateDefs(defs ParamDefinitions) error {
 }
 
 type Arguments map[ParamName]any
+
+func (r Arguments) ChannelContext() app.ChannelContext {
+	return r[contextParamName].(app.ChannelContext)
+}
 
 type ArgsValidator struct {
 	typeValidator *TypeValidator

@@ -2,7 +2,6 @@ package app
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -12,63 +11,18 @@ import (
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
-// getApps godoc
-//
-//	@Summary	get list of Apps
-//	@Tags		Desk
-//
-//	@Param		since	query	string	true	"get App after this id"
-//	@Param		limit	query	string	true	"max count of return data"
-//
-//	@Success	200		{array}	app.AppData
-//	@Router		/desk/apps [get]
-func (h *Handler) getApps(ctx *gin.Context) {
-	since, limit := ctx.Query("since"), ctx.Query("limit")
-	limitNumber, err := strconv.Atoi(limit)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	apps, err := h.appRepo.Index(ctx, since, limitNumber)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, app.AppDatasOf(apps))
-}
-
-// getCommands godoc
-//
-//	@Summary	get Commands of specific app
-//	@Tags		Desk
-//
-//	@Param		appID	path		string	true	"id of App"
-//
-//	@Success	200		{object}	object
-//	@Router		/desk/apps/{appID}/commands [put]
-func (h *Handler) getCommands(ctx *gin.Context) {
-	appID := ctx.Param("appID")
-	commands, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: []string{appID}})
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.NewCommandDTOs(commands))
-}
+const scope = command.ScopeFront
 
 // executeCommand godoc
 //
 //	@Summary	execute selected Command
-//	@Tags		Desk
+//	@Tags		Front
 //
 //	@Param		appID	path		string	true	"id of App"
 //	@Param		name	path		string	true	"name of Command to execute"
 //
 //	@Success	200		{object}	object
-//	@Router		/desk/apps/{appID}/commands/{name} [put]
+//	@Router		/front/v6/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ArgumentsAndContext
 	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
@@ -77,13 +31,13 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	appID, name := ctx.Param("appID"), ctx.Param("name")
-	xAccount := ctx.GetHeader("x-account")
+	xSession := ctx.GetHeader("x-session")
 
-	res, err := h.cmdInvoker.Invoke(ctx, command.CommandRequest{
+	res, err := h.cmdInvokeSvc.Invoke(ctx, command.CommandRequest{
 		Context: body.Context,
 		Params:  body.Params,
-		Key:     command.Key{AppID: appID, Scope: command.ScopeDesk, Name: name},
-		Token:   app.AuthToken(xAccount),
+		Key:     command.Key{AppID: appID, Scope: scope, Name: name},
+		Token:   app.AuthToken(xSession),
 	})
 
 	if err != nil {
@@ -97,13 +51,13 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 // autoComplete godoc
 //
 //	@Summary	execute selected AutoComplete of Command
-//	@Tags		Desk
+//	@Tags		Front
 //
 //	@Param		appID	path		string	true	"id of App"
 //	@Param		name	path		string	true	"name of Command to execute autoComplete"
 //
 //	@Success	200		{object}	object
-//	@Router		/desk/apps/{appID}/commands/{name}/auto-complete [put]
+//	@Router		/front/v6/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
 	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
@@ -111,19 +65,19 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		return
 	}
 
-	appID, name := ctx.Param("appID"), ctx.Param("name")
-	xAccount := ctx.GetHeader("x-account")
+	appID, name := ctx.Param("appId"), ctx.Param("name")
+	xSession := ctx.GetHeader("x-session")
 
-	choices, err := h.autoCompleteInvoker.Invoke(ctx,
+	choices, err := h.autoCompleteSvc.Invoke(ctx,
 		command.AutocompleteClientRequest{
 			Command: command.Key{
 				AppID: appID,
 				Name:  name,
-				Scope: command.ScopeDesk,
+				Scope: scope,
 			},
 			Context: body.Context,
 			Params:  body.Params,
-			Token:   app.AuthToken(xAccount),
+			Token:   app.AuthToken(xSession),
 		},
 	)
 	if err != nil {
@@ -136,13 +90,14 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 // downloadWAM godoc
 //
-//	@Summary	download wam files of an App
-//	@Tags		Desk
+//	@Summary	download wam of an app
+//	@Tags		Front
 //
 //	@Param		appID	path		string	true	"id of App"
+//	@Param		path	path		string	true	"file path"
 //
 //	@Success	200		{object}	object
-//	@Router		/desk/apps/{appID}/wams/{path} [get]
+//	@Router		/front/v6/apps/{appID}/wams/{path} [get]
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
 

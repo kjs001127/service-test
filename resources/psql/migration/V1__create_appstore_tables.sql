@@ -5,19 +5,19 @@ CREATE TABLE apps
     client_id          CHARACTER VARYING             NOT NULL,
     secret             CHARACTER VARYING             NOT NULL,
 
-    role_id             CHARACTER VARYING            NOT NULL,
+    role_id            CHARACTER VARYING             NOT NULL,
 
     title              CHARACTER VARYING             NOT NULL,
     description        CHARACTER VARYING,
     detail_description JSONB,
     detail_image_urls  CHARACTER VARYING,
     avatar_url         CHARACTER VARYING,
+    manual_url         CHARACTER VARYING,
 
     wam_url            CHARACTER VARYING,
     function_url       CHARACTER VARYING,
     hook_url           CHARACTER VARYING,
     check_url          CHARACTER VARYING,
-    manual_url         CHARACTER VARYING,
 
     state              CHARACTER VARYING             NOT NULL,
     config_schema      JSONB,
@@ -35,11 +35,14 @@ CREATE TABLE commands
     name                       CHARACTER VARYING                      NOT NULL,
     scope                      CHARACTER VARYING                      NOT NULL,
 
-    function_name              CHARACTER VARYING                      NOT NULL,
+    action_function_name       CHARACTER VARYING                      NOT NULL,
     autocomplete_function_name CHARACTER VARYING,
-    param_definitions          JSONB                                  NOT NULL,
 
     description                CHARACTER VARYING,
+    param_definitions          JSONB                                  NOT NULL,
+
+    alf_description            CHARACTER VARYING,
+    alf_triggerable            BOOLEAN                                         DEFAULT FALSE,
 
     created_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW(),
     updated_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW()
@@ -62,4 +65,10 @@ CREATE TABLE app_channels
     PRIMARY KEY (app_id, channel_id)
 );
 
+CREATE TABLE brief
+(
+    id          CHARACTER VARYING PRIMARY KEY          NOT NULL,
+    app_id      CHARACTER VARYING REFERENCES apps (id) NOT NULL,
 
+    function_id CHARACTER VARYING                      NOT NULL
+);

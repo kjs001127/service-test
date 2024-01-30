@@ -10,18 +10,15 @@ import (
 
 	"github.com/channel-io/ch-app-store/generated/models"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
 type AppDAO struct {
-	db db.Source
+	db db.DB
 }
 
-func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*remoteapp.App, error) {
 
 	var queries []qm.QueryMod
 	queries = append(queries,
@@ -34,7 +31,7 @@ func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App
 		queries = append(queries, qm.Where("id < ?", since))
 	}
 
-	apps, err := models.Apps(queries...).All(ctx, conn)
+	apps, err := models.Apps(queries...).All(ctx, a.db)
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +39,8 @@ func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) Fetch(ctx context.Context, appID string) (*app.App, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, conn)
+func (a *AppDAO) Fetch(ctx context.Context, appID string) (*remoteapp.App, error) {
+	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 	if err != nil {
 		return nil, err
 	}
@@ -56,22 +48,16 @@ func (a *AppDAO) Fetch(ctx context.Context, appID string) (*app.App, error) {
 	return a.unmarshal(appTarget)
 }
 
-func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*app.App, error) {
-	conn, err := a.db.New(ctx)
+func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*remoteapp.App, error) {
+	apps, err := models.Apps(qm.OrIn("id", appIDs)).All(ctx, a.db)
 	if err != nil {
 		return nil, err
 	}
-
-	apps, err := models.Apps(qm.OrIn("id", appIDs)).All(ctx, conn)
 
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (a *AppDAO) Save(ctx context.Context, app *remoteapp.App) (*remoteapp.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
@@ -80,7 +66,7 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 
 	if err = model.Insert(
 		ctx,
-		conn,
+		a.db,
 		boil.Infer(),
 	); err != nil {
 		return nil, err
@@ -89,11 +75,7 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 	return a.unmarshal(model)
 }
 
-func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (a *AppDAO) Update(ctx context.Context, app *remoteapp.App) (*remoteapp.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
@@ -102,7 +84,7 @@ func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 
 	if err = model.Upsert(
 		ctx,
-		conn,
+		a.db,
 		true,
 		[]string{"id"},
 		boil.Blacklist("id"),
@@ -115,16 +97,11 @@ func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 }
 
 func (a *AppDAO) Delete(ctx context.Context, appID string) error {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return err
-	}
-
-	_, err = models.Apps(qm.Where("id = ?", appID)).DeleteAll(ctx, conn)
+	_, err := models.Apps(qm.Where("id = ?", appID)).DeleteAll(ctx, a.db)
 	return err
 }
 
-func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
+func (a *AppDAO) marshal(appTarget *remoteapp.App) (*models.App, error) {
 	data, err := json.Marshal(appTarget.ConfigSchemas)
 	if err != nil {
 		return nil, err
@@ -150,34 +127,36 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	}, nil
 }
 
-func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
+func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.App, error) {
 	var cfgSchemas app.ConfigSchemas
 	if err := json.Unmarshal(rawApp.ConfigSchema.JSON, &cfgSchemas); err != nil {
 		return nil, err
 	}
 
-	return &app.App{
-		ID:                rawApp.ID,
-		RoleID:            rawApp.RoleID,
-		Secret:            rawApp.Secret,
-		ClientID:          rawApp.ClientID,
-		State:             app.AppState(rawApp.State),
-		AvatarURL:         rawApp.AvatarURL,
-		Title:             rawApp.Title,
-		Description:       rawApp.Description,
-		ManualURL:         rawApp.ManualURL,
-		DetailDescription: rawApp.DetailDescription,
-		DetailImageURLs:   rawApp.DetailImageUrls,
-		HookURL:           rawApp.HookURL,
-		FunctionURL:       rawApp.FunctionURL,
-		WamURL:            rawApp.WamURL,
-		CheckURL:          rawApp.CheckURL,
-		ConfigSchemas:     cfgSchemas,
+	return &remoteapp.App{
+		AppData: app.AppData{
+			ID:                rawApp.ID,
+			State:             app.AppState(rawApp.State),
+			AvatarURL:         rawApp.AvatarURL,
+			Title:             rawApp.Title,
+			Description:       rawApp.Description,
+			ManualURL:         rawApp.ManualURL,
+			DetailDescription: rawApp.DetailDescription,
+			DetailImageURLs:   rawApp.DetailImageUrls,
+			ConfigSchemas:     cfgSchemas,
+		},
+		RoleID:      rawApp.RoleID,
+		Secret:      rawApp.Secret,
+		ClientID:    rawApp.ClientID,
+		HookURL:     rawApp.HookURL,
+		FunctionURL: rawApp.FunctionURL,
+		WamURL:      rawApp.WamURL,
+		CheckURL:    rawApp.CheckURL,
 	}, nil
 }
 
-func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*app.App, error) {
-	ret := make([]*app.App, len(rawApps))
+func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*remoteapp.App, error) {
+	ret := make([]*remoteapp.App, len(rawApps))
 	for _, _app := range rawApps {
 		unmarshalled, err := a.unmarshal(_app)
 		if err != nil {

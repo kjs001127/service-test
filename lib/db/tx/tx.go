@@ -10,10 +10,10 @@ import (
 
 const txKey = "tx"
 
-var txDB *sql.DB
+var defaultDB *sql.DB
 
 func SetDB(newDB *sql.DB) {
-	txDB = newDB
+	defaultDB = newDB
 }
 
 func Run(
@@ -37,8 +37,8 @@ func RunWithReturn[R any](
 	sqlOptions ...Option,
 ) (ret R, retErr error) {
 	var empty R
-	if txDB == nil {
-		return empty, fmt.Errorf("txDB does not exist")
+	if defaultDB == nil {
+		return empty, fmt.Errorf("defaultDB does not exist")
 	}
 
 	txOptions := sql.TxOptions{Isolation: sql.LevelDefault, ReadOnly: false}
@@ -46,7 +46,7 @@ func RunWithReturn[R any](
 		opt.apply(&txOptions)
 	}
 
-	tx, err := txDB.BeginTx(ctx, &txOptions)
+	tx, err := defaultDB.BeginTx(ctx, &txOptions)
 	if err != nil {
 		return empty, err
 	}
@@ -63,7 +63,7 @@ func RunWithReturn[R any](
 
 	if ctx.Value(txKey) == nil {
 		ctx = context.WithValue(ctx, txKey, tx)
-	} else if _, ok := ctx.Value(txKey).(db.Conn); !ok {
+	} else if _, ok := ctx.Value(txKey).(db.DB); !ok {
 		return empty, fmt.Errorf("found conn in context, but is not db.Conn")
 	}
 
@@ -107,21 +107,41 @@ func WithReadOnly(readOnly bool) Option {
 	return ReadOnlyOption(readOnly)
 }
 
-type Source struct {
+type DB struct {
 }
 
-func NewSource() *Source {
-	return &Source{}
+func (s *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
+	return defaultDB.Exec(query, args)
 }
 
-func (s *Source) New(ctx context.Context) (db.Conn, error) {
-	if val, ok := ctx.Value(txKey).(db.Conn); ok {
-		return val, nil
+func (s *DB) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	return defaultDB.Query(query, args)
+}
+
+func (s *DB) QueryRow(query string, args ...interface{}) *sql.Row {
+	return defaultDB.QueryRow(query, args)
+}
+
+func (s *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	return withTx(ctx).ExecContext(ctx, query, args)
+}
+
+func (s *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
+	return withTx(ctx).QueryContext(ctx, query, args)
+}
+
+func (s *DB) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
+	return withTx(ctx).QueryRowContext(ctx, query, args)
+}
+
+func withTx(ctx context.Context) db.DB {
+	if tx, ok := ctx.Value(txKey).(db.DB); ok {
+		return tx
 	}
 
-	if txDB == nil {
-		return nil, fmt.Errorf("txDB does not exist")
+	if defaultDB == nil {
+		panic("defaultDB does not exist")
 	}
 
-	return txDB, nil
+	return defaultDB
 }

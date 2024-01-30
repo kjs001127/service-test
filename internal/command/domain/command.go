@@ -31,13 +31,14 @@ type Command struct {
 
 	AppID string `json:"appID"`
 	Name  string `json:"name"`
-	Scope Scope  `json:"-"`
+	Scope Scope  `json:"scope"`
 
-	Description null.String `json:"description"`
+	Description    null.String `json:"description"`
+	AlfDescription null.String `json:"alfDescription"`
 
-	FunctionName             string           `json:"-"`
-	AutoCompleteFunctionName null.String      `json:"-"`
-	ParamDefinitions         ParamDefinitions `json:"arguments"`
+	ActionFunctionName       string           `json:"actionFunctionName"`
+	AutoCompleteFunctionName null.String      `json:"autoCompleteFunctionName"`
+	ParamDefinitions         ParamDefinitions `json:"paramDefinitions"`
 
 	UpdatedAt time.Time `json:"-"`
 	CreatedAt time.Time `json:"-"`
@@ -62,13 +63,15 @@ type Query struct {
 
 type Key struct {
 	AppID string
-	Scope string
+	Scope Scope
 	Name  string
 }
 
 type CommandRepository interface {
 	FetchByQuery(ctx context.Context, query Query) ([]*Command, error)
 	Fetch(ctx context.Context, key Key) (*Command, error)
+
+	FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*Command, error)
 	FetchAllByAppID(ctx context.Context, appID string) ([]*Command, error)
 
 	Delete(ctx context.Context, key Key) error

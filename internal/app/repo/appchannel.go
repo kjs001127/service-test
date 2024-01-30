@@ -11,25 +11,20 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	appChannel "github.com/channel-io/ch-app-store/internal/appchannel/domain"
+	appChannel "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
 type AppChannelDao struct {
-	db db.Source
+	db db.DB
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.AppChannelIdentifier) (*appChannel.AppChannel, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
+func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.Install) (*appChannel.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", identifier.ChannelID),
 		qm.Where("app_id = $2", identifier.AppID),
-	).One(ctx, conn)
+	).One(ctx, a.db)
 
 	if err == sql.ErrNoRows {
 		return nil, apierr.NotFound(err)
@@ -41,25 +36,19 @@ func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.AppChan
 }
 
 func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*appChannel.AppChannel, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
-	).All(ctx, conn)
+	).All(ctx, a.db)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return unmarshalAll(appCh)
 }
 
 func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChannel) (*appChannel.AppChannel, error) {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	model, err := marshal(appChannel)
 	if err != nil {
 		return nil, err
@@ -67,7 +56,7 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChan
 
 	if err := model.Upsert(
 		ctx,
-		conn,
+		a.db,
 		true,
 		[]string{"app_id, channel_id"},
 		boil.Blacklist("app_id", "channel_id"),
@@ -79,23 +68,18 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChan
 	return unmarshal(model)
 }
 
-func (a AppChannelDao) Delete(ctx context.Context, identifier appChannel.AppChannelIdentifier) error {
-	conn, err := a.db.New(ctx)
-	if err != nil {
-		return err
-	}
-
+func (a *AppChannelDao) Delete(ctx context.Context, identifier appChannel.Install) error {
 	model, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
 		qm.Where("channel_id = $2", identifier.ChannelID),
-	).One(ctx, conn)
+	).One(ctx, a.db)
 
 	if err == sql.ErrNoRows {
 		return apierr.NotFound(err)
 	}
 
-	if _, err := model.Delete(ctx, conn); err != nil {
+	if _, err := model.Delete(ctx, a.db); err != nil {
 		return err
 	}
 
@@ -103,7 +87,7 @@ func (a AppChannelDao) Delete(ctx context.Context, identifier appChannel.AppChan
 }
 
 func unmarshal(channel *models.AppChannel) (*appChannel.AppChannel, error) {
-	cfgMap := make(appChannel.Configs)
+	cfgMap := make(appChannel.ConfigMap)
 	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
 		return nil, err
 	}
@@ -111,7 +95,6 @@ func unmarshal(channel *models.AppChannel) (*appChannel.AppChannel, error) {
 	return &appChannel.AppChannel{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Active:    channel.Active,
 		Configs:   cfgMap,
 	}, nil
 }
@@ -125,7 +108,6 @@ func marshal(channel *appChannel.AppChannel) (*models.AppChannel, error) {
 	return &models.AppChannel{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Active:    channel.Active,
 		Configs:   null.JSONFrom(cfg),
 	}, nil
 }
