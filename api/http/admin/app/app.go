@@ -20,7 +20,7 @@ import (
 //	@Success	201		{object}	app.App
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
-	var target app.App
+	var target app.RemoteApp
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
@@ -47,7 +47,7 @@ func (h *Handler) create(ctx *gin.Context) {
 //	@Router		/admin/apps/{id} [patch]
 func (h *Handler) update(ctx *gin.Context) {
 	ID := ctx.Param("id")
-	var target app.App
+	var target app.RemoteApp
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return

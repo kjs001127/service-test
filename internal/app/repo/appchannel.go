@@ -19,6 +19,10 @@ type AppChannelDao struct {
 	db db.DB
 }
 
+func NewAppChannelDao(db db.DB) *AppChannelDao {
+	return &AppChannelDao{db: db}
+}
+
 func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.Install) (*appChannel.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),

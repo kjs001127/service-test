@@ -9,14 +9,14 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	cmdInvokeSvc    cmd.InvokeSvc
-	autoCompleteSvc cmd.AutoCompleteSvc
+	cmdInvokeSvc    *cmd.InvokeSvc
+	autoCompleteSvc *cmd.AutoCompleteSvc
 	wamDownloader   *app.FileStreamer
 }
 
 func NewHandler(
-	cmdInvokeSvc cmd.InvokeSvc,
-	autoCompleteSvc cmd.AutoCompleteSvc,
+	cmdInvokeSvc *cmd.InvokeSvc,
+	autoCompleteSvc *cmd.AutoCompleteSvc,
 	wamDownloader *app.FileStreamer,
 ) *Handler {
 	return &Handler{cmdInvokeSvc: cmdInvokeSvc, autoCompleteSvc: autoCompleteSvc, wamDownloader: wamDownloader}

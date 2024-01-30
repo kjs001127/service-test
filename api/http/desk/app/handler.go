@@ -13,16 +13,16 @@ type Handler struct {
 	cmdRepo command.CommandRepository
 
 	wamDownloader       *app.FileStreamer
-	cmdInvoker          command.InvokeSvc
-	autoCompleteInvoker command.AutoCompleteSvc
+	cmdInvoker          *command.InvokeSvc
+	autoCompleteInvoker *command.AutoCompleteSvc
 }
 
 func NewHandler(
 	appRepo app.AppRepository,
 	cmdRepo command.CommandRepository,
 	wamDownloader *app.FileStreamer,
-	cmdInvoker command.InvokeSvc,
-	autoCompleteInvoker command.AutoCompleteSvc,
+	cmdInvoker *command.InvokeSvc,
+	autoCompleteInvoker *command.AutoCompleteSvc,
 ) *Handler {
 	return &Handler{appRepo: appRepo, cmdRepo: cmdRepo, wamDownloader: wamDownloader, cmdInvoker: cmdInvoker, autoCompleteInvoker: autoCompleteInvoker}
 }

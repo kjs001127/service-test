@@ -18,5 +18,5 @@ func NewHandler(appQuerySvc *app.QuerySvc, cmdRepo cmd.CommandRepository) *Handl
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.GET("/front/v1/channels/:channelId/commands", h.getCommands)
+	router.GET("/front/v1/channels/:channelID/commands", h.getCommands)
 }

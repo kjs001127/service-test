@@ -49,8 +49,15 @@ type ContextFnInvoker[REQ ChannelContextAware, RES any] interface {
 }
 
 type ContextFnInvokerImpl[REQ ChannelContextAware, RES any] struct {
-	invoker    Invoker[REQ, RES]
+	invoker    *Invoker[REQ, RES]
 	authorizer ContextAuthorizer
+}
+
+func NewContextFnInvoker[REQ ChannelContextAware, RES any](
+	invoker *Invoker[REQ, RES],
+	authorizer ContextAuthorizer,
+) *ContextFnInvokerImpl[REQ, RES] {
+	return &ContextFnInvokerImpl[REQ, RES]{invoker: invoker, authorizer: authorizer}
 }
 
 type Request[REQ ChannelContextAware] struct {

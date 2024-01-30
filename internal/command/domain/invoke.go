@@ -8,15 +8,15 @@ import (
 
 const contextParamName = ParamName("context")
 
-type InvokeSvc interface {
-	Invoke(ctx context.Context, request CommandRequest) (Action, error)
-}
-
-type InvokeSvcImpl struct {
+type InvokeSvc struct {
 	repository    CommandRepository
-	argsValidator ArgsValidator
+	argsValidator *ArgsValidator
 
 	requester app.ContextFnInvoker[Arguments, Action]
+}
+
+func NewInvokeSvc(repository CommandRepository, argsValidator *ArgsValidator, requester app.ContextFnInvoker[Arguments, Action]) *InvokeSvc {
+	return &InvokeSvc{repository: repository, argsValidator: argsValidator, requester: requester}
 }
 
 type CommandRequest struct {
@@ -27,7 +27,7 @@ type CommandRequest struct {
 	Context app.ChannelContext
 }
 
-func (r *InvokeSvcImpl) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
+func (r *InvokeSvc) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
 	cmd, err := r.repository.Fetch(ctx, request.Key)
 	if err != nil {
 		return Action{}, err

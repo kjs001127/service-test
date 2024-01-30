@@ -22,7 +22,7 @@ import (
 //	@Success	204
 //	@Router		/admin/apps/{appID}/functions/{name} [post]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID, name := ctx.Param("appID"), ctx.Param("name")
+	appID, name := ctx.Param("ID"), ctx.Param("name")
 
 	var req json.RawMessage
 	req, err := io.ReadAll(ctx.Request.Body)

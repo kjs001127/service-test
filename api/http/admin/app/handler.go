@@ -10,13 +10,13 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appRepo     app.AppRepository
+	appRepo     app.RemoteAppRepository
 	briefRepo   brief.BriefRepository
 	commandRepo cmd.CommandRepository
 }
 
 func NewHandler(
-	appRepo app.AppRepository,
+	appRepo app.RemoteAppRepository,
 	briefRepo brief.BriefRepository,
 	commandRepo cmd.CommandRepository,
 ) *Handler {

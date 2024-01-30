@@ -14,6 +14,10 @@ type BriefDao struct {
 	db db.DB
 }
 
+func NewBriefDao(db db.DB) *BriefDao {
+	return &BriefDao{db: db}
+}
+
 func (b BriefDao) Fetch(ctx context.Context, appID string) (*domain.Brief, error) {
 	one, err := models.Briefs(
 		qm.Select("*"),

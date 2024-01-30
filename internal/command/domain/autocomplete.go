@@ -47,16 +47,16 @@ func (choices Choices) validate() error {
 	return nil
 }
 
-type AutoCompleteSvc interface {
-	Invoke(ctx context.Context, request AutocompleteClientRequest) (Choices, error)
-}
-
-type AutoCompleteSvcImpl struct {
+type AutoCompleteSvc struct {
 	repository CommandRepository
 	requester  app.ContextFnInvoker[AutoCompleteRequest, Choices]
 }
 
-func (r *AutoCompleteSvcImpl) Invoke(ctx context.Context, request AutocompleteClientRequest) (Choices, error) {
+func NewAutoCompleteSvc(repository CommandRepository, requester app.ContextFnInvoker[AutoCompleteRequest, Choices]) *AutoCompleteSvc {
+	return &AutoCompleteSvc{repository: repository, requester: requester}
+}
+
+func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutocompleteClientRequest) (Choices, error) {
 	cmd, err := r.repository.Fetch(ctx, request.Command)
 	if err != nil {
 		return nil, err

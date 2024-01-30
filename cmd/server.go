@@ -6,6 +6,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http"
 	"github.com/channel-io/ch-app-store/internal"
+	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 func init() {
@@ -25,6 +26,7 @@ func main() {
 			gintool.NewApiServer,
 		),
 		http.Option,
+		fx.Invoke(func() { tx.SetDB(nil) }), // Set DB
 		fx.Invoke(func(srv *gintool.ApiServer) { panic(srv.Run()) }),
 	)
 }

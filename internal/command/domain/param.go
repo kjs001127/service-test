@@ -23,6 +23,10 @@ type ParamValidator struct {
 	typeValidator *TypeValidator
 }
 
+func NewParamValidator(typeValidator *TypeValidator) *ParamValidator {
+	return &ParamValidator{typeValidator: typeValidator}
+}
+
 func (v *ParamValidator) ValidateDefs(defs ParamDefinitions) error {
 	for _, def := range defs {
 		if err := v.typeValidator.Validate(def.Type, def.Attributes); err != nil {
@@ -54,6 +58,10 @@ func (r Arguments) ChannelContext() app.ChannelContext {
 
 type ArgsValidator struct {
 	typeValidator *TypeValidator
+}
+
+func NewArgsValidator(typeValidator *TypeValidator) *ArgsValidator {
+	return &ArgsValidator{typeValidator: typeValidator}
 }
 
 func (v *ArgsValidator) ValidateArgs(defs ParamDefinitions, input Arguments) error {

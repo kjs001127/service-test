@@ -9,6 +9,10 @@ type QuerySvc struct {
 	appRepo   AppRepository
 }
 
+func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository) *QuerySvc {
+	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo}
+}
+
 func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) (InstalledApps, error) {
 	appChs, err := s.appChRepo.FindAllByChannel(ctx, channelID)
 	if err != nil {

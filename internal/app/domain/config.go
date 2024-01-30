@@ -9,6 +9,10 @@ type ConfigSvc struct {
 	appRepo   AppRepository
 }
 
+func NewConfigSvc(appChRepo AppChannelRepository, appRepo AppRepository) *ConfigSvc {
+	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo}
+}
+
 func (s *ConfigSvc) SetConfig(ctx context.Context, install Install, input ConfigMap) (*AppChannel, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {

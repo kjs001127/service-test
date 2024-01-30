@@ -110,6 +110,10 @@ func WithReadOnly(readOnly bool) Option {
 type DB struct {
 }
 
+func NewDB() *DB {
+	return &DB{}
+}
+
 func (s *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return defaultDB.Exec(query, args)
 }

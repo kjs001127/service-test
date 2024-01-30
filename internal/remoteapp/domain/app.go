@@ -23,7 +23,7 @@ var bufPool = sync.Pool{
 	},
 }
 
-type App struct {
+type RemoteApp struct {
 	app.AppData
 
 	RoleID   string
@@ -65,7 +65,7 @@ type HttpRequester interface {
 	Request(ctx context.Context, request HttpRequest) (io.ReadCloser, error)
 }
 
-func (a *App) Invoke(ctx context.Context, function string, input null.JSON) (null.JSON, error) {
+func (a *RemoteApp) Invoke(ctx context.Context, function string, input null.JSON) (null.JSON, error) {
 	id := uid.New().Hex()
 
 	jsonReq := JsonRpcRequest{
@@ -107,27 +107,27 @@ func (a *App) Invoke(ctx context.Context, function string, input null.JSON) (nul
 	return null.JSONFrom(resp.Result), nil
 }
 
-func (a *App) Data() *app.AppData {
+func (a *RemoteApp) Data() *app.AppData {
 	return &a.AppData
 }
 
-func (a *App) CheckInstallable(ctx context.Context, channelID string) error {
+func (a *RemoteApp) CheckInstallable(ctx context.Context, channelID string) error {
 	return nil
 }
 
-func (a *App) OnInstall(ctx context.Context, channelID string) error {
+func (a *RemoteApp) OnInstall(ctx context.Context, channelID string) error {
 	return nil
 }
 
-func (a *App) OnUnInstall(ctx context.Context, channelID string) error {
+func (a *RemoteApp) OnUnInstall(ctx context.Context, channelID string) error {
 	return nil
 }
 
-func (a *App) OnConfigSet(ctx context.Context, channelID string, input app.ConfigMap) error {
+func (a *RemoteApp) OnConfigSet(ctx context.Context, channelID string, input app.ConfigMap) error {
 	return nil
 }
 
-func (a *App) StreamFile(ctx context.Context, path string, writer io.Writer) error {
+func (a *RemoteApp) StreamFile(ctx context.Context, path string, writer io.Writer) error {
 	if !a.WamURL.Valid {
 		return apierr.BadRequest(errors.New("wam url invalid"))
 	}
@@ -169,21 +169,25 @@ func doStream(from io.ReadCloser, to io.Writer) error {
 	return nil
 }
 
-type AppRepository interface {
-	Index(ctx context.Context, since string, limit int) ([]*App, error)
-	Fetch(ctx context.Context, appID string) (*App, error)
-	FindAll(ctx context.Context, appIDs []string) ([]*App, error)
-	Save(ctx context.Context, app *App) (*App, error)
-	Update(ctx context.Context, app *App) (*App, error)
+type RemoteAppRepository interface {
+	Index(ctx context.Context, since string, limit int) ([]*RemoteApp, error)
+	Fetch(ctx context.Context, appID string) (*RemoteApp, error)
+	FindAll(ctx context.Context, appIDs []string) ([]*RemoteApp, error)
+	Save(ctx context.Context, app *RemoteApp) (*RemoteApp, error)
+	Update(ctx context.Context, app *RemoteApp) (*RemoteApp, error)
 	Delete(ctx context.Context, appID string) error
 }
 
-type InstallableAppRepository struct {
-	appRepository AppRepository
+type AppRepositoryAdapter struct {
+	appRepository RemoteAppRepository
 	requester     HttpRequester
 }
 
-func (i *InstallableAppRepository) Index(ctx context.Context, since string, limit int) ([]app.App, error) {
+func NewAppRepositoryAdapter(appRepository RemoteAppRepository, requester HttpRequester) *AppRepositoryAdapter {
+	return &AppRepositoryAdapter{appRepository: appRepository, requester: requester}
+}
+
+func (i *AppRepositoryAdapter) Index(ctx context.Context, since string, limit int) ([]app.App, error) {
 	apps, err := i.appRepository.Index(ctx, since, limit)
 	if err != nil {
 		return nil, err
@@ -198,7 +202,7 @@ func (i *InstallableAppRepository) Index(ctx context.Context, since string, limi
 	return ret, nil
 }
 
-func (i *InstallableAppRepository) FindApps(ctx context.Context, appIDs []string) ([]app.App, error) {
+func (i *AppRepositoryAdapter) FindApps(ctx context.Context, appIDs []string) ([]app.App, error) {
 	apps, err := i.appRepository.FindAll(ctx, appIDs)
 	if err != nil {
 		return nil, err
@@ -213,7 +217,7 @@ func (i *InstallableAppRepository) FindApps(ctx context.Context, appIDs []string
 	return ret, nil
 }
 
-func (i *InstallableAppRepository) FindApp(ctx context.Context, appID string) (app.App, error) {
+func (i *AppRepositoryAdapter) FindApp(ctx context.Context, appID string) (app.App, error) {
 	one, err := i.appRepository.Fetch(ctx, appID)
 	if err != nil {
 		return nil, err

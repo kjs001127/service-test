@@ -7,8 +7,12 @@ import (
 )
 
 type InstallSvc struct {
-	repo       AppRepository
+	repo       RemoteAppRepository
 	hookSender HookSender
+}
+
+func NewInstallSvc(repo RemoteAppRepository, hookSender HookSender) *InstallSvc {
+	return &InstallSvc{repo: repo, hookSender: hookSender}
 }
 
 type InstallQueryResult struct {

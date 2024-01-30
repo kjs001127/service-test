@@ -12,6 +12,10 @@ type RegisterSaga struct {
 	svc *domain.RegisterSvc
 }
 
+func NewRegisterSaga(svc *domain.RegisterSvc) *RegisterSaga {
+	return &RegisterSaga{svc: svc}
+}
+
 func (s *RegisterSaga) Register(ctx context.Context, req domain.RegisterRequest) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
 		return s.svc.Register(ctx, req)

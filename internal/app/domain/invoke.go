@@ -14,6 +14,10 @@ type Invoker[REQ any, RES any] struct {
 	appRepo   AppRepository
 }
 
+func NewInvoker[REQ any, RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[REQ, RES] {
+	return &Invoker[REQ, RES]{appChRepo: appChRepo, appRepo: appRepo}
+}
+
 type ChannelFunctionRequest[REQ any] struct {
 	ChannelID string
 	FunctionRequest[REQ]
@@ -73,6 +77,10 @@ func (i *Invoker[REQ, RES]) Invoke(
 
 type FileStreamer struct {
 	appRepo AppRepository
+}
+
+func NewFileStreamer(appRepo AppRepository) *FileStreamer {
+	return &FileStreamer{appRepo: appRepo}
 }
 
 type StreamRequest struct {

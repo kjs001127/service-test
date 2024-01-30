@@ -9,6 +9,10 @@ type AppInstallSvc struct {
 	appRepo   AppRepository
 }
 
+func NewAppInstallSvc(appChRepo AppChannelRepository, appRepo AppRepository) *AppInstallSvc {
+	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo}
+}
+
 func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledApp, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
