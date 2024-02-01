@@ -19,7 +19,7 @@ func NewApiServer(gin *gin.Engine) *ApiServer {
 	return &ApiServer{
 		config:  cfg,
 		router:  gin,
-		address: fmt.Sprintf("localhost:%d", cfg.Port),
+		address: fmt.Sprintf(":%d", cfg.Port),
 	}
 }
 
