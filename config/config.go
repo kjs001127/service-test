@@ -36,6 +36,17 @@ type Config struct {
 	}
 }
 
+func init() {
+	fillDefaultValues()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+}
+
+func fillDefaultValues() {
+	viper.SetDefault("stage", "development")
+	viper.SetDefault("port", "3000")
+}
+
 func Get() *Config {
 	if cfg == nil {
 		cfg = &Config{}
