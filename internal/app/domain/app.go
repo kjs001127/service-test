@@ -32,18 +32,18 @@ type ConfigSchema struct {
 	Name       string
 	Type       string
 	Key        string
-	Default    null.String
-	Help       null.String
+	Default    *string
+	Help       *string
 	Attributes map[string]any
 }
 
 func (s ConfigSchemas) DefaultConfig() ConfigMap {
 	ret := make(ConfigMap)
 	for _, schema := range s {
-		if !schema.Default.Valid {
+		if schema.Default != nil {
 			continue
 		}
-		ret[schema.Name] = schema.Default.String
+		ret[schema.Name] = *schema.Default
 	}
 	return ret
 }
@@ -60,12 +60,12 @@ type AppData struct {
 	State AppState
 
 	Title       string
-	AvatarURL   null.String
-	Description null.String
+	AvatarURL   *string
+	Description *string
 
-	ManualURL         null.String
-	DetailDescription null.JSON
-	DetailImageURLs   null.String
+	ManualURL         *string
+	DetailDescription []byte
+	DetailImageURLs   *string
 
 	ConfigSchemas ConfigSchemas
 }

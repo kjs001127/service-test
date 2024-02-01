@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-
-	"github.com/volatiletech/null/v8"
 )
 
 type Scope string
@@ -33,11 +31,11 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
-	Description    null.String `json:"description"`
-	AlfDescription null.String `json:"alfDescription"`
+	Description    *string `json:"description"`
+	AlfDescription *string `json:"alfDescription"`
 
 	ActionFunctionName       string           `json:"actionFunctionName"`
-	AutoCompleteFunctionName null.String      `json:"autoCompleteFunctionName"`
+	AutoCompleteFunctionName *string          `json:"autoCompleteFunctionName"`
 	ParamDefinitions         ParamDefinitions `json:"paramDefinitions"`
 
 	UpdatedAt time.Time `json:"-"`

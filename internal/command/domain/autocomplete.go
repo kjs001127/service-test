@@ -62,7 +62,7 @@ func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutocompleteClient
 		return nil, err
 	}
 
-	if !cmd.AutoCompleteFunctionName.Valid {
+	if cmd.AutoCompleteFunctionName != nil {
 		return nil, errors.New("autoCompleteFunction does not exist")
 	}
 
@@ -76,7 +76,7 @@ func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutocompleteClient
 		Token: request.Token,
 		FunctionRequest: app.FunctionRequest[AutoCompleteRequest]{
 			AppID:        request.Command.AppID,
-			FunctionName: cmd.AutoCompleteFunctionName.String,
+			FunctionName: *cmd.AutoCompleteFunctionName,
 			Body:         autoCompleteCtx,
 		},
 	}

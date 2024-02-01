@@ -1,7 +1,7 @@
 [psql]
 host = "localhost"
-dbname = "channel"
-schema = "channel"
-user = "channel"
+dbname = "app_store"
+schema = "public"
+user = "app_store"
 port = "5432"
 sslmode = "disable"

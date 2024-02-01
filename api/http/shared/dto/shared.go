@@ -41,10 +41,10 @@ func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 		AppID:                    origin.AppID,
 		Name:                     origin.Name,
 		Scope:                    origin.Scope,
-		Description:              origin.Description.String,
+		Description:              *origin.Description,
 		ParamDefinitions:         origin.ParamDefinitions,
 		ActionFunctionName:       origin.ActionFunctionName,
-		AutoCompleteFunctionName: origin.AutoCompleteFunctionName.String,
+		AutoCompleteFunctionName: *origin.AutoCompleteFunctionName,
 		CreatedAt:                origin.CreatedAt,
 		UpdatedAt:                origin.UpdatedAt,
 	}

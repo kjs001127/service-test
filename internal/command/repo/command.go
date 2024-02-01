@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -128,8 +129,8 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		AppID:                    cmd.AppID,
 		Scope:                    string(cmd.Scope),
 		ActionFunctionName:       cmd.ActionFunctionName,
-		AutocompleteFunctionName: cmd.AutoCompleteFunctionName,
-		Description:              cmd.Description,
+		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
+		Description:              null.StringFromPtr(cmd.Description),
 		ParamDefinitions:         bytes,
 	}, nil
 }
@@ -146,8 +147,8 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		AppID:                    c.AppID,
 		Scope:                    domain.Scope(c.Scope),
 		ActionFunctionName:       c.ActionFunctionName,
-		AutoCompleteFunctionName: c.AutocompleteFunctionName,
-		Description:              c.Description,
+		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
+		Description:              c.Description.Ptr(),
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,

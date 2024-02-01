@@ -30,10 +30,10 @@ type RemoteApp struct {
 	ClientID string
 	Secret   string
 
-	HookURL     null.String
-	FunctionURL null.String
-	WamURL      null.String
-	CheckURL    null.String
+	HookURL     *string
+	FunctionURL *string
+	WamURL      *string
+	CheckURL    *string
 
 	requester HttpRequester
 }
@@ -80,14 +80,14 @@ func (a *RemoteApp) Invoke(ctx context.Context, function string, input null.JSON
 		return null.JSON{}, err
 	}
 
-	if !a.FunctionURL.Valid {
+	if a.FunctionURL != nil {
 		return null.JSON{}, apierr.BadRequest(errors.New("function url invalid"))
 	}
 
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Body:   marshaled,
 		Method: http.MethodPost,
-		Url:    a.FunctionURL.String,
+		Url:    *a.FunctionURL,
 	})
 
 	ret, err := io.ReadAll(reader)
@@ -128,11 +128,11 @@ func (a *RemoteApp) OnConfigSet(ctx context.Context, channelID string, input app
 }
 
 func (a *RemoteApp) StreamFile(ctx context.Context, path string, writer io.Writer) error {
-	if !a.WamURL.Valid {
+	if a.WamURL != nil {
 		return apierr.BadRequest(errors.New("wam url invalid"))
 	}
 
-	url := a.WamURL.String + path
+	url := *a.WamURL + path
 
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Method: http.MethodGet,
