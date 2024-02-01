@@ -117,27 +117,27 @@ func NewDB() *DB {
 }
 
 func (s *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
-	return defaultDB.Exec(query, args)
+	return defaultDB.Exec(query, args...)
 }
 
 func (s *DB) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return defaultDB.Query(query, args)
+	return defaultDB.Query(query, args...)
 }
 
 func (s *DB) QueryRow(query string, args ...interface{}) *sql.Row {
-	return defaultDB.QueryRow(query, args)
+	return defaultDB.QueryRow(query, args...)
 }
 
 func (s *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	return withTx(ctx).ExecContext(ctx, query, args)
+	return withTx(ctx).ExecContext(ctx, query, args...)
 }
 
 func (s *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	return withTx(ctx).QueryContext(ctx, query, args)
+	return withTx(ctx).QueryContext(ctx, query, args...)
 }
 
 func (s *DB) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	return withTx(ctx).QueryRowContext(ctx, query, args)
+	return withTx(ctx).QueryRowContext(ctx, query, args...)
 }
 
 func withTx(ctx context.Context) db.DB {
