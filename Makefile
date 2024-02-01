@@ -21,11 +21,11 @@ GOPRIVATE ?= github.com/channel-io
 LDFLAGS := -ldflags="-X ${MODULE_NAME}/tool.buildVersion=${VERSION}"
 
 # Default setting for flyway migration (이 부분은 이야기 해봐야함)
-DATABASE_HOST ?= localhost
-DATABASE_DBNAME ?= app_store
-DATABASE_SCHEMA ?= public
-DATABASE_USER ?= app_store
-DATABASE_PASSWORD ?= ""
+PSQL_HOST ?= localhost
+PSQL_DBNAME ?= app_store
+PSQL_SCHEMA ?= public
+PSQL_USER ?= app_store
+PSQL_PASSWORD ?= ""
 
 TEST_ENV = "test"
 
@@ -67,13 +67,13 @@ init: install-tools
 generate: flyway-migrate gen-boiler gen-mock
 
 gen-boiler:
-	PSQL_DBNAME=${DATABASE_DBNAME} \
-	PSQL_SCHEMA=${DATABASE_SCHEMA} \
-	PSQL_HOST=${DATABASE_HOST} \
+	PSQL_DBNAME=${PSQL_DBNAME} \
+	PSQL_SCHEMA=${PSQL_SCHEMA} \
+	PSQL_HOST=${PSQL_HOST} \
 	PSQL_PORT=5432 \
-	PSQL_USER=${DATABASE_USER} \
+	PSQL_USER=${PSQL_USER} \
 	PSQL_SSLMODE=disable \
-	PSQL_PASSWORD=${DATABASE_PASSWORD} \
+	PSQL_PASSWORD=${PSQL_PASSWORD} \
 	PSQL_BLACKLIST=flyway_schema_history \
 	sqlboiler --wipe --no-tests -o ${GENERATED_SRC_DIR}/models psql
 
@@ -117,9 +117,9 @@ docs-fmt:
 database-init:
 	@# error 는 무시
 	@# (TODO) DATABASE_HOST가 localhost가 아니면 경고 나오고 사용자 인풋 이후 진행되게 수정하기
-	-@createuser -s -l -h ${DATABASE_HOST} -p 5432 -U postgres ${DATABASE_USER}
-	-@createdb -E UTF8 -T template0 --lc-collate=C --lc-ctype=en_US.UTF-8 -h ${DATABASE_HOST} -p 5432 -U ${DATABASE_USER} ${DATABASE_DBNAME}
-	-@createdb -E UTF8 -T template0 --lc-collate=C --lc-ctype=en_US.UTF-8 -h ${DATABASE_HOST} -p 5432 -U ${DATABASE_USER} ${DATABASE_DBNAME}_test
+	-@createuser -s -l -h ${PSQL_HOST} -p 5432 -U postgres ${PSQL_USER}
+	-@createdb -E UTF8 -T template0 --lc-collate=C --lc-ctype=en_US.UTF-8 -h ${PSQL_HOST} -p 5432 -U ${PSQL_USER} ${PSQL_DBNAME}
+	-@createdb -E UTF8 -T template0 --lc-collate=C --lc-ctype=en_US.UTF-8 -h ${PSQL_HOST} -p 5432 -U ${PSQL_USER} ${PSQL_DBNAME}_test
 
 ## ------------- FLYWAY -------------
 ifndef DATABASE_PASSWORD
@@ -144,11 +144,11 @@ endif
 FLYWAY_CONFIG := ${PROJECT_PATH}/config/flyway/flyway.conf
 FLYWAY_MIGRATION := ${PROJECT_PATH}/resource/psql/migration
 
-FLYWAY_CMD=@DATABASE_HOST=${DATABASE_HOST} \
-	DATABASE_DBNAME=${DATABASE_DBNAME} \
-	DATABASE_SCHEMA=${DATABASE_SCHEMA} \
-	DATABASE_USER=${DATABASE_USER} \
-	DATABASE_PASSWORD=${DATABASE_PASSWORD} flyway \
+FLYWAY_CMD=@PSQL_HOST=${PSQL_HOST} \
+	PSQL_DBNAME=${PSQL_DBNAME} \
+	PSQL_SCHEMA=${PSQL_SCHEMA} \
+	PSQL_USER=${PSQL_USER} \
+	PSQL_PASSWORD=${PSQL_PASSWORD} flyway \
 	-configFiles=${FLYWAY_CONFIG} -locations=filesystem:${FLYWAY_MIGRATION}
 
 
