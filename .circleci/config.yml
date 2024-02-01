@@ -88,8 +88,8 @@ executors:
     working_directory: *working_directory
     environment:
       STAGE: test
-      DATABASE_DBNAME: ci_test
-      DATABASE_USER: ci
+      PSQL_DBNAME: ci_test
+      PSQL_USER: ci
 
   compile_executor:
     docker:
@@ -107,8 +107,8 @@ executors:
       # Perhaps this could be improved by introducing a separate build stage for CI environment,
       # compared to the runtime stage.
       STAGE: development
-      DATABASE_DBNAME: ci
-      DATABASE_USER: ci
+      PSQL_DBNAME: ci
+      PSQL_USER: ci
 
   build_container_executor:
     machine:
