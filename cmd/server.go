@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
+
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http"
+	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/internal"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
@@ -26,7 +29,26 @@ func main() {
 			gintool.NewApiServer,
 		),
 		http.Option,
-		fx.Invoke(func() { tx.SetDB(nil) }), // Set DB
+		fx.Invoke(func() {
+			conf := config.Get()
+			db, err := sql.Open(
+				"postgres",
+				tx.BuildDataSourceName(
+					conf.Psql.Host,
+					conf.Psql.DBName,
+					conf.Psql.Schema,
+					conf.Psql.User,
+					conf.Psql.Password,
+					conf.Psql.SSLMode,
+				),
+			)
+			if err != nil {
+				panic(err)
+			}
+			db.SetMaxOpenConns(50)
+
+			tx.SetDB(db)
+		}),
 		fx.Invoke(func(srv *gintool.ApiServer) { panic(srv.Run()) }),
 	)
 }

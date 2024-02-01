@@ -23,13 +23,8 @@ func NewAppDAO(db db.DB) *AppDAO {
 }
 
 func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*remoteapp.RemoteApp, error) {
-
 	var queries []qm.QueryMod
-	queries = append(queries,
-		qm.Select("*"),
-		qm.Limit(limit),
-		qm.OrderBy("id", "desc"),
-	)
+	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
 
 	if since != "" {
 		queries = append(queries, qm.Where("id < ?", since))

@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	_ "github.com/lib/pq"
+
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -148,4 +150,18 @@ func withTx(ctx context.Context) db.DB {
 	}
 
 	return defaultDB
+}
+
+func BuildDataSourceName(
+	host string,
+	dbName string,
+	schemaName string,
+	user string,
+	password string,
+	sslMode string,
+) string {
+	return fmt.Sprintf(
+		"host=%s dbname=%s search_path=%s user=%s password=%s sslmode=%s",
+		host, dbName, schemaName, user, password, sslMode,
+	)
 }

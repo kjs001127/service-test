@@ -15,9 +15,9 @@ import (
 //	@Summary	create App to app-store
 //	@Tags		Admin
 //
-//	@Param		app.App	body		app.App	true	"App to create"
+//	@Param		app.RemoteApp	body		app.RemoteApp	true	"App to create"
 //
-//	@Success	201		{object}	app.App
+//	@Success	201				{object}	app.RemoteApp
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
 	var target app.RemoteApp
@@ -40,10 +40,10 @@ func (h *Handler) create(ctx *gin.Context) {
 //	@Summary	update App info
 //	@Tags		Admin
 //
-//	@Param		id		path		string	true	"id of App to update"
-//	@Param		app.App	body		app.App	true	"App to create"
+//	@Param		id				path		string			true	"id of App to update"
+//	@Param		app.RemoteApp	body		app.RemoteApp	true	"App to create"
 //
-//	@Success	200		{object}	app.App
+//	@Success	200				{object}	app.RemoteApp
 //	@Router		/admin/apps/{id} [patch]
 func (h *Handler) update(ctx *gin.Context) {
 	ID := ctx.Param("id")

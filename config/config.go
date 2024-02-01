@@ -24,6 +24,16 @@ var configFiles embed.FS
 type Config struct {
 	Stage string `required:"true"`
 	Port  uint16 `required:"true"`
+
+	Psql struct {
+		Schema   string `required:"true"`
+		DBName   string `required:"true"`
+		Host     string `required:"true"`
+		Port     string `required:"true"`
+		User     string `required:"true"`
+		Password string `required:"true"`
+		SSLMode  string `required:"true"`
+	}
 }
 
 func Get() *Config {

@@ -19,7 +19,7 @@ var Option = fx.Provide(
 	),
 	app.NewInvoker[json.RawMessage, json.RawMessage],
 	app.NewInvoker[app.ChannelContextAware, any],
-	func() app.ContextAuthorizer { return nil }, // ContextAuthorizer 등록 필요
+	func() app.ContextAuthorizer { return &app.MockContextAuthorizer{} }, // ContextAuthorizer 등록 필요
 	app.NewInvoker[command.Arguments, command.Action],
 	fx.Annotate(
 		app.NewContextFnInvoker[command.Arguments, command.Action],

@@ -1,2 +1,10 @@
 stage: development
 port: 3000
+psql:
+  schema: channel
+  dbname: channel
+  host: localhost
+  port: 5432
+  user: channel
+  password: abc
+  sslmode: disable

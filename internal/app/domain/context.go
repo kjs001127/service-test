@@ -44,6 +44,13 @@ type ContextAuthorizer interface {
 	Authorize(ctx context.Context, target ChannelContext, info AuthInfo) error
 }
 
+type MockContextAuthorizer struct {
+}
+
+func (m *MockContextAuthorizer) Authorize(ctx context.Context, target ChannelContext, info AuthInfo) error {
+	return nil
+}
+
 type ContextFnInvoker[REQ ChannelContextAware, RES any] interface {
 	Invoke(ctx context.Context, req Request[REQ]) (RES, error)
 }

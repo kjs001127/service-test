@@ -17,7 +17,7 @@ import (
 //	@Summary	get list of Apps
 //	@Tags		Desk
 //
-//	@Param		since	query	string	true	"get App after this id"
+//	@Param		since	query	string	false	"get App after this id"
 //	@Param		limit	query	string	true	"max count of return data"
 //
 //	@Success	200		{array}	app.AppData
@@ -47,7 +47,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 //	@Param		appID	path		string	true	"id of App"
 //
 //	@Success	200		{object}	object
-//	@Router		/desk/apps/{appID}/commands [put]
+//	@Router		/desk/apps/{appID}/commands [get]
 func (h *Handler) getCommands(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	commands, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: []string{appID}})
