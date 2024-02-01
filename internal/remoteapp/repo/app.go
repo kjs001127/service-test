@@ -101,7 +101,11 @@ func (a *AppDAO) Delete(ctx context.Context, appID string) error {
 }
 
 func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
-	data, err := json.Marshal(appTarget.ConfigSchemas)
+	cfgSchema, err := json.Marshal(appTarget.ConfigSchemas)
+	if err != nil {
+		return nil, err
+	}
+	detailDescription, err := json.Marshal(appTarget.DetailDescription)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +117,7 @@ func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
 		RoleID:            appTarget.RoleID,
 		Title:             appTarget.Title,
 		Description:       null.StringFromPtr(appTarget.Description),
-		DetailDescription: null.JSONFrom(appTarget.DetailDescription),
+		DetailDescription: null.JSONFrom(detailDescription),
 		DetailImageUrls:   null.StringFromPtr(appTarget.DetailImageURLs),
 		AvatarURL:         null.StringFromPtr(appTarget.AvatarURL),
 		WamURL:            null.StringFromPtr(appTarget.WamURL),
@@ -122,13 +126,17 @@ func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
 		CheckURL:          null.StringFromPtr(appTarget.CheckURL),
 		ManualURL:         null.StringFromPtr(appTarget.ManualURL),
 		State:             string(appTarget.State),
-		ConfigSchema:      null.JSONFrom(data),
+		ConfigSchema:      null.JSONFrom(cfgSchema),
 	}, nil
 }
 
 func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 	var cfgSchemas app.ConfigSchemas
 	if err := json.Unmarshal(rawApp.ConfigSchema.JSON, &cfgSchemas); err != nil {
+		return nil, err
+	}
+	var detailDescription map[string]any
+	if err := json.Unmarshal(rawApp.DetailDescription.JSON, &detailDescription); err != nil {
 		return nil, err
 	}
 
@@ -140,7 +148,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 			Title:             rawApp.Title,
 			Description:       rawApp.Description.Ptr(),
 			ManualURL:         rawApp.ManualURL.Ptr(),
-			DetailDescription: rawApp.DetailDescription.JSON,
+			DetailDescription: detailDescription,
 			DetailImageURLs:   rawApp.DetailImageUrls.Ptr(),
 			ConfigSchemas:     cfgSchemas,
 		},

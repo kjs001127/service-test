@@ -64,7 +64,7 @@ type AppData struct {
 	Description *string
 
 	ManualURL         *string
-	DetailDescription []byte
+	DetailDescription map[string]any
 	DetailImageURLs   *string
 
 	ConfigSchemas ConfigSchemas
