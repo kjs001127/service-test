@@ -1,0 +1,9 @@
+stage: exp
+port: 3000
+psql:
+  schema: public
+  dbname: app_store
+  host: db.exp.channel.io
+  port: 5432
+  user: app_store
+  sslmode: disable

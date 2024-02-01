@@ -18,7 +18,7 @@ WORKDIR /${TARGET_APP}
 COPY ./target/bin/${TARGET_APP}.$TARGETOS.$TARGETARCH ./${TARGET_APP}
 
 # Add configuration
-COPY ./config/*.yml ./config/
+COPY ./config/*.yaml ./config/
 
 EXPOSE ${TARGET_PORT}
 
