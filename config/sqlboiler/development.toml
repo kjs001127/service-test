@@ -1,7 +1,0 @@
-[psql]
-host = "localhost"
-dbname = "app_store"
-schema = "public"
-user = "app_store"
-port = "5432"
-sslmode = "disable"
