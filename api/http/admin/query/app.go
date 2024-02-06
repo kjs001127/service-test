@@ -1,4 +1,4 @@
-package app
+package query
 
 import (
 	"net/http"
@@ -21,7 +21,7 @@ import (
 func (h *Handler) query(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, err := h.appRepo.QueryAll(ctx, channelID)
+	apps, err := h.querySvc.QueryAll(ctx, channelID)
 
 	briefs, err := h.briefRepo.FetchAll(ctx, app.AppIDsOf(apps.AppChannels))
 	if err != nil {

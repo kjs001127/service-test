@@ -8,12 +8,10 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-type AutocompleteClientRequest struct {
-	Context app.ChannelContext
-	Token   app.AuthToken
-
-	Command Key
-	Params  AutoCompleteArgs
+type AutoCompleteRequest struct {
+	Command   Key
+	ChannelID string
+	app.Body
 }
 
 type AutoCompleteArgs []AutoCompleteArg
@@ -49,47 +47,29 @@ func (choices Choices) validate() error {
 
 type AutoCompleteSvc struct {
 	repository CommandRepository
-	requester  app.ContextFnInvoker[AutoCompleteRequest, Choices]
+	requester  app.Invoker[Choices]
 }
 
-func NewAutoCompleteSvc(repository CommandRepository, requester app.ContextFnInvoker[AutoCompleteRequest, Choices]) *AutoCompleteSvc {
+func NewAutoCompleteSvc(repository CommandRepository, requester app.Invoker[Choices]) *AutoCompleteSvc {
 	return &AutoCompleteSvc{repository: repository, requester: requester}
 }
 
-func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutocompleteClientRequest) (Choices, error) {
+func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutoCompleteRequest) (Choices, error) {
 	cmd, err := r.repository.Fetch(ctx, request.Command)
 	if err != nil {
 		return nil, err
 	}
 
-	if cmd.AutoCompleteFunctionName != nil {
+	if cmd.AutoCompleteFunctionName == nil {
 		return nil, errors.New("autoCompleteFunction does not exist")
 	}
 
-	autoCompleteCtx := AutoCompleteRequest{
-		Context: request.Context,
-		Command: request.Command,
-		Params:  request.Params,
-	}
-
-	ctxReq := app.Request[AutoCompleteRequest]{
-		Token: request.Token,
-		FunctionRequest: app.FunctionRequest[AutoCompleteRequest]{
-			AppID:        request.Command.AppID,
+	ctxReq := app.FunctionRequest{
+		Endpoint: app.Endpoint{
+			AppID:        cmd.AppID,
 			FunctionName: *cmd.AutoCompleteFunctionName,
-			Body:         autoCompleteCtx,
 		},
+		Body: request.Body,
 	}
-
-	return r.requester.Invoke(ctx, ctxReq)
-}
-
-type AutoCompleteRequest struct {
-	Context app.ChannelContext
-	Command Key
-	Params  AutoCompleteArgs
-}
-
-func (a AutoCompleteRequest) ChannelContext() app.ChannelContext {
-	return a.Context
+	return r.requester.InvokeChannelFunction(ctx, request.ChannelID, ctxReq)
 }

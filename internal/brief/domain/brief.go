@@ -5,9 +5,9 @@ import (
 )
 
 type Brief struct {
-	ID           string
-	AppID        string
-	FunctionName string
+	ID                string
+	AppID             string
+	BriefFunctionName string
 }
 
 type BriefRepository interface {

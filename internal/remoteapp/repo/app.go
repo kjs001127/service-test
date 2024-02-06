@@ -126,6 +126,7 @@ func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
 		CheckURL:          null.StringFromPtr(appTarget.CheckURL),
 		ManualURL:         null.StringFromPtr(appTarget.ManualURL),
 		State:             string(appTarget.State),
+		IsPrivate:         appTarget.IsPrivate,
 		ConfigSchema:      null.JSONFrom(cfgSchema),
 	}, nil
 }
@@ -151,6 +152,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 			DetailDescription: detailDescription,
 			DetailImageURLs:   rawApp.DetailImageUrls.Ptr(),
 			ConfigSchemas:     cfgSchemas,
+			IsPrivate:         rawApp.IsPrivate,
 		},
 		RoleID:      rawApp.RoleID,
 		Secret:      rawApp.Secret,

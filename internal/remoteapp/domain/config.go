@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 type CheckType string
@@ -9,6 +11,10 @@ type CheckType string
 const (
 	CheckTypeConfig = CheckType("config")
 )
+
+func (a *RemoteApp) OnConfigSet(ctx context.Context, channelID string, input app.ConfigMap) error {
+	return nil
+}
 
 type CheckRequest struct {
 	ChannelId string

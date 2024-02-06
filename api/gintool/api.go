@@ -14,12 +14,12 @@ type ApiServer struct {
 	address string
 }
 
-func NewApiServer(gin *gin.Engine) *ApiServer {
+func NewApiServer(gin *gin.Engine, port string) *ApiServer {
 	cfg := config.Get()
 	return &ApiServer{
 		config:  cfg,
 		router:  gin,
-		address: fmt.Sprintf(":%d", cfg.Port),
+		address: fmt.Sprintf(":%s", port),
 	}
 }
 

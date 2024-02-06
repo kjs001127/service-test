@@ -3,8 +3,6 @@ package domain
 import (
 	"context"
 	"io"
-
-	"github.com/volatiletech/null/v8"
 )
 
 type AppRepository interface {
@@ -12,6 +10,13 @@ type AppRepository interface {
 	FindApp(ctx context.Context, appID string) (App, error)
 	Index(ctx context.Context, since string, limit int) ([]App, error)
 }
+
+type AppRequest struct {
+	FunctionName string
+	Body
+}
+
+type AppResponse any
 
 type App interface {
 	Data() *AppData
@@ -23,7 +28,7 @@ type App interface {
 	OnConfigSet(ctx context.Context, channelID string, input ConfigMap) error
 
 	StreamFile(ctx context.Context, path string, writer io.Writer) error
-	Invoke(ctx context.Context, function string, input null.JSON) (null.JSON, error)
+	Invoke(ctx context.Context, req AppRequest, res AppResponse) error
 }
 
 type ConfigSchemas []ConfigSchema
@@ -59,10 +64,12 @@ type AppData struct {
 	ID    string
 	State AppState
 
+	PublicKey   string
 	Title       string
 	AvatarURL   *string
 	Description *string
 
+	IsPrivate         bool
 	ManualURL         *string
 	DetailDescription map[string]any
 	DetailImageURLs   *string

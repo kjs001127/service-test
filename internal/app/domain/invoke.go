@@ -2,77 +2,76 @@ package domain
 
 import (
 	"context"
-	"encoding/json"
 	"io"
-	"strings"
 
-	"github.com/volatiletech/null/v8"
+	"github.com/channel-io/ch-app-store/auth/chctx"
+	"github.com/channel-io/ch-app-store/auth/general"
 )
 
-type Invoker[REQ any, RES any] struct {
+type Invoker[RES any] struct {
 	appChRepo AppChannelRepository
 	appRepo   AppRepository
 }
 
-func NewInvoker[REQ any, RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[REQ, RES] {
-	return &Invoker[REQ, RES]{appChRepo: appChRepo, appRepo: appRepo}
+func NewInvoker[REQ any, RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[RES] {
+	return &Invoker[RES]{appChRepo: appChRepo, appRepo: appRepo}
 }
 
-type ChannelFunctionRequest[REQ any] struct {
-	ChannelID string
-	FunctionRequest[REQ]
+type FunctionRequest struct {
+	Endpoint
+	Body
 }
 
-type FunctionRequest[REQ any] struct {
+type Endpoint struct {
 	AppID        string
 	FunctionName string
-	Body         REQ
 }
 
-func (i *Invoker[REQ, RES]) InvokeInChannel(
-	ctx context.Context,
-	request ChannelFunctionRequest[REQ],
-) (RES, error) {
-	var empty RES
-
-	_, err := i.appChRepo.Fetch(ctx, Install{AppID: request.AppID, ChannelID: request.ChannelID})
-	if err != nil {
-		return empty, nil
-	}
-
-	return i.Invoke(ctx, request.FunctionRequest)
+type Body struct {
+	Scopes  general.Scopes
+	Context chctx.ChannelContext
+	Params  any
 }
 
-func (i *Invoker[REQ, RES]) Invoke(
+func (i *Invoker[RES]) InvokeChannelFunction(
 	ctx context.Context,
-	req FunctionRequest[REQ],
+	channelID string,
+	request FunctionRequest,
 ) (RES, error) {
-	var ret RES
+	var res RES
 
-	installedApp, err := i.appRepo.FindApp(ctx, req.AppID)
+	_, err := i.appChRepo.Fetch(ctx, Install{
+		AppID:     request.AppID,
+		ChannelID: channelID,
+	})
 	if err != nil {
-		return ret, err
+		return res, nil
 	}
 
-	marshaled, err := json.Marshal(req.Body)
+	return i.InvokeFunction(ctx, request)
+}
+
+func (i *Invoker[RES]) InvokeFunction(
+	ctx context.Context,
+	request FunctionRequest,
+) (RES, error) {
+	var res RES
+
+	installedApp, err := i.appRepo.FindApp(ctx, request.AppID)
 	if err != nil {
-		return ret, err
+		return res, err
 	}
 
-	res, err := installedApp.Invoke(ctx, req.FunctionName, null.JSONFrom(marshaled))
-	if err != nil {
-		return ret, err
+	appReq := AppRequest{
+		FunctionName: request.FunctionName,
+		Body:         request.Body,
 	}
 
-	if !res.Valid {
-		return ret, nil
+	if err := installedApp.Invoke(ctx, appReq, &res); err != nil {
+		return res, err
 	}
 
-	if err := json.Unmarshal(res.JSON, &ret); err != nil {
-		return ret, err
-	}
-
-	return ret, nil
+	return res, err
 }
 
 type FileStreamer struct {
@@ -90,9 +89,6 @@ type StreamRequest struct {
 }
 
 func (i *FileStreamer) StreamFile(ctx context.Context, req StreamRequest) error {
-	if !strings.HasPrefix(req.Path, "/") {
-		req.Path = "/" + req.Path
-	}
 
 	installedApp, err := i.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {

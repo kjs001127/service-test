@@ -45,9 +45,9 @@ func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brie
 
 func unmarshal(model *models.Brief) *domain.Brief {
 	return &domain.Brief{
-		AppID:        model.AppID,
-		ID:           model.ID,
-		FunctionName: model.FunctionID,
+		AppID:             model.AppID,
+		ID:                model.ID,
+		BriefFunctionName: model.BriefFunctionName,
 	}
 }
 

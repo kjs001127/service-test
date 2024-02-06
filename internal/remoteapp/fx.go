@@ -3,6 +3,7 @@ package remoteapp
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/auth/principal"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/infra"
@@ -21,5 +22,9 @@ var Option = fx.Provide(
 	fx.Annotate(
 		domain.NewAppRepositoryAdapter,
 		fx.As(new(app.AppRepository)),
+	),
+	fx.Annotate(
+		domain.NewClientIDProviderAdapter,
+		fx.As(new(principal.ClientIDProvider)),
 	),
 )

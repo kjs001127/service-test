@@ -2,11 +2,18 @@ module github.com/channel-io/ch-app-store
 
 go 1.19
 
+replace github.com/channel-io/ch-proto v0.0.0 => ./ch-proto
+
 require (
+	github.com/channel-io/ch-proto v0.0.0
 	github.com/channel-io/go-lib v0.7.0
 	github.com/friendsofgo/errors v0.9.2
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-resty/resty/v2 v2.11.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang/protobuf v1.5.3
+	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.18.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
@@ -42,7 +49,6 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -70,7 +76,6 @@ require (
 	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect

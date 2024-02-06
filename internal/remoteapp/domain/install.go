@@ -2,17 +2,24 @@ package domain
 
 import (
 	"context"
+	"errors"
 
 	"github.com/volatiletech/null/v8"
 )
 
-type InstallSvc struct {
-	repo       RemoteAppRepository
-	hookSender HookSender
+func (a *RemoteApp) CheckInstallable(ctx context.Context, channelID string) error {
+	if a.IsPrivate {
+		return errors.New("private app")
+	}
+	return nil
 }
 
-func NewInstallSvc(repo RemoteAppRepository, hookSender HookSender) *InstallSvc {
-	return &InstallSvc{repo: repo, hookSender: hookSender}
+func (a *RemoteApp) OnInstall(ctx context.Context, channelID string) error {
+	return nil
+}
+
+func (a *RemoteApp) OnUnInstall(ctx context.Context, channelID string) error {
+	return nil
 }
 
 type InstallQueryResult struct {

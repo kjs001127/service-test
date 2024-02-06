@@ -6,25 +6,25 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-const contextParamName = ParamName("context")
-
 type InvokeSvc struct {
-	repository    CommandRepository
-	argsValidator *ArgsValidator
+	repository CommandRepository
 
-	requester app.ContextFnInvoker[Arguments, Action]
+	requester app.Invoker[Action]
+	validator ParamValidator
 }
 
-func NewInvokeSvc(repository CommandRepository, argsValidator *ArgsValidator, requester app.ContextFnInvoker[Arguments, Action]) *InvokeSvc {
-	return &InvokeSvc{repository: repository, argsValidator: argsValidator, requester: requester}
+func NewInvokeSvc(
+	repository CommandRepository,
+	requester app.Invoker[Action],
+	validator ParamValidator,
+) *InvokeSvc {
+	return &InvokeSvc{repository: repository, requester: requester, validator: validator}
 }
 
 type CommandRequest struct {
 	Key
-	Params Arguments
-
-	Token   app.AuthToken
-	Context app.ChannelContext
+	ChannelID string
+	app.Body
 }
 
 func (r *InvokeSvc) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
@@ -33,27 +33,13 @@ func (r *InvokeSvc) Invoke(ctx context.Context, request CommandRequest) (Action,
 		return Action{}, err
 	}
 
-	if err := r.argsValidator.ValidateArgs(cmd.ParamDefinitions, request.Params); err != nil {
-		return Action{}, err
-	}
-
-	ctxReq := app.Request[Arguments]{
-		Token: request.Token,
-		FunctionRequest: app.FunctionRequest[Arguments]{
-			AppID:        request.AppID,
-			Body:         argumentsOf(request),
+	ctxReq := app.FunctionRequest{
+		Endpoint: app.Endpoint{
+			AppID:        cmd.AppID,
 			FunctionName: cmd.ActionFunctionName,
 		},
+		Body: request.Body,
 	}
 
-	return r.requester.Invoke(ctx, ctxReq)
-}
-
-func argumentsOf(request CommandRequest) Arguments {
-	params := make(Arguments)
-	params[contextParamName] = request.Context
-	for key, val := range request.Params {
-		params[key] = val
-	}
-	return params
+	return r.requester.InvokeChannelFunction(ctx, request.ChannelID, ctxReq)
 }

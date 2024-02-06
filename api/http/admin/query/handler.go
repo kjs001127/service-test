@@ -1,4 +1,4 @@
-package app
+package query
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -10,15 +10,16 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appRepo   app.QuerySvc
+	querySvc  *app.QuerySvc
 	briefRepo brief.BriefRepository
 	cmdRepo   cmd.CommandRepository
 }
 
-func NewHandler(appRepo app.QuerySvc, briefRepo brief.BriefRepository, cmdRepo cmd.CommandRepository) *Handler {
-	return &Handler{appRepo: appRepo, briefRepo: briefRepo, cmdRepo: cmdRepo}
+func NewHandler(appRepo *app.QuerySvc, briefRepo brief.BriefRepository, cmdRepo cmd.CommandRepository) *Handler {
+	return &Handler{querySvc: appRepo, briefRepo: briefRepo, cmdRepo: cmdRepo}
+
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.GET("/admin/channels/:channelID/apps", h.query)
+	router.GET("/admin/channels/:channelId/apps", h.query)
 }

@@ -1,4 +1,4 @@
-package command
+package query
 
 import (
 	"net/http"
@@ -20,7 +20,7 @@ const scope = command.ScopeDesk
 //	@Param		channelId	path		string	true	"id of Channel"
 //
 //	@Success	200			{object}	dto.AppsAndCommands
-//	@Router		/desk/channels/{channelId}/commands [get]
+//	@Router		/desk/v1/channels/{channelId}/commands [get]
 func (h *Handler) queryChannelCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 

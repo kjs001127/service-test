@@ -25,6 +25,11 @@ type Config struct {
 	Stage string `required:"true"`
 	Port  uint16 `required:"true"`
 
+	Auth struct {
+		ManagerFetchURL string `required:"true"`
+		TokenIssueURL   string `required:"true"`
+		JWTServiceKey   string `required:"true"`
+	}
 	Psql struct {
 		Schema   string `required:"true"`
 		DBName   string `required:"true"`

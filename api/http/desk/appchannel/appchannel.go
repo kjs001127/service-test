@@ -18,7 +18,7 @@ import (
 //	@Param		appID		path		string	true	"id of App to install"
 //
 //	@Success	200			{object}	app.InstalledApp
-//	@Router		/desk/channels/{channelID}/app-channels/{appID} [post]
+//	@Router		/desk/channels/{channelID}/app-channels/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
@@ -69,9 +69,9 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 //	@Param		object		body		object	true	"key-value of Config to set"
 //
 //	@Success	200			{object}	app.ConfigMap
-//	@Router		/desk/channels/{channelId}/app-channels/configs [put]
+//	@Router		/desk/channels/{channelID}/app-channels/configs [put]
 func (h *Handler) setConfig(ctx *gin.Context) {
-	channelID, appID := ctx.Param("channelId"), ctx.Param("appId")
+	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
 	var configMap map[string]string
 	if err := ctx.ShouldBindBodyWith(configMap, binding.JSON); err != nil {
@@ -100,9 +100,9 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 //	@Param		channelId	path		string	true	"id of channel"
 //
 //	@Success	200			{object}	any		"JSON of configMap"
-//	@Router		/desk/channels/{channelId}/app-channels/configs [get]
+//	@Router		/desk/channels/{channelID}/app-channels/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
-	channelID, appID := ctx.Param("channelId"), ctx.Param("appId")
+	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
 	res, err := h.querySvc.Query(ctx, app.Install{
 		ChannelID: channelID,

@@ -20,7 +20,5 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/admin/apps/:id")
-
-	group.POST("/commands", h.registerCommand)
+	router.POST("/admin/apps/:id/commands", h.registerCommand)
 }

@@ -20,6 +20,7 @@ CREATE TABLE apps
     check_url          CHARACTER VARYING,
 
     state              CHARACTER VARYING             NOT NULL,
+    is_private         BOOLEAN                       NOT NULL,
     config_schema      JSONB,
 
     created_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW(),
@@ -67,8 +68,8 @@ CREATE TABLE app_channels
 
 CREATE TABLE brief
 (
-    id          CHARACTER VARYING PRIMARY KEY          NOT NULL,
-    app_id      CHARACTER VARYING REFERENCES apps (id) NOT NULL,
+    id                  CHARACTER VARYING PRIMARY KEY          NOT NULL,
+    app_id              CHARACTER VARYING REFERENCES apps (id) NOT NULL,
 
-    function_id CHARACTER VARYING                      NOT NULL
+    brief_function_name CHARACTER VARYING                      NOT NULL
 );

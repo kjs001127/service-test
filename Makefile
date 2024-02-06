@@ -108,7 +108,10 @@ clean-target:
 docs: docs-gen docs-fmt
 
 docs-gen:
-	swag init -d api/http -g module.go -o api/http/swagger --pd
+	swag init -d api/http/admin -g module.go -o api/http/admin/swagger --pd
+	swag init -d api/http/desk -g module.go -o api/http/desk/swagger --pd
+	swag init -d api/http/front -g module.go -o api/http/front/swagger --pd
+	swag init -d api/http/general -g module.go -o api/http/general/swagger --pd
 
 docs-fmt:
 	swag fmt -d api/http

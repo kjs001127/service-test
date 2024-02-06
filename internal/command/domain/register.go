@@ -46,7 +46,9 @@ func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
 
 func (s *RegisterSvc) validateRequest(req RegisterRequest) error {
 	for _, cmd := range req.Resources {
-		if cmd.AppID != req.AppID {
+		if len(cmd.AppID) <= 0 {
+			cmd.AppID = req.AppID
+		} else if cmd.AppID != req.AppID {
 			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", req.AppID, cmd.AppID))
 		}
 		if err := cmd.Validate(); err != nil {

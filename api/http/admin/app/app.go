@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	app "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
@@ -82,32 +81,4 @@ func (h *Handler) delete(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
-}
-
-func (h *Handler) query(ctx *gin.Context) {
-	appID := ctx.Param("appID")
-
-	found, err := h.appRepo.Fetch(ctx, appID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	brief, err := h.briefRepo.Fetch(ctx, appID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	cmds, err := h.commandRepo.FetchAllByAppID(ctx, appID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.AppResource{
-		App:      found.Data(),
-		Commands: cmds,
-		Brief:    brief,
-	})
 }

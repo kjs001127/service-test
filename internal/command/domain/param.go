@@ -2,35 +2,54 @@ package domain
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/friendsofgo/errors"
-
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
+type ParamInput map[ParamName]any
+
 type ParamName string
+type ParamType string
+
+const (
+	ParamTypeInt    = ParamType("int")
+	ParamTypeString = ParamType("string")
+	ParamTypeFloat  = ParamType("float")
+	ParamTypeBool   = ParamType("bool")
+)
+
 type ParamDefinitions map[ParamName]*ParamDefinition
 
 type ParamDefinition struct {
 	Name           ParamName      `json:"name"`
-	Type           TypeKey        `json:"type"`
+	Type           ParamType      `json:"type"`
 	Required       bool           `json:"required"`
 	Attributes     map[string]any `json:"attributes"`
 	AlfDescription string         `json:"alfDescription"`
 }
 
+type Validator func(param any) error
+type TypeValidator map[ParamType]Validator
+
 type ParamValidator struct {
-	typeValidator *TypeValidator
+	typeValidator TypeValidator
 }
 
-func NewParamValidator(typeValidator *TypeValidator) *ParamValidator {
-	return &ParamValidator{typeValidator: typeValidator}
+func NewParamValidator() *ParamValidator {
+	ret := &ParamValidator{typeValidator: make(TypeValidator)}
+	ret.typeValidator[ParamTypeInt] = validateInt
+	ret.typeValidator[ParamTypeString] = validateString
+	ret.typeValidator[ParamTypeFloat] = validateFloat
+	ret.typeValidator[ParamTypeBool] = validateBool
+
+	return ret
 }
 
 func (v *ParamValidator) ValidateDefs(defs ParamDefinitions) error {
 	for _, def := range defs {
-		if err := v.typeValidator.Validate(def.Type, def.Attributes); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("param type %s is not valid", def.Type))
+		if _, ok := v.typeValidator[def.Type]; !ok {
+			return fmt.Errorf("param type %s is not valid", def.Type)
 		}
 
 		if len(def.Name) <= 0 {
@@ -50,21 +69,7 @@ func (v *ParamValidator) ValidateDefs(defs ParamDefinitions) error {
 
 }
 
-type Arguments map[ParamName]any
-
-func (r Arguments) ChannelContext() app.ChannelContext {
-	return r[contextParamName].(app.ChannelContext)
-}
-
-type ArgsValidator struct {
-	typeValidator *TypeValidator
-}
-
-func NewArgsValidator(typeValidator *TypeValidator) *ArgsValidator {
-	return &ArgsValidator{typeValidator: typeValidator}
-}
-
-func (v *ArgsValidator) ValidateArgs(defs ParamDefinitions, input Arguments) error {
+func (v *ParamValidator) ValidateParamInput(defs ParamDefinitions, input ParamInput) error {
 	if err := v.validateExistence(defs, input); err != nil {
 		return err
 	}
@@ -74,7 +79,7 @@ func (v *ArgsValidator) ValidateArgs(defs ParamDefinitions, input Arguments) err
 	return nil
 }
 
-func (v *ArgsValidator) validateExistence(defs ParamDefinitions, params Arguments) error {
+func (v *ParamValidator) validateExistence(defs ParamDefinitions, params ParamInput) error {
 	if err := v.validateRequiredParams(defs, params); err != nil {
 		return err
 	}
@@ -86,7 +91,7 @@ func (v *ArgsValidator) validateExistence(defs ParamDefinitions, params Argument
 	return nil
 }
 
-func (v *ArgsValidator) validateRequiredParams(defs ParamDefinitions, params Arguments) error {
+func (v *ParamValidator) validateRequiredParams(defs ParamDefinitions, params ParamInput) error {
 	for _, def := range defs {
 		if !def.Required {
 			continue
@@ -99,7 +104,7 @@ func (v *ArgsValidator) validateRequiredParams(defs ParamDefinitions, params Arg
 	return nil
 }
 
-func (v *ArgsValidator) validateOptionalParams(defs ParamDefinitions, params Arguments) error {
+func (v *ParamValidator) validateOptionalParams(defs ParamDefinitions, params ParamInput) error {
 	for name, _ := range params {
 		if _, ok := defs[name]; !ok {
 			return fmt.Errorf("param does not exist in paramDefinition, key: %v", name)
@@ -109,12 +114,52 @@ func (v *ArgsValidator) validateOptionalParams(defs ParamDefinitions, params Arg
 	return nil
 }
 
-func (v *ArgsValidator) validateTypes(defs ParamDefinitions, input Arguments) error {
+func (v *ParamValidator) validateTypes(defs ParamDefinitions, input ParamInput) error {
 	for name, val := range input {
 		def := defs[name]
-		if err := v.typeValidator.Validate(def.Type, val); err != nil {
-			return errors.Wrap(err, fmt.Sprintf("failed to validate tyep of param %s", name))
+		validator, ok := v.typeValidator[def.Type]
+		if !ok {
+			return errors.New("invalid type")
+		}
+		if err := validator(val); err != nil {
+			return errors.Wrap(err, fmt.Sprintf("failed to validate type of param %s", name))
 		}
 	}
 	return nil
+}
+
+func validateInt(param any) error {
+	switch reflect.TypeOf(param).Kind() {
+	case reflect.Int, reflect.Int32, reflect.Int64:
+		return nil
+	default:
+		return errors.New("not a int")
+	}
+}
+
+func validateFloat(param any) error {
+	switch reflect.TypeOf(param).Kind() {
+	case reflect.Float64, reflect.Float32:
+		return nil
+	default:
+		return errors.New("not a float")
+	}
+}
+
+func validateString(param any) error {
+	switch reflect.TypeOf(param).Kind() {
+	case reflect.String:
+		return nil
+	default:
+		return errors.New("not a string")
+	}
+}
+
+func validateBool(param any) error {
+	switch reflect.TypeOf(param).Kind() {
+	case reflect.Bool:
+		return nil
+	default:
+		return errors.New("not a bool")
+	}
 }
