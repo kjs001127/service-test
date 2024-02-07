@@ -9,7 +9,8 @@ import (
 	"github.com/channel-io/ch-app-store/fx/apifx/httpfx/generalfx"
 )
 
-var Option = fx.Module("http",
+var Option = fx.Module(
+	"http",
 	generalfx.HttpModule,
 	frontfx.HttpModule,
 	adminfx.HttpModule,

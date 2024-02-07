@@ -7,10 +7,6 @@ import (
 )
 
 func main() {
-	startModule()
-}
-
-func startModule() {
 	fx.New(appstorefx.Option)
 
 	select {}

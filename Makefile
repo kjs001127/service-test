@@ -82,7 +82,7 @@ gen-mock:
 	#mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
 
 
-build: init generate
+build: init generate docs
 	GOOS=${GOOS} \
 	GOARCH=${GOARCH} \
 	go build ${LDFLAGS} \
@@ -105,13 +105,19 @@ clean-gen:
 clean-target:
 	rm -rf ${TARGET_DIR}
 
-docs: docs-gen docs-fmt
+docs: docs-clean docs-gen docs-fmt
 
 docs-gen:
-	swag init -d api/http/admin -g module.go -o api/http/admin/swagger --pd
-	swag init -d api/http/desk -g module.go -o api/http/desk/swagger --pd
-	swag init -d api/http/front -g module.go -o api/http/front/swagger --pd
-	swag init -d api/http/general -g module.go -o api/http/general/swagger --pd
+	swag init -d api/http/admin -g swagger.go -o api/http/admin/swagger --pd --instanceName swagger_admin
+	swag init -d api/http/desk -g swagger.go -o api/http/desk/swagger --pd --instanceName swagger_desk
+	swag init -d api/http/front -g swagger.go -o api/http/front/swagger --pd --instanceName swagger_front
+	swag init -d api/http/general -g swagger.go -o api/http/general/swagger --pd --instanceName swagger_general
+
+docs-clean:
+	rm -rf api/http/admin/swagger
+	rm -rf api/http/desk/swagger
+	rm -rf api/http/front/swagger
+	rm -rf api/http/general/swagger
 
 docs-fmt:
 	swag fmt -d api/http

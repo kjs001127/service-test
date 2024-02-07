@@ -6,6 +6,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
+	_ "github.com/channel-io/ch-app-store/api/http/general/swagger"
+
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/general/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/general/invoke"
@@ -15,11 +17,6 @@ import (
 
 const generalPort = `name:"general.port"`
 
-// HttpModule				   godoc
-//
-//	@Title		ch-app-store general API
-//	@Version	1.0
-//	@BasePath	/
 var HttpModule = fx.Module(
 	"generalHttpModule",
 	fx.Supply(
@@ -39,7 +36,10 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
-		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_general"),
+		))
 		go func() {
 			panic(server.Srv.Run())
 		}()

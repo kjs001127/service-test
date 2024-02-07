@@ -6,6 +6,8 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
+	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
+
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/front/invoke"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
@@ -15,11 +17,6 @@ import (
 
 const frontPort = `name:"front.port"`
 
-// HttpModule				   godoc
-//
-//	@Title		ch-app-store front API
-//	@Version	1.0
-//	@BasePath	/
 var HttpModule = fx.Module(
 	"frontHttpModule",
 	fx.Supply(
@@ -40,7 +37,10 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
-		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_front"),
+		))
 		go func() {
 			panic(server.Srv.Run())
 		}()

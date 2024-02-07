@@ -20,11 +20,11 @@ const tokenHeader = "x-access-token"
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		appID				path	string				true	"id of App to invoke Function"
-//	@Param		name				path	string				true	"name of Function to invoke"
-//	@Param		dto.JsonRPCRequest	body	dto.JsonRPCRequest	true	"body of Function to invoke"
+//	@Param		appID				path		string				true	"id of App to invoke Function"
+//	@Param		name				path		string				true	"name of Function to invoke"
+//	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
-//	@Success	200		{object}	command.Action
+//	@Success	200					{object}	json.RawMessage
 //	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions/{name} [post]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")

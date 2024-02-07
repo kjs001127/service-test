@@ -19,7 +19,7 @@ import (
 //	@Param		since	query	string	false	"get App after this id"
 //	@Param		limit	query	string	true	"max count of return data"
 //
-//	@Success	200		dto.AppsAndCommands
+//	@Success	200		{object} dto.AppsAndCommands
 //	@Router		/desk/v1/channels/{channelId}/apps [get]
 func (h *Handler) getApps(ctx *gin.Context) {
 	since, limit := ctx.Query("since"), ctx.Query("limit")

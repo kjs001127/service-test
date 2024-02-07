@@ -1,6 +1,7 @@
 package invoke
 
 import (
+	_ "encoding/json"
 	"errors"
 	"net/http"
 
@@ -20,10 +21,10 @@ import (
 //	@Summary	execute selected Command
 //	@Tags		Front
 //
-//	@Param		appID					path		string					true		"id of App"
-//	@Param		name					path		string					true		"name of Command to execute"
-//	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true		"body of Function to invoke"
-//	@Success	200		{object}	command.Action
+//	@Param		appID					path		string					true	"id of App"
+//	@Param		name					path		string					true	"name of Command to execute"
+//	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true	"body of Function to invoke"
+//	@Success	200						{object}	json.RawMessage
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ParamsAndContext
@@ -78,11 +79,11 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Summary	execute selected AutoComplete of Command
 //	@Tags		Front
 //
-//	@Param		appID								path		string								true	"id of App"
-//	@Param		name								path		string								true	"name of Command to execute autoComplete"
-//	@Param		channelID							path		string								true	"channelID"
-//	@Param 		dto.ContextAndAutoCompleteArgs 		body		dto.ContextAndAutoCompleteArgs		true
-//	@Success	200		{array}		command.Choice
+//	@Param		appID							path	string							true	"id of App"
+//	@Param		name							path	string							true	"name of Command to execute autoComplete"
+//	@Param		channelID						path	string							true	"channelID"
+//	@Param		dto.ContextAndAutoCompleteArgs	body	dto.ContextAndAutoCompleteArgs	true	"context and params to execute autoComplete"
+//	@Success	200								{array}	command.Choice
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs

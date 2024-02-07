@@ -22,10 +22,10 @@ const scopeChannel = "channel"
 //	@Summary	execute selected Command
 //	@Tags		Desk
 //
-//	@Param		appID					path		string					true		"id of App"
-//	@Param		name					path		string					true		"name of Command to execute"
-//	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true		"body of Function to invoke"
-//	@Success	200		{object}	command.Action
+//	@Param		appID					path		string					true	"id of App"
+//	@Param		name					path		string					true	"name of Command to execute"
+//	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true	"body of Function to invoke"
+//	@Success	200						{object}	command.Action
 //	@Router		/desk/channels/{channelID}/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ParamsAndContext
@@ -80,10 +80,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Summary	execute selected AutoComplete of Command
 //	@Tags		Desk
 //
-//	@Param		appID							path		string							true	"id of App"
-//	@Param		name							path		string							true	"name of Command to execute autoComplete"
-//	@Param		dto.ContextAndAutoCompleteArgs	body		dto.ContextAndAutoCompleteArgs	true	"body"
-//	@Success	200		{array}		command.Choice
+//	@Param		appID							path	string							true	"id of App"
+//	@Param		name							path	string							true	"name of Command to execute autoComplete"
+//	@Param		dto.ContextAndAutoCompleteArgs	body	dto.ContextAndAutoCompleteArgs	true	"body"
+//	@Success	200								{array}	command.Choice
 //	@Router		/desk/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
