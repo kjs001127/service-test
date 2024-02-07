@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/auth/appauth"
-	"github.com/channel-io/ch-app-store/auth/principal"
+	"github.com/channel-io/ch-app-store/auth/principal/account"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
@@ -17,21 +16,11 @@ type Handler struct {
 	invoker       *app.Invoker[json.RawMessage]
 	commandRepo   command.CommandRepository
 
-	authorizer appauth.AppAuthorizer[principal.Token]
+	authorizer account.ContextAuthorizer
 }
 
-func NewHandler(
-	wamDownloader *app.FileStreamer,
-	invoker *app.Invoker[json.RawMessage],
-	commandRepo command.CommandRepository,
-	authorizer appauth.AppAuthorizer[principal.Token],
-) *Handler {
-	return &Handler{
-		wamDownloader: wamDownloader,
-		invoker:       invoker,
-		commandRepo:   commandRepo,
-		authorizer:    authorizer,
-	}
+func NewHandler(wamDownloader *app.FileStreamer, invoker *app.Invoker[json.RawMessage], commandRepo command.CommandRepository, authorizer account.ContextAuthorizer) *Handler {
+	return &Handler{wamDownloader: wamDownloader, invoker: invoker, commandRepo: commandRepo, authorizer: authorizer}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

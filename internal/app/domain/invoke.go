@@ -3,8 +3,6 @@ package domain
 import (
 	"context"
 	"io"
-
-	"github.com/channel-io/ch-app-store/auth/appauth"
 )
 
 type Invoker[RES any] struct {
@@ -26,10 +24,25 @@ type Endpoint struct {
 	FunctionName string
 }
 
+type Caller struct {
+	Type string
+	ID   string
+}
+
 type Body struct {
-	Scopes  appauth.Authorities
-	Context appauth.ChannelContext
+	Caller  Caller
+	Context ChannelContext
 	Params  any
+}
+
+type ChannelContext struct {
+	Channel struct {
+		ID string `json:"id"`
+	}
+	Chat struct {
+		Type string `json:"type"`
+		ID   string `json:"id"`
+	}
 }
 
 func (i *Invoker[RES]) InvokeChannelFunction(

@@ -16,16 +16,3 @@ func (t TokenType) Header() string {
 	}
 	return ""
 }
-
-type Token struct {
-	T TokenType
-	V string
-}
-
-func (t Token) Type() TokenType {
-	return t.T
-}
-
-func (t Token) Value() string {
-	return t.V
-}

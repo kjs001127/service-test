@@ -8,24 +8,27 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/channel-io/ch-app-store/auth/appauth"
-	"github.com/channel-io/ch-app-store/auth/principal"
+	"github.com/channel-io/ch-app-store/auth"
+)
+
+const (
+	issueToken = "/general/auth/" + version + "/v1/token"
 )
 
 type RBACExchanger struct {
 	cli     *resty.Client
-	parser  *Parser
+	parser  *ParserImpl
 	authURL string
 }
 
-func NewRBACExchanger(cli *resty.Client, parser *Parser, authURL string) *RBACExchanger {
+func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RBACExchanger {
 	return &RBACExchanger{cli: cli, parser: parser, authURL: authURL}
 }
 
 func (e *RBACExchanger) Exchange(
 	ctx context.Context,
-	token principal.Token,
-	scopes appauth.Authorities,
+	token auth.Token,
+	scopes Scopes,
 	clientID string,
 ) (IssueResponse, error) {
 	r := e.cli.R()
@@ -39,12 +42,12 @@ func (e *RBACExchanger) Exchange(
 	}
 	r.
 		SetQueryParamsFromValues(values).
-		SetQueryParam("principal_type", token.Type().Header()).
+		SetQueryParam("principal_type", token.Type()).
 		SetQueryParam("grant_type", "principal").
 		SetQueryParam("principal_token", token.Value()).
 		SetQueryParam("client_id", clientID)
 
-	resp, err := r.Post(e.authURL + "/v1/token")
+	resp, err := r.Post(e.authURL + issueToken)
 	if err != nil {
 		return IssueResponse{}, err
 	}

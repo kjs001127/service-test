@@ -3,7 +3,6 @@ package authfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/auth/appauth"
 	"github.com/channel-io/ch-app-store/auth/general"
 	"github.com/channel-io/ch-app-store/auth/principal"
 	"github.com/channel-io/ch-app-store/auth/principal/account"
@@ -12,19 +11,14 @@ import (
 )
 
 const (
-	jwtServiceKey   = `name:"jwtServiceKey"`
-	managerFetchUrl = `name:"managerFetchUrl"`
-	authGeneral     = `name:authGeneral`
-	authAdmin       = `name:authAdmin`
+	jwtServiceKey = `name:"jwtServiceKey"`
+	authGeneral   = `name:"authGeneral"`
+	authAdmin     = `name:"authAdmin"`
 )
 
 var Option = fx.Module(
 	"authModule",
 	fx.Supply(
-		fx.Annotate(
-			config.Get().Auth.ManagerFetchURL,
-			fx.ResultTags(managerFetchUrl),
-		),
 		fx.Annotate(
 			config.Get().Auth.JWTServiceKey,
 			fx.ResultTags(jwtServiceKey),
@@ -46,7 +40,7 @@ var Option = fx.Module(
 		fx.Annotate(
 			account.NewManagerFetcherImpl,
 			fx.As(new(account.ManagerFetcher)),
-			fx.ParamTags("", managerFetchUrl),
+			fx.ParamTags("", authAdmin),
 		),
 		fx.Annotate(
 			session.NewUserFetcherImpl,
@@ -54,24 +48,31 @@ var Option = fx.Module(
 			fx.ParamTags(jwtServiceKey),
 		),
 		fx.Annotate(
+			general.NewRoleClient,
+			fx.ParamTags("", authAdmin),
+		),
+		fx.Annotate(
 			general.NewParser,
-			fx.ParamTags("", authAdmin, jwtServiceKey),
-		),
-
-		fx.Private,
-	),
-	fx.Provide(
-		fx.Annotate(
-			general.NewAuthorizer,
-			fx.As(new(appauth.AppAuthorizer[general.Token])),
+			fx.As(new(general.Parser)),
+			fx.ParamTags("", ``, jwtServiceKey),
 		),
 		fx.Annotate(
-			general.NewPrincipalAuthorizer,
-			fx.As(new(appauth.AppAuthorizer[principal.Token])),
+			session.NewContextAuthorizer,
+			fx.As(new(session.ContextAuthorizer)),
+		),
+		fx.Annotate(
+			account.NewContextAuthorizer,
+			fx.As(new(account.ContextAuthorizer)),
+		),
+		fx.Annotate(
+			principal.NewChatValidator,
+			fx.As(new(principal.ChatValidator)),
+			fx.ParamTags("", authAdmin),
 		),
 	),
 )
 
+/*
 var MockOption = fx.Module("mockauth",
 	fx.Provide(
 		fx.Annotate(
@@ -91,4 +92,4 @@ var MockOption = fx.Module("mockauth",
 			fx.As(new(session.UserFetcher)),
 		),
 	),
-)
+)*/

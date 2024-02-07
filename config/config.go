@@ -30,10 +30,9 @@ type Config struct {
 		Desk    string `required:"true"`
 	}
 	Auth struct {
-		ManagerFetchURL string `required:"true"`
-		AuthGeneralURL  string `required:"true"`
-		AuthAdminURL    string `required:"true"`
-		JWTServiceKey   string `required:"true"`
+		AuthGeneralURL string `required:"true"`
+		AuthAdminURL   string `required:"true"`
+		JWTServiceKey  string `required:"true"`
 	}
 	Psql struct {
 		Schema   string `required:"true"`

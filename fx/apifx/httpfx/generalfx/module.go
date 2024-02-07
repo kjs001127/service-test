@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/general/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/general/invoke"
+	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/api/http/general/util"
 	"github.com/channel-io/ch-app-store/config"
 )
@@ -26,9 +27,21 @@ var HttpModule = fx.Module(
 		),
 	),
 	fx.Provide(
-
-		fx.Annotate(gintool.NewGinEngine, fx.ParamTags(`group:"routes"`), fx.ResultTags(`name:"general.engine"`)),
-		fx.Annotate(gintool.NewApiServer, fx.ParamTags(`name:"general.engine"`, generalPort), fx.ResultTags(`name:"general.server"`)),
+		fx.Annotate(
+			middleware.NewAuth,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(`group:"general.auth"`),
+		),
+		fx.Annotate(
+			gintool.NewGinEngine,
+			fx.ParamTags(`group:"routes"`, `group:"general.auth"`),
+			fx.ResultTags(`name:"general.engine"`),
+		),
+		fx.Annotate(
+			gintool.NewApiServer,
+			fx.ParamTags(`name:"general.engine"`, generalPort),
+			fx.ResultTags(`name:"general.server"`),
+		),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(appchannel.NewHandler),
 		gintool.AddTag(util.NewHandler),

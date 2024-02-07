@@ -8,14 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/appauth"
-	"github.com/channel-io/ch-app-store/auth/principal"
+	"github.com/channel-io/ch-app-store/auth/principal/account"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
-
-const scopeChannel = "channel"
 
 // executeCommand godoc
 //
@@ -42,16 +40,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		return
 	}
 
-	scopes, err := h.authorizer.Handle(ctx, appauth.AppUseRequest[principal.Token]{
-		ChCtx: body.Context,
-		AppID: appID,
-		Token: principal.Token{
-			T: principal.TokenTypeAccount,
-			V: ctx.GetHeader(principal.TokenTypeAccount.Header()),
-		},
-		FunctionName: cmd.ActionFunctionName,
-	})
-	if err != nil {
+	rawManager, _ := ctx.Get(middleware.ManagerKey)
+	manager := rawManager.(account.ManagerPrincipal)
+
+	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -64,7 +56,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		Body: app.Body{
 			Params:  body.Params,
 			Context: body.Context,
-			Scopes:  scopes,
+			Caller: app.Caller{
+				Type: "manager",
+				ID:   manager.ID,
+			},
 		},
 	})
 	if err != nil {
@@ -104,16 +99,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		_ = ctx.Error(apierr.NotFound(errors.New("autocomplete not found")))
 	}
 
-	scopes, err := h.authorizer.Handle(ctx, appauth.AppUseRequest[principal.Token]{
-		AppID:        appID,
-		FunctionName: *cmd.AutoCompleteFunctionName,
-		ChCtx:        body.Context,
-		Token: principal.Token{
-			T: principal.TokenTypeAccount,
-			V: ctx.GetHeader(principal.TokenTypeAccount.Header()),
-		},
-	})
-	if err != nil {
+	rawManager, _ := ctx.Get(middleware.ManagerKey)
+	manager := rawManager.(account.ManagerPrincipal)
+
+	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -126,7 +115,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		Body: app.Body{
 			Params:  body.Params,
 			Context: body.Context,
-			Scopes:  scopes,
+			Caller: app.Caller{
+				Type: "manager",
+				ID:   manager.ID,
+			},
 		},
 	})
 	if err != nil {

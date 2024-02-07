@@ -30,7 +30,7 @@ var HttpModule = fx.Module(
 
 		fx.Annotate(
 			gintool.NewGinEngine,
-			fx.ParamTags(`group:"routes"`),
+			fx.ParamTags(`group:"routes"`, `group:"desk.auth"`),
 			fx.ResultTags(`name:"desk.engine"`),
 		),
 		fx.Annotate(
@@ -44,7 +44,11 @@ var HttpModule = fx.Module(
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(query.NewHandler),
 
-		middleware.NewAuth,
+		fx.Annotate(
+			middleware.NewAuth,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(`group:"desk.auth"`),
+		),
 
 		fx.Private,
 	),

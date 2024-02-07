@@ -8,13 +8,20 @@ import (
 type RouteRegistrant interface {
 	RegisterRoutes(router Router)
 }
+
+type Middleware interface {
+	Handle(ctx *gin.Context)
+}
+
 type Router interface {
 	gin.IRouter
 }
 
-func NewGinEngine(routes []RouteRegistrant) *gin.Engine {
+func NewGinEngine(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine {
 	router := gin.Default()
-
+	for _, m := range middlewares {
+		router.Use(m.Handle)
+	}
 	router.Use(cors.Default())
 
 	for _, route := range routes {

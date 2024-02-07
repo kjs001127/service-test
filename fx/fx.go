@@ -15,6 +15,6 @@ var Option = fx.Module(
 	httpfx.Option,
 	internalfx.Option,
 	dbfx.Option,
-	authfx.MockOption,
+	authfx.Option,
 	restyfx.Option,
 )

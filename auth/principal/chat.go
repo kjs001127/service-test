@@ -6,19 +6,23 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
+
+	"github.com/channel-io/ch-app-store/auth"
 )
 
+const uri = "/admin/auth"
+
 type ChatValidator interface {
-	ValidateChat(ctx context.Context, token Token, chat Chat) error
+	ValidateChat(ctx context.Context, token auth.Token, chat Chat) error
 }
 
 type ChatValidatorImpl struct {
-	cli         *resty.Client
-	chatAuthUrl string
+	cli     *resty.Client
+	baseUrl string
 }
 
-func NewChatValidator(cli *resty.Client, chatAuthUrl string) *ChatValidatorImpl {
-	return &ChatValidatorImpl{cli: cli, chatAuthUrl: chatAuthUrl}
+func NewChatValidator(cli *resty.Client, baseUrl string) *ChatValidatorImpl {
+	return &ChatValidatorImpl{cli: cli, baseUrl: baseUrl}
 }
 
 type Chat struct {
@@ -26,12 +30,12 @@ type Chat struct {
 	ID   string
 }
 
-func (c *ChatValidatorImpl) ValidateChat(ctx context.Context, token Token, chat Chat) error {
+func (c *ChatValidatorImpl) ValidateChat(ctx context.Context, token auth.Token, chat Chat) error {
 	req := c.cli.R()
 	req.SetContext(ctx)
-	req.Header.Set(token.Type().Header(), token.Value())
+	req.Header.Set(token.Type(), token.Value())
 
-	resp, err := req.Get(c.chatAuthUrl + fmt.Sprintf("/%ss/%s", chat.Type, chat.ID))
+	resp, err := req.Get(c.baseUrl + uri + fmt.Sprintf("/%ss/%s", chat.Type, chat.ID))
 	if err != nil {
 		return err
 	}

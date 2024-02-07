@@ -26,13 +26,21 @@ var HttpModule = fx.Module(
 		),
 	),
 	fx.Provide(
-		fx.Annotate(gintool.NewGinEngine, fx.ParamTags(`group:"routes"`), fx.ResultTags(`name:"front.engine"`)),
+		fx.Annotate(
+			gintool.NewGinEngine,
+			fx.ParamTags(`group:"routes"`, `group:"front.auth"`),
+			fx.ResultTags(`name:"front.engine"`),
+		),
 		fx.Annotate(gintool.NewApiServer, fx.ParamTags(`name:"front.engine"`, frontPort), fx.ResultTags(`name:"front.server"`)),
 
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(query.NewHandler),
 
-		middleware.NewAuth,
+		fx.Annotate(
+			middleware.NewAuth,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(`group:"front.auth"`),
+		),
 
 		fx.Private,
 	),

@@ -1,8 +1,7 @@
 stage: development
 auth:
-  managerFetchURL: test
   authGeneralUrl: test
-  authAdminUrl: test
+  authAdminURL: test
   jwtServiceKey: ${JWT_SERVICE_KEY}
 port:
   admin: 3000

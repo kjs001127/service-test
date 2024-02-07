@@ -69,7 +69,7 @@ func (a *RemoteApp) toJsonRPCRequest(request app.AppRequest) ([]byte, error) {
 	jsonReq["method"] = request.FunctionName
 	jsonReq["params"] = request.Body
 	jsonReq["context"] = request.Context
-	jsonReq["scopes"] = request.Scopes
+	jsonReq["caller"] = request.Caller
 
 	return json.Marshal(jsonReq)
 }

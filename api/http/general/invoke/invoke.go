@@ -2,13 +2,15 @@ package invoke
 
 import (
 	_ "encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general/dto"
-	"github.com/channel-io/ch-app-store/auth/appauth"
+	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -35,13 +37,14 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	scopes, err := h.authorizer.Handle(ctx, appauth.AppUseRequest[general.Token]{
-		Token: general.Token(ctx.GetHeader(general.Header())),
-		AppID: appID,
-		ChCtx: req.Context,
-	})
-	if err != nil {
-		_ = ctx.Error(err)
+	rawRbac, _ := ctx.Get(middleware.RBACKey)
+	rbac := rawRbac.(general.ParsedRBACToken)
+	if ok := rbac.CheckAction(general.Service(appID), general.Action(name)); !ok {
+		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
+		return
+	}
+	if ok := rbac.CheckScope("channel", channelID); !ok {
+		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
 		return
 	}
 
@@ -51,9 +54,11 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			FunctionName: name,
 		},
 		Body: app.Body{
-			Scopes:  scopes,
-			Context: req.Context,
-			Params:  req.Params,
+			Caller: app.Caller{
+				Type: rbac.Type,
+				ID:   rbac.ID,
+			},
+			Params: req.Params,
 		},
 	})
 	if err != nil {

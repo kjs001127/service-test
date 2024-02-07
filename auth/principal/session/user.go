@@ -10,7 +10,15 @@ import (
 
 const XSessionHeader = "x-session"
 
-type JwtServiceKey string
+type Token string
+
+func (t Token) Type() string {
+	return XSessionHeader
+}
+
+func (t Token) Value() string {
+	return string(t)
+}
 
 type User struct {
 	ChannelID string `json:"channelId"`
@@ -19,7 +27,7 @@ type User struct {
 
 type UserPrincipal struct {
 	User
-	Token string
+	Token Token
 }
 
 type UserJwt struct {
@@ -28,14 +36,14 @@ type UserJwt struct {
 }
 
 type UserFetcher interface {
-	FetchUser(ctx context.Context, token string) (User, error)
+	FetchUser(ctx context.Context, token string) (UserPrincipal, error)
 }
 
 type UserFetcherImpl struct {
-	jwtServiceKey JwtServiceKey
+	jwtServiceKey string
 }
 
-func NewUserFetcherImpl(jwtServiceKey JwtServiceKey) *UserFetcherImpl {
+func NewUserFetcherImpl(jwtServiceKey string) *UserFetcherImpl {
 	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey}
 }
 
@@ -63,7 +71,7 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 	if !ok {
 		return UserPrincipal{}, errors.New("invalid Key")
 	}
-	return UserPrincipal{User: User{ID: userID, ChannelID: channelID}, Token: token}, nil
+	return UserPrincipal{User: User{ID: userID, ChannelID: channelID}, Token: Token(token)}, nil
 }
 
 type MockUserFetcher struct {
