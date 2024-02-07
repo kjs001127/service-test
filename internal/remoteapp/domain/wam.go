@@ -36,7 +36,7 @@ func (a *RemoteApp) StreamFile(ctx context.Context, path string, writer io.Write
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer reader.Close() // TODO add logging
 
 	return doStream(reader, writer)
 }

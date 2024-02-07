@@ -61,3 +61,20 @@ func (c *ManagerFetcherImpl) FetchManager(ctx context.Context, channelID string,
 func isSuccess(statusCode int) bool {
 	return statusCode >= 200 && statusCode < 300
 }
+
+type MockManagerFetcher struct {
+}
+
+func NewMockManagerFetcher() *MockManagerFetcher {
+	return &MockManagerFetcher{}
+}
+
+func (m MockManagerFetcher) FetchManager(ctx context.Context, channelID string, token string) (Manager, error) {
+	return Manager{
+		ID:        "1",
+		ChannelID: "1",
+		AccountID: "1",
+		Name:      "1",
+		Email:     "1",
+	}, nil
+}

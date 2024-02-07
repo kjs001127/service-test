@@ -1,8 +1,10 @@
 package invoke
 
 import (
+	"encoding/json"
+
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/auth/general"
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	"github.com/channel-io/ch-app-store/auth/principal"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
@@ -11,24 +13,24 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	wamDownloader       *app.FileStreamer
-	cmdInvoker          *command.InvokeSvc
-	autoCompleteInvoker *command.AutoCompleteSvc
+	wamDownloader *app.FileStreamer
+	invoker       *app.Invoker[json.RawMessage]
+	commandRepo   command.CommandRepository
 
-	authorizer general.AppAuthorizer[principal.Token]
+	authorizer appauth.AppAuthorizer[principal.Token]
 }
 
 func NewHandler(
 	wamDownloader *app.FileStreamer,
-	cmdInvoker *command.InvokeSvc,
-	autoCompleteInvoker *command.AutoCompleteSvc,
-	authorizer general.AppAuthorizer[principal.Token],
+	invoker *app.Invoker[json.RawMessage],
+	commandRepo command.CommandRepository,
+	authorizer appauth.AppAuthorizer[principal.Token],
 ) *Handler {
 	return &Handler{
-		wamDownloader:       wamDownloader,
-		cmdInvoker:          cmdInvoker,
-		autoCompleteInvoker: autoCompleteInvoker,
-		authorizer:          authorizer,
+		wamDownloader: wamDownloader,
+		invoker:       invoker,
+		commandRepo:   commandRepo,
+		authorizer:    authorizer,
 	}
 }
 

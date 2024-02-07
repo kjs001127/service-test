@@ -19,7 +19,7 @@ type AppRequest struct {
 type AppResponse any
 
 type App interface {
-	Data() *AppData
+	Attributes() *AppAttributes
 
 	CheckInstallable(ctx context.Context, channelID string) error
 	OnInstall(ctx context.Context, channelID string) error
@@ -60,7 +60,7 @@ const (
 	AppStateUnStable = AppState("unstable")
 )
 
-type AppData struct {
+type AppAttributes struct {
 	ID    string
 	State AppState
 
@@ -98,11 +98,11 @@ type AppChannelRepository interface {
 }
 
 type InstalledApps struct {
-	Apps        []*AppData
+	Apps        []*AppAttributes
 	AppChannels []*AppChannel
 }
 
 type InstalledApp struct {
-	App        *AppData
+	App        *AppAttributes
 	AppChannel *AppChannel
 }

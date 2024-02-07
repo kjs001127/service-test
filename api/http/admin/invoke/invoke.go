@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/general"
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -38,7 +38,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			FunctionName: name,
 		},
 		Body: app.Body{
-			Scopes:  general.ExtractScopes(req.Context),
+			Scopes:  appauth.Authorities{appauth.Wildcard: {appauth.Wildcard}},
 			Context: req.Context,
 			Params:  req.Params,
 		},

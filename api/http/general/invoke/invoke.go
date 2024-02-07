@@ -7,7 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
+	"github.com/channel-io/ch-app-store/api/http/general/dto"
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	"github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -19,22 +20,22 @@ const tokenHeader = "x-access-token"
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		appID			path	string			true	"id of App to invoke Function"
-//	@Param		name			path	string			true	"name of Function to invoke"
-//	@Param		json.RawMessage	body	json.RawMessage	true	"body of Function to invoke"
+//	@Param		appID				path	string				true	"id of App to invoke Function"
+//	@Param		name				path	string				true	"name of Function to invoke"
+//	@Param		dto.JsonRPCRequest	body	dto.JsonRPCRequest	true	"body of Function to invoke"
 //
-//	@Success	204
+//	@Success	200		{object}	command.Action
 //	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions/{name} [post]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")
 
-	var req dto.ParamsAndContext
+	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	scopes, err := h.authorizer.Handle(ctx, general.Request[general.Token]{
+	scopes, err := h.authorizer.Handle(ctx, appauth.AppUseRequest[general.Token]{
 		Token: general.Token(ctx.GetHeader(general.Header())),
 		AppID: appID,
 		ChCtx: req.Context,

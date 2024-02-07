@@ -22,12 +22,17 @@ var (
 var configFiles embed.FS
 
 type Config struct {
-	Stage string `required:"true"`
-	Port  uint16 `required:"true"`
-
+	Stage string `required:"true" name:"config.stage"`
+	Port  struct {
+		Admin   string `required:"true"`
+		General string `required:"true"`
+		Front   string `required:"true"`
+		Desk    string `required:"true"`
+	}
 	Auth struct {
 		ManagerFetchURL string `required:"true"`
-		TokenIssueURL   string `required:"true"`
+		AuthGeneralURL  string `required:"true"`
+		AuthAdminURL    string `required:"true"`
 		JWTServiceKey   string `required:"true"`
 	}
 	Psql struct {

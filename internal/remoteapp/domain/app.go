@@ -7,7 +7,7 @@ import (
 )
 
 type RemoteApp struct {
-	app.AppData
+	app.AppAttributes
 
 	RoleID   string
 	ClientID string
@@ -21,8 +21,8 @@ type RemoteApp struct {
 	requester HttpRequester
 }
 
-func (a *RemoteApp) Data() *app.AppData {
-	return &a.AppData
+func (a *RemoteApp) Attributes() *app.AppAttributes {
+	return &a.AppAttributes
 }
 
 type RemoteAppRepository interface {

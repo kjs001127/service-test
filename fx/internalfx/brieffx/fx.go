@@ -1,4 +1,4 @@
-package brief
+package brieffx
 
 import (
 	"go.uber.org/fx"
@@ -9,5 +9,4 @@ import (
 
 var Option = fx.Provide(
 	fx.Annotate(repo.NewBriefDao, fx.As(new(domain.BriefRepository))),
-	domain.NewQueryService,
 )

@@ -37,7 +37,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 
 	ids := make([]string, 0, len(apps))
 	for _, a := range apps {
-		ids = append(ids, a.Data().ID)
+		ids = append(ids, a.Attributes().ID)
 	}
 
 	cmds, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: ids})
@@ -56,7 +56,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 //
 //	@Param		appID	path		string	true	"id of App"
 //
-//	@Success	200		{object}	object
+//	@Success	200		{array}		dto.CommandDTO
 //	@Router		/desk/v1/channels/{channelID}/apps/{appID}/commands [get]
 func (h *Handler) getCommands(ctx *gin.Context) {
 	appID := ctx.Param("appID")

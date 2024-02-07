@@ -19,7 +19,7 @@ const scope = command.ScopeFront
 //
 //	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	object
+//	@Success	200			{object}	dto.AppsAndCommands
 //	@Router		/front/v1/channels/{channelID}/commands [get]
 func (h *Handler) getCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")

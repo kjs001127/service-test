@@ -4,8 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/channel-io/ch-app-store/auth/chctx"
-	"github.com/channel-io/ch-app-store/auth/general"
+	"github.com/channel-io/ch-app-store/auth/appauth"
 )
 
 type Invoker[RES any] struct {
@@ -28,8 +27,8 @@ type Endpoint struct {
 }
 
 type Body struct {
-	Scopes  general.Scopes
-	Context chctx.ChannelContext
+	Scopes  appauth.Authorities
+	Context appauth.ChannelContext
 	Params  any
 }
 

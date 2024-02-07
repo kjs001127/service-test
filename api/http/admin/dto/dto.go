@@ -7,13 +7,13 @@ import (
 )
 
 type AppResource struct {
-	App      *app.AppData
+	App      *app.AppAttributes
 	Brief    *brief.Brief
 	Commands []*cmd.Command
 }
 
 type AppResources struct {
-	Apps     []*app.AppData
+	Apps     []*app.AppAttributes
 	Commands []*cmd.Command
 	Briefs   []*brief.Brief
 }

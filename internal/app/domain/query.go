@@ -39,7 +39,7 @@ func (s *QuerySvc) Query(ctx context.Context, install Install) (InstalledApp, er
 	}
 
 	return InstalledApp{
-		App:        app.Data(),
+		App:        app.Attributes(),
 		AppChannel: appCh,
 	}, nil
 }
@@ -52,10 +52,10 @@ func AppIDsOf(appChannels []*AppChannel) []string {
 	return appIDs
 }
 
-func AppDatasOf(apps []App) []*AppData {
-	ret := make([]*AppData, 0, len(apps))
+func AppDatasOf(apps []App) []*AppAttributes {
+	ret := make([]*AppAttributes, 0, len(apps))
 	for _, app := range apps {
-		ret = append(ret, app.Data())
+		ret = append(ret, app.Attributes())
 	}
 	return ret
 }

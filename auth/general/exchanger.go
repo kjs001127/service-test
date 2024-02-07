@@ -8,20 +8,26 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	"github.com/channel-io/ch-app-store/auth/principal"
 )
 
-type PrincipalToRBACExchanger struct {
+type RBACExchanger struct {
 	cli     *resty.Client
 	parser  *Parser
 	authURL string
 }
 
-func NewPrincipalToRBACExchanger(cli *resty.Client, parser *Parser, authURL string) *PrincipalToRBACExchanger {
-	return &PrincipalToRBACExchanger{cli: cli, parser: parser, authURL: authURL}
+func NewRBACExchanger(cli *resty.Client, parser *Parser, authURL string) *RBACExchanger {
+	return &RBACExchanger{cli: cli, parser: parser, authURL: authURL}
 }
 
-func (e *PrincipalToRBACExchanger) Exchange(ctx context.Context, token principal.Token, scopes Scopes, clientID string) (TokenResponse, error) {
+func (e *RBACExchanger) Exchange(
+	ctx context.Context,
+	token principal.Token,
+	scopes appauth.Authorities,
+	clientID string,
+) (IssueResponse, error) {
 	r := e.cli.R()
 	r.SetContext(ctx)
 
@@ -38,20 +44,20 @@ func (e *PrincipalToRBACExchanger) Exchange(ctx context.Context, token principal
 		SetQueryParam("principal_token", token.Value()).
 		SetQueryParam("client_id", clientID)
 
-	resp, err := r.Post(e.authURL)
+	resp, err := r.Post(e.authURL + "/v1/token")
 	if err != nil {
-		return TokenResponse{}, err
+		return IssueResponse{}, err
 	}
 
-	var unmarshalled TokenResponse
+	var unmarshalled IssueResponse
 	if err := json.Unmarshal(resp.Body(), &unmarshalled); err != nil {
-		return TokenResponse{}, err
+		return IssueResponse{}, err
 	}
 
 	return unmarshalled, nil
 }
 
-type TokenResponse struct {
+type IssueResponse struct {
 	AccessToken  string   `json:"access_token"`
 	RefreshToken string   `json:"refresh_token"`
 	ExpiresIn    string   `json:"expires_in"`

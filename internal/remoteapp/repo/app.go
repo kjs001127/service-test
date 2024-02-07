@@ -142,7 +142,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 	}
 
 	return &remoteapp.RemoteApp{
-		AppData: app.AppData{
+		AppAttributes: app.AppAttributes{
 			ID:                rawApp.ID,
 			State:             app.AppState(rawApp.State),
 			AvatarURL:         rawApp.AvatarURL.Ptr(),

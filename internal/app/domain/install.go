@@ -24,9 +24,9 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledA
 	}
 
 	ret, err := s.appChRepo.Save(ctx, &AppChannel{
-		AppID:     app.Data().ID,
+		AppID:     app.Attributes().ID,
 		ChannelID: req.ChannelID,
-		Configs:   app.Data().ConfigSchemas.DefaultConfig(),
+		Configs:   app.Attributes().ConfigSchemas.DefaultConfig(),
 	})
 	if err != nil {
 		return InstalledApp{}, err
@@ -37,7 +37,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledA
 	}
 
 	return InstalledApp{
-		App:        app.Data(),
+		App:        app.Attributes(),
 		AppChannel: ret,
 	}, nil
 }

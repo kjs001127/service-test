@@ -1,5 +1,14 @@
 stage: development
-port: 3000
+auth:
+  managerFetchURL: test
+  authGeneralUrl: test
+  authAdminUrl: test
+  jwtServiceKey: ${JWT_SERVICE_KEY}
+port:
+  admin: 3000
+  desk: 3001
+  front: 3002
+  general: 3003
 psql:
   schema: public
   dbname: app_store
@@ -8,3 +17,6 @@ psql:
   user: app_store
   password: abc
   sslmode: disable
+
+
+

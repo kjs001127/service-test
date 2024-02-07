@@ -27,6 +27,7 @@ CREATE TABLE apps
     updated_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW()
 );
 
+
 CREATE TABLE commands
 (
     id                         CHARACTER VARYING PRIMARY KEY          NOT NULL,

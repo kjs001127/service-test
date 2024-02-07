@@ -9,10 +9,9 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/golang/protobuf/proto"
 
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
-
-const actionWildcard = "*"
 
 type JwtServiceKey string
 
@@ -78,7 +77,7 @@ func (f *Parser) fetchRole(ctx context.Context, claims *RBACToken) (*service.Get
 	}
 	r.SetBody(body)
 
-	rawRes, err := r.Post(r.URL)
+	rawRes, err := r.Post(r.URL + "/v1/roles/getRole")
 	if err != nil {
 		return &service.GetRoleResult{}, err
 	}
@@ -93,8 +92,8 @@ func (f *Parser) fetchRole(ctx context.Context, claims *RBACToken) (*service.Get
 
 func (f *Parser) merge(role *service.GetRoleResult, claims *RBACToken) (ParsedRBACToken, error) {
 	ret := ParsedRBACToken{
-		Actions: make(map[Service][]Action),
-		Scopes:  make(map[ScopeKey][]ScopeValue),
+		Actions:     make(map[Service][]Action),
+		Authorities: make(appauth.Authorities),
 	}
 
 	for _, scopeKeyVal := range claims.Scope {
@@ -102,7 +101,7 @@ func (f *Parser) merge(role *service.GetRoleResult, claims *RBACToken) (ParsedRB
 		if !ok {
 			return ParsedRBACToken{}, errors.New("invalid scope")
 		}
-		ret.Scopes[ScopeKey(key)] = append(ret.Scopes[ScopeKey(key)], ScopeValue(val))
+		ret.Authorities[key] = append(ret.Authorities[key], val)
 	}
 
 	for _, c := range role.Role.Claims {
@@ -120,43 +119,43 @@ type RBACToken struct {
 
 type Service string
 type Action string
-type ScopeKey string
-type ScopeValue string
-type Scopes map[ScopeKey][]ScopeValue
 
 type ParsedRBACToken struct {
-	Actions map[Service][]Action
-	Scopes  Scopes
+	Actions     map[Service][]Action
+	Authorities appauth.Authorities
 }
 
 func (p *ParsedRBACToken) CheckAction(service Service, action Action) bool {
 	actions := p.Actions[service]
 	for _, a := range actions {
-		if a == action || a == actionWildcard {
+		if a == action || a == appauth.Wildcard {
 			return true
 		}
 	}
 	return false
 }
 
-func (p *ParsedRBACToken) CheckScope(key ScopeKey, value ScopeValue) bool {
+func (p *ParsedRBACToken) CheckAuthority(key string, value string) bool {
 	if len(key) <= 0 {
 		return true
 	}
+	if _, ok := p.Authorities[appauth.Wildcard]; ok {
+		return true
+	}
 
-	scopes := p.Scopes[key]
+	scopes := p.Authorities[key]
 	for _, s := range scopes {
-		if s == value {
+		if s == value || s == appauth.Wildcard {
 			return true
 		}
 	}
 	return false
 }
 
-func (p *ParsedRBACToken) CheckScopes(scopes Scopes) bool {
+func (p *ParsedRBACToken) CheckAuthorities(scopes appauth.Authorities) bool {
 	for key, vals := range scopes {
 		for _, val := range vals {
-			if !p.CheckScope(key, val) {
+			if !p.CheckAuthority(key, val) {
 				return false
 			}
 		}

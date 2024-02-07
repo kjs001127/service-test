@@ -82,7 +82,7 @@ gen-mock:
 	#mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
 
 
-build: init generate docs
+build: init generate
 	GOOS=${GOOS} \
 	GOARCH=${GOARCH} \
 	go build ${LDFLAGS} \

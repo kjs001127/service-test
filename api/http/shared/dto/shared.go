@@ -3,24 +3,24 @@ package dto
 import (
 	"time"
 
-	"github.com/channel-io/ch-app-store/auth/chctx"
+	"github.com/channel-io/ch-app-store/auth/appauth"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
 type ParamsAndContext struct {
-	Params  cmd.ParamInput       `json:"params"`
-	Context chctx.ChannelContext `json:"context"`
+	Params  cmd.ParamInput         `json:"params"`
+	Context appauth.ChannelContext `json:"context"`
 }
 
 type AppsAndCommands struct {
-	Apps     []*app.AppData `json:"apps"`
-	Commands []*CommandDTO  `json:"commands"`
+	Apps     []*app.AppAttributes `json:"apps"`
+	Commands []*CommandDTO        `json:"commands"`
 }
 
 type ContextAndAutoCompleteArgs struct {
-	Context chctx.ChannelContext `json:"context"`
-	Params  cmd.AutoCompleteArgs `json:"params"`
+	Context appauth.ChannelContext `json:"context"`
+	Params  cmd.AutoCompleteArgs   `json:"params"`
 }
 
 type CommandDTO struct {
