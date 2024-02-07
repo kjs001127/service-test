@@ -25,10 +25,9 @@ var Option = fx.Module(
 	}),
 )
 
-func BuildDataSource(
-	config *config.Config,
-) (*sql.DB, error) {
-	psql := config.Psql
+func BuildDataSource() (*sql.DB, error) {
+	cfg := config.Get()
+	psql := cfg.Psql
 	name := fmt.Sprintf(
 		"host=%s dbname=%s search_path=%s user=%s password=%s sslmode=%s",
 		psql.Host, psql.DBName, psql.Schema, psql.User, psql.Password, psql.SSLMode,

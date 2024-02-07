@@ -2,6 +2,8 @@ package generalfx
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -50,6 +52,11 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
+		server.Engine.GET("/swagger/general/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_general"),
+		))
+
 		go func() {
 			panic(server.Srv.Run())
 		}()

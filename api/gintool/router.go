@@ -19,13 +19,15 @@ type Router interface {
 
 func NewGinEngine(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine {
 	router := gin.Default()
-	for _, m := range middlewares {
-		router.Use(m.Handle)
-	}
 	router.Use(cors.Default())
 
+	var handlers []gin.HandlerFunc
+	for _, m := range middlewares {
+		handlers = append(handlers, m.Handle)
+	}
+	middlewareRouter := router.Group("", handlers...)
 	for _, route := range routes {
-		route.RegisterRoutes(router)
+		route.RegisterRoutes(middlewareRouter)
 	}
 
 	return router

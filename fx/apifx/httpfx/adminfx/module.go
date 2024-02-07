@@ -47,20 +47,7 @@ var HttpModule = fx.Module(
 			swaggerFiles.Handler,
 			ginSwagger.InstanceName("swagger_admin"),
 		))
-		server.Engine.GET("/swagger/front/*any", ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.InstanceName("swagger_front"),
-		))
 
-		server.Engine.GET("/swagger/desk/*any", ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.InstanceName("swagger_desk"),
-		))
-
-		server.Engine.GET("/swagger/general/*any", ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.InstanceName("swagger_general"),
-		))
 		go func() {
 			panic(server.Srv.Run())
 		}()

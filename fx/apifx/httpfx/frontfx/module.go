@@ -2,6 +2,8 @@ package frontfx
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
 	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
@@ -42,12 +44,17 @@ var HttpModule = fx.Module(
 			fx.ResultTags(`group:"front.auth"`),
 		),
 
+
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
 		go func() {
 			panic(server.Srv.Run())
 		}()
+		server.Engine.GET("/swagger/front/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_front"),
+		))
 	}),
 )
 
