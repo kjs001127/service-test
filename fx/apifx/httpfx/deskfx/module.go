@@ -2,10 +2,9 @@ package deskfx
 
 import (
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -13,7 +12,6 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/desk/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/desk/invoke"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
-	"github.com/channel-io/ch-app-store/api/http/desk/query"
 	"github.com/channel-io/ch-app-store/config"
 )
 
@@ -53,10 +51,6 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
-		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.InstanceName("swagger_desk"),
-		))
 		panic(server.Srv.Run())
 	}),
 )

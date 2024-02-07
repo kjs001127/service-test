@@ -64,7 +64,6 @@ type AppAttributes struct {
 	ID    string
 	State AppState
 
-	PublicKey   string
 	Title       string
 	AvatarURL   *string
 	Description *string

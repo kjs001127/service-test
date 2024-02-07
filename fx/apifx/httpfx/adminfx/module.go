@@ -6,13 +6,15 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
-	_ "github.com/channel-io/ch-app-store/api/http/admin/swagger"
-
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/admin/app"
 	"github.com/channel-io/ch-app-store/api/http/admin/invoke"
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
+	_ "github.com/channel-io/ch-app-store/api/http/admin/swagger"
+	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
+	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
+	_ "github.com/channel-io/ch-app-store/api/http/general/swagger"
 	"github.com/channel-io/ch-app-store/config"
 )
 
@@ -39,9 +41,23 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
-		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(
+		server.Engine.GET("/swagger/admin/*any", ginSwagger.WrapHandler(
 			swaggerFiles.Handler,
 			ginSwagger.InstanceName("swagger_admin"),
+		))
+		server.Engine.GET("/swagger/front/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_front"),
+		))
+
+		server.Engine.GET("/swagger/desk/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_desk"),
+		))
+
+		server.Engine.GET("/swagger/general/*any", ginSwagger.WrapHandler(
+			swaggerFiles.Handler,
+			ginSwagger.InstanceName("swagger_general"),
 		))
 		go func() {
 			panic(server.Srv.Run())

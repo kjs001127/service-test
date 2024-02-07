@@ -2,16 +2,14 @@ package frontfx
 
 import (
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 
 	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
+	"github.com/channel-io/ch-app-store/api/http/front/app"
 	"github.com/channel-io/ch-app-store/api/http/front/invoke"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	"github.com/channel-io/ch-app-store/api/http/front/query"
 	"github.com/channel-io/ch-app-store/config"
 )
 
@@ -34,7 +32,7 @@ var HttpModule = fx.Module(
 		fx.Annotate(gintool.NewApiServer, fx.ParamTags(`name:"front.engine"`, frontPort), fx.ResultTags(`name:"front.server"`)),
 
 		gintool.AddTag(invoke.NewHandler),
-		gintool.AddTag(query.NewHandler),
+		gintool.AddTag(app.NewHandler),
 
 		fx.Annotate(
 			middleware.NewAuth,
@@ -45,10 +43,6 @@ var HttpModule = fx.Module(
 		fx.Private,
 	),
 	fx.Invoke(func(server Server) {
-		server.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.InstanceName("swagger_front"),
-		))
 		go func() {
 			panic(server.Srv.Run())
 		}()

@@ -16,16 +16,16 @@ import (
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		appID			path	string			true	"id of App to invoke Function"
-//	@Param		name			path	string			true	"name of Function to invoke"
-//	@Param		json.RawMessage	body	json.RawMessage	true	"body of Function to invoke"
+//	@Param		appID				path		string				true	"id of App to invoke Function"
+//	@Param		name				path		string				true	"name of Function to invoke"
+//	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
-//	@Success	204
+//	@Success	200					{object}	json.RawMessage
 //	@Router		/admin/channels/{channelID}/apps/{appID}/functions/{name} [post]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")
 
-	var req dto.ParamsAndContext
+	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
@@ -41,8 +41,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 				Type: "admin",
 				ID:   "*",
 			},
-			Context: req.Context,
-			Params:  req.Params,
+			Params: req.Params,
 		},
 	})
 

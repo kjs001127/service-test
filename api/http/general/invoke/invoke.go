@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/general/dto"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -20,7 +20,7 @@ const tokenHeader = "x-access-token"
 // invoke godoc
 //
 //	@Summary	invoke Function
-//	@Tags		Admin
+//	@Tags		General
 //
 //	@Param		appID				path		string				true	"id of App to invoke Function"
 //	@Param		name				path		string				true	"name of Function to invoke"

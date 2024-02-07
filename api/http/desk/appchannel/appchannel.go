@@ -42,7 +42,7 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Tags		Desk
 //
 //	@Param		channelID	path	string	true	"id of Channel"
-//	@Param		appID		body	string	true	"id of App to uninstall"
+//	@Param		appID		path	string	true	"id of App to uninstall"
 //
 //	@Success	200
 //	@Router		/desk/channels/{channelID}/app-channels/{appID} [delete]

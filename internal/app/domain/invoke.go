@@ -43,6 +43,9 @@ type ChannelContext struct {
 		Type string `json:"type"`
 		ID   string `json:"id"`
 	}
+	Trigger struct {
+		Type string `json:"type"`
+	}
 }
 
 func (i *Invoker[RES]) InvokeChannelFunction(
