@@ -19,7 +19,7 @@ func main() {
 			generalfx.HttpModule,
 			internalfx.Option,
 			dbfx.Option,
-			authfx.MockOption,
+			authfx.Option,
 			restyfx.Option,
 		),
 	)
