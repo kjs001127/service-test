@@ -5,6 +5,7 @@ import (
 	"go.uber.org/fx"
 
 	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
+	"github.com/channel-io/ch-app-store/api/http/general/util"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/front/app"
@@ -33,6 +34,7 @@ var HttpModule = fx.Module(
 
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(app.NewHandler),
+		gintool.AddTag(util.NewHandler),
 
 		fx.Annotate(
 			middleware.NewAuth,

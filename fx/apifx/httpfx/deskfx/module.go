@@ -6,6 +6,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
+	"github.com/channel-io/ch-app-store/api/http/general/util"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/desk/app"
@@ -41,6 +42,7 @@ var HttpModule = fx.Module(
 		gintool.AddTag(appchannel.NewHandler),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(query.NewHandler),
+		gintool.AddTag(util.NewHandler),
 
 		fx.Annotate(
 			middleware.NewAuth,

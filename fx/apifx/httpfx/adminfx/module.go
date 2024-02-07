@@ -15,6 +15,7 @@ import (
 	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
 	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
 	_ "github.com/channel-io/ch-app-store/api/http/general/swagger"
+	"github.com/channel-io/ch-app-store/api/http/general/util"
 	"github.com/channel-io/ch-app-store/config"
 )
 
@@ -37,6 +38,7 @@ var HttpModule = fx.Module(
 		gintool.AddTag(register.NewHandler),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(query.NewHandler),
+		gintool.AddTag(util.NewHandler),
 
 		fx.Private,
 	),

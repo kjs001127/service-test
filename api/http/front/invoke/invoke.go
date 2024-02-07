@@ -140,7 +140,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		path	path		string	true	"file path"
 //
 //	@Success	200		{object}	object
-//	@Router		/front/v1/apps/{appID}/wams/{path} [get]
+//	@Router		/front/v1/channels/{channelID}/apps/{appID}/wams/{path} [get]
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
 
