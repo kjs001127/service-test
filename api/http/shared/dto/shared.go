@@ -52,7 +52,7 @@ func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 }
 
 func NewCommandDTOs(origins []*cmd.Command) []*CommandDTO {
-	ret := make([]*CommandDTO, len(origins))
+	ret := make([]*CommandDTO, 0, len(origins))
 	for _, origin := range origins {
 		ret = append(ret, NewCommandDTO(origin))
 	}

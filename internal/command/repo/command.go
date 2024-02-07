@@ -156,7 +156,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 }
 
 func marshalAll(cmds models.CommandSlice) ([]*domain.Command, error) {
-	ret := make([]*domain.Command, len(cmds))
+	ret := make([]*domain.Command, 0, len(cmds))
 	for _, model := range cmds {
 		res, err := marshal(model)
 		if err != nil {

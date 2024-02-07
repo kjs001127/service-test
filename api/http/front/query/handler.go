@@ -15,7 +15,7 @@ type Handler struct {
 
 	auth *middleware.Auth
 }
-	
+
 func NewHandler(appQuerySvc *app.QuerySvc, cmdRepo cmd.CommandRepository, auth *middleware.Auth) *Handler {
 	return &Handler{appQuerySvc: appQuerySvc, cmdRepo: cmdRepo, auth: auth}
 }

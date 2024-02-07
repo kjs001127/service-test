@@ -117,7 +117,7 @@ func marshal(channel *appChannel.AppChannel) (*models.AppChannel, error) {
 }
 
 func unmarshalAll(channels models.AppChannelSlice) ([]*appChannel.AppChannel, error) {
-	ret := make([]*appChannel.AppChannel, len(channels))
+	ret := make([]*appChannel.AppChannel, 0, len(channels))
 	for _, ch := range channels {
 		unmarshalled, err := unmarshal(ch)
 		if err != nil {

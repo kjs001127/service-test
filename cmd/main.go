@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/internal"
+	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -54,9 +55,9 @@ func startModule(modules ...Module) {
 			option,
 			fx.Invoke(func() {
 				conf := config.Get()
-				db, err := sql.Open(
+				database, err := sql.Open(
 					"postgres",
-					tx.BuildDataSourceName(
+					db.BuildDataSourceName(
 						conf.Psql.Host,
 						conf.Psql.DBName,
 						conf.Psql.Schema,
@@ -68,9 +69,9 @@ func startModule(modules ...Module) {
 				if err != nil {
 					panic(err)
 				}
-				db.SetMaxOpenConns(50)
+				database.SetMaxOpenConns(50)
 
-				tx.SetDB(db)
+				tx.SetDB(database)
 			}),
 		)
 	}

@@ -71,7 +71,7 @@ func (i *AppRepositoryAdapter) FindApp(ctx context.Context, appID string) (app.A
 }
 
 func (i *AppRepositoryAdapter) toApps(apps []*RemoteApp) []app.App {
-	ret := make([]app.App, len(apps))
+	ret := make([]app.App, 0, len(apps))
 	for _, a := range apps {
 		a.requester = i.requester
 		ret = append(ret, a)

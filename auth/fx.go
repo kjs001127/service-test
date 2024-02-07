@@ -26,11 +26,9 @@ var Option = fx.Module(
 			},
 			fx.As(new(session.UserFetcher)),
 		),
-		fx.Annotate(
-			func(cli *resty.Client, parser *general.Parser, cfg config.Config) *general.PrincipalToRBACExchanger {
-				return general.NewPrincipalToRBACExchanger(cli, parser, cfg.Auth.TokenIssueURL)
-			},
-		),
+		func(cli *resty.Client, parser *general.Parser, cfg config.Config) *general.PrincipalToRBACExchanger {
+			return general.NewPrincipalToRBACExchanger(cli, parser, cfg.Auth.TokenIssueURL)
+		},
 		general.NewParser,
 	),
 )

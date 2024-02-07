@@ -1,6 +1,6 @@
 CREATE TABLE apps
 (
-    id                 CHARACTER VARYING PRIMARY KEY NOT NULL,
+    id                 CHARACTER VARYING PRIMARY KEY,
 
     client_id          CHARACTER VARYING             NOT NULL,
     secret             CHARACTER VARYING             NOT NULL,
@@ -26,7 +26,6 @@ CREATE TABLE apps
     created_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW(),
     updated_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW()
 );
-
 
 CREATE TABLE commands
 (

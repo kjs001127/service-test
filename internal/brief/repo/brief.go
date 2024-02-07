@@ -52,7 +52,7 @@ func unmarshal(model *models.Brief) *domain.Brief {
 }
 
 func unmarshalAll(models models.BriefSlice) []*domain.Brief {
-	ret := make([]*domain.Brief, len(models))
+	ret := make([]*domain.Brief, 0, len(models))
 	for _, m := range models {
 		ret = append(ret, unmarshal(m))
 	}

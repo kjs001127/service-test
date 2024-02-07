@@ -66,7 +66,7 @@ func (a *AppDAO) Save(ctx context.Context, app *remoteapp.RemoteApp) (*remoteapp
 	if err = model.Insert(
 		ctx,
 		a.db,
-		boil.Infer(),
+		boil.Blacklist("id"),
 	); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 }
 
 func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*remoteapp.RemoteApp, error) {
-	ret := make([]*remoteapp.RemoteApp, len(rawApps))
+	ret := make([]*remoteapp.RemoteApp, 0, len(rawApps))
 	for _, _app := range rawApps {
 		unmarshalled, err := a.unmarshal(_app)
 		if err != nil {

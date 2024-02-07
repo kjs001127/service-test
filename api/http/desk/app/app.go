@@ -35,7 +35,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 		return
 	}
 
-	ids := make([]string, len(apps))
+	ids := make([]string, 0, len(apps))
 	for _, a := range apps {
 		ids = append(ids, a.Data().ID)
 	}

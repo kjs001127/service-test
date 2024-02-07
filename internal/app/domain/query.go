@@ -53,7 +53,7 @@ func AppIDsOf(appChannels []*AppChannel) []string {
 }
 
 func AppDatasOf(apps []App) []*AppData {
-	ret := make([]*AppData, len(apps))
+	ret := make([]*AppData, 0, len(apps))
 	for _, app := range apps {
 		ret = append(ret, app.Data())
 	}

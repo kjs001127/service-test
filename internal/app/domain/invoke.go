@@ -13,7 +13,7 @@ type Invoker[RES any] struct {
 	appRepo   AppRepository
 }
 
-func NewInvoker[REQ any, RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[RES] {
+func NewInvoker[RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[RES] {
 	return &Invoker[RES]{appChRepo: appChRepo, appRepo: appRepo}
 }
 
