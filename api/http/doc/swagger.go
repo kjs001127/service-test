@@ -19,7 +19,7 @@ func NewHandler(path string, name string) *Handler {
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	router.GET(h.path, ginSwagger.WrapHandler(
-		swaggerFiles.Handler,
+		swaggerFiles.NewHandler(),
 		ginSwagger.InstanceName(h.name),
 	))
 }

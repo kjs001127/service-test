@@ -9,7 +9,6 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/front/app"
 	"github.com/channel-io/ch-app-store/api/http/front/invoke"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
 )
 
 var HttpModule = fx.Module(

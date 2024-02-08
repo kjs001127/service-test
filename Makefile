@@ -108,16 +108,13 @@ clean-target:
 docs: docs-clean docs-gen docs-fmt
 
 docs-gen:
-	swag init -d api/http/admin -g swagger.go -o api/http/admin/swagger --pd --instanceName swagger_admin
-	swag init -d api/http/desk -g swagger.go -o api/http/desk/swagger --pd --instanceName swagger_desk
-	swag init -d api/http/front -g swagger.go -o api/http/front/swagger --pd --instanceName swagger_front
-	swag init -d api/http/general -g swagger.go -o api/http/general/swagger --pd --instanceName swagger_general
+	swag init -d api/http/admin -g swagger.go -o api/http/swagger --pd --instanceName swagger_admin
+	swag init -d api/http/desk -g swagger.go -o api/http/swagger --pd --instanceName swagger_desk
+	swag init -d api/http/front -g swagger.go -o api/http/swagger --pd --instanceName swagger_front
+	swag init -d api/http/general -g swagger.go -o api/http/swagger --pd --instanceName swagger_general
 
 docs-clean:
-	rm -rf api/http/admin/swagger
-	rm -rf api/http/desk/swagger
-	rm -rf api/http/front/swagger
-	rm -rf api/http/general/swagger
+	rm -rf api/http/swagger
 
 docs-fmt:
 	swag fmt -d api/http

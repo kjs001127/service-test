@@ -8,11 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/admin/invoke"
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
-	_ "github.com/channel-io/ch-app-store/api/http/admin/swagger"
-	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
 	"github.com/channel-io/ch-app-store/api/http/doc"
-	_ "github.com/channel-io/ch-app-store/api/http/front/swagger"
-	_ "github.com/channel-io/ch-app-store/api/http/general/swagger"
 )
 
 const adminPort = `name:"admin.port"`

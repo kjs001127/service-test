@@ -10,7 +10,6 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/desk/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/desk/invoke"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
-	_ "github.com/channel-io/ch-app-store/api/http/desk/swagger"
 	"github.com/channel-io/ch-app-store/api/http/doc"
 )
 
