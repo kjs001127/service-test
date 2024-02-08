@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,10 @@ func NewAuth(managerSvc session.UserFetcher) *Auth {
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
+	if !strings.HasPrefix(ctx.Request.RequestURI, "/front") {
+		return
+	}
+
 	xSession := ctx.GetHeader(principal.TokenTypeSession.Header())
 	if xSession == "" {
 		ctx.Abort()

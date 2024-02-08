@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,10 @@ func NewAuth(parser general.Parser) *Auth {
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
+	if !strings.HasPrefix(ctx.Request.RequestURI, "/general") {
+		return
+	}
+
 	xAccessToken := ctx.GetHeader(general.Header())
 	if xAccessToken == "" {
 		ctx.Abort()

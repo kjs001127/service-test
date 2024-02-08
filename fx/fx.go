@@ -12,7 +12,7 @@ import (
 
 var Option = fx.Module(
 	"app",
-	httpfx.Option,
+	httpfx.Public,
 	internalfx.Option,
 	dbfx.Option,
 	authfx.Option,

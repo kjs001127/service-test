@@ -3,11 +3,7 @@ auth:
   authGeneralUrl: test
   authAdminURL: test
   jwtServiceKey: ${JWT_SERVICE_KEY}
-port:
-  admin: 3000
-  desk: 3001
-  front: 3002
-  general: 3003
+port: 3000
 psql:
   schema: public
   dbname: app_store

@@ -23,13 +23,8 @@ var configFiles embed.FS
 
 type Config struct {
 	Stage string `required:"true" name:"config.stage"`
-	Port  struct {
-		Admin   string `required:"true"`
-		General string `required:"true"`
-		Front   string `required:"true"`
-		Desk    string `required:"true"`
-	}
-	Auth struct {
+	Port  string `required:"true"`
+	Auth  struct {
 		AuthGeneralURL string `required:"true"`
 		AuthAdminURL   string `required:"true"`
 		JWTServiceKey  string `required:"true"`
