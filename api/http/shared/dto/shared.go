@@ -13,8 +13,8 @@ type ParamsAndContext struct {
 }
 
 type AppsAndCommands struct {
-	Apps     []*app.AppAttributes `json:"apps"`
-	Commands []*CommandDTO        `json:"commands"`
+	Apps     []*app.App    `json:"apps"`
+	Commands []*CommandDTO `json:"commands"`
 }
 
 type ContextAndAutoCompleteArgs struct {

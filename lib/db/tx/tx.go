@@ -23,7 +23,7 @@ func Run(
 	body func(context.Context) error,
 	sqlOptions ...Option,
 ) error {
-	_, err := RunWithReturn(
+	_, err := RunWith(
 		ctx,
 		func(ctx context.Context) (interface{}, error) {
 			return nil, body(ctx)
@@ -33,7 +33,7 @@ func Run(
 	return err
 }
 
-func RunWithReturn[R any](
+func RunWith[R any](
 	ctx context.Context,
 	body func(context.Context) (R, error),
 	sqlOptions ...Option,

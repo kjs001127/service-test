@@ -2,33 +2,14 @@ package domain
 
 import (
 	"context"
-	"io"
 )
 
 type AppRepository interface {
-	FindApps(ctx context.Context, appIDs []string) ([]App, error)
-	FindApp(ctx context.Context, appID string) (App, error)
-	Index(ctx context.Context, since string, limit int) ([]App, error)
-}
-
-type AppRequest struct {
-	FunctionName string
-	Body
-}
-
-type AppResponse any
-
-type App interface {
-	Attributes() *AppAttributes
-
-	CheckInstallable(ctx context.Context, channelID string) error
-	OnInstall(ctx context.Context, channelID string) error
-	OnUnInstall(ctx context.Context, channelID string) error
-
-	OnConfigSet(ctx context.Context, channelID string, input ConfigMap) error
-
-	StreamFile(ctx context.Context, path string, writer io.Writer) error
-	Invoke(ctx context.Context, req AppRequest, res AppResponse) error
+	Save(ctx context.Context, app *App) (*App, error)
+	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
+	FindApp(ctx context.Context, appID string) (*App, error)
+	Index(ctx context.Context, since string, limit int) ([]*App, error)
+	Delete(ctx context.Context, appID string) error
 }
 
 type ConfigSchemas []ConfigSchema
@@ -60,7 +41,7 @@ const (
 	AppStateUnStable = AppState("unstable")
 )
 
-type AppAttributes struct {
+type App struct {
 	ID    string
 	State AppState
 
@@ -76,13 +57,13 @@ type AppAttributes struct {
 	ConfigSchemas ConfigSchemas
 }
 
-type ConfigMap map[string]string
-
 type AppChannel struct {
 	AppID     string
 	ChannelID string
 	Configs   ConfigMap
 }
+
+type ConfigMap map[string]string
 
 type Install struct {
 	AppID     string
@@ -94,14 +75,5 @@ type AppChannelRepository interface {
 	FindAllByChannel(ctx context.Context, channelID string) ([]*AppChannel, error)
 	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
 	Delete(ctx context.Context, identifier Install) error
-}
-
-type InstalledApps struct {
-	Apps        []*AppAttributes
-	AppChannels []*AppChannel
-}
-
-type InstalledApp struct {
-	App        *AppAttributes
-	AppChannel *AppChannel
+	DeleteByAppID(ctx context.Context, appID string) error
 }

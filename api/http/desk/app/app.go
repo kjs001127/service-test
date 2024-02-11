@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
@@ -37,7 +36,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 
 	ids := make([]string, 0, len(apps))
 	for _, a := range apps {
-		ids = append(ids, a.Attributes().ID)
+		ids = append(ids, a.ID)
 	}
 
 	cmds, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: ids})
@@ -46,7 +45,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Apps: app.AppDatasOf(apps), Commands: dto.NewCommandDTOs(cmds)})
+	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Apps: apps, Commands: dto.NewCommandDTOs(cmds)})
 }
 
 // getCommands godoc

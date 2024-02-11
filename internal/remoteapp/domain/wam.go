@@ -19,15 +19,29 @@ var bufPool = sync.Pool{
 	},
 }
 
-func (a *RemoteApp) StreamFile(ctx context.Context, path string, writer io.Writer) error {
-	if a.WamURL != nil {
+type FileStreamHandler struct {
+	repo      AppUrlRepository
+	requester HttpRequester
+}
+
+func NewFileStreamHandler(repo AppUrlRepository, requester HttpRequester) *FileStreamHandler {
+	return &FileStreamHandler{repo: repo, requester: requester}
+}
+
+func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, path string, writer io.Writer) error {
+	urls, err := a.repo.Fetch(ctx, appID)
+	if err != nil {
+		return err
+	}
+
+	if urls.WamURL != nil {
 		return apierr.BadRequest(errors.New("wam url invalid"))
 	}
 
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
-	url := *a.WamURL + path
+	url := *urls.WamURL + path
 
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Method: http.MethodGet,

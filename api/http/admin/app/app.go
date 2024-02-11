@@ -19,47 +19,19 @@ import (
 //	@Success	201				{object}	app.RemoteApp
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
-	var target app.RemoteApp
+	var target app.AppRequest
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	created, err := h.appRepo.Save(ctx, &target)
+	created, err := h.appDevSvc.CreateApp(ctx, target)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusCreated, created)
-}
-
-// update godoc
-//
-//	@Summary	update App info
-//	@Tags		Admin
-//
-//	@Param		id				path		string			true	"id of App to update"
-//	@Param		app.RemoteApp	body		app.RemoteApp	true	"App to create"
-//
-//	@Success	200				{object}	app.RemoteApp
-//	@Router		/admin/apps/{id} [patch]
-func (h *Handler) update(ctx *gin.Context) {
-	ID := ctx.Param("id")
-	var target app.RemoteApp
-	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-	target.ID = ID
-
-	updated, err := h.appRepo.Update(ctx, &target)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, updated)
 }
 
 // delete godoc
@@ -74,7 +46,7 @@ func (h *Handler) update(ctx *gin.Context) {
 func (h *Handler) delete(ctx *gin.Context) {
 	ID := ctx.Param("id")
 
-	err := h.appRepo.Delete(ctx, ID)
+	err := h.appDevSvc.DeleteApp(ctx, ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

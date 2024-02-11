@@ -15,6 +15,10 @@ var Option = fx.Provide(
 		appRepo.NewAppChannelDao,
 		fx.As(new(app.AppChannelRepository)),
 	),
+	fx.Annotate(
+		appRepo.NewAppDAO,
+		fx.As(new(app.AppRepository)),
+	),
 	app.NewInvoker[json.RawMessage],
 	app.NewAppInstallSvc,
 	app.NewQuerySvc,

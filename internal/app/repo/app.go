@@ -10,7 +10,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/generated/models"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -22,7 +21,7 @@ func NewAppDAO(db db.DB) *AppDAO {
 	return &AppDAO{db: db}
 }
 
-func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*remoteapp.RemoteApp, error) {
+func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App, error) {
 	var queries []qm.QueryMod
 	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
 
@@ -38,7 +37,7 @@ func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*remotea
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) Fetch(ctx context.Context, appID string) (*remoteapp.RemoteApp, error) {
+func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
 	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 	if err != nil {
 		return nil, err
@@ -47,7 +46,7 @@ func (a *AppDAO) Fetch(ctx context.Context, appID string) (*remoteapp.RemoteApp,
 	return a.unmarshal(appTarget)
 }
 
-func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*remoteapp.RemoteApp, error) {
+func (a *AppDAO) FindApps(ctx context.Context, appIDs []string) ([]*app.App, error) {
 	apps, err := models.Apps(qm.OrIn("id", appIDs)).All(ctx, a.db)
 	if err != nil {
 		return nil, err
@@ -56,7 +55,7 @@ func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*remoteapp.Rem
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) Save(ctx context.Context, app *remoteapp.RemoteApp) (*remoteapp.RemoteApp, error) {
+func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
@@ -74,7 +73,7 @@ func (a *AppDAO) Save(ctx context.Context, app *remoteapp.RemoteApp) (*remoteapp
 	return a.unmarshal(model)
 }
 
-func (a *AppDAO) Update(ctx context.Context, app *remoteapp.RemoteApp) (*remoteapp.RemoteApp, error) {
+func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
@@ -100,7 +99,7 @@ func (a *AppDAO) Delete(ctx context.Context, appID string) error {
 	return err
 }
 
-func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
+func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	cfgSchema, err := json.Marshal(appTarget.ConfigSchemas)
 	if err != nil {
 		return nil, err
@@ -112,26 +111,18 @@ func (a *AppDAO) marshal(appTarget *remoteapp.RemoteApp) (*models.App, error) {
 
 	return &models.App{
 		ID:                appTarget.ID,
-		ClientID:          appTarget.ClientID,
-		Secret:            appTarget.Secret,
-		RoleID:            appTarget.RoleID,
 		Title:             appTarget.Title,
 		Description:       null.StringFromPtr(appTarget.Description),
 		DetailDescription: null.JSONFrom(detailDescription),
 		DetailImageUrls:   null.StringFromPtr(appTarget.DetailImageURLs),
 		AvatarURL:         null.StringFromPtr(appTarget.AvatarURL),
-		WamURL:            null.StringFromPtr(appTarget.WamURL),
-		FunctionURL:       null.StringFromPtr(appTarget.FunctionURL),
-		HookURL:           null.StringFromPtr(appTarget.HookURL),
-		CheckURL:          null.StringFromPtr(appTarget.CheckURL),
-		ManualURL:         null.StringFromPtr(appTarget.ManualURL),
 		State:             string(appTarget.State),
 		IsPrivate:         appTarget.IsPrivate,
 		ConfigSchema:      null.JSONFrom(cfgSchema),
 	}, nil
 }
 
-func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
+func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	var cfgSchemas app.ConfigSchemas
 	if err := json.Unmarshal(rawApp.ConfigSchema.JSON, &cfgSchemas); err != nil {
 		return nil, err
@@ -141,31 +132,22 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*remoteapp.RemoteApp, error) {
 		return nil, err
 	}
 
-	return &remoteapp.RemoteApp{
-		AppAttributes: app.AppAttributes{
-			ID:                rawApp.ID,
-			State:             app.AppState(rawApp.State),
-			AvatarURL:         rawApp.AvatarURL.Ptr(),
-			Title:             rawApp.Title,
-			Description:       rawApp.Description.Ptr(),
-			ManualURL:         rawApp.ManualURL.Ptr(),
-			DetailDescription: detailDescription,
-			DetailImageURLs:   rawApp.DetailImageUrls.Ptr(),
-			ConfigSchemas:     cfgSchemas,
-			IsPrivate:         rawApp.IsPrivate,
-		},
-		RoleID:      rawApp.RoleID,
-		Secret:      rawApp.Secret,
-		ClientID:    rawApp.ClientID,
-		HookURL:     rawApp.HookURL.Ptr(),
-		FunctionURL: rawApp.FunctionURL.Ptr(),
-		WamURL:      rawApp.WamURL.Ptr(),
-		CheckURL:    rawApp.CheckURL.Ptr(),
+	return &app.App{
+		ID:                rawApp.ID,
+		State:             app.AppState(rawApp.State),
+		AvatarURL:         rawApp.AvatarURL.Ptr(),
+		Title:             rawApp.Title,
+		Description:       rawApp.Description.Ptr(),
+		ManualURL:         rawApp.ManualURL.Ptr(),
+		DetailDescription: detailDescription,
+		DetailImageURLs:   rawApp.DetailImageUrls.Ptr(),
+		ConfigSchemas:     cfgSchemas,
+		IsPrivate:         rawApp.IsPrivate,
 	}, nil
 }
 
-func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*remoteapp.RemoteApp, error) {
-	ret := make([]*remoteapp.RemoteApp, 0, len(rawApps))
+func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*app.App, error) {
+	ret := make([]*app.App, 0, len(rawApps))
 	for _, _app := range rawApps {
 		unmarshalled, err := a.unmarshal(_app)
 		if err != nil {

@@ -9,9 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/general"
+	genauth "github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -38,12 +39,12 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	}
 
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	rbac := rawRbac.(general.ParsedRBACToken)
-	if ok := rbac.CheckAction(general.Service(appID), general.Action(name)); !ok {
+	rbac := rawRbac.(genauth.ParsedRBACToken)
+	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(name)); !ok {
 		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
 		return
 	}
-	if ok := rbac.CheckScope("channel", channelID); !ok {
+	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
 		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
 		return
 	}

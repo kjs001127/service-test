@@ -2,10 +2,12 @@ package general
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/golang/protobuf/proto"
 
+	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
@@ -93,4 +95,75 @@ func (f *RoleClient) DeleteRole(ctx context.Context, roleID string) (*service.De
 	}
 
 	return &res, nil
+}
+
+type RoleClientAdapter struct {
+	cli *RoleClient
+}
+
+func (r RoleClientAdapter) ReadRole(ctx context.Context, roleID string) (*domain.Role, error) {
+	role, err := r.cli.FetchRole(ctx, roleID)
+	if err != nil {
+		return nil, err
+	}
+	return marshal(role.Role), nil
+}
+
+func (r RoleClientAdapter) CreateRole(ctx context.Context, request *domain.Role) (domain.RoleWithCredential, error) {
+	created, err := r.cli.CreateRole(ctx, unmarshalClaims(request.Claims))
+	if err != nil {
+		return domain.RoleWithCredential{}, err
+	}
+	return domain.RoleWithCredential{
+		Role: marshal(created.Role),
+		RoleCredentials: domain.RoleCredentials{
+			ClientID: created.Credentials.ClientId,
+			Secret:   created.Credentials.ClientSecret,
+		},
+	}, nil
+}
+
+func (r RoleClientAdapter) UpdateRole(ctx context.Context, roleID string, claims []domain.Claim) (*domain.Role, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (r RoleClientAdapter) DeleteRole(ctx context.Context, roleID string) error {
+	_, err := r.cli.DeleteRole(ctx, roleID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewRoleClientAdapter(cli *RoleClient) *RoleClientAdapter {
+	return &RoleClientAdapter{cli: cli}
+}
+
+func marshal(role *model.Role) *domain.Role {
+	return &domain.Role{
+		ID:     role.Id,
+		Claims: marshalClaims(role.Claims),
+	}
+}
+func marshalClaims(claims []*model.Claim) []domain.Claim {
+	ret := make([]domain.Claim, 0, len(claims))
+	for _, c := range claims {
+		ret = append(ret, domain.Claim{
+			Service: c.Service,
+			Action:  c.Action,
+			Scopes:  c.Scope,
+		})
+	}
+	return ret
+}
+func unmarshalClaims(claims []domain.Claim) []*model.Claim {
+	ret := make([]*model.Claim, 0, len(claims))
+	for _, c := range claims {
+		ret = append(ret, &model.Claim{
+			Service: c.Service,
+			Action:  c.Action,
+			Scope:   c.Scopes,
+		})
+	}
+	return ret
 }

@@ -13,13 +13,34 @@ var Option = fx.Provide(
 	fx.Annotate(
 		infra.NewHttpRequester,
 		fx.As(new(domain.HttpRequester)),
+		fx.ParamTags(`name:"app"`),
 	),
 	fx.Annotate(
-		repo.NewAppDAO,
-		fx.As(new(domain.RemoteAppRepository)),
+		repo.NewAppUrlDao,
+		fx.As(new(domain.AppUrlRepository)),
 	),
 	fx.Annotate(
-		domain.NewAppRepositoryAdapter,
-		fx.As(new(app.AppRepository)),
+		domain.NewInstallHandler,
+		fx.As(new(app.InstallHandler)),
+	),
+	fx.Annotate(
+		domain.NewConfigValidator,
+		fx.As(new(app.ConfigValidator)),
+	),
+	fx.Annotate(
+		domain.NewInvoker,
+		fx.As(new(app.InvokeHandler)),
+	),
+	fx.Annotate(
+		domain.NewFileStreamHandler,
+		fx.As(new(app.FileStreamHandler)),
+	),
+	fx.Annotate(
+		domain.NewAppDevSvcImpl,
+		fx.As(new(domain.AppDevSvc)),
+	),
+	fx.Annotate(
+		repo.NewAppRoleDao,
+		fx.As(new(domain.AppRoleRepository)),
 	),
 )

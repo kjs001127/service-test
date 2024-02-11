@@ -28,8 +28,22 @@ type JsonRpcResponse struct {
 	Result  json.RawMessage
 }
 
-func (a *RemoteApp) Invoke(ctx context.Context, request app.AppRequest, out app.AppResponse) error {
-	if a.FunctionURL == nil {
+type Invoker struct {
+	requester HttpRequester
+	repo      AppUrlRepository
+}
+
+func NewInvoker(requester HttpRequester, repo AppUrlRepository) *Invoker {
+	return &Invoker{requester: requester, repo: repo}
+}
+
+func (a *Invoker) Invoke(ctx context.Context, request app.FunctionRequest, out app.FunctionResponse) error {
+	urls, err := a.repo.Fetch(ctx, request.AppID)
+	if err != nil {
+		return err
+	}
+
+	if urls.FunctionURL == nil {
 		return apierr.BadRequest(errors.New("function url invalid"))
 	}
 
@@ -41,7 +55,7 @@ func (a *RemoteApp) Invoke(ctx context.Context, request app.AppRequest, out app.
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Body:   jsonRPCReq,
 		Method: http.MethodPost,
-		Url:    *a.FunctionURL,
+		Url:    *urls.FunctionURL,
 	})
 	if err != nil {
 		return err
@@ -60,7 +74,7 @@ func (a *RemoteApp) Invoke(ctx context.Context, request app.AppRequest, out app.
 	return nil
 }
 
-func (a *RemoteApp) toJsonRPCRequest(request app.AppRequest) ([]byte, error) {
+func (a *Invoker) toJsonRPCRequest(request app.FunctionRequest) ([]byte, error) {
 	id := uid.New().Hex()
 
 	jsonReq := make(map[string]any)
@@ -74,7 +88,7 @@ func (a *RemoteApp) toJsonRPCRequest(request app.AppRequest) ([]byte, error) {
 	return json.Marshal(jsonReq)
 }
 
-func (a *RemoteApp) fromJsonRPCResponse(ret []byte, out app.AppResponse) error {
+func (a *Invoker) fromJsonRPCResponse(ret []byte, out app.FunctionResponse) error {
 	var jsonResp JsonRpcResponse
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
 		return err

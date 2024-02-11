@@ -72,6 +72,11 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChan
 	return unmarshal(model)
 }
 
+func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
+	_, err := models.AppChannels(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
+	return err
+}
+
 func (a *AppChannelDao) Delete(ctx context.Context, identifier appChannel.Install) error {
 	model, err := models.AppChannels(
 		qm.Select("*"),

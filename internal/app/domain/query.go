@@ -4,6 +4,16 @@ import (
 	"context"
 )
 
+type InstalledApps struct {
+	Apps        []*App
+	AppChannels []*AppChannel
+}
+
+type InstalledApp struct {
+	App        *App
+	AppChannel *AppChannel
+}
+
 type QuerySvc struct {
 	appChRepo AppChannelRepository
 	appRepo   AppRepository
@@ -24,7 +34,7 @@ func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) (InstalledApp
 		return InstalledApps{}, err
 	}
 
-	return InstalledApps{Apps: AppDatasOf(apps), AppChannels: appChs}, nil
+	return InstalledApps{Apps: apps, AppChannels: appChs}, nil
 }
 
 func (s *QuerySvc) Query(ctx context.Context, install Install) (InstalledApp, error) {
@@ -39,7 +49,7 @@ func (s *QuerySvc) Query(ctx context.Context, install Install) (InstalledApp, er
 	}
 
 	return InstalledApp{
-		App:        app.Attributes(),
+		App:        app,
 		AppChannel: appCh,
 	}, nil
 }
@@ -50,12 +60,4 @@ func AppIDsOf(appChannels []*AppChannel) []string {
 		appIDs = append(appIDs, appChannelTarget.AppID)
 	}
 	return appIDs
-}
-
-func AppDatasOf(apps []App) []*AppAttributes {
-	ret := make([]*AppAttributes, 0, len(apps))
-	for _, app := range apps {
-		ret = append(ret, app.Attributes())
-	}
-	return ret
 }

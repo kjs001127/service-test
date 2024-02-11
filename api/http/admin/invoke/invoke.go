@@ -11,6 +11,11 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
+const (
+	callerAdmin = "admin"
+	idInferred  = "-"
+)
+
 // invoke godoc
 //
 //	@Summary	invoke Function
@@ -38,8 +43,8 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		},
 		Body: app.Body{
 			Caller: app.Caller{
-				Type: "admin",
-				ID:   "*",
+				Type: callerAdmin,
+				ID:   idInferred,
 			},
 			Params: req.Params,
 		},

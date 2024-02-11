@@ -2,43 +2,21 @@ package domain
 
 import (
 	"context"
-	"errors"
 
-	"github.com/volatiletech/null/v8"
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-func (a *RemoteApp) CheckInstallable(ctx context.Context, channelID string) error {
-	if a.IsPrivate {
-		return errors.New("private app")
-	}
+type InstallHandler struct {
+}
+
+func NewInstallHandler() *InstallHandler {
+	return &InstallHandler{}
+}
+
+func (i InstallHandler) OnInstall(ctx context.Context, app *app.App, channelID string) error {
 	return nil
 }
 
-func (a *RemoteApp) OnInstall(ctx context.Context, channelID string) error {
+func (i InstallHandler) OnUnInstall(ctx context.Context, app *app.App, channelID string) error {
 	return nil
-}
-
-func (a *RemoteApp) OnUnInstall(ctx context.Context, channelID string) error {
-	return nil
-}
-
-type InstallQueryResult struct {
-	Result        bool
-	MessageBlocks null.JSON
-}
-
-type HookType string
-
-const (
-	HookTypeInstall   = HookType("app")
-	HookTypeUnInstall = HookType("uninstall")
-)
-
-type HookEvent struct {
-	Type       HookType
-	Attributes any
-}
-
-type HookSender interface {
-	SendHook(ctx context.Context, url string, event HookEvent) error
 }

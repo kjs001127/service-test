@@ -8,6 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/auth/principal/account"
 	"github.com/channel-io/ch-app-store/auth/principal/session"
 	"github.com/channel-io/ch-app-store/config"
+	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
 const (
@@ -35,12 +36,12 @@ var Option = fx.Module(
 	fx.Provide(
 		fx.Annotate(
 			general.NewRBACExchanger,
-			fx.ParamTags("", "", authGeneral),
+			fx.ParamTags(`name:"dw"`, "", authGeneral),
 		),
 		fx.Annotate(
 			account.NewManagerFetcherImpl,
 			fx.As(new(account.ManagerFetcher)),
-			fx.ParamTags("", authAdmin),
+			fx.ParamTags(`name:"dw"`, authAdmin),
 		),
 		fx.Annotate(
 			session.NewUserFetcherImpl,
@@ -49,12 +50,12 @@ var Option = fx.Module(
 		),
 		fx.Annotate(
 			general.NewRoleClient,
-			fx.ParamTags("", authAdmin),
+			fx.ParamTags(`name:"dw"`, authAdmin),
 		),
 		fx.Annotate(
 			general.NewParser,
 			fx.As(new(general.Parser)),
-			fx.ParamTags("", ``, jwtServiceKey),
+			fx.ParamTags(`name:"dw"`, ``, jwtServiceKey),
 		),
 		fx.Annotate(
 			session.NewContextAuthorizer,
@@ -67,7 +68,11 @@ var Option = fx.Module(
 		fx.Annotate(
 			principal.NewChatValidator,
 			fx.As(new(principal.ChatValidator)),
-			fx.ParamTags("", authAdmin),
+			fx.ParamTags(`name:"dw"`, authAdmin),
+		),
+		fx.Annotate(
+			general.NewRoleClientAdapter,
+			fx.As(new(remoteapp.RoleClient)),
 		),
 	),
 )

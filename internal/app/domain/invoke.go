@@ -5,13 +5,19 @@ import (
 	"io"
 )
 
-type Invoker[RES any] struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
+type FunctionResponse any
+
+type InvokeHandler interface {
+	Invoke(ctx context.Context, request FunctionRequest, response FunctionResponse) error
 }
 
-func NewInvoker[RES any](appChRepo AppChannelRepository, appRepo AppRepository) *Invoker[RES] {
-	return &Invoker[RES]{appChRepo: appChRepo, appRepo: appRepo}
+type Invoker[RES any] struct {
+	appChRepo AppChannelRepository
+	handler   InvokeHandler
+}
+
+func NewInvoker[RES any](appChRepo AppChannelRepository, handler InvokeHandler) *Invoker[RES] {
+	return &Invoker[RES]{appChRepo: appChRepo, handler: handler}
 }
 
 type FunctionRequest struct {
@@ -53,62 +59,52 @@ func (i *Invoker[RES]) InvokeChannelFunction(
 	channelID string,
 	request FunctionRequest,
 ) (RES, error) {
-	var res RES
+	var ret RES
 
 	_, err := i.appChRepo.Fetch(ctx, Install{
 		AppID:     request.AppID,
 		ChannelID: channelID,
 	})
 	if err != nil {
-		return res, nil
+		return ret, nil
 	}
 
-	return i.InvokeFunction(ctx, request)
+	if err := i.handler.Invoke(ctx, request, &ret); err != nil {
+		return ret, err
+	}
+
+	return ret, nil
 }
 
-func (i *Invoker[RES]) InvokeFunction(
-	ctx context.Context,
-	request FunctionRequest,
-) (RES, error) {
-	var res RES
-
-	installedApp, err := i.appRepo.FindApp(ctx, request.AppID)
-	if err != nil {
-		return res, err
-	}
-
-	appReq := AppRequest{
-		FunctionName: request.FunctionName,
-		Body:         request.Body,
-	}
-
-	if err := installedApp.Invoke(ctx, appReq, &res); err != nil {
-		return res, err
-	}
-
-	return res, err
+type FileStreamHandler interface {
+	StreamFile(ctx context.Context, appID string, path string, writer io.Writer) error
 }
 
 type FileStreamer struct {
-	appRepo AppRepository
+	appChRepo AppChannelRepository
+	handler   FileStreamHandler
 }
 
-func NewFileStreamer(appRepo AppRepository) *FileStreamer {
-	return &FileStreamer{appRepo: appRepo}
+func NewFileStreamer(appChRepo AppChannelRepository, handler FileStreamHandler) *FileStreamer {
+	return &FileStreamer{appChRepo: appChRepo, handler: handler}
 }
 
 type StreamRequest struct {
-	Writer io.Writer
-	Path   string
-	AppID  string
+	Writer    io.Writer
+	Path      string
+	AppID     string
+	ChannelID string
 }
 
 func (i *FileStreamer) StreamFile(ctx context.Context, req StreamRequest) error {
 
-	installedApp, err := i.appRepo.FindApp(ctx, req.AppID)
+	_, err := i.appChRepo.Fetch(ctx, Install{
+		AppID:     req.AppID,
+		ChannelID: req.ChannelID,
+	})
 	if err != nil {
-		return err
+		return nil
 	}
 
-	return installedApp.StreamFile(ctx, req.Path, req.Writer)
+	return i.handler.StreamFile(ctx, req.AppID, req.Path, req.Writer)
 }

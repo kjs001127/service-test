@@ -2,11 +2,13 @@ package domain
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/channel-io/go-lib/pkg/uid"
 
+	"github.com/channel-io/ch-app-store/lib/db/tx"
 	"github.com/channel-io/ch-app-store/lib/deltaupdater"
 )
 
@@ -25,23 +27,25 @@ type RegisterRequest struct {
 }
 
 func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
-	if err := s.validateRequest(req); err != nil {
-		return err
-	}
+	return tx.Run(ctx, func(ctx context.Context) error {
+		if err := s.validateRequest(req); err != nil {
+			return err
+		}
 
-	oldbies, err := s.repo.FetchAllByAppID(ctx, req.AppID)
-	if err != nil {
-		return err
-	}
+		oldbies, err := s.repo.FetchAllByAppID(ctx, req.AppID)
+		if err != nil {
+			return err
+		}
 
-	updater := deltaupdater.DeltaUpdater[*Command, UpdateKey]{
-		IDOf:     s.updateKey,
-		DoInsert: s.insertResource,
-		DoUpdate: s.updateResource,
-		DoDelete: s.deleteResource,
-	}
+		updater := deltaupdater.DeltaUpdater[*Command, UpdateKey]{
+			IDOf:     s.updateKey,
+			DoInsert: s.insertResource,
+			DoUpdate: s.updateResource,
+			DoDelete: s.deleteResource,
+		}
 
-	return updater.Update(ctx, oldbies, req.Resources)
+		return updater.Update(ctx, oldbies, req.Resources)
+	}, tx.WithIsolation(sql.LevelSerializable))
 }
 
 func (s *RegisterSvc) validateRequest(req RegisterRequest) error {

@@ -8,19 +8,16 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appRepo app.RemoteAppRepository
+	appDevSvc app.AppDevSvc
 }
 
-func NewHandler(
-	appRepo app.RemoteAppRepository,
-) *Handler {
-	return &Handler{appRepo: appRepo}
+func NewHandler(appDevSvc app.AppDevSvc) *Handler {
+	return &Handler{appDevSvc: appDevSvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/admin/apps")
 
 	group.POST("/", h.create)
-	group.PATCH("/:id", h.update)
 	group.DELETE("/:id", h.delete)
 }

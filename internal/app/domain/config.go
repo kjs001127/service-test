@@ -4,13 +4,22 @@ import (
 	"context"
 )
 
+type ConfigValidator interface {
+	ValidateConfig(ctx context.Context, app *App, channelID string, input ConfigMap) error
+}
+
 type ConfigSvc struct {
 	appChRepo AppChannelRepository
 	appRepo   AppRepository
+	validator ConfigValidator
 }
 
-func NewConfigSvc(appChRepo AppChannelRepository, appRepo AppRepository) *ConfigSvc {
-	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo}
+func NewConfigSvc(
+	appChRepo AppChannelRepository,
+	appRepo AppRepository,
+	validator ConfigValidator,
+) *ConfigSvc {
+	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo, validator: validator}
 }
 
 func (s *ConfigSvc) SetConfig(ctx context.Context, install Install, input ConfigMap) (*AppChannel, error) {
@@ -24,7 +33,7 @@ func (s *ConfigSvc) SetConfig(ctx context.Context, install Install, input Config
 		return nil, err
 	}
 
-	if err := app.OnConfigSet(ctx, install.ChannelID, input); err != nil {
+	if err := s.validator.ValidateConfig(ctx, app, install.ChannelID, input); err != nil {
 		return nil, err
 	}
 

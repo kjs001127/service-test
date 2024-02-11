@@ -7,13 +7,32 @@ import (
 	"go.uber.org/fx"
 )
 
-const timeout = time.Second * 10
+const (
+	dwTimeout  = time.Second * 10
+	appTimeout = time.Second * 10
+)
 
 var Option = fx.Module(
 	"resty",
-	fx.Provide(func() *resty.Client {
-		ret := resty.New()
-		ret.SetTimeout(timeout)
-		return ret
-	}),
+	fx.Provide(
+		fx.Annotate(
+			func() *resty.Client {
+				ret := resty.New()
+				ret.SetTimeout(dwTimeout)
+				return ret
+			},
+			fx.ResultTags(`name:"dw"`),
+		),
+	),
+
+	fx.Provide(
+		fx.Annotate(
+			func() *resty.Client {
+				ret := resty.New()
+				ret.SetTimeout(appTimeout)
+				return ret
+			},
+			fx.ResultTags(`name:"app"`),
+		),
+	),
 )

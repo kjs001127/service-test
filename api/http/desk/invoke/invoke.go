@@ -33,17 +33,15 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
-
-	cmd, err := h.commandRepo.Fetch(ctx, command.Key{AppID: appID, Name: name})
-	if err != nil {
+	rawManager, _ := ctx.Get(middleware.ManagerKey)
+	manager := rawManager.(account.ManagerPrincipal)
+	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	rawManager, _ := ctx.Get(middleware.ManagerKey)
-	manager := rawManager.(account.ManagerPrincipal)
-
-	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
+	cmd, err := h.commandRepo.Fetch(ctx, command.Key{AppID: appID, Name: name})
+	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -89,6 +87,13 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
+	rawManager, _ := ctx.Get(middleware.ManagerKey)
+	manager := rawManager.(account.ManagerPrincipal)
+	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
 	cmd, err := h.commandRepo.Fetch(ctx, command.Key{AppID: appID, Name: name})
 	if err != nil {
 		_ = ctx.Error(err)
@@ -97,14 +102,6 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	if cmd.AutoCompleteFunctionName == nil {
 		_ = ctx.Error(apierr.NotFound(errors.New("autocomplete not found")))
-	}
-
-	rawManager, _ := ctx.Get(middleware.ManagerKey)
-	manager := rawManager.(account.ManagerPrincipal)
-
-	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
-		_ = ctx.Error(err)
-		return
 	}
 
 	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest{

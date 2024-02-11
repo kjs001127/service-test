@@ -4,13 +4,23 @@ import (
 	"context"
 )
 
-type AppInstallSvc struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
+type InstallHandler interface {
+	OnInstall(ctx context.Context, app *App, channelID string) error
+	OnUnInstall(ctx context.Context, app *App, channelID string) error
 }
 
-func NewAppInstallSvc(appChRepo AppChannelRepository, appRepo AppRepository) *AppInstallSvc {
-	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo}
+type AppInstallSvc struct {
+	appChRepo       AppChannelRepository
+	appRepo         AppRepository
+	installLHandler InstallHandler
+}
+
+func NewAppInstallSvc(
+	appChRepo AppChannelRepository,
+	appRepo AppRepository,
+	installLHandler InstallHandler,
+) *AppInstallSvc {
+	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installLHandler: installLHandler}
 }
 
 func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledApp, error) {
@@ -19,25 +29,21 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledA
 		return InstalledApp{}, err
 	}
 
-	if err := app.CheckInstallable(ctx, req.ChannelID); err != nil {
+	if err := s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
 		return InstalledApp{}, err
 	}
 
 	ret, err := s.appChRepo.Save(ctx, &AppChannel{
-		AppID:     app.Attributes().ID,
+		AppID:     app.ID,
 		ChannelID: req.ChannelID,
-		Configs:   app.Attributes().ConfigSchemas.DefaultConfig(),
+		Configs:   app.ConfigSchemas.DefaultConfig(),
 	})
 	if err != nil {
 		return InstalledApp{}, err
 	}
 
-	if err := app.OnInstall(ctx, req.ChannelID); err != nil {
-		return InstalledApp{}, err
-	}
-
 	return InstalledApp{
-		App:        app.Attributes(),
+		App:        app,
 		AppChannel: ret,
 	}, nil
 }
@@ -52,7 +58,7 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req Install) error {
 		return err
 	}
 
-	if err := app.OnUnInstall(ctx, req.ChannelID); err != nil {
+	if err := s.installLHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
 		return err
 	}
 

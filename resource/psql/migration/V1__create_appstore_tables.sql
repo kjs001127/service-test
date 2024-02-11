@@ -2,29 +2,33 @@ CREATE TABLE apps
 (
     id                 CHARACTER VARYING PRIMARY KEY,
 
-    client_id          CHARACTER VARYING             NOT NULL,
-    secret             CHARACTER VARYING             NOT NULL,
+    client_id          CHARACTER VARYING           NOT NULL,
+    secret             CHARACTER VARYING           NOT NULL,
 
-    role_id            CHARACTER VARYING             NOT NULL,
+    role_id            CHARACTER VARYING           NOT NULL,
 
-    title              CHARACTER VARYING             NOT NULL,
+    title              CHARACTER VARYING           NOT NULL,
     description        CHARACTER VARYING,
     detail_description JSONB,
     detail_image_urls  CHARACTER VARYING,
     avatar_url         CHARACTER VARYING,
     manual_url         CHARACTER VARYING,
 
-    wam_url            CHARACTER VARYING,
-    function_url       CHARACTER VARYING,
-    hook_url           CHARACTER VARYING,
-    check_url          CHARACTER VARYING,
-
-    state              CHARACTER VARYING             NOT NULL,
-    is_private         BOOLEAN                       NOT NULL,
+    state              CHARACTER VARYING           NOT NULL,
+    is_private         BOOLEAN                     NOT NULL,
     config_schema      JSONB,
 
-    created_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW(),
-    updated_at         TIMESTAMP WITHOUT TIME ZONE   NOT NULL DEFAULT NOW()
+    created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE app_urls
+(
+    app_id       CHARACTER VARYING PRIMARY KEY REFERENCES apps (id),
+    wam_url      CHARACTER VARYING,
+    function_url CHARACTER VARYING,
+    hook_url     CHARACTER VARYING,
+    check_url    CHARACTER VARYING
 );
 
 
@@ -40,6 +44,7 @@ CREATE TABLE commands
     autocomplete_function_name CHARACTER VARYING,
 
     description                CHARACTER VARYING,
+    display_name               CHARACTER VARYING                      NOT NULL,
     param_definitions          JSONB                                  NOT NULL,
 
     alf_description            CHARACTER VARYING,
@@ -73,3 +78,5 @@ CREATE TABLE brief
 
     brief_function_name CHARACTER VARYING                      NOT NULL
 );
+
+CREATE INDEX index_briefs_on_app_id ON brief USING btree (app_id);

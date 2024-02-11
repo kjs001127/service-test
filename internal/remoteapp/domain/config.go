@@ -6,27 +6,18 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-type CheckType string
+type ConfigValidator struct {
+}
 
-const (
-	CheckTypeConfig = CheckType("config")
-)
+func NewConfigValidator() *ConfigValidator {
+	return &ConfigValidator{}
+}
 
-func (a *RemoteApp) OnConfigSet(ctx context.Context, channelID string, input app.ConfigMap) error {
+func (c ConfigValidator) ValidateConfig(
+	ctx context.Context,
+	app *app.App,
+	channelID string,
+	input app.ConfigMap,
+) error {
 	return nil
-}
-
-type CheckRequest struct {
-	ChannelId string
-	Type      CheckType
-	Data      any
-}
-
-type CheckReturn struct {
-	Success  bool
-	Messages map[string]any
-}
-
-type HttpAppChecker interface {
-	Request(ctx context.Context, url string, req CheckRequest) (CheckReturn, error)
 }
