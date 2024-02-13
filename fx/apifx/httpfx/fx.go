@@ -4,7 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/api/http/general/util"
+	"github.com/channel-io/ch-app-store/api/http/util"
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/fx/apifx/httpfx/deskfx"
 	"github.com/channel-io/ch-app-store/fx/apifx/httpfx/frontfx"

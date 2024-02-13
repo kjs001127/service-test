@@ -136,12 +136,13 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Success	200		{object}	object
 //	@Router		/desk/channels/{channelID}/apps/{appID}/wams/{path} [get]
 func (h *Handler) downloadWAM(ctx *gin.Context) {
-	appID, path := ctx.Param("appID"), ctx.Param("path")
+	appID, path, channelID := ctx.Param("appID"), ctx.Param("path"), ctx.Param("channelID")
 
 	if err := h.wamDownloader.StreamFile(ctx, app.StreamRequest{
-		AppID:  appID,
-		Path:   path,
-		Writer: ctx.Writer,
+		AppID:     appID,
+		Path:      path,
+		Writer:    ctx.Writer,
+		ChannelID: channelID,
 	}); err != nil {
 		_ = ctx.Error(err)
 		return

@@ -2,6 +2,7 @@ package gintool
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,15 @@ func NewApiServer(port string, routes []RouteRegistrant, middlewares ...Middlewa
 
 func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine {
 	router := gin.Default()
-	router.Use(cors.Default())
+	router.Use(cors.New(
+		cors.Config{
+			AllowOrigins:     []string{"*.channel.io", "*.exp.channel.io", "*.eks.channel.io"},
+			AllowMethods:     []string{"*"},
+			AllowCredentials: true,
+			AllowHeaders:     []string{"*"},
+			MaxAge:           12 * time.Hour,
+		},
+	))
 	for _, m := range middlewares {
 		router.Use(m.Handle)
 	}

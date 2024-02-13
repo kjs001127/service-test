@@ -57,13 +57,13 @@ type App struct {
 	ConfigSchemas ConfigSchemas
 }
 
+type ConfigMap map[string]string
+
 type AppChannel struct {
 	AppID     string
 	ChannelID string
 	Configs   ConfigMap
 }
-
-type ConfigMap map[string]string
 
 type Install struct {
 	AppID     string

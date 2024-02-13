@@ -140,33 +140,35 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]Role
 }
 
 func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse, error) {
-	urls, err := s.urlRepo.Fetch(ctx, appID)
-	if err != nil {
-		return AppResponse{}, err
-	}
+	return tx.RunWith(ctx, func(ctx context.Context) (AppResponse, error) {
+		urls, err := s.urlRepo.Fetch(ctx, appID)
+		if err != nil {
+			return AppResponse{}, err
+		}
 
-	found, err := s.manager.Fetch(ctx, appID)
-	if err != nil {
-		return AppResponse{}, err
-	}
+		found, err := s.manager.Fetch(ctx, appID)
+		if err != nil {
+			return AppResponse{}, err
+		}
 
-	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
-	if err != nil {
-		return AppResponse{}, err
-	}
+		appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
+		if err != nil {
+			return AppResponse{}, err
+		}
 
-	roles, err := s.fetchRoles(ctx, appRoles)
-	if err != nil {
-		return AppResponse{}, err
-	}
+		roles, err := s.fetchRoles(ctx, appRoles)
+		if err != nil {
+			return AppResponse{}, err
+		}
 
-	return AppResponse{
-		Roles: roles,
-		RemoteApp: &RemoteApp{
-			App:  found,
-			Urls: urls,
-		},
-	}, nil
+		return AppResponse{
+			Roles: roles,
+			RemoteApp: &RemoteApp{
+				App:  found,
+				Urls: urls,
+			},
+		}, nil
+	}, tx.WithReadOnly())
 }
 
 func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, roleCredentials []*AppRole) ([]RoleWithCredential, error) {

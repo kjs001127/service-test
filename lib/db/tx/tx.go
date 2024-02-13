@@ -105,8 +105,8 @@ func WithIsolation(level sql.IsolationLevel) Option {
 	return IsolationOption(level)
 }
 
-func WithReadOnly(readOnly bool) Option {
-	return ReadOnlyOption(readOnly)
+func WithReadOnly() Option {
+	return ReadOnlyOption(true)
 }
 
 type DB struct {

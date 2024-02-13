@@ -42,8 +42,13 @@ type Body struct {
 }
 
 type ChannelContext struct {
+	Caller struct {
+		ID   string `json:"id"`
+		Type string `json:"type"`
+	}
 	Channel struct {
-		ID string `json:"id"`
+		ID       string `json:"id"`
+		Language string `json:"language"`
 	}
 	Chat struct {
 		Type string `json:"type"`

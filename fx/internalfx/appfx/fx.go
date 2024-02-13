@@ -23,4 +23,5 @@ var Option = fx.Provide(
 	app.NewAppInstallSvc,
 	app.NewQuerySvc,
 	app.NewConfigSvc,
+	app.NewAppManagerImpl,
 )
