@@ -85,13 +85,15 @@ func (f *ParserImpl) merge(role *service.GetRoleResult, claims *RBACToken) (Pars
 		ret.Actions[Service(c.Service)] = append(ret.Actions[Service(c.Service)], Action(c.Action))
 	}
 
+	ret.Type, ret.ID, _ = strings.Cut(claims.Identity, "-")
 	return ret, nil
 }
 
 type RBACToken struct {
 	jwt.StandardClaims
-	RoleId string   `json:"roleId"`
-	Scope  []string `json:"scope"`
+	RoleId   string   `json:"roleId"`
+	Scope    []string `json:"scope"`
+	Identity string   `json:"identity"`
 }
 
 type Service string
@@ -116,6 +118,9 @@ func (p *ParsedRBACToken) GetCaller() Caller {
 }
 
 func (p *ParsedRBACToken) CheckAction(service Service, action Action) bool {
+	if _, ok := p.Actions[wildcard]; ok {
+		return true
+	}
 	actions := p.Actions[service]
 	for _, a := range actions {
 		if a == action || a == wildcard {

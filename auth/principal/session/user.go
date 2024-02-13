@@ -73,14 +73,3 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 	}
 	return UserPrincipal{User: User{ID: userID, ChannelID: channelID}, Token: Token(token)}, nil
 }
-
-type MockUserFetcher struct {
-}
-
-func NewMockUserFetcher() *MockUserFetcher {
-	return &MockUserFetcher{}
-}
-
-func (m MockUserFetcher) FetchUser(ctx context.Context, token string) (User, error) {
-	return User{ChannelID: "1", ID: "1"}, nil
-}

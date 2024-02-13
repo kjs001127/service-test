@@ -22,10 +22,11 @@ const (
 //	@Summary	get App config of a Channel
 //	@Tags		General
 //
-//	@Param		appID		path		string	true	"id of app"
-//	@Param		channelID	path		string	true	"id of channel"
+//	@Param		x-access-token	header		string	true	"access token"
+//	@Param		appID			path		string	true	"id of app"
+//	@Param		channelID		path		string	true	"id of channel"
 //
-//	@Success	200			{object}	any		"JSON of configMap"
+//	@Success	200				{object}	any		"JSON of configMap"
 //	@Router		/general/v1/channels/{channelID}/app-channels/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 

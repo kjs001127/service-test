@@ -30,7 +30,7 @@ func (u *DeltaUpdater[T, ID]) deltaUpsert(ctx context.Context, oldbies []T, newb
 
 	for _, newbie := range newbies {
 		if oldbie, exists := oldbieMap[u.IDOf(newbie)]; exists {
-			if err := u.DoUpdate(ctx, newbie, oldbie); err != nil {
+			if err := u.DoUpdate(ctx, oldbie, newbie); err != nil {
 				return err
 			}
 		} else {

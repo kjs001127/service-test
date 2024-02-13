@@ -13,13 +13,13 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	wamDownloader *app.FileStreamer
-	invoker       *app.Invoker[json.RawMessage]
+	invoker       *app.Invoker[json.RawMessage, json.RawMessage]
 	commandRepo   command.CommandRepository
 
 	authorizer account.ContextAuthorizer
 }
 
-func NewHandler(wamDownloader *app.FileStreamer, invoker *app.Invoker[json.RawMessage], commandRepo command.CommandRepository, authorizer account.ContextAuthorizer) *Handler {
+func NewHandler(wamDownloader *app.FileStreamer, invoker *app.Invoker[json.RawMessage, json.RawMessage], commandRepo command.CommandRepository, authorizer account.ContextAuthorizer) *Handler {
 	return &Handler{wamDownloader: wamDownloader, invoker: invoker, commandRepo: commandRepo, authorizer: authorizer}
 }
 

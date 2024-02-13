@@ -13,8 +13,6 @@ var Option = fx.Provide(
 		fx.As(new(domain.CommandRepository)),
 	),
 	domain.NewParamValidator,
-	domain.NewAutoCompleteSvc,
-	domain.NewInvokeSvc,
 	domain.NewQueryService,
 	domain.NewRegisterService,
 )

@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"context"
-
 	"github.com/friendsofgo/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -11,7 +9,7 @@ import (
 type AutoCompleteRequest struct {
 	Command   Key
 	ChannelID string
-	app.Body
+	app.Body[AutoCompleteArgs]
 }
 
 type AutoCompleteArgs []AutoCompleteArg
@@ -43,33 +41,4 @@ func (choices Choices) validate() error {
 		}
 	}
 	return nil
-}
-
-type AutoCompleteSvc struct {
-	repository CommandRepository
-	requester  app.Invoker[Choices]
-}
-
-func NewAutoCompleteSvc(repository CommandRepository, requester app.Invoker[Choices]) *AutoCompleteSvc {
-	return &AutoCompleteSvc{repository: repository, requester: requester}
-}
-
-func (r *AutoCompleteSvc) Invoke(ctx context.Context, request AutoCompleteRequest) (Choices, error) {
-	cmd, err := r.repository.Fetch(ctx, request.Command)
-	if err != nil {
-		return nil, err
-	}
-
-	if cmd.AutoCompleteFunctionName == nil {
-		return nil, errors.New("autoCompleteFunction does not exist")
-	}
-
-	ctxReq := app.FunctionRequest{
-		Endpoint: app.Endpoint{
-			AppID:        cmd.AppID,
-			FunctionName: *cmd.AutoCompleteFunctionName,
-		},
-		Body: request.Body,
-	}
-	return r.requester.InvokeChannelFunction(ctx, request.ChannelID, ctxReq)
 }

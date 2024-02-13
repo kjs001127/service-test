@@ -5,13 +5,13 @@ import (
 )
 
 type InstalledApps struct {
-	Apps        []*App
-	AppChannels []*AppChannel
+	Apps        []*App        `json:"apps"`
+	AppChannels []*AppChannel `json:"appChannels"`
 }
 
 type InstalledApp struct {
-	App        *App
-	AppChannel *AppChannel
+	App        *App        `json:"app"`
+	AppChannel *AppChannel `json:"appChannel"`
 }
 
 type QuerySvc struct {

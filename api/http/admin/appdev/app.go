@@ -1,4 +1,4 @@
-package app
+package appdev
 
 import (
 	"net/http"
@@ -39,12 +39,12 @@ func (h *Handler) create(ctx *gin.Context) {
 //	@Summary	delete App from app-store
 //	@Tags		Admin
 //
-//	@Param		id	path	string	true	"id of App to delete"
+//	@Param		ID	path	string	true	"id of App to delete"
 //
 //	@Success	204
-//	@Router		/admin/apps/{id} [delete]
+//	@Router		/admin/apps/{ID} [delete]
 func (h *Handler) delete(ctx *gin.Context) {
-	ID := ctx.Param("id")
+	ID := ctx.Param("ID")
 
 	err := h.appDevSvc.DeleteApp(ctx, ID)
 	if err != nil {
@@ -53,4 +53,27 @@ func (h *Handler) delete(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (h *Handler) query(ctx *gin.Context) {
+	ID := ctx.Query("roleId")
+
+	appFound, err := h.appDevSvc.FetchAppByRoleID(ctx, ID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, appFound)
+}
+
+func (h *Handler) queryDetail(ctx *gin.Context) {
+	ID := ctx.Param("appID")
+	appFound, err := h.appDevSvc.FetchApp(ctx, ID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, appFound)
 }

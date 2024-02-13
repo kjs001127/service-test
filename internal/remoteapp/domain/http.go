@@ -5,15 +5,8 @@ import (
 	"io"
 )
 
-type Method string
-
-const (
-	MethodPost = Method("POST")
-	MethodGet  = Method("GET")
-)
-
 type HttpRequest struct {
-	Method  Method
+	Method  string
 	Url     string
 	Body    []byte
 	Headers map[string]string

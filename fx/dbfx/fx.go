@@ -14,15 +14,15 @@ import (
 var Option = fx.Module(
 	"postgres",
 	fx.Provide(
-		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
-	),
-	fx.Provide(
 		BuildDataSource,
-		fx.Private,
 	),
 	fx.Invoke(func(db *sql.DB) {
 		tx.SetDB(db)
 	}),
+
+	fx.Provide(
+		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
+	),
 )
 
 func BuildDataSource() (*sql.DB, error) {

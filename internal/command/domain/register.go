@@ -95,6 +95,7 @@ func (s *RegisterSvc) deleteResource(ctx context.Context, oldbie *Command) error
 	key := Key{
 		AppID: oldbie.AppID,
 		Name:  oldbie.Name,
+		Scope: oldbie.Scope,
 	}
 	if err := s.repo.Delete(ctx, key); err != nil {
 		return fmt.Errorf("delete command fail. cmd: %v, cause: %w", oldbie, err)

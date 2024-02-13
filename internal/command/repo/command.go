@@ -26,10 +26,15 @@ func NewCommandDao(src db.DB) *CommandDao {
 
 func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*domain.Command, error) {
 
+	slice := make([]interface{}, len(query.AppIDs))
+	for i, v := range query.AppIDs {
+		slice[i] = v
+	}
+
 	cmds, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("scope = $1", query.Scope),
-		qm.AndIn("app_id IN $2", query.AppIDs),
+		qm.WhereIn("app_id IN ($2)", slice...),
 	).All(ctx, c.db)
 	if err != nil {
 		return nil, err
@@ -106,9 +111,14 @@ func (c *CommandDao) Save(ctx context.Context, resource *domain.Command) (*domai
 }
 
 func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*domain.Command, error) {
+	slice := make([]interface{}, len(appIDs))
+	for i, v := range appIDs {
+		slice[i] = v
+	}
+
 	cmds, err := models.Commands(
 		qm.Select("*"),
-		qm.AndIn("app_id IN $1", appIDs),
+		qm.AndIn("app_id IN ($1)", slice...),
 	).All(ctx, c.db)
 	if err != nil {
 		return nil, err
@@ -131,13 +141,14 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		ActionFunctionName:       cmd.ActionFunctionName,
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
+		DisplayName:              cmd.DisplayName,
 		ParamDefinitions:         bytes,
 	}, nil
 }
 
 func marshal(c *models.Command) (*domain.Command, error) {
 	var paramDefs domain.ParamDefinitions
-	if err := c.ParamDefinitions.Marshal(&paramDefs); err != nil {
+	if err := c.ParamDefinitions.Unmarshal(&paramDefs); err != nil {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
 	}
 
@@ -149,6 +160,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		ActionFunctionName:       c.ActionFunctionName,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
 		Description:              c.Description.Ptr(),
+		DisplayName:              c.DisplayName,
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,

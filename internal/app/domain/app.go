@@ -42,27 +42,27 @@ const (
 )
 
 type App struct {
-	ID    string
-	State AppState
+	ID    string   `json:"id"`
+	State AppState `json:"state"`
 
-	Title       string
-	AvatarURL   *string
-	Description *string
+	Title       string  `json:"title"`
+	AvatarURL   *string `json:"avatarUrl"`
+	Description *string `json:"description"`
 
-	IsPrivate         bool
-	ManualURL         *string
-	DetailDescription map[string]any
-	DetailImageURLs   *string
+	IsPrivate         bool           `json:"isPrivate"`
+	ManualURL         *string        `json:"manualUrl"`
+	DetailDescription map[string]any `json:"detailDescription"`
+	DetailImageURLs   *string        `json:"detailImageUrls"`
 
-	ConfigSchemas ConfigSchemas
+	ConfigSchemas ConfigSchemas `json:"configSchemas"`
 }
 
 type ConfigMap map[string]string
 
 type AppChannel struct {
-	AppID     string
-	ChannelID string
-	Configs   ConfigMap
+	AppID     string    `json:"appId"`
+	ChannelID string    `json:"channelId"`
+	Configs   ConfigMap `json:"configs"`
 }
 
 type Install struct {

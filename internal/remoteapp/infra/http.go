@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -28,10 +29,14 @@ func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.
 	var resp *resty.Response
 	var err error
 	switch req.Method {
-	case domain.MethodGet:
+	case http.MethodGet:
 		resp, err = r.Get(req.Url)
-	case domain.MethodPost:
+	case http.MethodPost:
 		resp, err = r.Post(req.Url)
+	case http.MethodPut:
+		resp, err = r.Put(req.Url)
+	case http.MethodPatch:
+		resp, err = r.Patch(req.Url)
 	default:
 		return nil, errors.New("unsupported method")
 	}

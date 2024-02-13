@@ -1,6 +1,7 @@
 package invoke
 
 import (
+	"encoding/json"
 	_ "encoding/json"
 	"errors"
 	"net/http"
@@ -21,21 +22,23 @@ import (
 //	@Summary	execute selected Command
 //	@Tags		Front
 //
+//	@Param		x-session				header		string					true	"access token"
 //	@Param		appID					path		string					true	"id of App"
+//	@Param		channelID				path		string					true	"id of Channel"
 //	@Param		name					path		string					true	"name of Command to execute"
 //	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true	"body of Function to invoke"
 //	@Success	200						{object}	json.RawMessage
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ParamsAndContext
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name})
+	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeFront})
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -49,13 +52,19 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest{
+	param, err := json.Marshal(body.Params)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
 			AppID:        appID,
 			FunctionName: cmd.ActionFunctionName,
 		},
-		Body: app.Body{
-			Params:  body.Params,
+		Body: app.Body[json.RawMessage]{
+			Params:  param,
 			Context: body.Context,
 			Caller: app.Caller{
 				Type: "user",
@@ -76,6 +85,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Summary	execute selected AutoComplete of Command
 //	@Tags		Front
 //
+//	@Param		x-session						header	string							true	"access token"
 //	@Param		appID							path	string							true	"id of App"
 //	@Param		name							path	string							true	"name of Command to execute autoComplete"
 //	@Param		channelID						path	string							true	"channelID"
@@ -84,14 +94,14 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name})
+	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeFront})
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -99,6 +109,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	if cmd.AutoCompleteFunctionName == nil {
 		_ = ctx.Error(apierr.NotFound(errors.New("autocomplete not found")))
+		return
 	}
 
 	rawUser, _ := ctx.Get(middleware.UserKey)
@@ -109,13 +120,19 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest{
+	param, err := json.Marshal(body.Params)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
 			AppID:        appID,
 			FunctionName: *cmd.AutoCompleteFunctionName,
 		},
-		Body: app.Body{
-			Params:  body.Params,
+		Body: app.Body[json.RawMessage]{
+			Params:  param,
 			Context: body.Context,
 			Caller: app.Caller{
 				Type: "user",

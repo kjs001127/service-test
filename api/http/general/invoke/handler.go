@@ -10,13 +10,13 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	invoker *app.Invoker[json.RawMessage]
+	invoker *app.Invoker[json.RawMessage, json.RawMessage]
 }
 
-func NewHandler(invoker *app.Invoker[json.RawMessage]) *Handler {
+func NewHandler(invoker *app.Invoker[json.RawMessage, json.RawMessage]) *Handler {
 	return &Handler{invoker: invoker}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.POST("/general/v1/channels/:channelID/apps/:id/functions/:name", h.invoke)
+	router.PUT("/general/v1/channels/:channelID/apps/:id/functions/:name", h.invoke)
 }

@@ -26,7 +26,7 @@ func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App
 	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
 
 	if since != "" {
-		queries = append(queries, qm.Where("id < ?", since))
+		queries = append(queries, qm.Where("id < $1", since))
 	}
 
 	apps, err := models.Apps(queries...).All(ctx, a.db)
@@ -47,7 +47,12 @@ func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
 }
 
 func (a *AppDAO) FindApps(ctx context.Context, appIDs []string) ([]*app.App, error) {
-	apps, err := models.Apps(qm.OrIn("id", appIDs)).All(ctx, a.db)
+	slice := make([]interface{}, len(appIDs))
+	for i, v := range appIDs {
+		slice[i] = v
+	}
+
+	apps, err := models.Apps(qm.WhereIn("id IN ($1)", slice...)).All(ctx, a.db)
 	if err != nil {
 		return nil, err
 	}
@@ -62,10 +67,13 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 		return nil, err
 	}
 
-	if err = model.Insert(
+	if err := model.Upsert(
 		ctx,
 		a.db,
+		true,
+		[]string{"id"},
 		boil.Blacklist("id"),
+		boil.Infer(),
 	); err != nil {
 		return nil, err
 	}

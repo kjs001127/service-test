@@ -1,4 +1,4 @@
-package app
+package query
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"

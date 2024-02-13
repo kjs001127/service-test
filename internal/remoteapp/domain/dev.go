@@ -67,6 +67,7 @@ type AppDevSvc interface {
 	CreateApp(ctx context.Context, req AppRequest) (AppResponse, error)
 	FetchApp(ctx context.Context, appID string) (AppResponse, error)
 	DeleteApp(ctx context.Context, appID string) error
+	FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error)
 }
 
 type AppDevSvcImpl struct {
@@ -169,6 +170,17 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 			},
 		}, nil
 	}, tx.WithReadOnly())
+}
+
+func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error) {
+	appRole, err := s.roleRepo.FetchByRoleID(ctx, clientID)
+
+	found, err := s.manager.Fetch(ctx, appRole.AppID)
+	if err != nil {
+		return nil, err
+	}
+
+	return found, nil
 }
 
 func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, roleCredentials []*AppRole) ([]RoleWithCredential, error) {

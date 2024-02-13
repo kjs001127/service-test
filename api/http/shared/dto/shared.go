@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"time"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -18,35 +19,30 @@ type AppsAndCommands struct {
 }
 
 type ContextAndAutoCompleteArgs struct {
-	Context app.ChannelContext   `json:"context"`
-	Params  cmd.AutoCompleteArgs `json:"params"`
+	Context app.ChannelContext `json:"context"`
+	Params  json.RawMessage    `json:"params"`
 }
 
 type CommandDTO struct {
-	AppID            string
-	Name             string
-	Scope            cmd.Scope
-	Description      string
-	ParamDefinitions cmd.ParamDefinitions
+	AppID            string               `json:"appId"`
+	Name             string               `json:"name"`
+	Scope            cmd.Scope            `json:"scope"`
+	Description      *string              `json:"description"`
+	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
 
-	ActionFunctionName       string
-	AutoCompleteFunctionName string
-
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 	return &CommandDTO{
-		AppID:                    origin.AppID,
-		Name:                     origin.Name,
-		Scope:                    origin.Scope,
-		Description:              *origin.Description,
-		ParamDefinitions:         origin.ParamDefinitions,
-		ActionFunctionName:       origin.ActionFunctionName,
-		AutoCompleteFunctionName: *origin.AutoCompleteFunctionName,
-		CreatedAt:                origin.CreatedAt,
-		UpdatedAt:                origin.UpdatedAt,
+		AppID:            origin.AppID,
+		Name:             origin.Name,
+		Scope:            origin.Scope,
+		Description:      origin.Description,
+		ParamDefinitions: origin.ParamDefinitions,
+		CreatedAt:        origin.CreatedAt,
+		UpdatedAt:        origin.UpdatedAt,
 	}
 }
 

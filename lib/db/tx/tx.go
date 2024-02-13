@@ -54,11 +54,11 @@ func RunWith[R any](
 	}
 
 	defer func() {
-		if err := recover().(error); err != nil {
+		if err := recover(); err != nil {
+			retErr = fmt.Errorf("recovered from %v", err)
+
 			if txErr := tx.Rollback(); txErr != nil {
-				retErr = fmt.Errorf("rollback fail. err: %v. cause: %w", txErr, err)
-			} else {
-				retErr = err
+				retErr = fmt.Errorf("rollback fail. err: %v", retErr)
 			}
 		}
 	}()

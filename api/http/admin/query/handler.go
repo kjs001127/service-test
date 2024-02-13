@@ -17,9 +17,8 @@ type Handler struct {
 
 func NewHandler(appRepo *app.QuerySvc, briefRepo brief.BriefRepository, cmdRepo cmd.CommandRepository) *Handler {
 	return &Handler{querySvc: appRepo, briefRepo: briefRepo, cmdRepo: cmdRepo}
-
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.GET("/admin/channels/:channelId/apps", h.query)
+	router.GET("/admin/channels/:channelID/apps", h.query)
 }

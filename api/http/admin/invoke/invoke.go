@@ -1,8 +1,10 @@
 package invoke
 
 import (
+	"encoding/json"
 	_ "encoding/json"
 	"net/http"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -36,12 +38,12 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest{
+	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
 			AppID:        appID,
 			FunctionName: name,
 		},
-		Body: app.Body{
+		Body: app.Body[json.RawMessage]{
 			Caller: app.Caller{
 				Type: callerAdmin,
 				ID:   idInferred,
@@ -56,4 +58,55 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) brief(ctx *gin.Context) {
+
+	channelID := ctx.Param("channelID")
+
+	installed, err := h.querySvc.QueryAll(ctx, channelID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	briefs, err := h.briefRepo.FetchAll(ctx, app.AppIDsOf(installed.AppChannels))
+
+	ch := make(chan json.RawMessage, len(briefs))
+	var wg sync.WaitGroup
+	wg.Add(len(briefs))
+
+	for _, brief := range briefs {
+		brief := brief
+		go func() {
+			res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
+				Endpoint: app.Endpoint{
+					AppID:        brief.AppID,
+					FunctionName: brief.BriefFunctionName,
+				},
+				Body: app.Body[json.RawMessage]{
+					Caller: app.Caller{
+						Type: callerAdmin,
+						ID:   idInferred,
+					},
+				},
+			})
+			if err != nil {
+				ch <- res
+			}
+			wg.Done()
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	var ret []json.RawMessage
+	for res := range ch {
+		ret = append(ret, res)
+	}
+
+	ctx.JSON(http.StatusOK, ret)
 }

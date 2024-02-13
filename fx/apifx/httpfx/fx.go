@@ -35,6 +35,8 @@ var Public = fx.Module(
 	),
 
 	fx.Invoke(func(svr *gintool.ApiServer) {
-		panic(svr.Run())
+		go func() {
+			panic(svr.Run())
+		}()
 	}),
 )

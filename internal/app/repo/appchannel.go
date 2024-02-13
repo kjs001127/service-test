@@ -26,8 +26,8 @@ func NewAppChannelDao(db db.DB) *AppChannelDao {
 func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.Install) (*appChannel.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
-		qm.Where("channel_id = $1", identifier.ChannelID),
-		qm.Where("app_id = $2", identifier.AppID),
+		qm.Where("app_id = $1", identifier.AppID),
+		qm.Where("channel_id = $2", identifier.ChannelID),
 	).One(ctx, a.db)
 
 	if err == sql.ErrNoRows {
@@ -62,7 +62,7 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChan
 		ctx,
 		a.db,
 		true,
-		[]string{"app_id, channel_id"},
+		[]string{"app_id", "channel_id"},
 		boil.Blacklist("app_id", "channel_id"),
 		boil.Infer(),
 	); err != nil {

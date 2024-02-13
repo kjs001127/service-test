@@ -23,12 +23,6 @@ func (h *Handler) query(ctx *gin.Context) {
 
 	apps, err := h.querySvc.QueryAll(ctx, channelID)
 
-	briefs, err := h.briefRepo.FetchAll(ctx, app.AppIDsOf(apps.AppChannels))
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
 	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(apps.AppChannels))
 	if err != nil {
 		_ = ctx.Error(err)
@@ -38,6 +32,5 @@ func (h *Handler) query(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dto.AppResources{
 		Apps:     apps.Apps,
 		Commands: cmds,
-		Briefs:   briefs,
 	})
 }

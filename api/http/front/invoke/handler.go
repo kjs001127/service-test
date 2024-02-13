@@ -13,14 +13,14 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	cmdRepo       cmd.CommandRepository
-	invoker       *app.Invoker[json.RawMessage]
+	invoker       *app.Invoker[json.RawMessage, json.RawMessage]
 	wamDownloader *app.FileStreamer
 	authorizer    session.ContextAuthorizer
 }
 
 func NewHandler(
 	cmdRepo cmd.CommandRepository,
-	invoker *app.Invoker[json.RawMessage],
+	invoker *app.Invoker[json.RawMessage, json.RawMessage],
 	wamDownloader *app.FileStreamer,
 	authorizer session.ContextAuthorizer,
 ) *Handler {

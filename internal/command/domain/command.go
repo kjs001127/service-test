@@ -31,6 +31,7 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
+	DisplayName    string  `json:"displayName"`
 	Description    *string `json:"description"`
 	AlfDescription *string `json:"alfDescription"`
 

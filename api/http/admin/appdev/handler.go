@@ -1,4 +1,4 @@
-package app
+package appdev
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -19,5 +19,7 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/admin/apps")
 
 	group.POST("/", h.create)
-	group.DELETE("/:id", h.delete)
+	group.GET("/", h.query)
+	group.GET("/:ID", h.queryDetail)
+	group.DELETE("/:ID", h.delete)
 }

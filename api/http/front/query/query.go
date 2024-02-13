@@ -1,4 +1,4 @@
-package app
+package query
 
 import (
 	"net/http"
@@ -17,6 +17,7 @@ const scope = command.ScopeFront
 //	@Summary	query Apps and Commands installed on channel
 //	@Tags		Front
 //
+//	@Param		x-session	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"channelID to query"
 //
 //	@Success	200			{object}	dto.AppsAndCommands

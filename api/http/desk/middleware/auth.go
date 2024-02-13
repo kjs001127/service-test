@@ -7,7 +7,6 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/auth/principal"
 	"github.com/channel-io/ch-app-store/auth/principal/account"
 )
 
@@ -26,7 +25,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	xAccount := ctx.GetHeader(principal.TokenTypeAccount.Header())
+	xAccount := ctx.GetHeader(account.XAccountHeader)
 	if xAccount == "" {
 		ctx.Abort()
 		_ = ctx.Error(apierr.Unauthorized(errors.New("authorization header is empty")))

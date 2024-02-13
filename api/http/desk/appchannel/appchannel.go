@@ -6,6 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/desk/appchannel/dto"
+	shareddto "github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -14,11 +16,12 @@ import (
 //	@Summary	install an App to Channel
 //	@Tags		Desk
 //
+//	@Param		x-account	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"id of Channel"
 //	@Param		appID		path		string	true	"id of App to install"
 //
 //	@Success	200			{object}	app.InstalledApp
-//	@Router		/desk/channels/{channelID}/app-channels/{appID} [put]
+//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
@@ -41,11 +44,12 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Summary	uninstall an App to Channel
 //	@Tags		Desk
 //
+//	@Param		x-account	header	string	true	"access token"
 //	@Param		channelID	path	string	true	"id of Channel"
 //	@Param		appID		path	string	true	"id of App to uninstall"
 //
 //	@Success	200
-//	@Router		/desk/channels/{channelID}/app-channels/{appID} [delete]
+//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 	if err := h.installer.UnInstallApp(ctx, app.Install{
@@ -64,17 +68,18 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 //	@Summary	set config of a Channel
 //	@Tags		Desk
 //
-//	@Param		channelId	path		string	true	"id of Channel"
-//	@Param		appId		path		string	true	"id of App"
+//	@Param		x-account	header		string	true	"access token"
+//	@Param		channelID	path		string	true	"id of Channel"
+//	@Param		appID		path		string	true	"id of App"
 //	@Param		object		body		object	true	"key-value of Config to set"
 //
 //	@Success	200			{object}	app.ConfigMap
-//	@Router		/desk/channels/{channelID}/app-channels/configs [put]
+//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID}/configs [put]
 func (h *Handler) setConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
 	var configMap map[string]string
-	if err := ctx.ShouldBindBodyWith(configMap, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&configMap, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -96,11 +101,12 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 //	@Summary	get App config of a AppChannel
 //	@Tags		Desk
 //
-//	@Param		appId		path		string	true	"id of app"
-//	@Param		channelId	path		string	true	"id of channel"
+//	@Param		x-account	header		string	true	"access token"
+//	@Param		appID		path		string	true	"id of app"
+//	@Param		channelID	path		string	true	"id of channel"
 //
 //	@Success	200			{object}	any		"JSON of configMap"
-//	@Router		/desk/channels/{channelID}/app-channels/configs [get]
+//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
@@ -122,11 +128,12 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 //	@Tags			Desk
 //	@Description	get App and AppChannel installed to channel.
 //
+//	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
 //	@Param			appID		path		string	false	"id of App"
 //
 //	@Success		200			{object}	app.InstalledApp
-//	@Router			/desk/channels/{channelID}/app-channels/{appID} [get]
+//	@Router			/desk/v1/channels/{channelID}/app-channels/{appID} [get]
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
@@ -139,7 +146,16 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	cmds, err := h.cmdRepo.FetchAllByAppID(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.InstalledAppWithCommands{
+		Commands:     shareddto.NewCommandDTOs(cmds),
+		InstalledApp: res,
+	})
 }
 
 // queryAll godoc
@@ -148,10 +164,11 @@ func (h *Handler) query(ctx *gin.Context) {
 //	@Tags			Desk
 //	@Description	get All Apps and AppChannels installed to channel.
 //
+//	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
 //
 //	@Success		200			{object}	app.InstalledApps
-//	@Router			/desk/channels/{channelID}/app-channels [get]
+//	@Router			/desk/v1/channels/{channelID}/app-channels [get]
 func (h *Handler) queryAll(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
@@ -161,5 +178,14 @@ func (h *Handler) queryAll(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res)
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(res.AppChannels))
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.InstalledAppsWithCommands{
+		Commands:      shareddto.NewCommandDTOs(cmds),
+		InstalledApps: res,
+	})
 }

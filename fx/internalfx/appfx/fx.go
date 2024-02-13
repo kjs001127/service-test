@@ -19,7 +19,11 @@ var Option = fx.Provide(
 		appRepo.NewAppDAO,
 		fx.As(new(app.AppRepository)),
 	),
-	app.NewInvoker[json.RawMessage],
+	fx.Annotate(
+		app.NewAppManagerImpl,
+		fx.As(new(app.AppManager)),
+	),
+	app.NewInvoker[json.RawMessage, json.RawMessage],
 	app.NewAppInstallSvc,
 	app.NewQuerySvc,
 	app.NewConfigSvc,

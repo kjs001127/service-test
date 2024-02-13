@@ -1,6 +1,7 @@
 package invoke
 
 import (
+	"encoding/json"
 	_ "encoding/json"
 	"errors"
 	"net/http"
@@ -23,17 +24,19 @@ const tokenHeader = "x-access-token"
 //	@Summary	invoke Function
 //	@Tags		General
 //
+//	@Param		x-access-token		header		string				true	"access token"
+//	@Param		channelID			path		string				true	"id of Channel to invoke Function"
 //	@Param		appID				path		string				true	"id of App to invoke Function"
 //	@Param		name				path		string				true	"name of Function to invoke"
 //	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
 //	@Success	200					{object}	json.RawMessage
-//	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions/{name} [post]
+//	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions/{name} [put]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")
 
 	var req dto.JsonRPCRequest
-	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -49,19 +52,22 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest{
-		Endpoint: app.Endpoint{
-			AppID:        appID,
-			FunctionName: name,
-		},
-		Body: app.Body{
-			Caller: app.Caller{
-				Type: rbac.Type,
-				ID:   rbac.ID,
+	res, err := h.invoker.InvokeChannelFunction(
+		ctx,
+		channelID,
+		app.FunctionRequest[json.RawMessage]{
+			Endpoint: app.Endpoint{
+				AppID:        appID,
+				FunctionName: name,
 			},
-			Params: req.Params,
-		},
-	})
+			Body: app.Body[json.RawMessage]{
+				Caller: app.Caller{
+					Type: rbac.Type,
+					ID:   rbac.ID,
+				},
+				Params: req.Params,
+			},
+		})
 	if err != nil {
 		_ = ctx.Error(err)
 		return

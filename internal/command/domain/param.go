@@ -19,7 +19,15 @@ const (
 	ParamTypeBool   = ParamType("bool")
 )
 
-type ParamDefinitions map[ParamName]*ParamDefinition
+type ParamDefinitions []*ParamDefinition
+
+func (defs ParamDefinitions) toMap() map[ParamName]*ParamDefinition {
+	ret := make(map[ParamName]*ParamDefinition)
+	for _, def := range defs {
+		ret[def.Name] = def
+	}
+	return ret
+}
 
 type ParamDefinition struct {
 	Name           ParamName `json:"name"`
@@ -107,8 +115,9 @@ func (v *ParamValidator) validateRequiredParams(defs ParamDefinitions, params Pa
 }
 
 func (v *ParamValidator) validateOptionalParams(defs ParamDefinitions, params ParamInput) error {
+	defMap := defs.toMap()
 	for name, _ := range params {
-		if _, ok := defs[name]; !ok {
+		if _, ok := defMap[name]; !ok {
 			return fmt.Errorf("param does not exist in paramDefinition, key: %v", name)
 		}
 	}
@@ -117,8 +126,9 @@ func (v *ParamValidator) validateOptionalParams(defs ParamDefinitions, params Pa
 }
 
 func (v *ParamValidator) validateTypes(defs ParamDefinitions, input ParamInput) error {
+	defMap := defs.toMap()
 	for name, val := range input {
-		def := defs[name]
+		def := defMap[name]
 		validator, ok := v.typeValidator[def.Type]
 		if !ok {
 			return errors.New("invalid type")

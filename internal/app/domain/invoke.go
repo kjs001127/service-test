@@ -2,27 +2,36 @@ package domain
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 )
 
-type FunctionResponse any
-
-type InvokeHandler interface {
-	Invoke(ctx context.Context, request FunctionRequest, response FunctionResponse) error
+type JsonFunctionRequest struct {
+	Endpoint
+	Body json.RawMessage
 }
 
-type Invoker[RES any] struct {
+type JsonFunctionResponse json.RawMessage
+
+type InvokeHandler interface {
+	Invoke(ctx context.Context, request JsonFunctionRequest) (JsonFunctionResponse, error)
+}
+
+type Invoker[REQ any, RES any] struct {
 	appChRepo AppChannelRepository
 	handler   InvokeHandler
 }
 
-func NewInvoker[RES any](appChRepo AppChannelRepository, handler InvokeHandler) *Invoker[RES] {
-	return &Invoker[RES]{appChRepo: appChRepo, handler: handler}
+func NewInvoker[REQ any, RES any](
+	appChRepo AppChannelRepository,
+	handler InvokeHandler,
+) *Invoker[REQ, RES] {
+	return &Invoker[REQ, RES]{appChRepo: appChRepo, handler: handler}
 }
 
-type FunctionRequest struct {
+type FunctionRequest[REQ any] struct {
 	Endpoint
-	Body
+	Body[REQ]
 }
 
 type Endpoint struct {
@@ -35,10 +44,10 @@ type Caller struct {
 	ID   string
 }
 
-type Body struct {
+type Body[REQ any] struct {
 	Caller  Caller
 	Context ChannelContext
-	Params  any
+	Params  REQ
 }
 
 type ChannelContext struct {
@@ -59,10 +68,10 @@ type ChannelContext struct {
 	}
 }
 
-func (i *Invoker[RES]) InvokeChannelFunction(
+func (i *Invoker[REQ, RES]) InvokeChannelFunction(
 	ctx context.Context,
 	channelID string,
-	request FunctionRequest,
+	request FunctionRequest[REQ],
 ) (RES, error) {
 	var ret RES
 
@@ -71,10 +80,20 @@ func (i *Invoker[RES]) InvokeChannelFunction(
 		ChannelID: channelID,
 	})
 	if err != nil {
-		return ret, nil
+		return ret, err
 	}
 
-	if err := i.handler.Invoke(ctx, request, &ret); err != nil {
+	jsonReq, err := json.Marshal(request.Body)
+	if err != nil {
+		return ret, err
+	}
+
+	jsonRes, err := i.handler.Invoke(ctx, JsonFunctionRequest{
+		Body:     jsonReq,
+		Endpoint: request.Endpoint,
+	})
+
+	if err := json.Unmarshal(jsonRes, &ret); err != nil {
 		return ret, err
 	}
 

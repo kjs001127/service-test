@@ -4,7 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/api/http/admin/app"
+	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
 	"github.com/channel-io/ch-app-store/api/http/admin/invoke"
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
@@ -16,7 +16,7 @@ const adminPort = `name:"admin.port"`
 var HttpModule = fx.Module(
 	"adminHttpModule",
 	fx.Provide(
-		gintool.AddTag(app.NewHandler),
+		gintool.AddTag(appdev.NewHandler),
 		gintool.AddTag(register.NewHandler),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(query.NewHandler),

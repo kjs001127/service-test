@@ -6,16 +6,16 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/doc"
-	"github.com/channel-io/ch-app-store/api/http/front/app"
 	"github.com/channel-io/ch-app-store/api/http/front/invoke"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
+	"github.com/channel-io/ch-app-store/api/http/front/query"
 )
 
 var HttpModule = fx.Module(
 	"frontHttpModule",
 	fx.Provide(
 		gintool.AddTag(invoke.NewHandler),
-		gintool.AddTag(app.NewHandler),
+		gintool.AddTag(query.NewHandler),
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),

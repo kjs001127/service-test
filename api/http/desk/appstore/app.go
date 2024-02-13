@@ -1,4 +1,4 @@
-package app
+package appstore
 
 import (
 	"net/http"
@@ -15,11 +15,13 @@ import (
 //	@Summary	get list of Apps
 //	@Tags		Desk
 //
-//	@Param		since	query	string	false	"get App after this id"
-//	@Param		limit	query	string	true	"max count of return data"
+//	@Param		x-account	header		string	true	"access token"
+//	@Param		since		query		string	false	"get App after this id"
+//	@Param		limit		query		string	true	"max count of return data"
+//	@Param		channelID	path		string	true	"channelID"
 //
-//	@Success	200		{object} dto.AppsAndCommands
-//	@Router		/desk/v1/channels/{channelId}/apps [get]
+//	@Success	200			{object}	dto.AppsAndCommands
+//	@Router		/desk/v1/channels/{channelID}/app-store/apps  [get]
 func (h *Handler) getApps(ctx *gin.Context) {
 	since, limit := ctx.Query("since"), ctx.Query("limit")
 	limitNumber, err := strconv.Atoi(limit)
@@ -46,24 +48,4 @@ func (h *Handler) getApps(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Apps: apps, Commands: dto.NewCommandDTOs(cmds)})
-}
-
-// getCommands godoc
-//
-//	@Summary	get Commands of specific app
-//	@Tags		Desk
-//
-//	@Param		appID	path		string	true	"id of App"
-//
-//	@Success	200		{array}		dto.CommandDTO
-//	@Router		/desk/v1/channels/{channelID}/apps/{appID}/commands [get]
-func (h *Handler) getCommands(ctx *gin.Context) {
-	appID := ctx.Param("appID")
-	commands, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: []string{appID}})
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.NewCommandDTOs(commands))
 }
