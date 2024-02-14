@@ -82,14 +82,14 @@ type CommandRepository interface {
 type Invoker struct {
 	repository CommandRepository
 
-	requester app.Invoker[ParamInput, Action]
-	validator ParamValidator
+	requester *app.Invoker[ParamInput, Action]
+	validator *ParamValidator
 }
 
 func NewInvoker(
 	repository CommandRepository,
-	requester app.Invoker[ParamInput, Action],
-	validator ParamValidator,
+	requester *app.Invoker[ParamInput, Action],
+	validator *ParamValidator,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, validator: validator}
 }

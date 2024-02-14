@@ -19,7 +19,7 @@ var HttpModule = fx.Module(
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"auth"`),
+			fx.ResultTags(`group:"middlewares"`),
 		),
 	),
 	fx.Supply(

@@ -1,8 +1,6 @@
 package invoke
 
 import (
-	"encoding/json"
-
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/auth/principal/session"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -12,19 +10,15 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	cmdRepo       cmd.CommandRepository
-	invoker       *app.Invoker[json.RawMessage, json.RawMessage]
-	wamDownloader *app.FileStreamer
-	authorizer    session.ContextAuthorizer
+	invoker             *cmd.Invoker
+	wamDownloader       *app.FileStreamer
+	autoCompleteInvoker *cmd.AutoCompleteInvoker
+
+	authorizer session.ContextAuthorizer
 }
 
-func NewHandler(
-	cmdRepo cmd.CommandRepository,
-	invoker *app.Invoker[json.RawMessage, json.RawMessage],
-	wamDownloader *app.FileStreamer,
-	authorizer session.ContextAuthorizer,
-) *Handler {
-	return &Handler{cmdRepo: cmdRepo, invoker: invoker, wamDownloader: wamDownloader, authorizer: authorizer}
+func NewHandler(invoker *cmd.Invoker, wamDownloader *app.FileStreamer, autoCompleteInvoker *cmd.AutoCompleteInvoker, authorizer session.ContextAuthorizer) *Handler {
+	return &Handler{invoker: invoker, wamDownloader: wamDownloader, autoCompleteInvoker: autoCompleteInvoker, authorizer: authorizer}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

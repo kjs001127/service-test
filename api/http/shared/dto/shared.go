@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"encoding/json"
 	"time"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -19,8 +18,8 @@ type AppsAndCommands struct {
 }
 
 type ContextAndAutoCompleteArgs struct {
-	Context app.ChannelContext `json:"context"`
-	Params  json.RawMessage    `json:"params"`
+	Context app.ChannelContext   `json:"context"`
+	Params  cmd.AutoCompleteArgs `json:"params"`
 }
 
 type CommandDTO struct {

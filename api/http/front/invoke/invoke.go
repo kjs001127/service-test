@@ -1,9 +1,7 @@
 package invoke
 
 import (
-	"encoding/json"
 	_ "encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,12 +35,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeFront})
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
-
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
@@ -51,19 +43,15 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		return
 	}
 
-	param, err := json.Marshal(body.Params)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
-		return
-	}
-
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
-		Endpoint: app.Endpoint{
-			AppID:        appID,
-			FunctionName: cmd.ActionFunctionName,
+	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
+		ChannelID: channelID,
+		Key: command.Key{
+			AppID: appID,
+			Name:  name,
+			Scope: command.ScopeFront,
 		},
-		Body: app.Body[json.RawMessage]{
-			Params:  param,
+		Body: app.Body[command.ParamInput]{
+			Params:  body.Params,
 			Context: body.Context,
 			Caller: app.Caller{
 				Type: "user",
@@ -100,17 +88,6 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	cmd, err := h.cmdRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeFront})
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
-
-	if cmd.AutoCompleteFunctionName == nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, dto.HttpNotFoundError(errors.New("autocomplete not found")))
-		return
-	}
-
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
@@ -119,19 +96,15 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		return
 	}
 
-	param, err := json.Marshal(body.Params)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
-		return
-	}
-
-	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
-		Endpoint: app.Endpoint{
-			AppID:        appID,
-			FunctionName: *cmd.AutoCompleteFunctionName,
+	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
+		Command: command.Key{
+			AppID: appID,
+			Name:  name,
+			Scope: command.ScopeFront,
 		},
-		Body: app.Body[json.RawMessage]{
-			Params:  param,
+		ChannelID: channelID,
+		Body: app.Body[command.AutoCompleteArgs]{
+			Params:  body.Params,
 			Context: body.Context,
 			Caller: app.Caller{
 				Type: "user",

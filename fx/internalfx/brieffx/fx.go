@@ -9,4 +9,5 @@ import (
 
 var Option = fx.Provide(
 	fx.Annotate(repo.NewBriefDao, fx.As(new(domain.BriefRepository))),
+	domain.NewInvoker,
 )

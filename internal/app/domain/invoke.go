@@ -25,9 +25,14 @@ type Invoker[REQ any, RES any] struct {
 
 func NewInvoker[REQ any, RES any](
 	appChRepo AppChannelRepository,
+	appRepo AppRepository,
 	handler InvokeHandler,
 ) *Invoker[REQ, RES] {
-	return &Invoker[REQ, RES]{appChRepo: appChRepo, handler: handler}
+	return &Invoker[REQ, RES]{
+		appChRepo: appChRepo,
+		appRepo:   appRepo,
+		handler:   handler,
+	}
 }
 
 type FunctionRequest[REQ any] struct {

@@ -15,11 +15,11 @@ type AutoCompleteRequest struct {
 	app.Body[AutoCompleteArgs]
 }
 
-type AutoCompleteArgs []AutoCompleteArg
+type AutoCompleteArgs []*AutoCompleteArg
 type AutoCompleteArg struct {
-	Focused bool
-	Name    string
-	Value   any
+	Focused bool   `json:"focused"`
+	Name    string `json:"name"`
+	Value   any    `json:"value"`
 }
 
 func (args AutoCompleteArgs) validate() error {
@@ -33,8 +33,8 @@ func (args AutoCompleteArgs) validate() error {
 
 type Choices []Choice
 type Choice struct {
-	Name  string
-	Value any
+	Name  string `json:"name"`
+	Value any    `json:"value"`
 }
 
 func (choices Choices) validate() error {
@@ -47,12 +47,12 @@ func (choices Choices) validate() error {
 }
 
 type AutoCompleteInvoker struct {
-	invoker app.Invoker[AutoCompleteArgs, Choices]
+	invoker *app.Invoker[AutoCompleteArgs, Choices]
 	repo    CommandRepository
 }
 
 func NewAutoCompleteInvoker(
-	invoker app.Invoker[AutoCompleteArgs, Choices],
+	invoker *app.Invoker[AutoCompleteArgs, Choices],
 	repo CommandRepository,
 ) *AutoCompleteInvoker {
 	return &AutoCompleteInvoker{invoker: invoker, repo: repo}

@@ -15,4 +15,6 @@ var Option = fx.Provide(
 	domain.NewParamValidator,
 	domain.NewQueryService,
 	domain.NewRegisterService,
+	domain.NewInvoker,
+	domain.NewAutoCompleteInvoker,
 )
