@@ -7,10 +7,10 @@ import (
 )
 
 type Urls struct {
-	HookURL     *string
-	FunctionURL *string
-	WamURL      *string
-	CheckURL    *string
+	HookURL     *string `json:"hookUrl"`
+	FunctionURL *string `json:"functionUrl"`
+	WamURL      *string `json:"wamUrl"`
+	CheckURL    *string `json:"checkUrl"`
 }
 
 type RemoteApp struct {

@@ -56,7 +56,10 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 					FunctionName: brief.BriefFunctionName,
 				},
 				Body: app.Body[BriefRequest]{
-					Caller: caller,
+					Context: app.ChannelContext{
+						Channel: app.Channel{ID: channelID},
+						Caller:  caller,
+					},
 					Params: BriefRequest{},
 				},
 			})

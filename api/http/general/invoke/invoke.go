@@ -60,9 +60,12 @@ func (h *Handler) invoke(ctx *gin.Context) {
 				FunctionName: name,
 			},
 			Body: app.Body[json.RawMessage]{
-				Caller: app.Caller{
-					Type: rbac.Type,
-					ID:   rbac.ID,
+				Context: app.ChannelContext{
+					Channel: app.Channel{ID: channelID},
+					Caller: app.Caller{
+						Type: rbac.Type,
+						ID:   rbac.ID,
+					},
 				},
 				Params: req.Params,
 			},

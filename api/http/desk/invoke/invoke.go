@@ -35,6 +35,12 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
+
+	body.Context.Channel = app.Channel{ID: channelID}
+	body.Context.Caller = app.Caller{
+		Type: "manager",
+		ID:   manager.ID,
+	}
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -50,10 +56,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		Body: app.Body[command.ParamInput]{
 			Params:  body.Params,
 			Context: body.Context,
-			Caller: app.Caller{
-				Type: "manager",
-				ID:   manager.ID,
-			},
 		},
 	})
 	if err != nil {
@@ -87,6 +89,11 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
+	body.Context.Channel = app.Channel{ID: channelID}
+	body.Context.Caller = app.Caller{
+		Type: "manager",
+		ID:   manager.ID,
+	}
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -102,10 +109,6 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		Body: app.Body[command.AutoCompleteArgs]{
 			Params:  body.Params,
 			Context: body.Context,
-			Caller: app.Caller{
-				Type: "manager",
-				ID:   manager.ID,
-			},
 		},
 	})
 	if err != nil {

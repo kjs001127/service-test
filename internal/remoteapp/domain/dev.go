@@ -54,7 +54,7 @@ type AppRoleRepository interface {
 type RoleType string
 
 type AppRequest struct {
-	Roles []*Role
+	Roles []*Role `json:"roles"`
 	*RemoteApp
 }
 

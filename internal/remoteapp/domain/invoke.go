@@ -31,8 +31,13 @@ func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunc
 		return nil, apierr.BadRequest(errors.New("function url invalid"))
 	}
 
+	marshaled, err := json.Marshal(request)
+	if err != nil {
+		return nil, err
+	}
+
 	reader, err := a.requester.Request(ctx, HttpRequest{
-		Body:   request.Body,
+		Body:   marshaled,
 		Method: http.MethodPut,
 		Url:    *urls.FunctionURL,
 	})

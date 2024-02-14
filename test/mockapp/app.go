@@ -90,7 +90,7 @@ func (i InvokeHandler) Invoke(ctx context.Context, app *app.App, request app.Jso
 	}
 
 	var ret any
-	switch request.FunctionName {
+	switch request.Method {
 	case "deskActionFunction":
 		ret = cmd.Action{
 			Type: "wam",

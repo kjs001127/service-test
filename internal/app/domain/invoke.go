@@ -7,8 +7,9 @@ import (
 )
 
 type JsonFunctionRequest struct {
-	FunctionName string
-	Body         json.RawMessage
+	Method  string          `json:"method"`
+	Params  json.RawMessage `json:"params"`
+	Context ChannelContext  `json:"context"`
 }
 
 type JsonFunctionResponse json.RawMessage
@@ -45,33 +46,29 @@ type Endpoint struct {
 	FunctionName string
 }
 
+type Channel struct {
+	ID string `json:"id"`
+}
 type Caller struct {
-	Type string
-	ID   string
+	Type string `json:"type"`
+	ID   string `json:"id"`
 }
 
 type Body[REQ any] struct {
-	Caller  Caller         `json:"caller"`
 	Context ChannelContext `json:"context"`
 	Params  REQ            `json:"params"`
 }
 
 type ChannelContext struct {
-	Caller struct {
-		ID   string `json:"id"`
-		Type string `json:"type"`
-	}
-	Channel struct {
-		ID       string `json:"id"`
-		Language string `json:"language"`
-	}
-	Chat struct {
+	Caller  Caller  `json:"caller"`
+	Channel Channel `json:"channel"`
+	Chat    struct {
 		Type string `json:"type"`
 		ID   string `json:"id"`
-	}
+	} `json:"chat"`
 	Trigger struct {
 		Type string `json:"type"`
-	}
+	} `json:"trigger"`
 }
 
 func (i *Invoker[REQ, RES]) InvokeChannelFunction(
@@ -89,19 +86,20 @@ func (i *Invoker[REQ, RES]) InvokeChannelFunction(
 		return ret, err
 	}
 
-	jsonReq, err := json.Marshal(request.Body)
-	if err != nil {
-		return ret, err
-	}
-
 	app, err := i.appRepo.FindApp(ctx, request.AppID)
 	if err != nil {
 		return ret, err
 	}
 
+	paramMarshaled, err := json.Marshal(request.Params)
+	if err != nil {
+		return ret, err
+	}
+
 	jsonRes, err := i.handler.Invoke(ctx, app, JsonFunctionRequest{
-		Body:         jsonReq,
-		FunctionName: request.FunctionName,
+		Method:  request.FunctionName,
+		Params:  paramMarshaled,
+		Context: request.Context,
 	})
 
 	if err := json.Unmarshal(jsonRes, &ret); err != nil {

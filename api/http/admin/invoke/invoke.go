@@ -13,10 +13,10 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-const (
-	callerAdmin = "admin"
-	idInferred  = "-"
-)
+var callerAdmin = app.Caller{
+	ID:   "admin",
+	Type: "admin",
+}
 
 // invoke godoc
 //
@@ -28,7 +28,7 @@ const (
 //	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
 //	@Success	200					{object}	json.RawMessage
-//	@Router		/admin/channels/{channelID}/apps/{appID}/functions/{name} [post]
+//	@Router		/admin/channels/{channelID}/apps/{appID}/functions/{name} [put]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")
 
@@ -44,9 +44,9 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			FunctionName: name,
 		},
 		Body: app.Body[json.RawMessage]{
-			Caller: app.Caller{
-				Type: callerAdmin,
-				ID:   idInferred,
+			Context: app.ChannelContext{
+				Channel: app.Channel{ID: channelID},
+				Caller:  callerAdmin,
 			},
 			Params: req.Params,
 		},
@@ -89,9 +89,8 @@ func (h *Handler) brief(ctx *gin.Context) {
 					FunctionName: brief.BriefFunctionName,
 				},
 				Body: app.Body[json.RawMessage]{
-					Caller: app.Caller{
-						Type: callerAdmin,
-						ID:   idInferred,
+					Context: app.ChannelContext{
+						Channel: app.Channel{ID: channelID},
 					},
 				},
 			})
