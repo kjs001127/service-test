@@ -7,18 +7,19 @@ import (
 )
 
 type JsonFunctionRequest struct {
-	Endpoint
-	Body json.RawMessage
+	FunctionName string
+	Body         json.RawMessage
 }
 
 type JsonFunctionResponse json.RawMessage
 
 type InvokeHandler interface {
-	Invoke(ctx context.Context, request JsonFunctionRequest) (JsonFunctionResponse, error)
+	Invoke(ctx context.Context, app *App, request JsonFunctionRequest) (JsonFunctionResponse, error)
 }
 
 type Invoker[REQ any, RES any] struct {
 	appChRepo AppChannelRepository
+	appRepo   AppRepository
 	handler   InvokeHandler
 }
 
@@ -45,9 +46,9 @@ type Caller struct {
 }
 
 type Body[REQ any] struct {
-	Caller  Caller
-	Context ChannelContext
-	Params  REQ
+	Caller  Caller         `json:"caller"`
+	Context ChannelContext `json:"context"`
+	Params  REQ            `json:"params"`
 }
 
 type ChannelContext struct {
@@ -88,9 +89,14 @@ func (i *Invoker[REQ, RES]) InvokeChannelFunction(
 		return ret, err
 	}
 
-	jsonRes, err := i.handler.Invoke(ctx, JsonFunctionRequest{
-		Body:     jsonReq,
-		Endpoint: request.Endpoint,
+	app, err := i.appRepo.FindApp(ctx, request.AppID)
+	if err != nil {
+		return ret, err
+	}
+
+	jsonRes, err := i.handler.Invoke(ctx, app, JsonFunctionRequest{
+		Body:         jsonReq,
+		FunctionName: request.FunctionName,
 	})
 
 	if err := json.Unmarshal(jsonRes, &ret); err != nil {

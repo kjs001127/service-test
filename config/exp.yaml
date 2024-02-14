@@ -6,8 +6,9 @@ auth:
 port: 3000
 psql:
   schema: public
-  dbname: app_store
+  dbname: app_store_exp
   host: db.exp.channel.io
   port: 5432
   user: app_store
+  password: ${PSQL_PASSWORD}
   sslmode: disable

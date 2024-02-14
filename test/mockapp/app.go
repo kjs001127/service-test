@@ -84,13 +84,13 @@ func (i InstallHandler) OnUnInstall(ctx context.Context, app *app.App, channelID
 type InvokeHandler struct {
 }
 
-func (i InvokeHandler) Invoke(ctx context.Context, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
-	if request.Endpoint.AppID != "1" {
+func (i InvokeHandler) Invoke(ctx context.Context, app *app.App, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
+	if app.ID != "1" {
 		return nil, errors.New("no such app")
 	}
 
 	var ret any
-	switch request.Endpoint.FunctionName {
+	switch request.FunctionName {
 	case "deskActionFunction":
 		ret = cmd.Action{
 			Type: "wam",

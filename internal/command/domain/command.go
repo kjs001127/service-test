@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 type Scope string
@@ -75,4 +77,42 @@ type CommandRepository interface {
 
 	Delete(ctx context.Context, key Key) error
 	Save(ctx context.Context, resource *Command) (*Command, error)
+}
+
+type Invoker struct {
+	repository CommandRepository
+
+	requester app.Invoker[ParamInput, Action]
+	validator ParamValidator
+}
+
+func NewInvoker(
+	repository CommandRepository,
+	requester app.Invoker[ParamInput, Action],
+	validator ParamValidator,
+) *Invoker {
+	return &Invoker{repository: repository, requester: requester, validator: validator}
+}
+
+type CommandRequest struct {
+	Key
+	ChannelID string
+	app.Body[ParamInput]
+}
+
+func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
+	cmd, err := r.repository.Fetch(ctx, request.Key)
+	if err != nil {
+		return Action{}, err
+	}
+
+	ctxReq := app.FunctionRequest[ParamInput]{
+		Endpoint: app.Endpoint{
+			AppID:        cmd.AppID,
+			FunctionName: cmd.ActionFunctionName,
+		},
+		Body: request.Body,
+	}
+
+	return r.requester.InvokeChannelFunction(ctx, request.ChannelID, ctxReq)
 }

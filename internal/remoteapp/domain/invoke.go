@@ -21,8 +21,8 @@ func NewInvoker(requester HttpRequester, repo AppUrlRepository) *Invoker {
 	return &Invoker{requester: requester, repo: repo}
 }
 
-func (a *Invoker) Invoke(ctx context.Context, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
-	urls, err := a.repo.Fetch(ctx, request.AppID)
+func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
+	urls, err := a.repo.Fetch(ctx, app.ID)
 	if err != nil {
 		return nil, err
 	}

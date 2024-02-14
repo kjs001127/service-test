@@ -1,14 +1,17 @@
 package domain
 
 import (
+	"context"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/friendsofgo/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 type AutoCompleteRequest struct {
-	Command   Key
-	ChannelID string
+	Command   Key    `json:"command"`
+	ChannelID string `json:"channelId"`
 	app.Body[AutoCompleteArgs]
 }
 
@@ -41,4 +44,34 @@ func (choices Choices) validate() error {
 		}
 	}
 	return nil
+}
+
+type AutoCompleteInvoker struct {
+	invoker app.Invoker[AutoCompleteArgs, Choices]
+	repo    CommandRepository
+}
+
+func NewAutoCompleteInvoker(
+	invoker app.Invoker[AutoCompleteArgs, Choices],
+	repo CommandRepository,
+) *AutoCompleteInvoker {
+	return &AutoCompleteInvoker{invoker: invoker, repo: repo}
+}
+
+func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRequest) (Choices, error) {
+	cmd, err := i.repo.Fetch(ctx, request.Command)
+	if err != nil {
+		return nil, err
+	}
+	if cmd.AutoCompleteFunctionName == nil {
+		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
+	}
+
+	return i.invoker.InvokeChannelFunction(ctx, request.ChannelID, app.FunctionRequest[AutoCompleteArgs]{
+		Endpoint: app.Endpoint{
+			AppID:        request.Command.AppID,
+			FunctionName: *cmd.AutoCompleteFunctionName,
+		},
+		Body: request.Body,
+	})
 }
