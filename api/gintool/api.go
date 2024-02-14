@@ -30,10 +30,12 @@ func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine 
 	router := gin.Default()
 	router.Use(cors.New(
 		cors.Config{
-			AllowOrigins:     []string{"*.channel.io", "*.exp.channel.io", "*.eks.channel.io"},
-			AllowMethods:     []string{"*"},
+			AllowOrigins:     []string{"*"},
 			AllowCredentials: true,
-			AllowHeaders:     []string{"*"},
+			AllowWildcard:    true,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "x-account", "x-session", "x-access-token"},
+			ExposeHeaders:    []string{"Content-Length"},
 			MaxAge:           12 * time.Hour,
 		},
 	))
