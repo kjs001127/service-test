@@ -6,10 +6,10 @@ import (
 )
 
 type HttpRequest struct {
-	Method  string
-	Url     string
-	Body    []byte
-	Headers map[string]string
+	Method  string            `json:"method"`
+	Url     string            `json:"url"`
+	Body    []byte            `json:"body"`
+	Headers map[string]string `json:"headers"`
 }
 
 type HttpRequester interface {
