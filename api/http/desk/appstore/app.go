@@ -26,13 +26,13 @@ func (h *Handler) getApps(ctx *gin.Context) {
 	since, limit := ctx.Query("since"), ctx.Query("limit")
 	limitNumber, err := strconv.Atoi(limit)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
 	apps, err := h.appRepo.Index(ctx, since, limitNumber)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 
 	cmds, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: ids})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 

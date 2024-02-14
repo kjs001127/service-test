@@ -4,11 +4,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	authgen "github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -35,7 +35,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
 	rbac := rawRbac.(authgen.ParsedRBACToken)
 	if ok := rbac.CheckAction(general.AppStoreService, fetchConfig); !ok {
-		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
 
@@ -43,14 +43,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		general.ChannelScope: {channelID},
 		general.AppScope:     {appID},
 	}); !ok {
-		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
 
 	installedApp, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 

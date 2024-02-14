@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/auth/general"
 )
 
@@ -27,15 +28,13 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	xAccessToken := ctx.GetHeader(general.Header())
 	if xAccessToken == "" {
-		ctx.Abort()
-		_ = ctx.Error(apierr.Unauthorized(errors.New("authorization header is empty")))
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
 		return
 	}
 
 	rbac, err := a.parser.Parse(ctx, xAccessToken)
 	if err != nil {
-		ctx.Abort()
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 

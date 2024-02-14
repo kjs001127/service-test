@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
+	shareddto "github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -25,7 +26,7 @@ func (h *Handler) query(ctx *gin.Context) {
 
 	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(apps.AppChannels))
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 

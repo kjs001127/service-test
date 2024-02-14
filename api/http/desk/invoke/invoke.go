@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -31,7 +30,7 @@ import (
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.ParamsAndContext
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
@@ -39,19 +38,19 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	cmd, err := h.commandRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeDesk})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	param, err := json.Marshal(body.Params)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -70,7 +69,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		},
 	})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -92,7 +91,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
@@ -101,18 +100,22 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	cmd, err := h.commandRepo.Fetch(ctx, command.Key{AppID: appID, Name: name, Scope: command.ScopeDesk})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	if cmd.AutoCompleteFunctionName == nil {
-		_ = ctx.Error(apierr.NotFound(errors.New("autocomplete not found")))
+		ctx.AbortWithStatusJSON(
+			http.StatusUnprocessableEntity,
+			dto.HttpUnprocessableEntityError(errors.New("autocomplete not found")),
+		)
+		return
 	}
 
 	res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
@@ -130,7 +133,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		},
 	})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -155,7 +158,7 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 		Writer:    ctx.Writer,
 		ChannelID: channelID,
 	}); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 

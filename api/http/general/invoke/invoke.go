@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -37,18 +36,18 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
 	rbac := rawRbac.(genauth.ParsedRBACToken)
 	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(name)); !ok {
-		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
 	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
-		_ = ctx.Error(apierr.Unauthorized(errors.New("function call unauthorized")))
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
 
@@ -69,7 +68,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			},
 		})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 

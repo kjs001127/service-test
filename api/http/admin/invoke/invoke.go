@@ -34,7 +34,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
@@ -53,7 +53,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -66,11 +66,15 @@ func (h *Handler) brief(ctx *gin.Context) {
 
 	installed, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	briefs, err := h.briefRepo.FetchAll(ctx, app.AppIDsOf(installed.AppChannels))
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		return
+	}
 
 	ch := make(chan json.RawMessage, len(briefs))
 	var wg sync.WaitGroup

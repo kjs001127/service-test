@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/auth/principal/account"
 )
 
@@ -27,22 +28,28 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	xAccount := ctx.GetHeader(account.XAccountHeader)
 	if xAccount == "" {
-		ctx.Abort()
-		_ = ctx.Error(apierr.Unauthorized(errors.New("authorization header is empty")))
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			dto.HttpUnauthorizedError(errors.New("authorization header is empty")),
+		)
 		return
 	}
 
 	channelID := ctx.Param("channelID")
 	if channelID == "" {
-		ctx.Abort()
-		_ = ctx.Error(apierr.Unauthorized(errors.New("channelID is empty")))
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			dto.HttpUnauthorizedError(errors.New("channelID is empty")),
+		)
 		return
 	}
 
 	authenticatedManager, err := a.managerSvc.FetchManager(ctx, channelID, xAccount)
 	if err != nil {
-		ctx.Abort()
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(
+			http.StatusUnprocessableEntity,
+			dto.HttpUnprocessableEntityError(err),
+		)
 		return
 	}
 

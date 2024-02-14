@@ -32,7 +32,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -56,7 +56,7 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 
 	var configMap map[string]string
 	if err := ctx.ShouldBindBodyWith(&configMap, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, shareddto.HttpBadRequestError(err))
 		return
 	}
 
@@ -89,7 +89,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		ChannelID: channelID,
 	}, configMap)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -115,7 +115,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		AppID:     appID,
 	})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -142,13 +142,13 @@ func (h *Handler) query(ctx *gin.Context) {
 		AppID:     appID,
 	})
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	cmds, err := h.cmdRepo.FetchAllByAppID(ctx, appID)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
@@ -174,13 +174,13 @@ func (h *Handler) queryAll(ctx *gin.Context) {
 
 	res, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(res.AppChannels))
 	if err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
 		return
 	}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
@@ -22,12 +23,12 @@ import (
 func (h *Handler) registerCommand(ctx *gin.Context) {
 	var request command.RegisterRequest
 	if err := ctx.ShouldBindBodyWith(request, binding.JSON); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
 	}
 
 	if err := h.registerSaga.Register(ctx, request); err != nil {
-		_ = ctx.Error(err)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
