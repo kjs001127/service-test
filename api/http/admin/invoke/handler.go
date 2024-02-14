@@ -11,13 +11,15 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	invoker   *app.Invoker[json.RawMessage, json.RawMessage]
-	briefRepo brief.BriefRepository
-	querySvc  *app.QuerySvc
+	invoker      *app.Invoker[json.RawMessage, json.RawMessage]
+	briefInvoker *brief.Invoker
 }
 
-func NewHandler(invoker *app.Invoker[json.RawMessage, json.RawMessage], brief brief.BriefRepository) *Handler {
-	return &Handler{invoker: invoker, briefRepo: brief}
+func NewHandler(
+	invoker *app.Invoker[json.RawMessage, json.RawMessage],
+	briefInvoker *brief.Invoker,
+) *Handler {
+	return &Handler{invoker: invoker, briefInvoker: briefInvoker}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

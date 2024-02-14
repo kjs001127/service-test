@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	_ "encoding/json"
 	"net/http"
-	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 )
 
 var callerAdmin = app.Caller{
-	ID:   "admin",
 	Type: "admin",
+	ID:   "-",
 }
 
 // invoke godoc
@@ -60,55 +60,24 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// brief godoc
+//
+//	@Summaryc	call brief
+//	@Tags		Admin
+//
+//	@Param		channelID	path		string	true	"id of App to invoke brief"
+//
+//	@Success	200			{object}	brief.BriefResponses
+//	@Router		/admin/channels/{channelID}/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 
 	channelID := ctx.Param("channelID")
 
-	installed, err := h.querySvc.QueryAll(ctx, channelID)
+	var ret brief.BriefResponses
+	ret, err := h.briefInvoker.Invoke(ctx, callerAdmin, channelID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
-	}
-
-	briefs, err := h.briefRepo.FetchAll(ctx, app.AppIDsOf(installed.AppChannels))
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
-
-	ch := make(chan json.RawMessage, len(briefs))
-	var wg sync.WaitGroup
-	wg.Add(len(briefs))
-
-	for _, brief := range briefs {
-		brief := brief
-		go func() {
-			res, err := h.invoker.InvokeChannelFunction(ctx, channelID, app.FunctionRequest[json.RawMessage]{
-				Endpoint: app.Endpoint{
-					AppID:        brief.AppID,
-					FunctionName: brief.BriefFunctionName,
-				},
-				Body: app.Body[json.RawMessage]{
-					Context: app.ChannelContext{
-						Channel: app.Channel{ID: channelID},
-					},
-				},
-			})
-			if err != nil {
-				ch <- res
-			}
-			wg.Done()
-		}()
-	}
-
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
-
-	var ret []json.RawMessage
-	for res := range ch {
-		ret = append(ret, res)
 	}
 
 	ctx.JSON(http.StatusOK, ret)

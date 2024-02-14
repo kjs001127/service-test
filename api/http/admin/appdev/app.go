@@ -15,9 +15,9 @@ import (
 //	@Summary	create App to app-store
 //	@Tags		Admin
 //
-//	@Param		app.RemoteApp	body		app.RemoteApp	true	"App to create"
+//	@Param		app.RemoteApp	body		app.AppRequest	true	"App to create"
 //
-//	@Success	201				{object}	app.RemoteApp
+//	@Success	201				{object}	app.AppResponse
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
 	var target app.AppRequest
@@ -56,6 +56,15 @@ func (h *Handler) delete(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// query godoc
+//
+//	@Summary	query App from app-store
+//	@Tags		Admin
+//
+//	@Param		roleId	query	string	true "roleId of App to query"
+//
+//	@Success	200  	{object} domain.App
+//	@Router		/admin/apps [get]
 func (h *Handler) query(ctx *gin.Context) {
 	ID := ctx.Query("roleId")
 

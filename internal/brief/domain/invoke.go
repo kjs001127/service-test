@@ -8,7 +8,12 @@ import (
 )
 
 type BriefResponses struct {
-	Result []string `json:"result"`
+	Results []AppBrief `json:"results"`
+}
+
+type AppBrief struct {
+	AppId string `json:"appId"`
+	Brief string `json:"brief"`
 }
 
 type BriefResponse struct {
@@ -43,7 +48,7 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 		return BriefResponses{}, err
 	}
 
-	ch := make(chan string, len(briefs))
+	ch := make(chan AppBrief, len(briefs))
 	var wg sync.WaitGroup
 	wg.Add(len(briefs))
 
@@ -64,7 +69,7 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 				},
 			})
 			if err != nil {
-				ch <- res.Result
+				ch <- AppBrief{AppId: brief.AppID, Brief: res.Result}
 			}
 			wg.Done()
 		}()
@@ -75,10 +80,10 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 		close(ch)
 	}()
 
-	var res []string
+	var res []AppBrief
 	for s := range ch {
 		res = append(res, s)
 	}
 
-	return BriefResponses{Result: res}, nil
+	return BriefResponses{Results: res}, nil
 }

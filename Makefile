@@ -2,6 +2,8 @@
 MODULE_NAME := $(shell go list -m)
 PROJECT_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = ch-app-store
+ADMIN_CMD_PATH = ${PROJECT_PATH}/cmd/admin
+PUBLIC_CMD_PATH = ${PROJECT_PATH}/cmd/public
 export PATH := ${PATH}:${GOPATH}/bin
 
 # Artifacts
@@ -82,12 +84,20 @@ gen-mock:
 	#mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
 
 
-build: init generate docs
+build-public: init generate docs
 	GOOS=${GOOS} \
 	GOARCH=${GOARCH} \
 	go build ${LDFLAGS} \
 	-o ${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH} \
-	${PROJECT_PATH}/cmd
+	${PUBLIC_CMD_PATH}
+
+build-admin: init generate docs
+	GOOS=${GOOS} \
+	GOARCH=${GOARCH} \
+	go build ${LDFLAGS} \
+	-o ${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH} \
+	${ADMIN_CMD_PATH}
+
 
 run:
 	${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH}

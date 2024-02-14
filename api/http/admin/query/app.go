@@ -17,7 +17,7 @@ import (
 //
 //	@Param		channelID	path		string	true	"channelID"
 //
-//	@Success	200			{object}	dto.AppResources
+//	@Success	200			{object}	dto.AppsAndFullCommands
 //	@Router		/admin/channels/{channelID}/apps [get]
 func (h *Handler) query(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
@@ -30,7 +30,7 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppResources{
+	ctx.JSON(http.StatusOK, dto.AppsAndFullCommands{
 		Apps:     apps.Apps,
 		Commands: cmds,
 	})

@@ -53,6 +53,13 @@ type AppRoleRepository interface {
 
 type RoleType string
 
+const (
+	RoleTypeFront   = RoleType("front")
+	RoleTypeDesk    = RoleType("desk")
+	RoleTypeChannel = RoleType("channel")
+	RoleTypeApp     = RoleType("app")
+)
+
 type AppRequest struct {
 	Roles []*Role `json:"roles"`
 	*RemoteApp

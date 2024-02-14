@@ -9,26 +9,12 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
 	"github.com/channel-io/ch-app-store/api/http/doc"
-	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 )
 
 const adminPort = `name:"admin.port"`
 
 var HttpModule = fx.Module(
 	"adminHttpModule",
-
-	fx.Provide(
-		fx.Annotate(
-			middleware.NewSentry,
-			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"middlewares"`),
-		),
-		fx.Annotate(
-			middleware.NewDatadog,
-			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"middlewares"`),
-		),
-	),
 
 	fx.Provide(
 		gintool.AddTag(appdev.NewHandler),
