@@ -39,6 +39,10 @@ type Config struct {
 		Password string `required:"true"`
 		SSLMode  string `required:"true"`
 	}
+	Sentry struct {
+		DSN              string  `required:"false"`
+		TracesSampleRate float64 `required:"false"`
+	}
 }
 
 func init() {

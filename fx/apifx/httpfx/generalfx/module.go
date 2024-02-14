@@ -17,7 +17,7 @@ var HttpModule = fx.Module(
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"auth"`),
+			fx.ResultTags(`group:"middlewares"`),
 		),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(appchannel.NewHandler),
