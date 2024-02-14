@@ -45,7 +45,7 @@ func (h *Handler) create(ctx *gin.Context) {
 //	@Success	204
 //	@Router		/admin/apps/{ID} [delete]
 func (h *Handler) delete(ctx *gin.Context) {
-	ID := ctx.Param("ID")
+	ID := ctx.Param("appID")
 
 	err := h.appDevSvc.DeleteApp(ctx, ID)
 	if err != nil {
@@ -77,6 +77,15 @@ func (h *Handler) query(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, appFound)
 }
 
+// queryDetail godoc
+//
+//	@Summary	query App from app-store
+//	@Tags		Admin
+//
+//	@Param		appID	path	string	true "appId"
+//
+//	@Success	200  	{object} app.AppResponse
+//	@Router		/admin/apps/{appID} [get]
 func (h *Handler) queryDetail(ctx *gin.Context) {
 	ID := ctx.Param("appID")
 	appFound, err := h.appDevSvc.FetchApp(ctx, ID)

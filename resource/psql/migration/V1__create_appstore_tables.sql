@@ -2,11 +2,6 @@ CREATE TABLE apps
 (
     id                 CHARACTER VARYING PRIMARY KEY,
 
-    client_id          CHARACTER VARYING           NOT NULL,
-    secret             CHARACTER VARYING           NOT NULL,
-
-    role_id            CHARACTER VARYING           NOT NULL,
-
     title              CHARACTER VARYING           NOT NULL,
     description        CHARACTER VARYING,
     detail_description JSONB,
@@ -26,9 +21,7 @@ CREATE TABLE app_urls
 (
     app_id       CHARACTER VARYING PRIMARY KEY REFERENCES apps (id),
     wam_url      CHARACTER VARYING,
-    function_url CHARACTER VARYING,
-    hook_url     CHARACTER VARYING,
-    check_url    CHARACTER VARYING
+    function_url CHARACTER VARYING
 );
 
 
@@ -48,7 +41,7 @@ CREATE TABLE commands
     param_definitions          JSONB                                  NOT NULL,
 
     alf_description            CHARACTER VARYING,
-    alf_triggerable            BOOLEAN                                         DEFAULT FALSE,
+    alf_mode                   CHARACTER VARYING                      NOT NULL,
 
     created_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW(),
     updated_at                 TIMESTAMP WITHOUT TIME ZONE            NOT NULL DEFAULT NOW()

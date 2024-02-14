@@ -16,5 +16,5 @@ func NewHandler(registerSaga *command.RegisterSvc) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.POST("/admin/apps/:id/commands", h.registerCommand)
+	router.POST("/admin/apps/:appID/commands", h.registerCommand)
 }

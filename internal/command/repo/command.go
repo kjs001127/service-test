@@ -141,6 +141,7 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		ActionFunctionName:       cmd.ActionFunctionName,
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
+		AlfMode:                  cmd.AlfMode,
 		DisplayName:              cmd.DisplayName,
 		ParamDefinitions:         bytes,
 	}, nil
@@ -164,6 +165,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,
+		AlfMode:                  c.AlfMode,
 	}, nil
 }
 

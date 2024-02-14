@@ -22,17 +22,16 @@ func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) 
 }
 
 type RegisterRequest struct {
-	AppID     string
 	Resources []*Command
 }
 
-func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
+func (s *RegisterSvc) Register(ctx context.Context, appID string, req RegisterRequest) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
-		if err := s.validateRequest(req); err != nil {
+		if err := s.validateRequest(appID, req); err != nil {
 			return err
 		}
 
-		oldbies, err := s.repo.FetchAllByAppID(ctx, req.AppID)
+		oldbies, err := s.repo.FetchAllByAppID(ctx, appID)
 		if err != nil {
 			return err
 		}
@@ -48,12 +47,12 @@ func (s *RegisterSvc) Register(ctx context.Context, req RegisterRequest) error {
 	}, tx.WithIsolation(sql.LevelSerializable))
 }
 
-func (s *RegisterSvc) validateRequest(req RegisterRequest) error {
+func (s *RegisterSvc) validateRequest(appID string, req RegisterRequest) error {
 	for _, cmd := range req.Resources {
 		if len(cmd.AppID) <= 0 {
-			cmd.AppID = req.AppID
-		} else if cmd.AppID != req.AppID {
-			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", req.AppID, cmd.AppID))
+			cmd.AppID = appID
+		} else if cmd.AppID != appID {
+			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", appID, cmd.AppID))
 		}
 		if err := cmd.Validate(); err != nil {
 			return apierr.BadRequest(err)

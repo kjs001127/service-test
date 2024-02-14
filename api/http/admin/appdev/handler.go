@@ -20,6 +20,6 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.POST("/", h.create)
 	group.GET("/", h.query)
-	group.GET("/:ID", h.queryDetail)
-	group.DELETE("/:ID", h.delete)
+	group.GET("/:appID", h.queryDetail)
+	group.DELETE("/:appID", h.delete)
 }

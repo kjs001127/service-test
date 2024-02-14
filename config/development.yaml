@@ -1,7 +1,7 @@
 stage: development
 auth:
-  authGeneralUrl: test
-  authAdminURL: test
+  authGeneralUrl: https://appstore-api.eks.exp.channel.io
+  authAdminURL: https://appstore-admin.eks.exp.channel.io
   jwtServiceKey: test
 port: 3000
 psql:

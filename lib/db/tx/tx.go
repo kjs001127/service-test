@@ -48,41 +48,34 @@ func RunWith[R any](
 		opt.apply(&txOptions)
 	}
 
-	tx, err := defaultDB.BeginTx(ctx, &txOptions)
-	if err != nil {
-		return empty, err
-	}
-
-	defer func() {
-		if err := recover(); err != nil {
-			retErr = fmt.Errorf("recovered from %v", err)
-
-			if txErr := tx.Rollback(); txErr != nil {
-				retErr = fmt.Errorf("rollback fail. err: %v", retErr)
-			}
-		}
-	}()
-
 	if ctx.Value(txKey) == nil {
+		tx, err := defaultDB.BeginTx(ctx, &txOptions)
+		if err != nil {
+			return empty, err
+		}
 		ctx = context.WithValue(ctx, txKey, tx)
-	} else if _, ok := ctx.Value(txKey).(db.DB); !ok {
+
+		defer func() {
+			if err := recover(); err != nil {
+				_ = tx.Rollback()
+				panic(err)
+			}
+
+			if retErr != nil {
+				if err := tx.Rollback(); err != nil {
+					retErr = fmt.Errorf("rollback fail, origin: %w", err)
+				}
+			} else {
+				if err := tx.Commit(); err != nil {
+					retErr = err
+				}
+			}
+		}()
+	} else if _, ok := ctx.Value(txKey).(*sql.Tx); !ok {
 		return empty, fmt.Errorf("found conn in context, but is not db.Conn")
 	}
 
-	result, err := body(ctx)
-
-	if err != nil {
-		if txErr := tx.Rollback(); txErr != nil {
-			return empty, fmt.Errorf("rollback fail. err: %v. cause: %w", txErr, err)
-		}
-		return empty, err
-	}
-
-	if err := tx.Commit(); err != nil {
-		return empty, fmt.Errorf("tx commit fail. cause: %w", err)
-	}
-
-	return result, nil
+	return body(ctx)
 }
 
 type Option interface {

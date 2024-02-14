@@ -63,6 +63,7 @@ func marshal(role *domain.AppRole) *models.AppRole {
 		RoleID:   role.RoleID,
 		ClientID: role.ClientID,
 		Secret:   role.Secret,
+		Type:     string(role.Type),
 	}
 }
 
@@ -74,6 +75,7 @@ func unmarshal(role *models.AppRole) *domain.AppRole {
 			ClientID: role.ClientID,
 			Secret:   role.Secret,
 		},
+		Type: domain.RoleType(role.Type),
 	}
 }
 

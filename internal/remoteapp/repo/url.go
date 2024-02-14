@@ -32,10 +32,8 @@ func (a *AppUrlDao) Fetch(ctx context.Context, appID string) (remoteapp.Urls, er
 	}
 
 	return remoteapp.Urls{
-		HookURL:     res.HookURL.Ptr(),
 		FunctionURL: res.FunctionURL.Ptr(),
 		WamURL:      res.WamURL.Ptr(),
-		CheckURL:    res.CheckURL.Ptr(),
 	}, nil
 }
 
@@ -44,8 +42,6 @@ func (a *AppUrlDao) Save(ctx context.Context, appID string, urls remoteapp.Urls)
 		AppID:       appID,
 		WamURL:      null.StringFromPtr(urls.WamURL),
 		FunctionURL: null.StringFromPtr(urls.FunctionURL),
-		HookURL:     null.StringFromPtr(urls.HookURL),
-		CheckURL:    null.StringFromPtr(urls.CheckURL),
 	}
 	return model.Insert(ctx, a.db, boil.Infer())
 }

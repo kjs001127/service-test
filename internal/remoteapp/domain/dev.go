@@ -12,6 +12,7 @@ import (
 type AppRole struct {
 	RoleCredentials
 	RoleID string
+	Type   RoleType
 	AppID  string
 }
 
@@ -22,12 +23,16 @@ type RoleCredentials struct {
 
 type Role struct {
 	ID     string
-	Claims []Claim
-	Type   RoleType
+	Claims []*Claim
+}
+
+type RoleWithType struct {
+	Role
+	Type RoleType
 }
 
 type RoleWithCredential struct {
-	*Role
+	RoleWithType
 	RoleCredentials
 }
 
@@ -39,8 +44,8 @@ type Claim struct {
 
 type RoleClient interface {
 	ReadRole(ctx context.Context, roleID string) (*Role, error)
-	CreateRole(ctx context.Context, request *Role) (RoleWithCredential, error)
-	UpdateRole(ctx context.Context, roleID string, claims []Claim) (*Role, error)
+	CreateRole(ctx context.Context, request *RoleWithType) (*RoleWithCredential, error)
+	UpdateRole(ctx context.Context, roleID string, claims []*Claim) (*Role, error)
 	DeleteRole(ctx context.Context, roleID string) error
 }
 
@@ -61,13 +66,13 @@ const (
 )
 
 type AppRequest struct {
-	Roles []*Role `json:"roles"`
+	Roles []*RoleWithType `json:"roles"`
 	*RemoteApp
 }
 
 type AppResponse struct {
 	*RemoteApp
-	Roles []RoleWithCredential
+	Roles []*RoleWithCredential
 }
 
 type AppDevSvc interface {
@@ -99,36 +104,36 @@ func NewAppDevSvcImpl(
 }
 
 func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppResponse, error) {
-	return tx.RunWith(ctx, func(ctx context.Context) (AppResponse, error) {
+	remoteApp, err := tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
 		req.ID = uid.New().Hex()
 
 		created, err := s.manager.Create(ctx, req.App)
 		if err != nil {
-			return AppResponse{}, err
+			return nil, err
 		}
 
 		if err := s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
-			return AppResponse{}, err
+			return nil, err
 		}
-
-		roles, err := s.createRoles(ctx, req)
-		if err != nil {
-			return AppResponse{}, err
-		}
-
-		return AppResponse{
-			Roles: roles,
-			RemoteApp: &RemoteApp{
-				App:  created,
-				Urls: req.Urls,
-			},
-		}, nil
-
+		return &RemoteApp{App: created, Urls: req.Urls}, nil
 	})
+	if err != nil {
+		return AppResponse{}, err
+	}
+
+	roles, err := s.createRoles(ctx, req)
+	if err != nil {
+		return AppResponse{}, err
+	}
+
+	return AppResponse{
+		Roles:     roles,
+		RemoteApp: remoteApp,
+	}, nil
 }
 
-func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]RoleWithCredential, error) {
-	var roles []RoleWithCredential
+func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*RoleWithCredential, error) {
+	var roles []*RoleWithCredential
 	for _, r := range req.Roles {
 		roleWithCredential, err := s.roleCli.CreateRole(ctx, r)
 		if err != nil {
@@ -138,6 +143,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]Role
 			AppID:           req.ID,
 			RoleID:          roleWithCredential.ID,
 			RoleCredentials: roleWithCredential.RoleCredentials,
+			Type:            r.Type,
 		}); err != nil {
 			return nil, err
 		}
@@ -190,20 +196,39 @@ func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (
 	return found, nil
 }
 
-func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, roleCredentials []*AppRole) ([]RoleWithCredential, error) {
-	var roles []RoleWithCredential
+func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, roleCredentials []*AppRole) ([]*RoleWithCredential, error) {
+	var roles []*RoleWithCredential
 	for _, c := range roleCredentials {
 		role, err := s.roleCli.ReadRole(ctx, c.RoleID)
 		if err != nil {
 			return nil, err
 		}
-		roles = append(roles, RoleWithCredential{Role: role, RoleCredentials: c.RoleCredentials})
+		roles = append(roles, &RoleWithCredential{
+			RoleWithType: RoleWithType{
+				Type: c.Type,
+				Role: *role,
+			},
+			RoleCredentials: c.RoleCredentials,
+		})
 	}
 	return roles, nil
 }
 
 func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
+	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
+	if err != nil {
+		return err
+	}
+	for _, c := range appRoles {
+		if err := s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
+			return err
+		}
+	}
+
 	return tx.Run(ctx, func(ctx context.Context) error {
+		if err := s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
+			return err
+		}
 		if err := s.urlRepo.Delete(ctx, appID); err != nil {
 			return err
 		}
@@ -211,18 +236,6 @@ func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
 		if err := s.manager.Delete(ctx, appID); err != nil {
 			return err
 		}
-
-		appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
-		if err != nil {
-			return err
-		}
-
-		for _, c := range appRoles {
-			if err := s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
-				return err
-			}
-		}
-
-		return s.roleRepo.DeleteByAppID(ctx, appID)
+		return nil
 	})
 }

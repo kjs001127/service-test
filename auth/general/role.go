@@ -2,7 +2,6 @@ package general
 
 import (
 	"context"
-	"errors"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/golang/protobuf/proto"
@@ -14,7 +13,7 @@ import (
 
 const (
 	version     = "v1"
-	roleBaseUri = "/admin/auth/" + version + "/roles"
+	roleBaseUri = "/api/admin/auth/" + version + "/roles"
 	fetchRole   = roleBaseUri + "/getRole"
 	createRole  = roleBaseUri + "/createRole"
 	deleteRole  = roleBaseUri + "/deleteRole"
@@ -32,6 +31,8 @@ func NewRoleClient(cli *resty.Client, authUrl string) *RoleClient {
 func (f *RoleClient) FetchRole(ctx context.Context, roleID string) (*service.GetRoleResult, error) {
 	r := f.cli.R()
 	r.SetContext(ctx)
+	r.SetHeader("Content-Type", "application/x-protobuf")
+	r.SetHeader("Accept", "application/x-protobuf")
 
 	body, err := proto.Marshal(&service.GetRoleRequest{RoleId: roleID})
 	if err != nil {
@@ -52,20 +53,22 @@ func (f *RoleClient) FetchRole(ctx context.Context, roleID string) (*service.Get
 	return &res, nil
 }
 
-func (f *RoleClient) CreateRole(ctx context.Context, claims []*model.Claim) (*service.CreateRoleResult, error) {
+func (f *RoleClient) CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error) {
 	r := f.cli.R()
 	r.SetContext(ctx)
 
-	body, err := proto.Marshal(&service.CreateRoleRequest{Claims: claims})
+	body, err := proto.Marshal(request)
 	if err != nil {
 		return nil, err
 	}
 	r.SetBody(body)
+	r.SetHeader("Content-Type", "application/x-protobuf")
+	r.SetHeader("Accept", "application/x-protobuf")
+
 	rawRes, err := r.Post(f.authUrl + createRole)
 	if err != nil {
 		return nil, err
 	}
-
 	var res service.CreateRoleResult
 	if err := proto.Unmarshal(rawRes.Body(), &res); err != nil {
 		return nil, err
@@ -83,6 +86,8 @@ func (f *RoleClient) DeleteRole(ctx context.Context, roleID string) (*service.De
 		return nil, err
 	}
 	r.SetBody(body)
+	r.SetHeader("Content-Type", "application/x-protobuf")
+	r.SetHeader("Accept", "application/x-protobuf")
 
 	rawRes, err := r.Post(f.authUrl + deleteRole)
 	if err != nil {
@@ -101,21 +106,34 @@ type RoleClientAdapter struct {
 	cli *RoleClient
 }
 
-func (r RoleClientAdapter) ReadRole(ctx context.Context, roleID string) (*domain.Role, error) {
-	role, err := r.cli.FetchRole(ctx, roleID)
-	if err != nil {
-		return nil, err
-	}
-	return marshal(role.Role), nil
+func NewRoleClientAdapter(cli *RoleClient) *RoleClientAdapter {
+	return &RoleClientAdapter{cli: cli}
 }
 
-func (r RoleClientAdapter) CreateRole(ctx context.Context, request *domain.Role) (domain.RoleWithCredential, error) {
-	created, err := r.cli.CreateRole(ctx, unmarshalClaims(request.Claims))
-	if err != nil {
-		return domain.RoleWithCredential{}, err
+func (r RoleClientAdapter) CreateRole(ctx context.Context, request *domain.RoleWithType) (*domain.RoleWithCredential, error) {
+	req := &service.CreateRoleRequest{
+		Claims: unmarshalClaims(request.Claims),
 	}
-	return domain.RoleWithCredential{
-		Role: marshal(created.Role),
+	switch request.Type {
+	case domain.RoleTypeChannel:
+		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
+	case domain.RoleTypeFront:
+		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_PRINCIPAL, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
+		req.AllowedPrincipalTypes = []string{"x-session"}
+	case domain.RoleTypeDesk:
+		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_PRINCIPAL, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
+		req.AllowedPrincipalTypes = []string{"x-account"}
+	}
+
+	created, err := r.cli.CreateRole(ctx, req)
+	if err != nil {
+		return &domain.RoleWithCredential{}, err
+	}
+	return &domain.RoleWithCredential{
+		RoleWithType: domain.RoleWithType{
+			Role: *marshal(created.Role),
+			Type: request.Type,
+		},
 		RoleCredentials: domain.RoleCredentials{
 			ClientID: created.Credentials.ClientId,
 			Secret:   created.Credentials.ClientSecret,
@@ -123,8 +141,17 @@ func (r RoleClientAdapter) CreateRole(ctx context.Context, request *domain.Role)
 	}, nil
 }
 
-func (r RoleClientAdapter) UpdateRole(ctx context.Context, roleID string, claims []domain.Claim) (*domain.Role, error) {
-	return nil, errors.New("not implemented")
+func (r RoleClientAdapter) UpdateRole(ctx context.Context, roleID string, claims []*domain.Claim) (*domain.Role, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r RoleClientAdapter) ReadRole(ctx context.Context, roleID string) (*domain.Role, error) {
+	role, err := r.cli.FetchRole(ctx, roleID)
+	if err != nil {
+		return nil, err
+	}
+	return marshal(role.Role), nil
 }
 
 func (r RoleClientAdapter) DeleteRole(ctx context.Context, roleID string) error {
@@ -135,20 +162,16 @@ func (r RoleClientAdapter) DeleteRole(ctx context.Context, roleID string) error 
 	return nil
 }
 
-func NewRoleClientAdapter(cli *RoleClient) *RoleClientAdapter {
-	return &RoleClientAdapter{cli: cli}
-}
-
 func marshal(role *model.Role) *domain.Role {
 	return &domain.Role{
 		ID:     role.Id,
 		Claims: marshalClaims(role.Claims),
 	}
 }
-func marshalClaims(claims []*model.Claim) []domain.Claim {
-	ret := make([]domain.Claim, 0, len(claims))
+func marshalClaims(claims []*model.Claim) []*domain.Claim {
+	ret := make([]*domain.Claim, 0, len(claims))
 	for _, c := range claims {
-		ret = append(ret, domain.Claim{
+		ret = append(ret, &domain.Claim{
 			Service: c.Service,
 			Action:  c.Action,
 			Scopes:  c.Scope,
@@ -156,7 +179,7 @@ func marshalClaims(claims []*model.Claim) []domain.Claim {
 	}
 	return ret
 }
-func unmarshalClaims(claims []domain.Claim) []*model.Claim {
+func unmarshalClaims(claims []*domain.Claim) []*model.Claim {
 	ret := make([]*model.Claim, 0, len(claims))
 	for _, c := range claims {
 		ret = append(ret, &model.Claim{

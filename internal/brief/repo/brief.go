@@ -31,9 +31,14 @@ func (b BriefDao) Fetch(ctx context.Context, appID string) (*domain.Brief, error
 }
 
 func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brief, error) {
+	slice := make([]interface{}, len(appIDs))
+	for i, v := range appIDs {
+		slice[i] = v
+	}
+
 	all, err := models.Briefs(
 		qm.Select("*"),
-		qm.WhereIn("app_id IN $1", appIDs),
+		qm.WhereIn("app_id IN ($1)", slice...),
 	).All(ctx, b.db)
 
 	if err != nil {

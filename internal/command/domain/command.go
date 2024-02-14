@@ -29,13 +29,14 @@ func (s Scope) isDefined() bool {
 type Command struct {
 	ID string `json:"id"`
 
-	AppID string `json:"appID"`
+	AppID string `json:"appId"`
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
 	DisplayName    string  `json:"displayName"`
 	Description    *string `json:"description"`
 	AlfDescription *string `json:"alfDescription"`
+	AlfMode        string  `json:"alfMode"`
 
 	ActionFunctionName       string           `json:"actionFunctionName"`
 	AutoCompleteFunctionName *string          `json:"autoCompleteFunctionName"`
