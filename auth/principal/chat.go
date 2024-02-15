@@ -10,7 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/auth"
 )
 
-const uri = "/admin/auth"
+const uri = "/api/admin/auth"
 
 type ChatValidator interface {
 	ValidateChat(ctx context.Context, token auth.Token, chat Chat) error

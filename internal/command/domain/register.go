@@ -21,13 +21,9 @@ func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) 
 	return &RegisterSvc{repo: repo, paramValidator: paramValidator}
 }
 
-type RegisterRequest struct {
-	Resources []*Command
-}
-
-func (s *RegisterSvc) Register(ctx context.Context, appID string, req RegisterRequest) error {
+func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Command) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
-		if err := s.validateRequest(appID, req); err != nil {
+		if err := s.validateRequest(appID, cmds); err != nil {
 			return err
 		}
 
@@ -43,12 +39,12 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, req RegisterRe
 			DoDelete: s.deleteResource,
 		}
 
-		return updater.Update(ctx, oldbies, req.Resources)
+		return updater.Update(ctx, oldbies, cmds)
 	}, tx.WithIsolation(sql.LevelSerializable))
 }
 
-func (s *RegisterSvc) validateRequest(appID string, req RegisterRequest) error {
-	for _, cmd := range req.Resources {
+func (s *RegisterSvc) validateRequest(appID string, cmds []*Command) error {
+	for _, cmd := range cmds {
 		if len(cmd.AppID) <= 0 {
 			cmd.AppID = appID
 		} else if cmd.AppID != appID {

@@ -9,3 +9,7 @@ type AppsAndFullCommands struct {
 	Apps     []*app.App     `json:"apps"`
 	Commands []*cmd.Command `json:"commands"`
 }
+
+type RegisterRequest struct {
+	Commands []*cmd.Command `json:"commands"`
+}

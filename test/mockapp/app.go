@@ -25,9 +25,8 @@ func SetUpMockApp(manager app.AppManager, reg *cmd.RegisterSvc) error {
 		return err
 	}
 
-	_ = reg.Register(context.Background(), cmd.RegisterRequest{
-		AppID: "1",
-		Resources: []*cmd.Command{
+	_ = reg.Register(context.Background(), "1",
+		[]*cmd.Command{
 			{
 				ID:                       "1",
 				Name:                     "deskCommand",
@@ -66,7 +65,7 @@ func SetUpMockApp(manager app.AppManager, reg *cmd.RegisterSvc) error {
 				ActionFunctionName: "frontActionFunction",
 			},
 		},
-	})
+	)
 	return nil
 }
 
