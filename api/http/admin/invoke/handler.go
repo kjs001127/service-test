@@ -23,6 +23,6 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.PUT("/admin/channels/:channelID/apps/:id/functions/:name", h.invoke)
+	router.PUT("/admin/channels/:channelID/apps/:id/functions", h.invoke)
 	router.PUT("/admin/channels/:channelID/brief", h.brief)
 }
