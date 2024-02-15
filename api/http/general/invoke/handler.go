@@ -18,5 +18,5 @@ func NewHandler(invoker *app.Invoker[json.RawMessage, json.RawMessage]) *Handler
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.PUT("/general/v1/channels/:channelID/apps/:id/functions/:name", h.invoke)
+	router.PUT("/general/v1/channels/:channelID/apps/:id/functions", h.invoke)
 }

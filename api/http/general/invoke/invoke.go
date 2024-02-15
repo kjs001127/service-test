@@ -26,13 +26,12 @@ const tokenHeader = "x-access-token"
 //	@Param		x-access-token		header		string				true	"access token"
 //	@Param		channelID			path		string				true	"id of Channel to invoke Function"
 //	@Param		appID				path		string				true	"id of App to invoke Function"
-//	@Param		name				path		string				true	"name of Function to invoke"
 //	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
 //	@Success	200					{object}	json.RawMessage
-//	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions/{name} [put]
+//	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID, name, channelID := ctx.Param("id"), ctx.Param("name"), ctx.Param("channelID")
+	appID, channelID := ctx.Param("id"), ctx.Param("channelID")
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -42,7 +41,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
 	rbac := rawRbac.(genauth.ParsedRBACToken)
-	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(name)); !ok {
+	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(req.Method)); !ok {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
@@ -57,7 +56,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		app.FunctionRequest[json.RawMessage]{
 			Endpoint: app.Endpoint{
 				AppID:        appID,
-				FunctionName: name,
+				FunctionName: req.Method,
 			},
 			Body: app.Body[json.RawMessage]{
 				Context: app.ChannelContext{

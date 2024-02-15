@@ -7,6 +7,7 @@ import (
 )
 
 type JsonRPCRequest struct {
+	Method  string             `json:"method"`
 	Params  json.RawMessage    `json:"params"`
 	Context app.ChannelContext `json:"context"`
 }

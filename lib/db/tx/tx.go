@@ -3,6 +3,7 @@ package tx
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/lib/pq"
@@ -134,13 +135,14 @@ func (s *DB) QueryRowContext(ctx context.Context, query string, args ...interfac
 }
 
 func withTx(ctx context.Context) db.DB {
+	if ctx.Value(txKey) == nil {
+		return defaultDB
+	}
+
 	if tx, ok := ctx.Value(txKey).(db.DB); ok {
 		return tx
 	}
 
-	if defaultDB == nil {
-		panic("defaultDB does not exist")
-	}
+	panic(errors.New("invalid tx"))
 
-	return defaultDB
 }

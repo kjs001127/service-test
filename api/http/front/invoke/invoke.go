@@ -121,30 +121,3 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, res)
 }
-
-// downloadWAM godoc
-//
-//	@Summary	download wam of an app
-//	@Tags		Front
-//
-//	@Param		appID	path		string	true	"id of App"
-//	@Param		path	path		string	true	"file path"
-//
-//	@Success	200		{object}	object
-//	@Router		/front/v1/channels/{channelID}/apps/{appID}/wams/{path} [get]
-func (h *Handler) downloadWAM(ctx *gin.Context) {
-	appID, path := ctx.Param("appID"), ctx.Param("path")
-
-	err := h.wamDownloader.StreamFile(ctx, app.StreamRequest{
-		AppID:  appID,
-		Path:   path,
-		Writer: ctx.Writer,
-	})
-
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
-
-	ctx.Writer.Flush()
-}

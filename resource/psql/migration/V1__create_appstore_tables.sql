@@ -37,7 +37,8 @@ CREATE TABLE commands
     autocomplete_function_name CHARACTER VARYING,
 
     description                CHARACTER VARYING,
-    display_name               CHARACTER VARYING                      NOT NULL,
+    name_i18n_map              JSONB                                  NOT NULL,
+
     param_definitions          JSONB                                  NOT NULL,
 
     alf_description            CHARACTER VARYING,

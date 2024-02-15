@@ -23,8 +23,10 @@ type ContextAndAutoCompleteArgs struct {
 }
 
 type CommandDTO struct {
-	AppID            string               `json:"appId"`
-	Name             string               `json:"name"`
+	AppID       string            `json:"appId"`
+	Name        string            `json:"name"`
+	NameI18nMap map[string]string `json:"nameI18NMap"`
+
 	Scope            cmd.Scope            `json:"scope"`
 	Description      *string              `json:"description"`
 	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
@@ -37,6 +39,7 @@ func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 	return &CommandDTO{
 		AppID:            origin.AppID,
 		Name:             origin.Name,
+		NameI18nMap:      origin.NameI18nMap,
 		Scope:            origin.Scope,
 		Description:      origin.Description,
 		ParamDefinitions: origin.ParamDefinitions,

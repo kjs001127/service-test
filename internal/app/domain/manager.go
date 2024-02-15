@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+
+	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type AppManager interface {
@@ -32,10 +34,15 @@ func (a *AppManagerImpl) Modify(ctx context.Context, app *App) (*App, error) {
 }
 
 func (a *AppManagerImpl) Delete(ctx context.Context, appID string) error {
-	if err := a.appRepo.Delete(ctx, appID); err != nil {
-		return err
-	}
-	return a.repo.DeleteByAppID(ctx, appID)
+	return tx.Run(ctx, func(ctx context.Context) error {
+		if err := a.repo.DeleteByAppID(ctx, appID); err != nil {
+			return err
+		}
+		if err := a.appRepo.Delete(ctx, appID); err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (a *AppManagerImpl) Fetch(ctx context.Context, appID string) (*App, error) {

@@ -67,7 +67,8 @@ type ChannelContext struct {
 		ID   string `json:"id"`
 	} `json:"chat"`
 	Trigger struct {
-		Type string `json:"type"`
+		Type       string            `json:"type"`
+		Attributes map[string]string `json:"attributes"`
 	} `json:"trigger"`
 }
 
@@ -76,27 +77,33 @@ func (i *Invoker[REQ, RES]) InvokeChannelFunction(
 	channelID string,
 	request FunctionRequest[REQ],
 ) (RES, error) {
-	var ret RES
+	var empty RES
 
 	_, err := i.appChRepo.Fetch(ctx, Install{
 		AppID:     request.AppID,
 		ChannelID: channelID,
 	})
 	if err != nil {
-		return ret, err
+		return empty, err
 	}
 
 	app, err := i.appRepo.FindApp(ctx, request.AppID)
 	if err != nil {
-		return ret, err
+		return empty, err
 	}
+
+	return i.doInvoke(ctx, app, request)
+}
+
+func (i *Invoker[REQ, RES]) doInvoke(ctx context.Context, target *App, request FunctionRequest[REQ]) (RES, error) {
+	var ret RES
 
 	paramMarshaled, err := json.Marshal(request.Params)
 	if err != nil {
 		return ret, err
 	}
 
-	jsonRes, err := i.handler.Invoke(ctx, app, JsonFunctionRequest{
+	jsonRes, err := i.handler.Invoke(ctx, target, JsonFunctionRequest{
 		Method:  request.FunctionName,
 		Params:  paramMarshaled,
 		Context: request.Context,

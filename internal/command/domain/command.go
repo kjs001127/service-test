@@ -33,14 +33,16 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
-	DisplayName    string  `json:"displayName"`
-	Description    *string `json:"description"`
+	NameI18nMap map[string]string `json:"nameI18nMap"`
+	Description *string           `json:"description"`
+
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        string  `json:"alfMode"`
 
-	ActionFunctionName       string           `json:"actionFunctionName"`
-	AutoCompleteFunctionName *string          `json:"autoCompleteFunctionName"`
-	ParamDefinitions         ParamDefinitions `json:"paramDefinitions"`
+	ActionFunctionName       string  `json:"actionFunctionName"`
+	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
+
+	ParamDefinitions ParamDefinitions `json:"paramDefinitions"`
 
 	UpdatedAt time.Time `json:"-"`
 	CreatedAt time.Time `json:"-"`

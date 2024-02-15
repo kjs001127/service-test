@@ -128,7 +128,11 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 }
 
 func unmarshal(cmd *domain.Command) (*models.Command, error) {
-	bytes, err := json.Marshal(cmd.ParamDefinitions)
+	paramDef, err := json.Marshal(cmd.ParamDefinitions)
+	if err != nil {
+		return nil, err
+	}
+	nameI18nMap, err := json.Marshal(cmd.NameI18nMap)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +146,8 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfMode:                  cmd.AlfMode,
-		DisplayName:              cmd.DisplayName,
-		ParamDefinitions:         bytes,
+		NameI18nMap:              nameI18nMap,
+		ParamDefinitions:         paramDef,
 	}, nil
 }
 
@@ -151,6 +155,11 @@ func marshal(c *models.Command) (*domain.Command, error) {
 	var paramDefs domain.ParamDefinitions
 	if err := c.ParamDefinitions.Unmarshal(&paramDefs); err != nil {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
+	}
+
+	nameI18nMap := make(map[string]string)
+	if err := c.NameI18nMap.Unmarshal(&nameI18nMap); err != nil {
+		return nil, fmt.Errorf("parsing name18nMap, cmd: %v, cause: %w", c, err)
 	}
 
 	return &domain.Command{
@@ -161,7 +170,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		ActionFunctionName:       c.ActionFunctionName,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
 		Description:              c.Description.Ptr(),
-		DisplayName:              c.DisplayName,
+		NameI18nMap:              nameI18nMap,
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,

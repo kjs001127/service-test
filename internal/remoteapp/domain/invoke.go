@@ -12,6 +12,11 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
+const (
+	contentTypeHeader = "Content-Type"
+	contentTypeJson   = "application/json"
+)
+
 type Invoker struct {
 	requester HttpRequester
 	repo      AppUrlRepository
@@ -39,7 +44,10 @@ func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunc
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Body:   marshaled,
 		Method: http.MethodPut,
-		Url:    *urls.FunctionURL,
+		Headers: map[string]string{
+			contentTypeHeader: contentTypeJson,
+		},
+		Url: *urls.FunctionURL,
 	})
 	if err != nil {
 		return nil, err
@@ -55,8 +63,18 @@ func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunc
 	return a.resultOf(ret)
 }
 
+type Error struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
+
+func (e *Error) Error() string {
+	return e.Message
+}
+
 type Response struct {
-	Result json.RawMessage
+	Error  Error           `json:"error"`
+	Result json.RawMessage `json:"result"`
 }
 
 func (a *Invoker) resultOf(ret []byte) (app.JsonFunctionResponse, error) {
@@ -64,5 +82,10 @@ func (a *Invoker) resultOf(ret []byte) (app.JsonFunctionResponse, error) {
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
 		return nil, err
 	}
+
+	if len(jsonResp.Error.Type) > 0 {
+		return nil, &jsonResp.Error
+	}
+
 	return app.JsonFunctionResponse(jsonResp.Result), nil
 }
