@@ -33,7 +33,7 @@ func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*d
 
 	cmds, err := models.Commands(
 		qm.Select("*"),
-		qm.Where("scope = $1", query.Scope),
+		qm.Where("scope = ?", query.Scope),
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
