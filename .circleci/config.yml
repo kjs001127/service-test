@@ -20,7 +20,8 @@ references:
   ecr_repo_name: &ecr_repo_name ch-app-store
   working_directory: &working_directory /home/circleci/ch-app-store
   target_app: &target_app ch-app-store
-  target_port: &target_port 3000
+  target_public_port: &target_public_port 3020
+  target_admin_port: &target_admin_port 3021
 
   test_branches_only: &test_branches_only
     context: ci-local
@@ -80,7 +81,7 @@ executors:
   test_executor:
     docker:
       - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
-      - image: cimg/postgres:14.5
+      - image: cimg/postgres:14.10
         environment:
           POSTGRES_USER: ci
           POSTGRES_DB: ci_test
@@ -94,7 +95,7 @@ executors:
   compile_executor:
     docker:
       - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
-      - image: cimg/postgres:14.5
+      - image: cimg/postgres:14.10
         environment:
           POSTGRES_USER: ci
           POSTGRES_DB: ci
@@ -117,7 +118,8 @@ executors:
     working_directory: *working_directory
     environment:
       TARGET_APP: *target_app
-      TARGET_PORT: *target_port
+      TARGET_PUBLIC_PORT: *target_public_port
+      TARGET_ADMIN_PORT: *target_admin_port
 
 jobs:
   test:
@@ -182,7 +184,7 @@ jobs:
       - aws-ecr/build-and-push-image:
           <<: [*aws_ecr_env, *common_aws_ecr_config]
           dockerfile: deploy/Dockerfile
-          extra-build-args: --build-arg="TARGET_APP=$TARGET_APP" --build-arg="TARGET_PORT=$TARGET_PORT"
+          extra-build-args: --build-arg="TARGET_APP=$TARGET_APP" --build-arg="TARGET_PUBLIC_PORT=$TARGET_PUBLIC_PORT --build-arg="TARGET_ADMIN_PORT=$TARGET_ADMIN_PORT"
           tag: <<parameters.tag>>
       - aws-ecr/build-and-push-image:
           <<: [*aws_ecr_env, *common_aws_ecr_config]

@@ -2,8 +2,8 @@
 MODULE_NAME := $(shell go list -m)
 PROJECT_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = ch-app-store
-ADMIN_CMD_PATH = ${PROJECT_PATH}/cmd/admin
-PUBLIC_CMD_PATH = ${PROJECT_PATH}/cmd/public
+APPS := admin desk front general
+
 export PATH := ${PATH}:${GOPATH}/bin
 
 # Artifacts
@@ -84,30 +84,26 @@ gen-mock:
 	#mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
 
 
-build-public: init generate docs
-	GOOS=${GOOS} \
-	GOARCH=${GOARCH} \
-	go build ${LDFLAGS} \
-	-o ${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH} \
-	${PUBLIC_CMD_PATH}
-
-build-admin: init generate docs
-	GOOS=${GOOS} \
-	GOARCH=${GOARCH} \
-	go build ${LDFLAGS} \
-	-o ${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH} \
-	${ADMIN_CMD_PATH}
-
+build: init generate docs
+	@for app in ${APPS} ; do \
+		echo "Building ${PROJECT_NAME}-$$app..."; \
+		GOOS=${GOOS} \
+		GOARCH=${GOARCH} \
+		go build ${LDFLAGS} \
+		-o ${TARGET_BIN_DIR}/${PROJECT_NAME}-$$app.${GOOS}.${GOARCH} \
+		${PROJECT_PATH}/cmd/$$app ; \
+	done
 
 run:
-	${TARGET_BIN_DIR}/${PROJECT_NAME}.${GOOS}.${GOARCH}
+	# general 기본 run으로 설정되어 있음
+	${TARGET_BIN_DIR}/${PROJECT_NAME}-general.${GOOS}.${GOARCH}
 
 dev: build run
 
 test: build
 	GO_ENV=$(TEST_ENV) go test `go list ./... | grep -v ./generated`
 
-clean: clean-bin clean-gen
+clean: clean-target clean-gen
 
 clean-gen:
 	rm -rf ${GENERATED_SRC_DIR}
@@ -118,10 +114,9 @@ clean-target:
 docs: docs-clean docs-gen docs-fmt
 
 docs-gen:
-	swag init -d api/http/admin -g swagger.go -o api/http/swagger --pd --instanceName swagger_admin
-	swag init -d api/http/desk -g swagger.go -o api/http/swagger --pd --instanceName swagger_desk
-	swag init -d api/http/front -g swagger.go -o api/http/swagger --pd --instanceName swagger_front
-	swag init -d api/http/general -g swagger.go -o api/http/swagger --pd --instanceName swagger_general
+	@for app in ${APPS} ; do \
+		swag init -d api/http/$$app -g swagger.go -o api/http/swagger --pd --instanceName swagger_$$app ; \
+	done
 
 docs-clean:
 	rm -rf api/http/swagger

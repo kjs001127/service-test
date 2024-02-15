@@ -3,7 +3,7 @@
 
 ## Getting started to develop 🛠️
 
-### Install Golang 
+### Install Golang
 
 - Install Go at [here](https://go.dev/doc/install).
 - Check installed Go version via `go version`
@@ -16,7 +16,7 @@
 make init
 ```
 
-### Generate database schema & mock files 
+### Generate database schema & mock files
 
 - Simply use `make generate`
 
@@ -28,8 +28,8 @@ make generate
 ```bash
 make dev
 ```
-- http://localhost:3000
-- default port is 3000
+- http://localhost:3020
+- default port is 3020
 
 ### Run on other environments
 ```bash

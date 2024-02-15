@@ -1,5 +1,5 @@
 stage: production
-port: 3000
+port: 3020
 psql:
   schema: public
   dbname: app_store

@@ -10,17 +10,23 @@ ARG TARGETOS
 ARG TARGETARCH
 
 ARG TARGET_APP
-ARG TARGET_PORT
+ARG TARGET_PUBLIC_PORT
+ARG TARGET_ADMIN_PORT
 
-WORKDIR /${TARGET_APP}
+WORKDIR /$TARGET_APP
 
 # k8s 환경에서 환경변수 설정은 .env 파일이 아닌 configmap & secret 에서 가져옴.
-COPY ./target/bin/${TARGET_APP}.$TARGETOS.$TARGETARCH ./${TARGET_APP}
+COPY ./target/bin/$TARGET_APP-desk.$TARGETOS.$TARGETARCH ./desk
+COPY ./target/bin/$TARGET_APP-front.$TARGETOS.$TARGETARCH ./front
+COPY ./target/bin/$TARGET_APP-general.$TARGETOS.$TARGETARCH ./general
+COPY ./target/bin/$TARGET_APP-admin.$TARGETOS.$TARGETARCH ./admin
+COPY ./deploy/run.sh ./run.sh
 
 # Add configuration
 COPY ./config/*.yaml ./config/
 
-EXPOSE ${TARGET_PORT}
+# front, genenral, desk 모두 하나의 포트만 사용 할 것이므로
+EXPOSE $TARGET_PUBLIC_PORT
+EXPOSE $TARGET_ADMIN_PORT
 
-ENV TARGET_APP ${TARGET_APP}
-CMD ./${TARGET_APP}
+CMD ["./run.sh"]

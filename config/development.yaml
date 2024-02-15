@@ -3,7 +3,7 @@ auth:
   authGeneralUrl: https://appstore-api.eks.exp.channel.io
   authAdminURL: https://appstore-admin.eks.exp.channel.io
   jwtServiceKey: test
-port: 3000
+port: 3020
 psql:
   schema: public
   dbname: app_store

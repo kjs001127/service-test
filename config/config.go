@@ -53,7 +53,7 @@ func init() {
 
 func fillDefaultValues() {
 	viper.SetDefault("stage", "development")
-	viper.SetDefault("port", "3000")
+	viper.SetDefault("port", "3020")
 }
 
 func Get() *Config {
