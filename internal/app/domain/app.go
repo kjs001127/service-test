@@ -15,12 +15,12 @@ type AppRepository interface {
 type ConfigSchemas []ConfigSchema
 
 type ConfigSchema struct {
-	Name       string
-	Type       string
-	Key        string
-	Default    *string
-	Help       *string
-	Attributes map[string]any
+	Name       string         `json:"name"`
+	Type       string         `json:"type"`
+	Key        string         `json:"key"`
+	Default    *string        `json:"default"`
+	Help       *string        `json:"help"`
+	Attributes map[string]any `json:"attributes"`
 }
 
 func (s ConfigSchemas) DefaultConfig() ConfigMap {

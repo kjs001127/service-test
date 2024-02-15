@@ -17,18 +17,18 @@ type AppRole struct {
 }
 
 type RoleCredentials struct {
-	ClientID string
-	Secret   string
+	ClientID string `json:"clientID"`
+	Secret   string `json:"secret"`
 }
 
 type Role struct {
-	ID     string
-	Claims []*Claim
+	ID     string   `json:"id"`
+	Claims []*Claim `json:"claims"`
 }
 
 type RoleWithType struct {
 	Role
-	Type RoleType
+	Type RoleType `json:"type"`
 }
 
 type RoleWithCredential struct {
@@ -37,9 +37,9 @@ type RoleWithCredential struct {
 }
 
 type Claim struct {
-	Service string
-	Action  string
-	Scopes  []string
+	Service string   `json:"service"`
+	Action  string   `json:"action"`
+	Scopes  []string `json:"scopes"`
 }
 
 type RoleClient interface {
