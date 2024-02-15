@@ -30,7 +30,9 @@ func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine 
 	router := gin.Default()
 	router.Use(cors.New(
 		cors.Config{
-			AllowOrigins:     []string{"*"},
+			AllowOriginFunc: func(origin string) bool {
+				return true
+			},
 			AllowCredentials: true,
 			AllowWildcard:    true,
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},

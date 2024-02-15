@@ -15,7 +15,7 @@ import (
 //	@Summary	register Command to App
 //	@Tags		Admin
 //
-//	@Param		appID							path	string					true	"id of App to register Command"
+//	@Param		appID					path	string					true	"id of App to register Command"
 //	@Param		command.RegisterRequest	body	command.RegisterRequest	true	"data of Command to register"
 //
 //	@Success	204
