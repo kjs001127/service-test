@@ -34,7 +34,7 @@ func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*d
 	cmds, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("scope = $1", query.Scope),
-		qm.WhereIn("app_id IN ($2)", slice...),
+		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 
 	cmds, err := models.Commands(
 		qm.Select("*"),
-		qm.AndIn("app_id IN ($1)", slice...),
+		qm.AndIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
 		return nil, err

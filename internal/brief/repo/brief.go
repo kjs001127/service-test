@@ -38,7 +38,7 @@ func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brie
 
 	all, err := models.Briefs(
 		qm.Select("*"),
-		qm.WhereIn("app_id IN ($1)", slice...),
+		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, b.db)
 
 	if err != nil {

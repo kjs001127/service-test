@@ -52,7 +52,7 @@ func (a *AppDAO) FindApps(ctx context.Context, appIDs []string) ([]*app.App, err
 		slice[i] = v
 	}
 
-	apps, err := models.Apps(qm.WhereIn("id IN ($1)", slice...)).All(ctx, a.db)
+	apps, err := models.Apps(qm.WhereIn("id IN ?", slice...)).All(ctx, a.db)
 	if err != nil {
 		return nil, err
 	}
