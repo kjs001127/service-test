@@ -184,7 +184,7 @@ jobs:
       - aws-ecr/build-and-push-image:
           <<: [*aws_ecr_env, *common_aws_ecr_config]
           dockerfile: deploy/Dockerfile
-          extra-build-args: --build-arg="TARGET_APP=$TARGET_APP" --build-arg="TARGET_PUBLIC_PORT=$TARGET_PUBLIC_PORT --build-arg="TARGET_ADMIN_PORT=$TARGET_ADMIN_PORT"
+          extra-build-args: --build-arg="TARGET_APP=$TARGET_APP" --build-arg="TARGET_PUBLIC_PORT=$TARGET_PUBLIC_PORT" --build-arg="TARGET_ADMIN_PORT=$TARGET_ADMIN_PORT"
           tag: <<parameters.tag>>
       - aws-ecr/build-and-push-image:
           <<: [*aws_ecr_env, *common_aws_ecr_config]
