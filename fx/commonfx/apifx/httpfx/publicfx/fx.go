@@ -5,6 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/doc"
+	"github.com/channel-io/ch-app-store/api/http/public/controller"
 	"github.com/channel-io/ch-app-store/api/http/public/wam"
 )
 
@@ -12,6 +13,7 @@ var PublicHandlers = fx.Module(
 	"public",
 	fx.Provide(
 		gintool.AddTag(wam.NewHandler),
+		gintool.AddTag(controller.NewHandler),
 	),
 
 	fx.Supply(
