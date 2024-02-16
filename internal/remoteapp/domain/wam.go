@@ -34,7 +34,7 @@ func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, path s
 		return err
 	}
 
-	if urls.WamURL != nil {
+	if urls.WamURL == nil {
 		return apierr.BadRequest(errors.New("wam url invalid"))
 	}
 

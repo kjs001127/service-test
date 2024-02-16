@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	_ "encoding/json"
 	"errors"
+	"github.com/channel-io/ch-app-store/api/http/general"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	genauth "github.com/channel-io/ch-app-store/auth/general"
