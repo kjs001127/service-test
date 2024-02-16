@@ -122,7 +122,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		Title:             appTarget.Title,
 		Description:       null.StringFromPtr(appTarget.Description),
 		DetailDescription: null.JSONFrom(detailDescription),
-		DetailImageUrls:   null.StringFromPtr(appTarget.DetailImageURLs),
+		DetailImageUrls:   appTarget.DetailImageURLs,
 		AvatarURL:         null.StringFromPtr(appTarget.AvatarURL),
 		State:             string(appTarget.State),
 		IsPrivate:         appTarget.IsPrivate,
@@ -148,7 +148,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 		Description:       rawApp.Description.Ptr(),
 		ManualURL:         rawApp.ManualURL.Ptr(),
 		DetailDescription: detailDescription,
-		DetailImageURLs:   rawApp.DetailImageUrls.Ptr(),
+		DetailImageURLs:   rawApp.DetailImageUrls,
 		ConfigSchemas:     cfgSchemas,
 		IsPrivate:         rawApp.IsPrivate,
 	}, nil

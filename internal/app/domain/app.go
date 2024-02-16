@@ -52,7 +52,7 @@ type App struct {
 	IsPrivate         bool           `json:"isPrivate"`
 	ManualURL         *string        `json:"manualUrl"`
 	DetailDescription map[string]any `json:"detailDescription"`
-	DetailImageURLs   *string        `json:"detailImageUrls"`
+	DetailImageURLs   []string       `json:"detailImageUrls"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas"`
 }
