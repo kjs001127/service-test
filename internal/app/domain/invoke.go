@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"net/http"
 )
 
 type JsonFunctionRequest struct {
@@ -142,54 +141,4 @@ func (i *Invoker) doInvoke(ctx context.Context, appID string, channelID string, 
 	}
 
 	return jsonRes, nil
-}
-
-type ProxyRequest struct {
-	Req    *http.Request
-	Writer http.ResponseWriter
-}
-
-type FileStreamHandler interface {
-	StreamFile(ctx context.Context, appID string, request ProxyRequest) error
-}
-
-type FileStreamer struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
-
-	handlerMap map[AppType]FileStreamHandler
-}
-
-func NewFileStreamer(
-	appChRepo AppChannelRepository,
-	appRepo AppRepository,
-	handlers []Typed[FileStreamHandler]) *FileStreamer {
-	ret := &FileStreamer{
-		appChRepo:  appChRepo,
-		appRepo:    appRepo,
-		handlerMap: make(map[AppType]FileStreamHandler),
-	}
-	for _, h := range handlers {
-		ret.handlerMap[h.Type] = h.Handler
-	}
-	return ret
-}
-
-type AppProxyRequest struct {
-	ProxyRequest
-	AppID string
-}
-
-func (i *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) error {
-	app, err := i.appRepo.FindApp(ctx, req.AppID)
-	if err != nil {
-		return err
-	}
-
-	h, ok := i.handlerMap[app.Type]
-	if !ok {
-		return errors.New("no handler found")
-	}
-
-	return h.StreamFile(ctx, req.AppID, req.ProxyRequest)
 }

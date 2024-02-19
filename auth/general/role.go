@@ -2,6 +2,7 @@ package general
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/golang/protobuf/proto"
@@ -70,11 +71,11 @@ func (f *RoleClient) CreateRole(ctx context.Context, request *service.CreateRole
 
 	rawRes, err := r.Post(f.authUrl + createRole)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("creatRole fail, body: %s, cause: %w", rawRes.Body(), err)
 	}
 	var res service.CreateRoleResult
 	if err := proto.Unmarshal(rawRes.Body(), &res); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse creatRole fail, body: %s, cause: %w", rawRes.Body(), err)
 	}
 
 	return &res, nil

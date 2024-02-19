@@ -43,20 +43,11 @@ var RemoteAppDomain = fx.Module(
 			fx.ResultTags(`name:"remoteInvoker"`),
 			fx.As(new(app.InvokeHandler)),
 		),
-		fx.Annotate(
-			domain.NewFileStreamHandler,
-			fx.ResultTags(`name:"remoteStreamer"`),
-			fx.As(new(app.FileStreamHandler)),
-		),
+		domain.NewFileStreamer,
 		fx.Annotate(
 			app.NewTyped[app.InvokeHandler],
 			fx.ParamTags(`name:"remoteApp"`, `name:"remoteInvoker"`),
 			fx.ResultTags(`group:"invokeHandler"`),
-		),
-		fx.Annotate(
-			app.NewTyped[app.FileStreamHandler],
-			fx.ParamTags(`name:"remoteApp"`, `name:"remoteStreamer"`),
-			fx.ResultTags(`group:"fileStreamer"`),
 		),
 	),
 )

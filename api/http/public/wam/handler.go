@@ -2,16 +2,16 @@ package wam
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	wamDownloader *app.FileStreamer
+	wamDownloader *remoteapp.FileStreamer
 }
 
-func NewHandler(wamDownloader *app.FileStreamer) *Handler {
+func NewHandler(wamDownloader *remoteapp.FileStreamer) *Handler {
 	return &Handler{wamDownloader: wamDownloader}
 }
 

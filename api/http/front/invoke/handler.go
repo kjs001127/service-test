@@ -3,15 +3,15 @@ package invoke
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/auth/principal/session"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	invoker             *cmd.Invoker
-	wamDownloader       *app.FileStreamer
+	wamDownloader       *remoteapp.FileStreamer
 	autoCompleteInvoker *cmd.AutoCompleteInvoker
 
 	authorizer session.ContextAuthorizer
@@ -19,7 +19,7 @@ type Handler struct {
 
 func NewHandler(
 	invoker *cmd.Invoker,
-	wamDownloader *app.FileStreamer,
+	wamDownloader *remoteapp.FileStreamer,
 	autoCompleteInvoker *cmd.AutoCompleteInvoker,
 	authorizer session.ContextAuthorizer,
 ) *Handler {

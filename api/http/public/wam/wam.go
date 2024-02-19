@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
 // downloadWAM godoc
@@ -24,12 +24,10 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 
 	reqCloned := *ctx.Request
 	reqCloned.URL.Path = path
-	err := h.wamDownloader.StreamFile(ctx, app.AppProxyRequest{
-		AppID: appID,
-		ProxyRequest: app.ProxyRequest{
-			Writer: ctx.Writer,
-			Req:    ctx.Request,
-		},
+	err := h.wamDownloader.StreamFile(ctx, remoteapp.AppProxyRequest{
+		AppID:  appID,
+		Writer: ctx.Writer,
+		Req:    ctx.Request,
 	})
 
 	if err != nil {

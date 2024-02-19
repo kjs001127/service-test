@@ -26,10 +26,6 @@ var AppDomain = fx.Module(
 			app.NewInvoker,
 			fx.ParamTags(``, ``, `group:"invokeHandler"`),
 		),
-		fx.Annotate(
-			app.NewFileStreamer,
-			fx.ParamTags(``, ``, `group:"fileStreamer"`),
-		),
 		app.NewInvokeTyper[json.RawMessage, json.RawMessage],
 	),
 )

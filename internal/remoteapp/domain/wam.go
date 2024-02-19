@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"sync"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 const bufSize = 1024 * 2 // 2KB
@@ -21,17 +20,23 @@ var bufPool = sync.Pool{
 	},
 }
 
-type FileStreamHandler struct {
+type FileStreamer struct {
 	repo      AppUrlRepository
 	requester HttpRequester
 }
 
-func NewFileStreamHandler(repo AppUrlRepository, requester HttpRequester) *FileStreamHandler {
-	return &FileStreamHandler{repo: repo, requester: requester}
+func NewFileStreamer(repo AppUrlRepository, requester HttpRequester) *FileStreamer {
+	return &FileStreamer{repo: repo, requester: requester}
 }
 
-func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, req app.ProxyRequest) error {
-	urls, err := a.repo.Fetch(ctx, appID)
+type AppProxyRequest struct {
+	Req    *http.Request
+	Writer http.ResponseWriter
+	AppID  string
+}
+
+func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) error {
+	urls, err := a.repo.Fetch(ctx, req.AppID)
 	if err != nil {
 		return err
 	}

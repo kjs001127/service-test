@@ -19,7 +19,7 @@ var Option = fx.Module(
 			fx.As(new(app.InvokeHandler)),
 		),
 		fx.Annotate(
-			new(mockapp.FileStreamer),
+			new(mockremoteapp.FileStreamer),
 			fx.As(new(app.FileStreamHandler)),
 		),
 		fx.Annotate(
