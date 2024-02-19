@@ -45,35 +45,35 @@ func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, path s
 
 	reader, err := a.requester.Request(ctx, HttpRequest{
 		Method: http.MethodGet,
-		Url:    url,
+		Headers: map[string]string{
+			"Accept": "text/html,image/webp,image/apng",
+		},
+		Url: url,
 	})
 	if err != nil {
 		return err
 	}
-	defer reader.Close() // TODO add logging
 
 	return doStream(reader, writer)
 }
 
 func doStream(from io.ReadCloser, to io.Writer) error {
+	defer from.Close() // TODO add logging
+
 	buf := bufPool.Get().([]byte)
 	defer bufPool.Put(buf)
 
-	var n int
-	var err error
-	for ; err == nil; n, err = from.Read(buf) {
-		if n <= 0 {
-			continue
+	for {
+		n, err := from.Read(buf)
+		if n > 0 {
+			if _, err := to.Write(buf[:n]); err != nil {
+				return err
+			}
 		}
-
-		if _, err := to.Write(buf[:n]); err != nil {
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
 			return err
 		}
 	}
-
-	if err != io.EOF {
-		return err
-	}
-
-	return nil
 }

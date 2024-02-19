@@ -134,11 +134,12 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 
 func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	var cfgSchemas app.ConfigSchemas
-	if err := json.Unmarshal(rawApp.ConfigSchema.JSON, &cfgSchemas); err != nil {
+	if err := rawApp.ConfigSchema.Unmarshal(&cfgSchemas); err != nil {
 		return nil, err
 	}
-	var detailDescription map[string]any
-	if err := json.Unmarshal(rawApp.DetailDescription.JSON, &detailDescription); err != nil {
+
+	detailDescription := make(map[string]any)
+	if err := rawApp.DetailDescription.Unmarshal(&detailDescription); err != nil {
 		return nil, err
 	}
 
