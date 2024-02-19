@@ -17,16 +17,20 @@ var App = fx.Module(
 
 var AppDomain = fx.Module(
 	"appDomain",
+
 	fx.Provide(
-		fx.Annotate(
-			app.NewAppManagerImpl,
-			fx.As(new(app.AppManager)),
-		),
 		app.NewAppInstallSvc,
 		app.NewQuerySvc,
 		app.NewConfigSvc,
-		app.NewFileStreamer,
-		app.NewInvoker[json.RawMessage, json.RawMessage],
+		fx.Annotate(
+			app.NewInvoker,
+			fx.ParamTags(``, ``, `group:"invokeHandler"`),
+		),
+		fx.Annotate(
+			app.NewFileStreamer,
+			fx.ParamTags(``, ``, `group:"fileStreamer"`),
+		),
+		app.NewInvokeTyper[json.RawMessage, json.RawMessage],
 	),
 )
 

@@ -4,14 +4,6 @@ import (
 	"context"
 )
 
-type AppRepository interface {
-	Save(ctx context.Context, app *App) (*App, error)
-	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
-	FindApp(ctx context.Context, appID string) (*App, error)
-	Index(ctx context.Context, since string, limit int) ([]*App, error)
-	Delete(ctx context.Context, appID string) error
-}
-
 type ConfigSchemas []ConfigSchema
 
 type ConfigSchema struct {
@@ -41,6 +33,16 @@ const (
 	AppStateUnStable = AppState("unstable")
 )
 
+type AppType string
+type Typed[T any] struct {
+	Type    AppType
+	Handler T
+}
+
+func NewTyped[T any](t AppType, handler T) Typed[T] {
+	return Typed[T]{Type: t, Handler: handler}
+}
+
 type App struct {
 	ID    string   `json:"id"`
 	State AppState `json:"state"`
@@ -55,6 +57,7 @@ type App struct {
 	DetailImageURLs   []string       `json:"detailImageUrls"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas"`
+	Type          AppType       `json:"appType"`
 }
 
 type ConfigMap map[string]string
@@ -76,4 +79,12 @@ type AppChannelRepository interface {
 	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
 	Delete(ctx context.Context, identifier Install) error
 	DeleteByAppID(ctx context.Context, appID string) error
+}
+
+type AppRepository interface {
+	Save(ctx context.Context, app *App) (*App, error)
+	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
+	FindApp(ctx context.Context, appID string) (*App, error)
+	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
+	Delete(ctx context.Context, appID string) error
 }

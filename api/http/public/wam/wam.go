@@ -21,13 +21,11 @@ import (
 //	@Router		/public/v1/apps/{appID}/wams/{path} [get]
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
-	channelId := ctx.Query("channelId")
 
 	err := h.wamDownloader.StreamFile(ctx, app.StreamRequest{
-		AppID:     appID,
-		Path:      path,
-		Writer:    ctx.Writer,
-		ChannelID: channelId,
+		AppID:  appID,
+		Path:   path,
+		Writer: ctx.Writer,
 	})
 
 	if err != nil {

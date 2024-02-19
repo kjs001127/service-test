@@ -21,8 +21,9 @@ func NewAppDAO(db db.DB) *AppDAO {
 	return &AppDAO{db: db}
 }
 
-func (a *AppDAO) Index(ctx context.Context, since string, limit int) ([]*app.App, error) {
+func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([]*app.App, error) {
 	var queries []qm.QueryMod
+	queries = append(queries, qm.Where("is_private = false"))
 	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
 
 	if since != "" {
@@ -120,6 +121,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	return &models.App{
 		ID:                appTarget.ID,
 		Title:             appTarget.Title,
+		Type:              string(appTarget.Type),
 		Description:       null.StringFromPtr(appTarget.Description),
 		DetailDescription: null.JSONFrom(detailDescription),
 		DetailImageUrls:   appTarget.DetailImageURLs,
@@ -143,6 +145,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	return &app.App{
 		ID:                rawApp.ID,
 		State:             app.AppState(rawApp.State),
+		Type:              app.AppType(rawApp.Type),
 		AvatarURL:         rawApp.AvatarURL.Ptr(),
 		Title:             rawApp.Title,
 		Description:       rawApp.Description.Ptr(),

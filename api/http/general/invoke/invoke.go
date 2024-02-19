@@ -52,9 +52,9 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	res, err := h.invoker.InvokeChannelFunction(
 		ctx,
-		channelID,
 		app.FunctionRequest[json.RawMessage]{
 			Endpoint: app.Endpoint{
+				ChannelID:    channelID,
 				AppID:        appID,
 				FunctionName: req.Method,
 			},

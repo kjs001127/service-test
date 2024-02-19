@@ -47,12 +47,12 @@ func (choices Choices) validate() error {
 }
 
 type AutoCompleteInvoker struct {
-	invoker *app.Invoker[AutoCompleteArgs, Choices]
+	invoker *app.InvokeTyper[AutoCompleteArgs, Choices]
 	repo    CommandRepository
 }
 
 func NewAutoCompleteInvoker(
-	invoker *app.Invoker[AutoCompleteArgs, Choices],
+	invoker *app.InvokeTyper[AutoCompleteArgs, Choices],
 	repo CommandRepository,
 ) *AutoCompleteInvoker {
 	return &AutoCompleteInvoker{invoker: invoker, repo: repo}
@@ -67,8 +67,9 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
 	}
 
-	return i.invoker.InvokeChannelFunction(ctx, request.ChannelID, app.FunctionRequest[AutoCompleteArgs]{
+	return i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[AutoCompleteArgs]{
 		Endpoint: app.Endpoint{
+			ChannelID:    request.ChannelID,
 			AppID:        request.Command.AppID,
 			FunctionName: *cmd.AutoCompleteFunctionName,
 		},

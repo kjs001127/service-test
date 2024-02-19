@@ -3,8 +3,6 @@ package domain
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/uid"
-
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
@@ -105,8 +103,6 @@ func NewAppDevSvcImpl(
 
 func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppResponse, error) {
 	remoteApp, err := tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
-		req.ID = uid.New().Hex()
-
 		created, err := s.manager.Create(ctx, req.App)
 		if err != nil {
 			return nil, err

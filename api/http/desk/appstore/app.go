@@ -30,7 +30,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 		return
 	}
 
-	apps, err := h.appRepo.Index(ctx, since, limitNumber)
+	apps, err := h.appRepo.FindPublicApps(ctx, since, limitNumber)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return

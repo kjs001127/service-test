@@ -23,6 +23,11 @@ var RemoteAppDev = fx.Module(
 
 var RemoteAppDomain = fx.Module(
 	"remoteappDomain",
+	fx.Supply(
+		fx.Annotate(app.AppType("remote"),
+			fx.ResultTags(`name:"remoteApp"`),
+		),
+	),
 	fx.Provide(
 		fx.Annotate(
 			domain.NewInstallHandler,
@@ -34,11 +39,23 @@ var RemoteAppDomain = fx.Module(
 		),
 		fx.Annotate(
 			domain.NewInvoker,
+			fx.ResultTags(`name:"remoteInvoker"`),
 			fx.As(new(app.InvokeHandler)),
 		),
 		fx.Annotate(
 			domain.NewFileStreamHandler,
+			fx.ResultTags(`name:"remoteStreamer"`),
 			fx.As(new(app.FileStreamHandler)),
+		),
+		fx.Annotate(
+			app.NewTyped[app.InvokeHandler],
+			fx.ParamTags(`name:"remoteApp"`, `name:"remoteInvoker"`),
+			fx.ResultTags(`group:"invokeHandler"`),
+		),
+		fx.Annotate(
+			app.NewTyped[app.FileStreamHandler],
+			fx.ParamTags(`name:"remoteApp"`, `name:"remoteStreamer"`),
+			fx.ResultTags(`group:"fileStreamer"`),
 		),
 	),
 )
@@ -46,6 +63,11 @@ var RemoteAppDomain = fx.Module(
 var RemoteAppDevDomain = fx.Module(
 	"remoteAppDev",
 	fx.Provide(
+		fx.Annotate(
+			app.NewAppManagerImpl,
+			fx.As(new(app.AppManager)),
+			fx.ParamTags(``, ``, `name:"remoteApp"`),
+		),
 		fx.Annotate(
 			domain.NewAppDevSvcImpl,
 			fx.As(new(domain.AppDevSvc)),

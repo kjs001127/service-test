@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 )
 
@@ -18,24 +19,6 @@ type InvokeHandler interface {
 	Invoke(ctx context.Context, app *App, request JsonFunctionRequest) (JsonFunctionResponse, error)
 }
 
-type Invoker[REQ any, RES any] struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
-	handler   InvokeHandler
-}
-
-func NewInvoker[REQ any, RES any](
-	appChRepo AppChannelRepository,
-	appRepo AppRepository,
-	handler InvokeHandler,
-) *Invoker[REQ, RES] {
-	return &Invoker[REQ, RES]{
-		appChRepo: appChRepo,
-		appRepo:   appRepo,
-		handler:   handler,
-	}
-}
-
 type FunctionRequest[REQ any] struct {
 	Endpoint
 	Body[REQ]
@@ -43,6 +26,7 @@ type FunctionRequest[REQ any] struct {
 
 type Endpoint struct {
 	AppID        string
+	ChannelID    string
 	FunctionName string
 }
 
@@ -72,48 +56,88 @@ type ChannelContext struct {
 	} `json:"trigger"`
 }
 
-func (i *Invoker[REQ, RES]) InvokeChannelFunction(
-	ctx context.Context,
-	channelID string,
-	request FunctionRequest[REQ],
-) (RES, error) {
-	var empty RES
-
-	_, err := i.appChRepo.Fetch(ctx, Install{
-		AppID:     request.AppID,
-		ChannelID: channelID,
-	})
-	if err != nil {
-		return empty, err
-	}
-
-	app, err := i.appRepo.FindApp(ctx, request.AppID)
-	if err != nil {
-		return empty, err
-	}
-
-	return i.doInvoke(ctx, app, request)
+type InvokeTyper[REQ any, RES any] struct {
+	invoker *Invoker
 }
 
-func (i *Invoker[REQ, RES]) doInvoke(ctx context.Context, target *App, request FunctionRequest[REQ]) (RES, error) {
+func NewInvokeTyper[REQ any, RES any](
+	invoker *Invoker,
+) *InvokeTyper[REQ, RES] {
+	return &InvokeTyper[REQ, RES]{invoker: invoker}
+}
+
+func (i *InvokeTyper[REQ, RES]) InvokeChannelFunction(
+	ctx context.Context,
+	request FunctionRequest[REQ],
+) (RES, error) {
 	var ret RES
 
-	paramMarshaled, err := json.Marshal(request.Params)
+	marshaled, err := json.Marshal(request.Params)
 	if err != nil {
 		return ret, err
 	}
 
-	jsonRes, err := i.handler.Invoke(ctx, target, JsonFunctionRequest{
+	res, err := i.invoker.doInvoke(ctx, request.AppID, request.ChannelID, JsonFunctionRequest{
 		Method:  request.FunctionName,
-		Params:  paramMarshaled,
+		Params:  marshaled,
 		Context: request.Context,
 	})
+	if err != nil {
+		return ret, err
+	}
 
-	if err := json.Unmarshal(jsonRes, &ret); err != nil {
+	if err := json.Unmarshal(res, &ret); err != nil {
 		return ret, err
 	}
 
 	return ret, nil
+}
+
+type Invoker struct {
+	appChRepo  AppChannelRepository
+	appRepo    AppRepository
+	handlerMap map[AppType]InvokeHandler
+}
+
+func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers []Typed[InvokeHandler]) *Invoker {
+	handlerMap := make(map[AppType]InvokeHandler)
+	for _, h := range handlers {
+		handlerMap[h.Type] = h.Handler
+	}
+	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap}
+}
+
+func (i *Invoker) doInvoke(ctx context.Context, appID string, channelID string, request JsonFunctionRequest) (JsonFunctionResponse, error) {
+	_, err := i.appChRepo.Fetch(ctx, Install{
+		AppID:     appID,
+		ChannelID: channelID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	app, err := i.appRepo.FindApp(ctx, appID)
+	if err != nil {
+		return nil, err
+	}
+
+	paramMarshaled, err := json.Marshal(request.Params)
+	if err != nil {
+		return nil, err
+	}
+
+	h, ok := i.handlerMap[app.Type]
+	if !ok {
+		return nil, errors.New("no handler found")
+	}
+
+	jsonRes, err := h.Invoke(ctx, app, JsonFunctionRequest{
+		Method:  request.Method,
+		Params:  paramMarshaled,
+		Context: request.Context,
+	})
+
+	return jsonRes, nil
 }
 
 type FileStreamHandler interface {
@@ -122,11 +146,24 @@ type FileStreamHandler interface {
 
 type FileStreamer struct {
 	appChRepo AppChannelRepository
-	handler   FileStreamHandler
+	appRepo   AppRepository
+
+	handlerMap map[AppType]FileStreamHandler
 }
 
-func NewFileStreamer(appChRepo AppChannelRepository, handler FileStreamHandler) *FileStreamer {
-	return &FileStreamer{appChRepo: appChRepo, handler: handler}
+func NewFileStreamer(
+	appChRepo AppChannelRepository,
+	appRepo AppRepository,
+	handlers []Typed[FileStreamHandler]) *FileStreamer {
+	ret := &FileStreamer{
+		appChRepo:  appChRepo,
+		appRepo:    appRepo,
+		handlerMap: make(map[AppType]FileStreamHandler),
+	}
+	for _, h := range handlers {
+		ret.handlerMap[h.Type] = h.Handler
+	}
+	return ret
 }
 
 type StreamRequest struct {
@@ -137,14 +174,15 @@ type StreamRequest struct {
 }
 
 func (i *FileStreamer) StreamFile(ctx context.Context, req StreamRequest) error {
-
-	_, err := i.appChRepo.Fetch(ctx, Install{
-		AppID:     req.AppID,
-		ChannelID: req.ChannelID,
-	})
+	app, err := i.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return nil
+		return err
 	}
 
-	return i.handler.StreamFile(ctx, req.AppID, req.Path, req.Writer)
+	h, ok := i.handlerMap[app.Type]
+	if !ok {
+		return errors.New("no handler found")
+	}
+
+	return h.StreamFile(ctx, req.AppID, req.Path, req.Writer)
 }

@@ -85,13 +85,13 @@ type CommandRepository interface {
 type Invoker struct {
 	repository CommandRepository
 
-	requester *app.Invoker[ParamInput, Action]
+	requester *app.InvokeTyper[ParamInput, Action]
 	validator *ParamValidator
 }
 
 func NewInvoker(
 	repository CommandRepository,
-	requester *app.Invoker[ParamInput, Action],
+	requester *app.InvokeTyper[ParamInput, Action],
 	validator *ParamValidator,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, validator: validator}
@@ -112,10 +112,11 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	ctxReq := app.FunctionRequest[ParamInput]{
 		Endpoint: app.Endpoint{
 			AppID:        cmd.AppID,
+			ChannelID:    request.ChannelID,
 			FunctionName: cmd.ActionFunctionName,
 		},
 		Body: request.Body,
 	}
 
-	return r.requester.InvokeChannelFunction(ctx, request.ChannelID, ctxReq)
+	return r.requester.InvokeChannelFunction(ctx, ctxReq)
 }

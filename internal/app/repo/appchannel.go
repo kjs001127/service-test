@@ -15,6 +15,8 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
+const wildcard = "*"
+
 type AppChannelDao struct {
 	db db.DB
 }
@@ -43,6 +45,7 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
+		qm.Or("channel_id = $2", wildcard),
 	).All(ctx, a.db)
 
 	if err != nil {

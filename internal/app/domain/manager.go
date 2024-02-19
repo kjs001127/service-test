@@ -3,6 +3,8 @@ package domain
 import (
 	"context"
 
+	"github.com/channel-io/go-lib/pkg/uid"
+
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -16,16 +18,22 @@ type AppManager interface {
 type AppManagerImpl struct {
 	appRepo AppRepository
 	repo    AppChannelRepository
+	Type    AppType
 }
 
 func NewAppManagerImpl(
 	appRepo AppRepository,
 	repo AppChannelRepository,
+	t AppType,
 ) *AppManagerImpl {
-	return &AppManagerImpl{appRepo: appRepo, repo: repo}
+	return &AppManagerImpl{appRepo: appRepo, repo: repo, Type: t}
 }
 
 func (a *AppManagerImpl) Create(ctx context.Context, app *App) (*App, error) {
+	app.ID = uid.New().Hex()
+	app.Type = a.Type
+	app.State = AppStateStable
+
 	return a.appRepo.Save(ctx, app)
 }
 
