@@ -26,7 +26,7 @@ var Admin = fx.Module(
 	AdminHttp,
 	remoteappfx.RemoteAppDev,
 	brieffx.Brief,
-	authfx.Auth,
+	authfx.AdminAuth,
 	appfx.App,
 	commandfx.Command,
 	restyfx.Clients,

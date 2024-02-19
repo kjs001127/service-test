@@ -103,27 +103,26 @@ func (f *RoleClient) DeleteRole(ctx context.Context, roleID string) (*service.De
 }
 
 type RoleClientAdapter struct {
-	cli *RoleClient
+	cli              *RoleClient
+	grantTypeMap     map[domain.RoleType][]model.GrantType
+	principalTypeMap map[domain.RoleType][]string
 }
 
-func NewRoleClientAdapter(cli *RoleClient) *RoleClientAdapter {
-	return &RoleClientAdapter{cli: cli}
+func NewRoleClientAdapter(
+	cli *RoleClient,
+	grantTypeMap map[domain.RoleType][]model.GrantType,
+	principalTypeMap map[domain.RoleType][]string,
+) *RoleClientAdapter {
+	return &RoleClientAdapter{cli: cli, grantTypeMap: grantTypeMap, principalTypeMap: principalTypeMap}
 }
 
-func (r RoleClientAdapter) CreateRole(ctx context.Context, request *domain.RoleWithType) (*domain.RoleWithCredential, error) {
+func (r *RoleClientAdapter) CreateRole(ctx context.Context, request *domain.RoleWithType) (*domain.RoleWithCredential, error) {
 	req := &service.CreateRoleRequest{
 		Claims: unmarshalClaims(request.Claims),
 	}
-	switch request.Type {
-	case domain.RoleTypeChannel:
-		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
-	case domain.RoleTypeFront:
-		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_PRINCIPAL, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
-		req.AllowedPrincipalTypes = []string{"x-session"}
-	case domain.RoleTypeDesk:
-		req.AllowedGrantTypes = []model.GrantType{model.GrantType_GRANT_TYPE_PRINCIPAL, model.GrantType_GRANT_TYPE_REFRESH_TOKEN}
-		req.AllowedPrincipalTypes = []string{"x-account"}
-	}
+
+	req.AllowedGrantTypes = r.grantTypeMap[request.Type]
+	req.AllowedPrincipalTypes = r.principalTypeMap[request.Type]
 
 	created, err := r.cli.CreateRole(ctx, req)
 	if err != nil {
