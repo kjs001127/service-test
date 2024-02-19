@@ -22,10 +22,14 @@ import (
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
 
-	err := h.wamDownloader.StreamFile(ctx, app.StreamRequest{
-		AppID:  appID,
-		Path:   path,
-		Writer: ctx.Writer,
+	reqCloned := *ctx.Request
+	reqCloned.URL.Path = path
+	err := h.wamDownloader.StreamFile(ctx, app.AppProxyRequest{
+		AppID: appID,
+		ProxyRequest: app.ProxyRequest{
+			Writer: ctx.Writer,
+			Req:    ctx.Request,
+		},
 	})
 
 	if err != nil {

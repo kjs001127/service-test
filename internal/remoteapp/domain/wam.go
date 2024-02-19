@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"io"
-	"net/http"
-	"strings"
+	"net/http/httputil"
+	"net/url"
 	"sync"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
 const bufSize = 1024 * 2 // 2KB
@@ -28,7 +30,7 @@ func NewFileStreamHandler(repo AppUrlRepository, requester HttpRequester) *FileS
 	return &FileStreamHandler{repo: repo, requester: requester}
 }
 
-func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, path string, writer io.Writer) error {
+func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, req app.ProxyRequest) error {
 	urls, err := a.repo.Fetch(ctx, appID)
 	if err != nil {
 		return err
@@ -38,23 +40,15 @@ func (a *FileStreamHandler) StreamFile(ctx context.Context, appID string, path s
 		return apierr.BadRequest(errors.New("wam url invalid"))
 	}
 
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	url := *urls.WamURL + path
-
-	reader, err := a.requester.Request(ctx, HttpRequest{
-		Method: http.MethodGet,
-		Headers: map[string]string{
-			"Accept": "text/html,image/webp,image/apng",
-		},
-		Url: url,
-	})
+	wamUrl, err := url.Parse(*urls.WamURL)
 	if err != nil {
 		return err
 	}
 
-	return doStream(reader, writer)
+	proxy := httputil.NewSingleHostReverseProxy(wamUrl)
+	proxy.ServeHTTP(req.Writer, req.Req)
+
+	return nil
 }
 
 func doStream(from io.ReadCloser, to io.Writer) error {
