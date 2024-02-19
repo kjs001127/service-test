@@ -9,7 +9,7 @@ import (
 
 const (
 	dwTimeout  = time.Second * 10
-	appTimeout = time.Second * 10
+	appTimeout = time.Second * 30
 )
 
 var Clients = fx.Module(
