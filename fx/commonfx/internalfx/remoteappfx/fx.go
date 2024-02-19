@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/infra"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/repo"
+	"github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
 var RemoteApp = fx.Module(
@@ -62,6 +63,37 @@ var RemoteAppDomain = fx.Module(
 
 var RemoteAppDevDomain = fx.Module(
 	"remoteAppDev",
+	fx.Supply(
+		map[domain.RoleType]domain.RoleTypeRule{
+			"channel": {
+				GrantTypes: []model.GrantType{
+					model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
+					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
+				},
+				GrantedScopes: []string{
+					"channel",
+				},
+			},
+
+			"user": {
+				GrantTypes: []model.GrantType{
+					model.GrantType_GRANT_TYPE_PRINCIPAL,
+					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
+				},
+				PrincipalTypes: []string{"x-session"},
+				GrantedScopes:  []string{"channel", "user"},
+			},
+
+			"manager": {
+				GrantTypes: []model.GrantType{
+					model.GrantType_GRANT_TYPE_PRINCIPAL,
+					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
+				},
+				PrincipalTypes: []string{"x-account"},
+				GrantedScopes:  []string{"channel", "manager"},
+			},
+		},
+	),
 	fx.Provide(
 		fx.Annotate(
 			app.NewAppManagerImpl,

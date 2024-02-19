@@ -9,7 +9,6 @@ import (
 	"github.com/channel-io/ch-app-store/auth/principal/session"
 	"github.com/channel-io/ch-app-store/config"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
-	"github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
 const (
@@ -25,32 +24,11 @@ var AdminAuth = fx.Module(
 			config.Get().Auth.AuthAdminURL,
 			fx.ResultTags(authAdmin),
 		),
-		map[remoteapp.RoleType][]model.GrantType{
-			remoteapp.RoleTypeChannel: {
-				model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
-				model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
-			},
-			remoteapp.RoleTypeFront: {
-				model.GrantType_GRANT_TYPE_PRINCIPAL,
-				model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
-			},
-			remoteapp.RoleTypeDesk: {
-				model.GrantType_GRANT_TYPE_PRINCIPAL,
-				model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
-			},
-		},
-		map[remoteapp.RoleType][]string{
-			remoteapp.RoleTypeFront: {"x-session"},
-			remoteapp.RoleTypeDesk:  {"x-account"},
-		},
 	),
 	fx.Provide(
 		fx.Annotate(
 			general.NewRoleClient,
 			fx.ParamTags(`name:"dw"`, authAdmin),
-		),
-		fx.Annotate(
-			general.NewRoleClientAdapter,
 			fx.As(new(remoteapp.RoleClient)),
 		),
 	),

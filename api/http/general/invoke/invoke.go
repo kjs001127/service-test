@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	_ "encoding/json"
 	"errors"
-	"github.com/channel-io/ch-app-store/api/http/general"
 	"net/http"
+
+	"github.com/channel-io/ch-app-store/api/http/general"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -16,7 +17,7 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-const tokenHeader = "x-access-token"
+const callerTypeApp = "app"
 
 // invoke godoc
 //
@@ -39,15 +40,9 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	rbac := rawRbac.(genauth.ParsedRBACToken)
-	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(req.Method)); !ok {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
-		return
-	}
-	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
-		return
+	caller, err := authorizeRbac(ctx, channelID, appID, req.Method)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
 	}
 
 	res, err := h.invoker.InvokeChannelFunction(
@@ -61,10 +56,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			Body: app.Body[json.RawMessage]{
 				Context: app.ChannelContext{
 					Channel: app.Channel{ID: channelID},
-					Caller: app.Caller{
-						Type: rbac.Type,
-						ID:   rbac.ID,
-					},
+					Caller:  caller,
 				},
 				Params: req.Params,
 			},
@@ -75,4 +67,27 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func authorizeRbac(ctx *gin.Context, channelID, appID, functionName string) (app.Caller, error) {
+	rawRbac, _ := ctx.Get(middleware.RBACKey)
+	rbac := rawRbac.(genauth.ParsedRBACToken)
+	if rbac.Caller.Type == callerTypeApp && rbac.Caller.ID == appID {
+		return app.Caller{
+			Type: rbac.Caller.Type,
+			ID:   rbac.Caller.ID,
+		}, nil
+	}
+
+	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(functionName)); !ok {
+		return app.Caller{}, errors.New("function call unauthorized")
+	}
+	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
+		return app.Caller{}, errors.New("function call unauthorized")
+	}
+
+	return app.Caller{
+		Type: rbac.Caller.Type,
+		ID:   rbac.Caller.ID,
+	}, nil
 }

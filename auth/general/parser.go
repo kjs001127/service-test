@@ -42,7 +42,7 @@ func (f *ParserImpl) Parse(ctx context.Context, token string) (ParsedRBACToken, 
 		return ParsedRBACToken{}, err
 	}
 
-	role, err := f.roleCli.FetchRole(ctx, claims.RoleId)
+	role, err := f.roleCli.GetRole(ctx, claims.RoleId)
 	if err != nil {
 		return ParsedRBACToken{}, err
 	}

@@ -2,49 +2,40 @@ package domain
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"strings"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
+	"github.com/channel-io/ch-proto/auth/v1/go/model"
+	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
 
 type AppRole struct {
-	RoleCredentials
+	*model.RoleCredentials
 	RoleID string
 	Type   RoleType
 	AppID  string
 }
 
-type RoleCredentials struct {
-	ClientID string `json:"clientID"`
-	Secret   string `json:"secret"`
-}
-
-type Role struct {
-	ID     string   `json:"id"`
-	Claims []*Claim `json:"claims"`
-}
-
 type RoleWithType struct {
-	Role
+	*model.Role
 	Type RoleType `json:"type"`
 }
 
 type RoleWithCredential struct {
-	RoleWithType
-	RoleCredentials
-}
-
-type Claim struct {
-	Service string   `json:"service"`
-	Action  string   `json:"action"`
-	Scopes  []string `json:"scopes"`
+	*RoleWithType
+	*model.RoleCredentials
 }
 
 type RoleClient interface {
-	ReadRole(ctx context.Context, roleID string) (*Role, error)
-	CreateRole(ctx context.Context, request *RoleWithType) (*RoleWithCredential, error)
-	UpdateRole(ctx context.Context, roleID string, claims []*Claim) (*Role, error)
-	DeleteRole(ctx context.Context, roleID string) error
+	GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error)
+	CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error)
+	UpdateRole(ctx context.Context, roleID string, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error)
+	DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error)
 }
 
 type AppRoleRepository interface {
@@ -56,13 +47,6 @@ type AppRoleRepository interface {
 
 type RoleType string
 
-const (
-	RoleTypeFront   = RoleType("front")
-	RoleTypeDesk    = RoleType("desk")
-	RoleTypeChannel = RoleType("channel")
-	RoleTypeApp     = RoleType("app")
-)
-
 type AppRequest struct {
 	Roles []*RoleWithType `json:"roles"`
 	*RemoteApp
@@ -73,6 +57,12 @@ type AppResponse struct {
 	Roles []*RoleWithCredential
 }
 
+type RoleTypeRule struct {
+	GrantTypes     []model.GrantType
+	PrincipalTypes []string
+	GrantedScopes  []string
+}
+
 type AppDevSvc interface {
 	CreateApp(ctx context.Context, req AppRequest) (AppResponse, error)
 	FetchApp(ctx context.Context, appID string) (AppResponse, error)
@@ -81,10 +71,11 @@ type AppDevSvc interface {
 }
 
 type AppDevSvcImpl struct {
-	roleCli  RoleClient
-	roleRepo AppRoleRepository
-	urlRepo  AppUrlRepository
-	manager  app.AppManager
+	roleCli   RoleClient
+	roleRepo  AppRoleRepository
+	urlRepo   AppUrlRepository
+	manager   app.AppManager
+	typeRules map[RoleType]RoleTypeRule
 }
 
 func NewAppDevSvcImpl(
@@ -92,27 +83,13 @@ func NewAppDevSvcImpl(
 	roleRepo AppRoleRepository,
 	urlRepo AppUrlRepository,
 	manager app.AppManager,
+	typeRules map[RoleType]RoleTypeRule,
 ) *AppDevSvcImpl {
-	return &AppDevSvcImpl{
-		roleCli:  roleCli,
-		roleRepo: roleRepo,
-		urlRepo:  urlRepo,
-		manager:  manager,
-	}
+	return &AppDevSvcImpl{roleCli: roleCli, roleRepo: roleRepo, urlRepo: urlRepo, manager: manager, typeRules: typeRules}
 }
 
 func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppResponse, error) {
-	remoteApp, err := tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
-		created, err := s.manager.Create(ctx, req.App)
-		if err != nil {
-			return nil, err
-		}
-
-		if err := s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
-			return nil, err
-		}
-		return &RemoteApp{App: created, Urls: req.Urls}, nil
-	})
+	remoteApp, err := s.createRemoteApp(ctx, req)
 	if err != nil {
 		return AppResponse{}, err
 	}
@@ -128,25 +105,75 @@ func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppRespo
 	}, nil
 }
 
-func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*RoleWithCredential, error) {
-	var roles []*RoleWithCredential
-	for _, r := range req.Roles {
-		roleWithCredential, err := s.roleCli.CreateRole(ctx, r)
+func (s *AppDevSvcImpl) createRemoteApp(ctx context.Context, req AppRequest) (*RemoteApp, error) {
+	return tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
+		created, err := s.manager.Create(ctx, req.App)
 		if err != nil {
 			return nil, err
 		}
+
+		if err := s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
+			return nil, err
+		}
+		return &RemoteApp{App: created, Urls: req.Urls}, nil
+	})
+}
+
+func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*RoleWithCredential, error) {
+	var roles []*RoleWithCredential
+	for _, r := range req.Roles {
+		rules, ok := s.typeRules[r.Type]
+		if !ok {
+			return nil, apierr.NotFound(fmt.Errorf("no role type found %s", r.Type))
+		}
+
+		if err := checkScopes(r.Role, rules); err != nil {
+			return nil, err
+		}
+
+		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
+			Claims:                r.Claims,
+			AllowedPrincipalTypes: rules.PrincipalTypes,
+			AllowedGrantTypes:     rules.GrantTypes,
+		})
+		if err != nil {
+			return nil, err
+		}
+
 		if err := s.roleRepo.Save(ctx, &AppRole{
 			AppID:           req.ID,
-			RoleID:          roleWithCredential.ID,
-			RoleCredentials: roleWithCredential.RoleCredentials,
+			RoleID:          res.Role.Id,
+			RoleCredentials: res.Credentials,
 			Type:            r.Type,
 		}); err != nil {
 			return nil, err
 		}
 
-		roles = append(roles, roleWithCredential)
+		roles = append(roles, &RoleWithCredential{
+			RoleWithType:    &RoleWithType{Role: res.Role, Type: r.Type},
+			RoleCredentials: res.Credentials,
+		})
 	}
 	return roles, nil
+}
+
+func checkScopes(role *model.Role, rule RoleTypeRule) error {
+	for _, c := range role.Claims {
+		for _, s := range c.Scope {
+			parsed, _, _ := strings.Cut(s, "-")
+
+			var checked bool
+			for _, granted := range rule.GrantedScopes {
+				if granted == parsed {
+					checked = true
+				}
+			}
+			if !checked {
+				return errors.New("scope is not granted for type")
+			}
+		}
+	}
+	return nil
 }
 
 func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse, error) {
@@ -192,18 +219,15 @@ func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (
 	return found, nil
 }
 
-func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, roleCredentials []*AppRole) ([]*RoleWithCredential, error) {
+func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, appRoles []*AppRole) ([]*RoleWithCredential, error) {
 	var roles []*RoleWithCredential
-	for _, c := range roleCredentials {
-		role, err := s.roleCli.ReadRole(ctx, c.RoleID)
+	for _, c := range appRoles {
+		role, err := s.roleCli.GetRole(ctx, c.RoleID)
 		if err != nil {
 			return nil, err
 		}
 		roles = append(roles, &RoleWithCredential{
-			RoleWithType: RoleWithType{
-				Type: c.Type,
-				Role: *role,
-			},
+			RoleWithType:    &RoleWithType{Role: role.Role, Type: c.Type},
 			RoleCredentials: c.RoleCredentials,
 		})
 	}
@@ -216,7 +240,7 @@ func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
 		return err
 	}
 	for _, c := range appRoles {
-		if err := s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
+		if _, err := s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
 			return err
 		}
 	}

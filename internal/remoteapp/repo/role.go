@@ -12,6 +12,7 @@ import (
 	"github.com/channel-io/ch-app-store/generated/models"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
+	"github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
 type AppRoleDao struct {
@@ -61,8 +62,8 @@ func marshal(role *domain.AppRole) *models.AppRole {
 	return &models.AppRole{
 		AppID:    role.AppID,
 		RoleID:   role.RoleID,
-		ClientID: role.ClientID,
-		Secret:   role.Secret,
+		ClientID: role.RoleCredentials.ClientId,
+		Secret:   role.RoleCredentials.ClientSecret,
 		Type:     string(role.Type),
 	}
 }
@@ -71,9 +72,9 @@ func unmarshal(role *models.AppRole) *domain.AppRole {
 	return &domain.AppRole{
 		AppID:  role.AppID,
 		RoleID: role.RoleID,
-		RoleCredentials: domain.RoleCredentials{
-			ClientID: role.ClientID,
-			Secret:   role.Secret,
+		RoleCredentials: &model.RoleCredentials{
+			ClientSecret: role.Secret,
+			ClientId:     role.ClientID,
 		},
 		Type: domain.RoleType(role.Type),
 	}
