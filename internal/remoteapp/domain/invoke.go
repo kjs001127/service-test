@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -80,7 +81,7 @@ type Response struct {
 func (a *Invoker) resultOf(ret []byte) (app.JsonFunctionResponse, error) {
 	var jsonResp Response
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal. payload: %s, cause: %w", ret, err)
 	}
 
 	if len(jsonResp.Error.Type) > 0 {

@@ -137,6 +137,10 @@ func (i *Invoker) doInvoke(ctx context.Context, appID string, channelID string, 
 		Context: request.Context,
 	})
 
+	if err != nil {
+		return nil, err
+	}
+
 	return jsonRes, nil
 }
 
