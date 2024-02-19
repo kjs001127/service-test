@@ -3,6 +3,7 @@ package infra
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -42,6 +43,10 @@ func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.
 	}
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode() < 200 || resp.StatusCode() >= 400 {
+		return nil, fmt.Errorf("http response fail, %d", resp.StatusCode())
 	}
 
 	return resp.RawBody(), nil
