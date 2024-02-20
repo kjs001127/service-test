@@ -53,7 +53,7 @@
       }
 
       function callCommand(appId, commandName, params) {
-        sendToClient({ type: 'command', appId, name: commandName, params })
+        sendToClient({ type: 'command', appId, name: commandName, params, wamId })
       }
 
       function callFunction(appId, functionName, params) {
@@ -61,17 +61,15 @@
           method: 'PUT',
           body: JSON.stringify({
             method: functionName,
-            // params,
-            params: {
-              userId: '65d34af26b2fcb86812a',
-            },
+            params,
             context: {
-              channelId,
+              channel: {
+                id: channelId,
+              }
             }
           }),
           headers: {
-            // 'x-access-token': accessToken,
-            'x-access-token': '111',
+            'x-access-token': accessToken,
             'accept': 'application/json',
             'Content-Type': 'application/json',
           }
