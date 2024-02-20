@@ -13,3 +13,7 @@ type AppsAndFullCommands struct {
 type RegisterRequest struct {
 	Commands []*cmd.Command `json:"commands"`
 }
+
+type BriefRequest struct {
+	Context app.ChannelContext `json:"context"`
+}

@@ -21,6 +21,8 @@ type BriefResponse struct {
 }
 
 type BriefRequest struct {
+	Context   app.ChannelContext
+	ChannelID string
 }
 
 type Invoker struct {
@@ -37,8 +39,8 @@ func NewInvoker(
 	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker}
 }
 
-func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID string) (BriefResponses, error) {
-	installedApps, err := i.querySvc.QueryAll(ctx, channelID)
+func (i *Invoker) Invoke(ctx context.Context, req BriefRequest) (BriefResponses, error) {
+	installedApps, err := i.querySvc.QueryAll(ctx, req.ChannelID)
 	if err != nil {
 		return BriefResponses{}, err
 	}
@@ -58,15 +60,11 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 			res := i.invoker.Invoke(ctx, app.TypedRequest[BriefRequest]{
 				Endpoint: app.Endpoint{
 					AppID:        brief.AppID,
-					ChannelID:    channelID,
+					ChannelID:    req.ChannelID,
 					FunctionName: brief.BriefFunctionName,
 				},
 				Body: app.Body[BriefRequest]{
-					Context: app.ChannelContext{
-						Channel: app.Channel{ID: channelID},
-						Caller:  caller,
-					},
-					Params: BriefRequest{},
+					Context: req.Context,
 				},
 			})
 			if res.Error == nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
@@ -60,17 +61,29 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //
 //	@Summaryc	call brief
 //	@Tags		Admin
+
+// @Param		dto.BriefRequest		body		dto.BriefRequest	true	"body of Brief"
+// @Param		channelID				path		string				true	"id of Channel to invoke brief"
 //
-//	@Param		channelID	path		string	true	"id of App to invoke brief"
-//
-//	@Success	200			{object}	brief.BriefResponses
-//	@Router		/admin/channels/{channelID}/brief  [put]
+// @Success	200			{object}	brief.BriefResponses
+// @Router		/admin/channels/{channelID}/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 
 	channelID := ctx.Param("channelID")
 
+	var req localdto.BriefRequest
+	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+		ctx.JSON(http.StatusOK, app.WrapErr(err))
+		return
+	}
+
+	req.Context.Caller.ID = channelID
+
 	var ret brief.BriefResponses
-	ret, err := h.briefInvoker.Invoke(ctx, callerAdmin, channelID)
+	ret, err := h.briefInvoker.Invoke(ctx, brief.BriefRequest{
+		Context:   req.Context,
+		ChannelID: channelID,
+	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
