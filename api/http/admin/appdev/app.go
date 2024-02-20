@@ -15,7 +15,7 @@ import (
 //	@Summary	create App to app-store
 //	@Tags		Admin
 //
-//	@Param		app.RemoteApp	body		app.AppRequest	true	"App to create"
+//	@Param		app.AppRequest	body		app.AppRequest	true	"App to create"
 //
 //	@Success	201				{object}	app.AppResponse
 //	@Router		/admin/apps [post]
