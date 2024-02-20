@@ -160,7 +160,3 @@ type TypedResponse[REQ any] struct {
 	Result REQ    `json:"result"`
 	Error  *Error `json:"error"`
 }
-
-// app -> invoke(functionName, ctx) type 에 따른 handler
-
-// installableApp -> invoke(functionName, ctx) -> ctx 에 channel 이 없으면 reject, 채널에 설치 여부 체크 후 라우팅
