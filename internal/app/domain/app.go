@@ -51,10 +51,10 @@ type App struct {
 	AvatarURL   *string `json:"avatarUrl"`
 	Description *string `json:"description"`
 
-	IsPrivate         bool           `json:"isPrivate"`
-	ManualURL         *string        `json:"manualUrl"`
-	DetailDescription map[string]any `json:"detailDescription"`
-	DetailImageURLs   []string       `json:"detailImageUrls"`
+	IsPrivate          bool             `json:"isPrivate"`
+	ManualURL          *string          `json:"manualUrl"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions"`
+	DetailImageURLs    []string         `json:"detailImageUrls"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas"`
 	Type          AppType       `json:"appType"`

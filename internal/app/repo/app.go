@@ -113,22 +113,22 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	detailDescription, err := json.Marshal(appTarget.DetailDescription)
+	detailDescriptions, err := json.Marshal(appTarget.DetailDescriptions)
 	if err != nil {
 		return nil, err
 	}
 
 	return &models.App{
-		ID:                appTarget.ID,
-		Title:             appTarget.Title,
-		Type:              string(appTarget.Type),
-		Description:       null.StringFromPtr(appTarget.Description),
-		DetailDescription: null.JSONFrom(detailDescription),
-		DetailImageUrls:   appTarget.DetailImageURLs,
-		AvatarURL:         null.StringFromPtr(appTarget.AvatarURL),
-		State:             string(appTarget.State),
-		IsPrivate:         appTarget.IsPrivate,
-		ConfigSchema:      null.JSONFrom(cfgSchema),
+		ID:                 appTarget.ID,
+		Title:              appTarget.Title,
+		Type:               string(appTarget.Type),
+		Description:        null.StringFromPtr(appTarget.Description),
+		DetailDescriptions: null.JSONFrom(detailDescriptions),
+		DetailImageUrls:    appTarget.DetailImageURLs,
+		AvatarURL:          null.StringFromPtr(appTarget.AvatarURL),
+		State:              string(appTarget.State),
+		IsPrivate:          appTarget.IsPrivate,
+		ConfigSchema:       null.JSONFrom(cfgSchema),
 	}, nil
 }
 
@@ -138,23 +138,23 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 		return nil, err
 	}
 
-	detailDescription := make(map[string]any)
-	if err := rawApp.DetailDescription.Unmarshal(&detailDescription); err != nil {
+	var detailDescriptions []map[string]any
+	if err := rawApp.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
 		return nil, err
 	}
 
 	return &app.App{
-		ID:                rawApp.ID,
-		State:             app.AppState(rawApp.State),
-		Type:              app.AppType(rawApp.Type),
-		AvatarURL:         rawApp.AvatarURL.Ptr(),
-		Title:             rawApp.Title,
-		Description:       rawApp.Description.Ptr(),
-		ManualURL:         rawApp.ManualURL.Ptr(),
-		DetailDescription: detailDescription,
-		DetailImageURLs:   rawApp.DetailImageUrls,
-		ConfigSchemas:     cfgSchemas,
-		IsPrivate:         rawApp.IsPrivate,
+		ID:                 rawApp.ID,
+		State:              app.AppState(rawApp.State),
+		Type:               app.AppType(rawApp.Type),
+		AvatarURL:          rawApp.AvatarURL.Ptr(),
+		Title:              rawApp.Title,
+		Description:        rawApp.Description.Ptr(),
+		ManualURL:          rawApp.ManualURL.Ptr(),
+		DetailDescriptions: detailDescriptions,
+		DetailImageURLs:    rawApp.DetailImageUrls,
+		ConfigSchemas:      cfgSchemas,
+		IsPrivate:          rawApp.IsPrivate,
 	}, nil
 }
 
