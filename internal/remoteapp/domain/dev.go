@@ -131,6 +131,12 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 			return nil, err
 		}
 
+		r.Claims = append(r.Claims, &model.Claim{
+			Scope:   []string{"channel"},
+			Service: req.ID,
+			Action:  "*",
+		})
+
 		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
 			Claims:                r.Claims,
 			AllowedPrincipalTypes: rules.GrantedPrincipalTypes,
