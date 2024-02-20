@@ -132,7 +132,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 		}
 
 		r.Claims = append(r.Claims, &model.Claim{
-			Scope:   []string{"channel"},
+			Scope:   []string{"channel-{id}"},
 			Service: req.ID,
 			Action:  "*",
 		})
