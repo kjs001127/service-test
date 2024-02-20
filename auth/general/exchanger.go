@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/channel-io/ch-app-store/auth"
+	"github.com/channel-io/ch-app-store/auth/principal"
 )
 
 const (
@@ -27,7 +27,7 @@ func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RB
 
 func (e *RBACExchanger) Exchange(
 	ctx context.Context,
-	token auth.Token,
+	token principal.Token,
 	scopes Scopes,
 	clientID string,
 ) (IssueResponse, error) {

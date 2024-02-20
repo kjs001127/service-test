@@ -1,4 +1,4 @@
-package auth
+package principal
 
 type Token interface {
 	Value() string
