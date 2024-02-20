@@ -1,7 +1,7 @@
 stage: exp
 auth:
-  authGeneralUrl: https://appstore-api.eks.exp.channel.io
-  authAdminURL: https://appstore-admin.eks.exp.channel.io
+  authGeneralUrl: https://api.exp.channel.io
+  authAdminURL: https://admin.api.exp.channel.io
   jwtServiceKey: ${JWT_SERVICE_KEY}
 port: ${PORT}
 psql:
