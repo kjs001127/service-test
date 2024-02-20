@@ -19,6 +19,10 @@ type errorWithMessage struct {
 func errorsWithMessage(errs ...error) []errorWithMessage {
 	var errorArr []errorWithMessage
 	for _, err := range errs {
+		if err == nil {
+			continue
+		}
+
 		errorArr = append(errorArr, errorWithMessage{
 			error:   err,
 			Message: err.Error(),
