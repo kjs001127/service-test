@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/channel-io/go-lib/pkg/log"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -19,10 +20,11 @@ const (
 type Invoker struct {
 	requester HttpRequester
 	repo      AppUrlRepository
+	logger    *log.ChannelLogger
 }
 
-func NewInvoker(requester HttpRequester, repo AppUrlRepository) *Invoker {
-	return &Invoker{requester: requester, repo: repo}
+func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger *log.ChannelLogger) *Invoker {
+	return &Invoker{requester: requester, repo: repo, logger: logger}
 }
 
 func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
@@ -40,14 +42,12 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapErr(err)
 	}
 
-	fmt.Printf("request: %s\n", marshaled)
-
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapErr(err)
 	}
 
-	fmt.Printf("response: %s\n", ret)
+	a.logger.Debugw("requesting remote app function", "request", marshaled, "response", ret)
 
 	var jsonResp app.JsonFunctionResponse
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
@@ -78,4 +78,3 @@ func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) 
 
 	return ret, nil
 }
-
