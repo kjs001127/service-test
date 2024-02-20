@@ -4,11 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -27,19 +24,19 @@ func NewInvoker(requester HttpRequester, repo AppUrlRepository) *Invoker {
 	return &Invoker{requester: requester, repo: repo}
 }
 
-func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
-	urls, err := a.repo.Fetch(ctx, app.ID)
+func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
+	urls, err := a.repo.Fetch(ctx, target.ID)
 	if err != nil {
-		return nil, err
+		return app.WrapErr(err)
 	}
 
 	if urls.FunctionURL == nil {
-		return nil, apierr.BadRequest(errors.New("function url invalid"))
+		return app.WrapErr(errors.New("function url empty"))
 	}
 
 	marshaled, err := json.Marshal(request)
 	if err != nil {
-		return nil, err
+		return app.WrapErr(errors.New("json marshal fail"))
 	}
 
 	reader, err := a.requester.Request(ctx, HttpRequest{
@@ -51,42 +48,24 @@ func (a *Invoker) Invoke(ctx context.Context, app *app.App, request app.JsonFunc
 		Url: *urls.FunctionURL,
 	})
 	if err != nil {
-		return nil, err
+		return app.WrapErr(err)
 	}
 
 	defer reader.Close()
 
 	ret, err := io.ReadAll(reader)
 	if err != nil {
-		return nil, err
+		return app.WrapErr(err)
 	}
 
 	return a.resultOf(ret)
 }
 
-type Error struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
-func (e *Error) Error() string {
-	return e.Message
-}
-
-type Response struct {
-	Error  Error           `json:"error"`
-	Result json.RawMessage `json:"result"`
-}
-
-func (a *Invoker) resultOf(ret []byte) (app.JsonFunctionResponse, error) {
-	var jsonResp Response
+func (a *Invoker) resultOf(ret []byte) app.JsonFunctionResponse {
+	var jsonResp app.JsonFunctionResponse
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal. payload: %s, cause: %w", ret, err)
+		return app.WrapErr(err)
 	}
 
-	if len(jsonResp.Error.Type) > 0 {
-		return nil, &jsonResp.Error
-	}
-
-	return app.JsonFunctionResponse(jsonResp.Result), nil
+	return jsonResp
 }

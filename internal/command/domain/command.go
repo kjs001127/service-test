@@ -118,5 +118,6 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		Body: request.Body,
 	}
 
-	return r.requester.InvokeChannelFunction(ctx, ctxReq)
+	ret := r.requester.InvokeChannelFunction(ctx, ctxReq)
+	return ret.Result, ret.Error
 }

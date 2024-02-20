@@ -55,7 +55,7 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 	for _, brief := range briefs {
 		brief := brief
 		go func() {
-			res, err := i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[BriefRequest]{
+			res := i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[BriefRequest]{
 				Endpoint: app.Endpoint{
 					AppID:        brief.AppID,
 					ChannelID:    channelID,
@@ -69,8 +69,8 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 					Params: BriefRequest{},
 				},
 			})
-			if err != nil {
-				ch <- &AppBrief{AppId: brief.AppID, Brief: res.Result}
+			if res.Error == nil {
+				ch <- &AppBrief{AppId: brief.AppID, Brief: res.Result.Result}
 			}
 			wg.Done()
 		}()

@@ -67,7 +67,7 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
 	}
 
-	return i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[AutoCompleteArgs]{
+	res := i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[AutoCompleteArgs]{
 		Endpoint: app.Endpoint{
 			ChannelID:    request.ChannelID,
 			AppID:        request.Command.AppID,
@@ -75,4 +75,6 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		},
 		Body: request.Body,
 	})
+
+	return res.Result, res.Error
 }

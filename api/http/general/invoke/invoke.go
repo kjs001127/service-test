@@ -36,16 +36,16 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
 		return
 	}
 
 	caller, err := authorizeRbac(ctx, channelID, appID, req.Method)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, err)
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(
+	res := h.invoker.InvokeChannelFunction(
 		ctx,
 		app.FunctionRequest[json.RawMessage]{
 			Endpoint: app.Endpoint{
@@ -61,10 +61,6 @@ func (h *Handler) invoke(ctx *gin.Context) {
 				Params: req.Params,
 			},
 		})
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
 
 	ctx.JSON(http.StatusOK, res)
 }

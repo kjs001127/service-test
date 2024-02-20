@@ -34,11 +34,11 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		ctx.JSON(http.StatusOK, app.WrapErr(err))
 		return
 	}
 
-	res, err := h.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[json.RawMessage]{
+	res := h.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
 			ChannelID:    channelID,
 			AppID:        appID,
@@ -52,11 +52,6 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			Params: req.Params,
 		},
 	})
-
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
 
 	ctx.JSON(http.StatusOK, res)
 }

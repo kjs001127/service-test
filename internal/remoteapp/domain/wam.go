@@ -3,7 +3,6 @@ package domain
 import (
 	"context"
 	"errors"
-	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -54,25 +53,4 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 	proxy.ServeHTTP(req.Writer, req.Req)
 
 	return nil
-}
-
-func doStream(from io.ReadCloser, to io.Writer) error {
-	defer from.Close() // TODO add logging
-
-	buf := bufPool.Get().([]byte)
-	defer bufPool.Put(buf)
-
-	for {
-		n, err := from.Read(buf)
-		if n > 0 {
-			if _, err := to.Write(buf[:n]); err != nil {
-				return err
-			}
-		}
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			return err
-		}
-	}
 }
