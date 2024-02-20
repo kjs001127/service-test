@@ -3,23 +3,20 @@ package domain
 import (
 	"context"
 	"encoding/json"
-
-	"github.com/channel-io/go-lib/pkg/log"
 )
 
 type Invoker struct {
 	appChRepo  AppChannelRepository
 	appRepo    AppRepository
 	handlerMap map[AppType]InvokeHandler
-	logger     *log.ChannelLogger
 }
 
-func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers []Typed[InvokeHandler], logger *log.ChannelLogger) *Invoker {
+func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers []Typed[InvokeHandler]) *Invoker {
 	handlerMap := make(map[AppType]InvokeHandler)
 	for _, h := range handlers {
 		handlerMap[h.Type] = h.Handler
 	}
-	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap, logger: logger}
+	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, channelID string, request JsonFunctionRequest) JsonFunctionResponse {
