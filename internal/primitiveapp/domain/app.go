@@ -2,9 +2,6 @@ package domain
 
 import (
 	"context"
-	"errors"
-
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -12,7 +9,7 @@ import (
 type PrimitiveFunction func(
 	ctx context.Context,
 	request app.JsonFunctionRequest,
-) (app.JsonFunctionResponse, error)
+) app.JsonFunctionResponse
 
 type PrimitiveApp struct {
 	AppID     string
@@ -33,16 +30,16 @@ func NewInvokeHandler(repo PrimitiveAppRepository) *InvokeHandler {
 
 func (i *InvokeHandler) Invoke(
 	ctx context.Context,
-	app *app.App,
+	target *app.App,
 	request app.JsonFunctionRequest,
-) (app.JsonFunctionResponse, error) {
-	primitiveApp, err := i.repo.FindPrimitiveApp(ctx, app.ID)
+) app.JsonFunctionResponse {
+	primitiveApp, err := i.repo.FindPrimitiveApp(ctx, target.ID)
 	if err != nil {
-		return nil, err
+		return app.WrapErr(err)
 	}
 	fn, ok := primitiveApp.Functions[request.Method]
 	if !ok {
-		return nil, apierr.NotFound(errors.New("fn not found"))
+		return app.WrapErr(err)
 	}
 
 	return fn(ctx, request)

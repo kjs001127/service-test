@@ -83,9 +83,9 @@ func (i InstallHandler) OnUnInstall(ctx context.Context, app *app.App, channelID
 type InvokeHandler struct {
 }
 
-func (i InvokeHandler) Invoke(ctx context.Context, app *app.App, request app.JsonFunctionRequest) (app.JsonFunctionResponse, error) {
-	if app.ID != "1" {
-		return nil, errors.New("no such app")
+func (i InvokeHandler) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
+	if target.ID != "1" {
+		return app.WrapErr(errors.New("cannot find app"))
 	}
 
 	var ret any
@@ -116,11 +116,13 @@ func (i InvokeHandler) Invoke(ctx context.Context, app *app.App, request app.Jso
 			{Name: "테스트1", Value: "testValue1"},
 		}
 	default:
-		return nil, apierr.NotFound(errors.New("no command found"))
+		return app.WrapErr(apierr.NotFound(errors.New("no command found")))
 	}
 
 	res, _ := json.Marshal(ret)
-	return res, nil
+	return app.JsonFunctionResponse{
+		Result: res,
+	}
 }
 
 // go:embed resources/*
