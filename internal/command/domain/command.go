@@ -119,5 +119,5 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	}
 
 	ret := r.requester.Invoke(ctx, ctxReq)
-	return ret.Result, ret.Error
+	return ret.Result, nil
 }

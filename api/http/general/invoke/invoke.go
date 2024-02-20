@@ -25,14 +25,13 @@ const callerTypeApp = "app"
 //	@Tags		General
 //
 //	@Param		x-access-token		header		string				true	"access token"
-//	@Param		channelID			path		string				true	"id of Channel to invoke Function"
 //	@Param		appID				path		string				true	"id of App to invoke Function"
 //	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
-//	@Success	200					{object}	json.RawMessage
-//	@Router		/general/v1/channels/{channelID}/apps/{appID}/functions [put]
+//	@Success	200					{object}	app.JsonFunctionResponse
+//	@Router		/general/v1/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID, channelID := ctx.Param("id"), ctx.Param("channelID")
+	appID := ctx.Param("appID")
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -40,7 +39,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	caller, err := authorizeRbac(ctx, channelID, appID, req.Method)
+	chCtx, err := authorizeRbac(ctx, appID, req.Method, req.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
 	}
@@ -49,41 +48,37 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		ctx,
 		app.TypedRequest[json.RawMessage]{
 			Endpoint: app.Endpoint{
-				ChannelID:    channelID,
+				ChannelID:    chCtx.Channel.ID,
 				AppID:        appID,
 				FunctionName: req.Method,
 			},
 			Body: app.Body[json.RawMessage]{
-				Context: app.ChannelContext{
-					Channel: app.Channel{ID: channelID},
-					Caller:  caller,
-				},
-				Params: req.Params,
+				Context: chCtx,
+				Params:  req.Params,
 			},
 		})
 
 	ctx.JSON(http.StatusOK, res)
 }
 
-func authorizeRbac(ctx *gin.Context, channelID, appID, functionName string) (app.Caller, error) {
+func authorizeRbac(ctx *gin.Context, appID string, fn string, chCtx app.ChannelContext) (app.ChannelContext, error) {
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
 	rbac := rawRbac.(genauth.ParsedRBACToken)
-	if rbac.Caller.Type == callerTypeApp && rbac.Caller.ID == appID {
-		return app.Caller{
+
+	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(fn)); !ok {
+		return app.ChannelContext{}, errors.New("function call unauthorized")
+	}
+	if ok := rbac.CheckScope(general.ChannelScope, chCtx.Channel.ID); !ok {
+		return app.ChannelContext{}, errors.New("function call unauthorized")
+	}
+
+	return app.ChannelContext{
+		Caller: app.Caller{
 			Type: rbac.Caller.Type,
 			ID:   rbac.Caller.ID,
-		}, nil
-	}
-
-	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(functionName)); !ok {
-		return app.Caller{}, errors.New("function call unauthorized")
-	}
-	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
-		return app.Caller{}, errors.New("function call unauthorized")
-	}
-
-	return app.Caller{
-		Type: rbac.Caller.Type,
-		ID:   rbac.Caller.ID,
+		},
+		Channel: app.Channel{
+			ID: chCtx.Channel.ID,
+		},
 	}, nil
 }

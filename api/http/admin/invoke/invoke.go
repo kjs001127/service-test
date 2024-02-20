@@ -25,13 +25,12 @@ var callerAdmin = app.Caller{
 //	@Tags		Admin
 //
 //	@Param		appID				path		string				true	"id of App to invoke Function"
-//	@Param		name				path		string				true	"name of Function to invoke"
 //	@Param		dto.JsonRPCRequest	body		dto.JsonRPCRequest	true	"body of Function to invoke"
 //
-//	@Success	200					{object}	json.RawMessage
-//	@Router		/admin/channels/{channelID}/apps/{appID}/functions [put]
+//	@Success	200					{object}	app.JsonRpcResponse
+//	@Router		/admin/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID, channelID := ctx.Param("id"), ctx.Param("channelID")
+	appID := ctx.Param("id")
 
 	var req dto.JsonRPCRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
@@ -41,16 +40,13 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
-			ChannelID:    channelID,
+			ChannelID:    req.Context.Channel.ID,
 			AppID:        appID,
 			FunctionName: req.Method,
 		},
 		Body: app.Body[json.RawMessage]{
-			Context: app.ChannelContext{
-				Channel: app.Channel{ID: channelID},
-				Caller:  callerAdmin,
-			},
-			Params: req.Params,
+			Context: req.Context,
+			Params:  req.Params,
 		},
 	})
 
@@ -62,10 +58,10 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-// @Param		dto.BriefRequest		body		dto.BriefRequest	true	"body of Brief"
-// @Param		channelID				path		string				true	"id of Channel to invoke brief"
+// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+// @Param		channelID			path		string				true	"id of Channel to invoke brief"
 //
-// @Success	200			{object}	brief.BriefResponses
+// @Success	200					{object}	brief.BriefResponses
 // @Router		/admin/channels/{channelID}/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 

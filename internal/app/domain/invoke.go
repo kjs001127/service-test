@@ -92,7 +92,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-func (e Error) Error() string {
+func (e *Error) Error() string {
 	return e.Message
 }
 
@@ -157,3 +157,7 @@ type TypedResponse[REQ any] struct {
 	Result REQ
 	Error  *Error
 }
+
+// app -> invoke(functionName, ctx) type 에 따른 handler
+
+// installableApp -> invoke(functionName, ctx) -> ctx 에 channel 이 없으면 reject, 채널에 설치 여부 체크 후 라우팅
