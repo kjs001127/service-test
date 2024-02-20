@@ -4,8 +4,32 @@ import (
 	"context"
 )
 
-type ConfigSchemas []ConfigSchema
+type App struct {
+	ID    string   `json:"id"`
+	State AppState `json:"state"`
 
+	Title       string  `json:"title"`
+	AvatarURL   *string `json:"avatarUrl"`
+	Description *string `json:"description"`
+
+	IsPrivate          bool             `json:"isPrivate"`
+	ManualURL          *string          `json:"manualUrl"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions"`
+	DetailImageURLs    []string         `json:"detailImageUrls"`
+
+	ConfigSchemas ConfigSchemas `json:"configSchemas"`
+	Type          AppType       `json:"appType"`
+}
+
+type AppState string
+
+const (
+	AppStateStable   = AppState("stable")
+	AppStateUnStable = AppState("unstable")
+)
+
+type ConfigMap map[string]string
+type ConfigSchemas []ConfigSchema
 type ConfigSchema struct {
 	Name       string         `json:"name"`
 	Type       string         `json:"type"`
@@ -26,13 +50,6 @@ func (s ConfigSchemas) DefaultConfig() ConfigMap {
 	return ret
 }
 
-type AppState string
-
-const (
-	AppStateStable   = AppState("stable")
-	AppStateUnStable = AppState("unstable")
-)
-
 type AppType string
 type Typed[T any] struct {
 	Type    AppType
@@ -43,24 +60,13 @@ func NewTyped[T any](t AppType, handler T) Typed[T] {
 	return Typed[T]{Type: t, Handler: handler}
 }
 
-type App struct {
-	ID    string   `json:"id"`
-	State AppState `json:"state"`
-
-	Title       string  `json:"title"`
-	AvatarURL   *string `json:"avatarUrl"`
-	Description *string `json:"description"`
-
-	IsPrivate          bool             `json:"isPrivate"`
-	ManualURL          *string          `json:"manualUrl"`
-	DetailDescriptions []map[string]any `json:"detailDescriptions"`
-	DetailImageURLs    []string         `json:"detailImageUrls"`
-
-	ConfigSchemas ConfigSchemas `json:"configSchemas"`
-	Type          AppType       `json:"appType"`
+type AppRepository interface {
+	Save(ctx context.Context, app *App) (*App, error)
+	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
+	FindApp(ctx context.Context, appID string) (*App, error)
+	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
+	Delete(ctx context.Context, appID string) error
 }
-
-type ConfigMap map[string]string
 
 type AppChannel struct {
 	AppID     string    `json:"appId"`
@@ -79,12 +85,4 @@ type AppChannelRepository interface {
 	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
 	Delete(ctx context.Context, identifier Install) error
 	DeleteByAppID(ctx context.Context, appID string) error
-}
-
-type AppRepository interface {
-	Save(ctx context.Context, app *App) (*App, error)
-	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
-	FindApp(ctx context.Context, appID string) (*App, error)
-	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
-	Delete(ctx context.Context, appID string) error
 }

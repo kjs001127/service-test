@@ -57,10 +57,10 @@ type AppResponse struct {
 	Roles []*RoleWithCredential
 }
 
-type RoleTypeRule struct {
-	GrantTypes     []model.GrantType
-	PrincipalTypes []string
-	GrantedScopes  []string
+type TypeRule struct {
+	GrantTypes            []model.GrantType
+	GrantedPrincipalTypes []string
+	GrantedScopes         []string
 }
 
 type AppDevSvc interface {
@@ -75,7 +75,7 @@ type AppDevSvcImpl struct {
 	roleRepo  AppRoleRepository
 	urlRepo   AppUrlRepository
 	manager   app.AppManager
-	typeRules map[RoleType]RoleTypeRule
+	typeRules map[RoleType]TypeRule
 }
 
 func NewAppDevSvcImpl(
@@ -83,7 +83,7 @@ func NewAppDevSvcImpl(
 	roleRepo AppRoleRepository,
 	urlRepo AppUrlRepository,
 	manager app.AppManager,
-	typeRules map[RoleType]RoleTypeRule,
+	typeRules map[RoleType]TypeRule,
 ) *AppDevSvcImpl {
 	return &AppDevSvcImpl{roleCli: roleCli, roleRepo: roleRepo, urlRepo: urlRepo, manager: manager, typeRules: typeRules}
 }
@@ -133,7 +133,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 
 		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
 			Claims:                r.Claims,
-			AllowedPrincipalTypes: rules.PrincipalTypes,
+			AllowedPrincipalTypes: rules.GrantedPrincipalTypes,
 			AllowedGrantTypes:     rules.GrantTypes,
 		})
 		if err != nil {
@@ -157,17 +157,18 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 	return roles, nil
 }
 
-func checkScopes(role *model.Role, rule RoleTypeRule) error {
+func checkScopes(role *model.Role, rule TypeRule) error {
 	for _, c := range role.Claims {
 		for _, s := range c.Scope {
-			parsed, _, _ := strings.Cut(s, "-")
+			scope, _, _ := strings.Cut(s, "-")
 
 			var checked bool
-			for _, granted := range rule.GrantedScopes {
-				if granted == parsed {
+			for _, grantedScope := range rule.GrantedScopes {
+				if grantedScope == scope {
 					checked = true
 				}
 			}
+
 			if !checked {
 				return errors.New("scope is not granted for type")
 			}

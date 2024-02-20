@@ -87,7 +87,7 @@ func (s *RegisterSvc) updateResource(ctx context.Context, oldbie *Command, newbi
 }
 
 func (s *RegisterSvc) deleteResource(ctx context.Context, oldbie *Command) error {
-	key := Key{
+	key := CommandKey{
 		AppID: oldbie.AppID,
 		Name:  oldbie.Name,
 		Scope: oldbie.Scope,

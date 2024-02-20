@@ -36,32 +36,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 
 	marshaled, err := json.Marshal(request)
 	if err != nil {
-		return app.WrapErr(errors.New("json marshal fail"))
+		return app.WrapErr(err)
 	}
 
-	reader, err := a.requester.Request(ctx, HttpRequest{
-		Body:   marshaled,
-		Method: http.MethodPut,
-		Headers: map[string]string{
-			contentTypeHeader: contentTypeJson,
-		},
-		Url: *urls.FunctionURL,
-	})
+	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapErr(err)
 	}
 
-	defer reader.Close()
-
-	ret, err := io.ReadAll(reader)
-	if err != nil {
-		return app.WrapErr(err)
-	}
-
-	return a.resultOf(ret)
-}
-
-func (a *Invoker) resultOf(ret []byte) app.JsonFunctionResponse {
 	var jsonResp app.JsonFunctionResponse
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
 		return app.WrapErr(err)
@@ -69,3 +51,26 @@ func (a *Invoker) resultOf(ret []byte) app.JsonFunctionResponse {
 
 	return jsonResp
 }
+
+func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) ([]byte, error) {
+	reader, err := a.requester.Request(ctx, HttpRequest{
+		Body:   body,
+		Method: http.MethodPut,
+		Headers: map[string]string{
+			contentTypeHeader: contentTypeJson,
+		},
+		Url: url,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	ret, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret, nil
+}
+

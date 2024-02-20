@@ -43,7 +43,7 @@ func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*d
 	return marshalAll(cmds)
 }
 
-func (c *CommandDao) Fetch(ctx context.Context, key domain.Key) (*domain.Command, error) {
+func (c *CommandDao) Fetch(ctx context.Context, key domain.CommandKey) (*domain.Command, error) {
 	model, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
@@ -70,7 +70,7 @@ func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*doma
 	return marshalAll(cmds)
 }
 
-func (c *CommandDao) Delete(ctx context.Context, key domain.Key) error {
+func (c *CommandDao) Delete(ctx context.Context, key domain.CommandKey) error {
 
 	model, err := models.Commands(
 		qm.Select("*"),

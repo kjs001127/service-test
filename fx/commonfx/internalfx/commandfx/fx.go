@@ -20,8 +20,8 @@ var CommandDomain = fx.Module(
 		domain.NewRegisterService,
 		domain.NewInvoker,
 		domain.NewAutoCompleteInvoker,
-		app.NewInvokeTyper[domain.ParamInput, domain.Action],
-		app.NewInvokeTyper[domain.AutoCompleteArgs, domain.Choices],
+		app.NewTypedInvoker[domain.ParamInput, domain.Action],
+		app.NewTypedInvoker[domain.AutoCompleteArgs, domain.Choices],
 	),
 )
 

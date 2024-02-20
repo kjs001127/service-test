@@ -1,6 +1,8 @@
 package remoteappfx
 
 import (
+	"net/http"
+
 	"go.uber.org/fx"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -55,7 +57,7 @@ var RemoteAppDomain = fx.Module(
 var RemoteAppDevDomain = fx.Module(
 	"remoteAppDev",
 	fx.Supply(
-		map[domain.RoleType]domain.RoleTypeRule{
+		map[domain.RoleType]domain.TypeRule{
 			"channel": {
 				GrantTypes: []model.GrantType{
 					model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
@@ -71,8 +73,8 @@ var RemoteAppDevDomain = fx.Module(
 					model.GrantType_GRANT_TYPE_PRINCIPAL,
 					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				PrincipalTypes: []string{"x-session"},
-				GrantedScopes:  []string{"channel", "user"},
+				GrantedPrincipalTypes: []string{"x-session"},
+				GrantedScopes:         []string{"channel", "user"},
 			},
 
 			"manager": {
@@ -80,8 +82,8 @@ var RemoteAppDevDomain = fx.Module(
 					model.GrantType_GRANT_TYPE_PRINCIPAL,
 					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				PrincipalTypes: []string{"x-account"},
-				GrantedScopes:  []string{"channel", "manager"},
+				GrantedPrincipalTypes: []string{"x-account"},
+				GrantedScopes:         []string{"channel", "manager"},
 			},
 		},
 	),
@@ -101,6 +103,12 @@ var RemoteAppDevDomain = fx.Module(
 
 var RemoteAppInfra = fx.Module(
 	"remoteAppInfra",
+	fx.Supply(
+		fx.Annotate(
+			http.DefaultTransport,
+			fx.As(new(http.RoundTripper)),
+		),
+	),
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppUrlDao,

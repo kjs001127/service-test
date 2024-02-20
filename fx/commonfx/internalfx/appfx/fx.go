@@ -26,7 +26,7 @@ var AppDomain = fx.Module(
 			app.NewInvoker,
 			fx.ParamTags(``, ``, `group:"invokeHandler"`),
 		),
-		app.NewInvokeTyper[json.RawMessage, json.RawMessage],
+		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
 	),
 )
 

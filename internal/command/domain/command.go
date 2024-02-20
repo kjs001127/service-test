@@ -65,7 +65,7 @@ type Query struct {
 	Scope  Scope
 }
 
-type Key struct {
+type CommandKey struct {
 	AppID string
 	Scope Scope
 	Name  string
@@ -73,43 +73,43 @@ type Key struct {
 
 type CommandRepository interface {
 	FetchByQuery(ctx context.Context, query Query) ([]*Command, error)
-	Fetch(ctx context.Context, key Key) (*Command, error)
+	Fetch(ctx context.Context, key CommandKey) (*Command, error)
 
 	FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*Command, error)
 	FetchAllByAppID(ctx context.Context, appID string) ([]*Command, error)
 
-	Delete(ctx context.Context, key Key) error
+	Delete(ctx context.Context, key CommandKey) error
 	Save(ctx context.Context, resource *Command) (*Command, error)
 }
 
 type Invoker struct {
 	repository CommandRepository
 
-	requester *app.InvokeTyper[ParamInput, Action]
+	requester *app.TypedInvoker[ParamInput, Action]
 	validator *ParamValidator
 }
 
 func NewInvoker(
 	repository CommandRepository,
-	requester *app.InvokeTyper[ParamInput, Action],
+	requester *app.TypedInvoker[ParamInput, Action],
 	validator *ParamValidator,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, validator: validator}
 }
 
 type CommandRequest struct {
-	Key
+	CommandKey
 	ChannelID string
 	app.Body[ParamInput]
 }
 
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
-	cmd, err := r.repository.Fetch(ctx, request.Key)
+	cmd, err := r.repository.Fetch(ctx, request.CommandKey)
 	if err != nil {
 		return Action{}, err
 	}
 
-	ctxReq := app.FunctionRequest[ParamInput]{
+	ctxReq := app.TypedRequest[ParamInput]{
 		Endpoint: app.Endpoint{
 			AppID:        cmd.AppID,
 			ChannelID:    request.ChannelID,
@@ -118,6 +118,6 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		Body: request.Body,
 	}
 
-	ret := r.requester.InvokeChannelFunction(ctx, ctxReq)
+	ret := r.requester.Invoke(ctx, ctxReq)
 	return ret.Result, ret.Error
 }

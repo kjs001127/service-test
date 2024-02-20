@@ -48,7 +48,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
-		Key: command.Key{
+		CommandKey: command.CommandKey{
 			AppID: appID,
 			Name:  name,
 			Scope: command.ScopeDesk,
@@ -100,7 +100,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	}
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
-		Command: command.Key{
+		Command: command.CommandKey{
 			AppID: appID,
 			Name:  name,
 			Scope: command.ScopeDesk,

@@ -6,14 +6,12 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
-
-	"github.com/channel-io/ch-app-store/auth"
 )
 
 const uri = "/api/admin/auth"
 
 type ChatValidator interface {
-	ValidateChat(ctx context.Context, token auth.Token, chat Chat) error
+	ValidateChat(ctx context.Context, token Token, chat Chat) error
 }
 
 type ChatValidatorImpl struct {
@@ -30,7 +28,7 @@ type Chat struct {
 	ID   string
 }
 
-func (c *ChatValidatorImpl) ValidateChat(ctx context.Context, token auth.Token, chat Chat) error {
+func (c *ChatValidatorImpl) ValidateChat(ctx context.Context, token Token, chat Chat) error {
 	req := c.cli.R()
 	req.SetContext(ctx)
 	req.Header.Set(token.Type(), token.Value())

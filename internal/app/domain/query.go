@@ -4,16 +4,6 @@ import (
 	"context"
 )
 
-type InstalledApps struct {
-	Apps        []*App        `json:"apps"`
-	AppChannels []*AppChannel `json:"appChannels"`
-}
-
-type InstalledApp struct {
-	App        *App        `json:"app"`
-	AppChannel *AppChannel `json:"appChannel"`
-}
-
 type QuerySvc struct {
 	appChRepo AppChannelRepository
 	appRepo   AppRepository
@@ -52,6 +42,16 @@ func (s *QuerySvc) Query(ctx context.Context, install Install) (InstalledApp, er
 		App:        app,
 		AppChannel: appCh,
 	}, nil
+}
+
+type InstalledApps struct {
+	Apps        []*App        `json:"apps"`
+	AppChannels []*AppChannel `json:"appChannels"`
+}
+
+type InstalledApp struct {
+	App        *App        `json:"app"`
+	AppChannel *AppChannel `json:"appChannel"`
 }
 
 func AppIDsOf(appChannels []*AppChannel) []string {

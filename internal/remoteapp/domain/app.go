@@ -6,14 +6,14 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-type Urls struct {
-	FunctionURL *string `json:"functionUrl"`
-	WamURL      *string `json:"wamUrl"`
-}
-
 type RemoteApp struct {
 	*app.App
 	Urls
+}
+
+type Urls struct {
+	FunctionURL *string `json:"functionUrl"`
+	WamURL      *string `json:"wamUrl"`
 }
 
 type AppUrlRepository interface {

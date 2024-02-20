@@ -5,113 +5,6 @@ import (
 	"encoding/json"
 )
 
-type JsonFunctionRequest struct {
-	Method  string          `json:"method"`
-	Params  json.RawMessage `json:"params"`
-	Context ChannelContext  `json:"context"`
-}
-
-type Error struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
-func (e Error) Error() string {
-	return e.Message
-}
-
-func WrapErr(err error) JsonFunctionResponse {
-	return JsonFunctionResponse{Error: &Error{Type: "common", Message: err.Error()}}
-}
-
-type JsonFunctionResponse struct {
-	Error  *Error          `json:"error"`
-	Result json.RawMessage `json:"result"`
-}
-
-type InvokeHandler interface {
-	Invoke(ctx context.Context, app *App, request JsonFunctionRequest) JsonFunctionResponse
-}
-
-type FunctionRequest[REQ any] struct {
-	Endpoint
-	Body[REQ]
-}
-
-type Endpoint struct {
-	AppID        string
-	ChannelID    string
-	FunctionName string
-}
-
-type Channel struct {
-	ID string `json:"id"`
-}
-type Caller struct {
-	Type string `json:"type"`
-	ID   string `json:"id"`
-}
-
-type Body[REQ any] struct {
-	Context ChannelContext `json:"context"`
-	Params  REQ            `json:"params"`
-}
-
-type ChannelContext struct {
-	Caller  Caller  `json:"caller"`
-	Channel Channel `json:"channel"`
-	Chat    struct {
-		Type string `json:"type"`
-		ID   string `json:"id"`
-	} `json:"chat"`
-	Trigger struct {
-		Type       string            `json:"type"`
-		Attributes map[string]string `json:"attributes"`
-	} `json:"trigger"`
-}
-
-type TypedResponse[REQ any] struct {
-	Result REQ
-	Error  *Error
-}
-
-type InvokeTyper[REQ any, RES any] struct {
-	invoker *Invoker
-}
-
-func NewInvokeTyper[REQ any, RES any](
-	invoker *Invoker,
-) *InvokeTyper[REQ, RES] {
-	return &InvokeTyper[REQ, RES]{invoker: invoker}
-}
-
-func (i *InvokeTyper[REQ, RES]) InvokeChannelFunction(
-	ctx context.Context,
-	request FunctionRequest[REQ],
-) TypedResponse[RES] {
-	var ret RES
-
-	marshaled, err := json.Marshal(request.Params)
-	if err != nil {
-		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
-	}
-
-	res := i.invoker.doInvoke(ctx, request.AppID, request.ChannelID, JsonFunctionRequest{
-		Method:  request.FunctionName,
-		Params:  marshaled,
-		Context: request.Context,
-	})
-	if res.Error != nil {
-		return TypedResponse[RES]{Error: res.Error}
-	}
-
-	if err := json.Unmarshal(res.Result, &ret); err != nil {
-		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
-	}
-
-	return TypedResponse[RES]{Result: ret}
-}
-
 type Invoker struct {
 	appChRepo  AppChannelRepository
 	appRepo    AppRepository
@@ -126,7 +19,7 @@ func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers 
 	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap}
 }
 
-func (i *Invoker) doInvoke(ctx context.Context, appID string, channelID string, request JsonFunctionRequest) JsonFunctionResponse {
+func (i *Invoker) Invoke(ctx context.Context, appID string, channelID string, request JsonFunctionRequest) JsonFunctionResponse {
 	_, err := i.appChRepo.Fetch(ctx, Install{
 		AppID:     appID,
 		ChannelID: channelID,
@@ -155,4 +48,112 @@ func (i *Invoker) doInvoke(ctx context.Context, appID string, channelID string, 
 		Params:  paramMarshaled,
 		Context: request.Context,
 	})
+}
+
+type InvokeHandler interface {
+	Invoke(ctx context.Context, app *App, request JsonFunctionRequest) JsonFunctionResponse
+}
+
+type JsonFunctionRequest struct {
+	Method  string          `json:"method"`
+	Params  json.RawMessage `json:"params"`
+	Context ChannelContext  `json:"context"`
+}
+
+type ChannelContext struct {
+	Caller  Caller  `json:"caller"`
+	Channel Channel `json:"channel"`
+	Chat    struct {
+		Type string `json:"type"`
+		ID   string `json:"id"`
+	} `json:"chat"`
+	Trigger struct {
+		Type       string            `json:"type"`
+		Attributes map[string]string `json:"attributes"`
+	} `json:"trigger"`
+}
+
+type Channel struct {
+	ID string `json:"id"`
+}
+
+type Caller struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
+}
+
+type JsonFunctionResponse struct {
+	Error  *Error          `json:"error"`
+	Result json.RawMessage `json:"result"`
+}
+
+type Error struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
+
+func (e Error) Error() string {
+	return e.Message
+}
+
+func WrapErr(err error) JsonFunctionResponse {
+	return JsonFunctionResponse{Error: &Error{Type: "common", Message: err.Error()}}
+}
+
+type TypedInvoker[REQ any, RES any] struct {
+	invoker *Invoker
+}
+
+func NewTypedInvoker[REQ any, RES any](
+	invoker *Invoker,
+) *TypedInvoker[REQ, RES] {
+	return &TypedInvoker[REQ, RES]{invoker: invoker}
+}
+
+func (i *TypedInvoker[REQ, RES]) Invoke(
+	ctx context.Context,
+	request TypedRequest[REQ],
+) TypedResponse[RES] {
+	var ret RES
+
+	marshaled, err := json.Marshal(request.Params)
+	if err != nil {
+		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
+	}
+
+	res := i.invoker.Invoke(ctx, request.AppID, request.ChannelID, JsonFunctionRequest{
+		Method:  request.FunctionName,
+		Params:  marshaled,
+		Context: request.Context,
+	})
+	if res.Error != nil {
+		return TypedResponse[RES]{Error: res.Error}
+	}
+
+	if err := json.Unmarshal(res.Result, &ret); err != nil {
+		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
+	}
+
+	return TypedResponse[RES]{Result: ret}
+}
+
+type TypedRequest[REQ any] struct {
+	Endpoint
+	Body[REQ]
+}
+
+type Endpoint struct {
+	AppID        string
+	ChannelID    string
+	FunctionName string
+}
+
+type Body[REQ any] struct {
+	Context ChannelContext `json:"context"`
+	Params  REQ            `json:"params"`
+}
+
+type TypedResponse[REQ any] struct {
+	Result REQ
+	Error  *Error
 }

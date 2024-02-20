@@ -39,10 +39,11 @@ func RunWith[R any](
 	body func(context.Context) (R, error),
 	sqlOptions ...Option,
 ) (ret R, retErr error) {
-	var empty R
 	if defaultDB == nil {
-		return empty, fmt.Errorf("defaultDB does not exist")
+		panic(errors.New("defaultDB is not configured"))
 	}
+
+	var empty R
 
 	txOptions := sql.TxOptions{Isolation: sql.LevelDefault, ReadOnly: false}
 	for _, opt := range sqlOptions {
@@ -123,18 +124,18 @@ func (s *DB) QueryRow(query string, args ...interface{}) *sql.Row {
 }
 
 func (s *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	return withTx(ctx).ExecContext(ctx, query, args...)
+	return txIfExists(ctx).ExecContext(ctx, query, args...)
 }
 
 func (s *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	return withTx(ctx).QueryContext(ctx, query, args...)
+	return txIfExists(ctx).QueryContext(ctx, query, args...)
 }
 
 func (s *DB) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	return withTx(ctx).QueryRowContext(ctx, query, args...)
+	return txIfExists(ctx).QueryRowContext(ctx, query, args...)
 }
 
-func withTx(ctx context.Context) db.DB {
+func txIfExists(ctx context.Context) db.DB {
 	if ctx.Value(txKey) == nil {
 		return defaultDB
 	}

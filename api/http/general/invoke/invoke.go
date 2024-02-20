@@ -45,9 +45,9 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
 	}
 
-	res := h.invoker.InvokeChannelFunction(
+	res := h.invoker.Invoke(
 		ctx,
-		app.FunctionRequest[json.RawMessage]{
+		app.TypedRequest[json.RawMessage]{
 			Endpoint: app.Endpoint{
 				ChannelID:    channelID,
 				AppID:        appID,

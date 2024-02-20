@@ -38,7 +38,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	res := h.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[json.RawMessage]{
+	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
 			ChannelID:    channelID,
 			AppID:        appID,

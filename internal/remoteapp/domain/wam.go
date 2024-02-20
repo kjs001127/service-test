@@ -6,26 +6,17 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"sync"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
 
-const bufSize = 1024 * 2 // 2KB
-
-var bufPool = sync.Pool{
-	New: func() any {
-		return make([]byte, bufSize)
-	},
-}
-
 type FileStreamer struct {
 	repo      AppUrlRepository
-	requester HttpRequester
+	requester http.RoundTripper
 }
 
-func NewFileStreamer(repo AppUrlRepository, requester HttpRequester) *FileStreamer {
-	return &FileStreamer{repo: repo, requester: requester}
+func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper) *FileStreamer {
+	return &FileStreamer{repo: repo, requester: tripper}
 }
 
 type AppProxyRequest struct {
@@ -50,6 +41,7 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(wamUrl)
+	proxy.Transport = a.requester
 	proxy.ServeHTTP(req.Writer, req.Req)
 
 	return nil

@@ -26,24 +26,24 @@ type BriefRequest struct {
 type Invoker struct {
 	repo     BriefRepository
 	querySvc *app.QuerySvc
-	invoker  *app.InvokeTyper[BriefRequest, BriefResponse]
+	invoker  *app.TypedInvoker[BriefRequest, BriefResponse]
 }
 
 func NewInvoker(
 	repo BriefRepository,
 	querySvc *app.QuerySvc,
-	invoker *app.InvokeTyper[BriefRequest, BriefResponse],
+	invoker *app.TypedInvoker[BriefRequest, BriefResponse],
 ) *Invoker {
 	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID string) (BriefResponses, error) {
-	apps, err := i.querySvc.QueryAll(ctx, channelID)
+	installedApps, err := i.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		return BriefResponses{}, err
 	}
 
-	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(apps.AppChannels))
+	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(installedApps.AppChannels))
 	if err != nil {
 		return BriefResponses{}, err
 	}
@@ -55,7 +55,7 @@ func (i *Invoker) Invoke(ctx context.Context, caller app.Caller, channelID strin
 	for _, brief := range briefs {
 		brief := brief
 		go func() {
-			res := i.invoker.InvokeChannelFunction(ctx, app.FunctionRequest[BriefRequest]{
+			res := i.invoker.Invoke(ctx, app.TypedRequest[BriefRequest]{
 				Endpoint: app.Endpoint{
 					AppID:        brief.AppID,
 					ChannelID:    channelID,
