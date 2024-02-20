@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -39,10 +40,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapErr(err)
 	}
 
+	fmt.Printf("request: %s\n", marshaled)
+
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapErr(err)
 	}
+
+	fmt.Printf("response: %s\n", ret)
 
 	var jsonResp app.JsonFunctionResponse
 	if err := json.Unmarshal(ret, &jsonResp); err != nil {
