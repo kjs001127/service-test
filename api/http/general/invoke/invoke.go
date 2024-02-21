@@ -21,15 +21,14 @@ import (
 
 // invokeNative godoc
 //
-//	@Summary	invoke native Function
+//	@Summary	invoke Function
 //	@Tags		General
 //
-//	@Param		x-access-token			header		string						true	"access token"
-//	@Param		dto.JsonFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
+//	@Param		x-access-token				header			string							true	"access token"
+//	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
 //	@Success	200						{object}	domain.NativeFunctionResponse
 //	@Router		/general/v1/native/functions [put]
-
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req localdto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
