@@ -42,12 +42,13 @@ var Auth = fx.Module(
 		),
 		fx.Annotate(
 			general.NewRoleClientImpl,
+			fx.As(new(general.RoleFetcher)),
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 		fx.Annotate(
 			general.NewParser,
 			fx.As(new(general.Parser)),
-			fx.ParamTags(restyfx.Dw, ``, configfx.DwAdmin),
+			fx.ParamTags(``, configfx.JwtServiceKey),
 		),
 		fx.Annotate(
 			session.NewContextAuthorizer,
