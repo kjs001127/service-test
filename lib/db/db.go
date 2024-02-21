@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/pkg/errors"
+
 	"github.com/channel-io/ch-app-store/config"
 )
 
@@ -28,7 +30,7 @@ func BuildDataSource() (*sql.DB, error) {
 
 	opened, err := sql.Open("postgres", name)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while opening psql")
 	}
 	opened.SetMaxOpenConns(50)
 	return opened, nil

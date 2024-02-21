@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -32,7 +33,7 @@ func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([
 
 	apps, err := models.Apps(queries...).All(ctx, a.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying app")
 	}
 
 	return a.unmarshalAll(apps)
@@ -41,7 +42,7 @@ func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([
 func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
 	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying app")
 	}
 
 	return a.unmarshal(appTarget)
@@ -55,7 +56,7 @@ func (a *AppDAO) FindApps(ctx context.Context, appIDs []string) ([]*app.App, err
 
 	apps, err := models.Apps(qm.WhereIn("id IN ?", slice...)).All(ctx, a.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying app")
 	}
 
 	return a.unmarshalAll(apps)
@@ -65,7 +66,7 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling app")
 	}
 
 	if err := model.Upsert(
@@ -76,7 +77,7 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 		boil.Blacklist("id"),
 		boil.Infer(),
 	); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while upserting app")
 	}
 
 	return a.unmarshal(model)
@@ -86,7 +87,7 @@ func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 
 	model, err := a.marshal(app)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling app")
 	}
 
 	if err = model.Upsert(
@@ -97,7 +98,7 @@ func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 		boil.Blacklist("id"),
 		boil.Infer(),
 	); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while upserting app")
 	}
 
 	return a.unmarshal(model)
@@ -105,17 +106,17 @@ func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
 
 func (a *AppDAO) Delete(ctx context.Context, appID string) error {
 	_, err := models.Apps(qm.Where("id = ?", appID)).DeleteAll(ctx, a.db)
-	return err
+	return errors.Wrap(err, "error while deleting app")
 }
 
 func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	cfgSchema, err := json.Marshal(appTarget.ConfigSchemas)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling cfgSchema")
 	}
 	detailDescriptions, err := json.Marshal(appTarget.DetailDescriptions)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
 	}
 
 	return &models.App{
@@ -135,12 +136,12 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	var cfgSchemas app.ConfigSchemas
 	if err := rawApp.ConfigSchema.Unmarshal(&cfgSchemas); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling cfgSchema")
 	}
 
 	var detailDescriptions []map[string]any
 	if err := rawApp.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
 	}
 
 	return &app.App{
@@ -163,7 +164,7 @@ func (a *AppDAO) unmarshalAll(rawApps []*models.App) ([]*app.App, error) {
 	for _, _app := range rawApps {
 		unmarshalled, err := a.unmarshal(_app)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "error while unmarshaling app")
 		}
 		ret = append(ret, unmarshalled)
 	}

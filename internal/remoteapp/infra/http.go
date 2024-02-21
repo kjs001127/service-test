@@ -2,12 +2,12 @@ package infra
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
@@ -42,7 +42,7 @@ func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.
 		return nil, errors.New("unsupported method")
 	}
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while requesting to app server")
 	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() >= 400 {

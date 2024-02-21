@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/pkg/errors"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -37,7 +39,7 @@ func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*d
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying command")
 	}
 
 	return marshalAll(cmds)
@@ -51,8 +53,10 @@ func (c *CommandDao) Fetch(ctx context.Context, key domain.CommandKey) (*domain.
 		qm.Where("name = $3", key.Name),
 	).One(ctx, c.db)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(err)
+	} else if err != nil {
+		return nil, errors.Wrap(err, "error while querying command")
 	}
 
 	return marshal(model)
@@ -64,7 +68,7 @@ func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*doma
 		qm.Where("app_id = $1", appID),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying command")
 	}
 
 	return marshalAll(cmds)
@@ -79,12 +83,14 @@ func (c *CommandDao) Delete(ctx context.Context, key domain.CommandKey) error {
 		qm.Where("name = $3", key.Name),
 	).One(ctx, c.db)
 
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return apierr.NotFound(err)
+	} else if err != nil {
+		return errors.Wrap(err, "error while deleting command")
 	}
 
-	if _, err := model.Delete(ctx, c.db); err != nil {
-		return err
+	if _, err = model.Delete(ctx, c.db); err != nil {
+		return errors.Wrap(err, "error while deleting command")
 	}
 
 	return nil
@@ -93,10 +99,10 @@ func (c *CommandDao) Delete(ctx context.Context, key domain.CommandKey) error {
 func (c *CommandDao) Save(ctx context.Context, resource *domain.Command) (*domain.Command, error) {
 	model, err := unmarshal(resource)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
-	if err := model.Upsert(
+	if err = model.Upsert(
 		ctx,
 		c.db,
 		true,
@@ -104,7 +110,7 @@ func (c *CommandDao) Save(ctx context.Context, resource *domain.Command) (*domai
 		boil.Blacklist("id", "app_id", "scope", "name"),
 		boil.Infer(),
 	); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while upserting command")
 	}
 
 	return resource, nil
@@ -121,7 +127,7 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 		qm.AndIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying command")
 	}
 
 	return marshalAll(cmds)
@@ -130,11 +136,11 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 func unmarshal(cmd *domain.Command) (*models.Command, error) {
 	paramDef, err := json.Marshal(cmd.ParamDefinitions)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling paramDef")
 	}
 	nameI18nMap, err := json.Marshal(cmd.NameI18nMap)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
 	}
 
 	return &models.Command{
@@ -183,7 +189,7 @@ func marshalAll(cmds models.CommandSlice) ([]*domain.Command, error) {
 	for _, model := range cmds {
 		res, err := marshal(model)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "error while marshaling command")
 		}
 		ret = append(ret, res)
 	}

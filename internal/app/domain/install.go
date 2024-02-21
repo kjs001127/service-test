@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+
+	"github.com/pkg/errors"
 )
 
 type InstallHandler interface {
@@ -26,11 +28,11 @@ func NewAppInstallSvc(
 func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledApp, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return InstalledApp{}, err
+		return InstalledApp{}, errors.WithStack(err)
 	}
 
-	if err := s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
-		return InstalledApp{}, err
+	if err = s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
+		return InstalledApp{}, errors.Wrap(err, "error while handling onInstall")
 	}
 
 	ret, err := s.appChRepo.Save(ctx, &AppChannel{
@@ -39,7 +41,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledA
 		Configs:   app.ConfigSchemas.DefaultConfig(),
 	})
 	if err != nil {
-		return InstalledApp{}, err
+		return InstalledApp{}, errors.WithStack(err)
 	}
 
 	return InstalledApp{
@@ -51,15 +53,15 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledA
 func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req Install) error {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
-	if err := s.appChRepo.Delete(ctx, req); err != nil {
-		return err
+	if err = s.appChRepo.Delete(ctx, req); err != nil {
+		return errors.WithStack(err)
 	}
 
-	if err := s.installLHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
-		return err
+	if err = s.installLHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
+		return errors.Wrap(err, "error while uninstalling app")
 	}
 
 	return nil

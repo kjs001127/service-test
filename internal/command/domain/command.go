@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pkg/errors"
+
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -106,7 +108,7 @@ type CommandRequest struct {
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
 	cmd, err := r.repository.Fetch(ctx, request.CommandKey)
 	if err != nil {
-		return Action{}, err
+		return Action{}, errors.WithStack(err)
 	}
 
 	ctxReq := app.TypedRequest[ParamInput]{

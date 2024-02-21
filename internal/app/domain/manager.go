@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/channel-io/go-lib/pkg/uid"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
@@ -44,10 +45,10 @@ func (a *AppManagerImpl) Modify(ctx context.Context, app *App) (*App, error) {
 func (a *AppManagerImpl) Delete(ctx context.Context, appID string) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
 		if err := a.repo.DeleteByAppID(ctx, appID); err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 		if err := a.appRepo.Delete(ctx, appID); err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 		return nil
 	})

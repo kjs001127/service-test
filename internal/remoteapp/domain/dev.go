@@ -2,11 +2,11 @@ package domain
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
@@ -91,12 +91,12 @@ func NewAppDevSvcImpl(
 func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppResponse, error) {
 	remoteApp, err := s.createRemoteApp(ctx, req)
 	if err != nil {
-		return AppResponse{}, err
+		return AppResponse{}, errors.WithStack(err)
 	}
 
 	roles, err := s.createRoles(ctx, req)
 	if err != nil {
-		return AppResponse{}, err
+		return AppResponse{}, errors.WithStack(err)
 	}
 
 	return AppResponse{
@@ -109,11 +109,11 @@ func (s *AppDevSvcImpl) createRemoteApp(ctx context.Context, req AppRequest) (*R
 	return tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
 		created, err := s.manager.Create(ctx, req.App)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 
-		if err := s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
-			return nil, err
+		if err = s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
+			return nil, errors.WithStack(err)
 		}
 		return &RemoteApp{App: created, Urls: req.Urls}, nil
 	})
@@ -128,7 +128,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 		}
 
 		if err := checkScopes(r.Role, rules); err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "error while checking scopes")
 		}
 
 		r.Claims = append(r.Claims, &model.Claim{
@@ -143,7 +143,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 			AllowedGrantTypes:     rules.GrantTypes,
 		})
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "error while creating roles")
 		}
 
 		if err := s.roleRepo.Save(ctx, &AppRole{
@@ -152,7 +152,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 			RoleCredentials: res.Credentials,
 			Type:            r.Type,
 		}); err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 
 		roles = append(roles, &RoleWithCredential{
@@ -187,22 +187,22 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 	return tx.RunWith(ctx, func(ctx context.Context) (AppResponse, error) {
 		urls, err := s.urlRepo.Fetch(ctx, appID)
 		if err != nil {
-			return AppResponse{}, err
+			return AppResponse{}, errors.WithStack(err)
 		}
 
 		found, err := s.manager.Fetch(ctx, appID)
 		if err != nil {
-			return AppResponse{}, err
+			return AppResponse{}, errors.WithStack(err)
 		}
 
 		appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
 		if err != nil {
-			return AppResponse{}, err
+			return AppResponse{}, errors.WithStack(err)
 		}
 
 		roles, err := s.fetchRoles(ctx, appRoles)
 		if err != nil {
-			return AppResponse{}, err
+			return AppResponse{}, errors.WithStack(err)
 		}
 
 		return AppResponse{
@@ -223,7 +223,7 @@ func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (
 
 	found, err := s.manager.Fetch(ctx, appRole.AppID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return found, nil
@@ -234,7 +234,7 @@ func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, appRoles []*AppRole) ([]
 	for _, c := range appRoles {
 		role, err := s.roleCli.GetRole(ctx, c.RoleID)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 		roles = append(roles, &RoleWithCredential{
 			RoleWithType:    &RoleWithType{Role: role.Role, Type: c.Type},
@@ -247,24 +247,24 @@ func (s *AppDevSvcImpl) fetchRoles(ctx context.Context, appRoles []*AppRole) ([]
 func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
 	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	for _, c := range appRoles {
-		if _, err := s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
-			return err
+		if _, err = s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
+			return errors.Wrap(err, "error while deleting roles")
 		}
 	}
 
 	return tx.Run(ctx, func(ctx context.Context) error {
-		if err := s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
-			return err
+		if err = s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
+			return errors.WithStack(err)
 		}
-		if err := s.urlRepo.Delete(ctx, appID); err != nil {
-			return err
+		if err = s.urlRepo.Delete(ctx, appID); err != nil {
+			return errors.WithStack(err)
 		}
 
-		if err := s.manager.Delete(ctx, appID); err != nil {
-			return err
+		if err = s.manager.Delete(ctx, appID); err != nil {
+			return errors.WithStack(err)
 		}
 		return nil
 	})

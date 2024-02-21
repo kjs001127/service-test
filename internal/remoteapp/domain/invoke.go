@@ -3,10 +3,11 @@ package domain
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -48,7 +49,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	fmt.Printf("requesting remote app function %s : %s \n %s: %s", "request", marshaled, "response", ret)
 
 	var jsonResp app.JsonFunctionResponse
-	if err := json.Unmarshal(ret, &jsonResp); err != nil {
+	if err = json.Unmarshal(ret, &jsonResp); err != nil {
 		return app.WrapErr(err)
 	}
 
@@ -65,13 +66,13 @@ func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) 
 		Url: url,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while requesting to app server")
 	}
 	defer reader.Close()
 
 	ret, err := io.ReadAll(reader)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while reading body")
 	}
 
 	return ret, nil

@@ -7,6 +7,7 @@ import (
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/channel-io/go-lib/pkg/uid"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 	"github.com/channel-io/ch-app-store/lib/deltaupdater"
@@ -24,12 +25,12 @@ func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) 
 func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Command) error {
 	return tx.Run(ctx, func(ctx context.Context) error {
 		if err := s.validateRequest(appID, cmds); err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 
 		oldbies, err := s.repo.FetchAllByAppID(ctx, appID)
 		if err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 
 		updater := deltaupdater.DeltaUpdater[*Command, UpdateKey]{

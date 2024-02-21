@@ -4,6 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/pkg/errors"
+
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -42,12 +44,12 @@ func NewInvoker(
 func (i *Invoker) Invoke(ctx context.Context, req BriefRequest) (BriefResponses, error) {
 	installedApps, err := i.querySvc.QueryAll(ctx, req.ChannelID)
 	if err != nil {
-		return BriefResponses{}, err
+		return BriefResponses{}, errors.WithStack(err)
 	}
 
 	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(installedApps.AppChannels))
 	if err != nil {
-		return BriefResponses{}, err
+		return BriefResponses{}, errors.WithStack(err)
 	}
 
 	ch := make(chan *AppBrief, len(briefs))

@@ -81,21 +81,21 @@ func (v *ParamValidator) ValidateDefs(defs ParamDefinitions) error {
 
 func (v *ParamValidator) ValidateParamInput(defs ParamDefinitions, input ParamInput) error {
 	if err := v.validateExistence(defs, input); err != nil {
-		return err
+		return errors.Wrap(err, "error while validating existence of param def")
 	}
 	if err := v.validateTypes(defs, input); err != nil {
-		return err
+		return errors.Wrap(err, "error while validating type of param def")
 	}
 	return nil
 }
 
 func (v *ParamValidator) validateExistence(defs ParamDefinitions, params ParamInput) error {
 	if err := v.validateRequiredParams(defs, params); err != nil {
-		return err
+		return errors.Wrap(err, "error while validating existence of required param def")
 	}
 
 	if err := v.validateOptionalParams(defs, params); err != nil {
-		return err
+		return errors.Wrap(err, "error while validating existence of optional param def")
 	}
 
 	return nil

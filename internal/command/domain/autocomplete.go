@@ -61,7 +61,7 @@ func NewAutoCompleteInvoker(
 func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRequest) (Choices, error) {
 	cmd, err := i.repo.Fetch(ctx, request.Command)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	if cmd.AutoCompleteFunctionName == nil {
 		return nil, apierr.NotFound(errors.New("autocomplete function not found"))

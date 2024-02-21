@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -28,7 +28,7 @@ func (a *AppUrlDao) Fetch(ctx context.Context, appID string) (remoteapp.Urls, er
 	if errors.Is(err, sql.ErrNoRows) {
 		return remoteapp.Urls{}, apierr.NotFound(err)
 	} else if err != nil {
-		return remoteapp.Urls{}, err
+		return remoteapp.Urls{}, errors.Wrap(err, "error while querying Url")
 	}
 
 	return remoteapp.Urls{
@@ -48,5 +48,5 @@ func (a *AppUrlDao) Save(ctx context.Context, appID string, urls remoteapp.Urls)
 
 func (a *AppUrlDao) Delete(ctx context.Context, appID string) error {
 	_, err := models.AppUrls(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	return err
+	return errors.WithStack(err)
 }

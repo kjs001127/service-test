@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -33,7 +33,7 @@ func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*domain.
 		qm.Where("app_id = $1", appID),
 	).All(ctx, a.db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying appRole")
 	}
 	return unmarshalAll(appRoles), nil
 }
@@ -47,7 +47,7 @@ func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*domain.
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(err)
 	} else if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while querying appRole")
 	}
 
 	return unmarshal(appRole), nil
@@ -55,7 +55,7 @@ func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*domain.
 
 func (a *AppRoleDao) DeleteByAppID(ctx context.Context, appID string) error {
 	_, err := models.AppRoles(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	return err
+	return errors.Wrap(err, "error while deleting appRole")
 }
 
 func marshal(role *domain.AppRole) *models.AppRole {

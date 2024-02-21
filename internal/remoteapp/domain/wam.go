@@ -2,12 +2,12 @@ package domain
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 )
 
 type FileStreamer struct {
@@ -28,7 +28,7 @@ type AppProxyRequest struct {
 func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) error {
 	urls, err := a.repo.Fetch(ctx, req.AppID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	if urls.WamURL == nil {
@@ -37,7 +37,7 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 
 	wamUrl, err := url.Parse(*urls.WamURL)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error while parsing wamURL")
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(wamUrl)
