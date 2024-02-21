@@ -217,6 +217,9 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 
 func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error) {
 	appRole, err := s.roleRepo.FetchByRoleID(ctx, clientID)
+	if err != nil {
+		return nil, err
+	}
 
 	found, err := s.manager.Fetch(ctx, appRole.AppID)
 	if err != nil {

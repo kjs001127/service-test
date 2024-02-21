@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/general"
+	"github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
 const RBACKey = "rbacKey"

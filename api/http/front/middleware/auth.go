@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/principal/session"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 )
 
 const UserKey = "user"

@@ -15,8 +15,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	genauth "github.com/channel-io/ch-app-store/auth/general"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
 // invokeNative godoc

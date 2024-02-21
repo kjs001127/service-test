@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/channel-io/ch-app-store/auth/principal"
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
 )
 
 const (

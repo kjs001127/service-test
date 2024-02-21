@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/golang-jwt/jwt"
 
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
@@ -29,13 +28,12 @@ type Parser interface {
 }
 
 type ParserImpl struct {
-	cli           *resty.Client
-	roleCli       *RoleClient
+	roleCli       RoleFetcher
 	jwtServiceKey string
 }
 
-func NewParser(cli *resty.Client, roleCli *RoleClient, jwtServiceKey string) *ParserImpl {
-	return &ParserImpl{cli: cli, roleCli: roleCli, jwtServiceKey: jwtServiceKey}
+func NewParser(roleCli RoleFetcher, jwtServiceKey string) *ParserImpl {
+	return &ParserImpl{roleCli: roleCli, jwtServiceKey: jwtServiceKey}
 }
 
 func (f *ParserImpl) Parse(ctx context.Context, token string) (ParsedRBACToken, error) {
@@ -64,15 +62,16 @@ func (f *ParserImpl) Parse(ctx context.Context, token string) (ParsedRBACToken, 
 func (f *ParserImpl) parseJWT(token string) (*RBACToken, error) {
 	parsed, err := jwt.ParseWithClaims(token, &RBACToken{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
-			return f.jwtServiceKey, nil
+			return []byte(f.jwtServiceKey), nil
 		}
 		return ParsedRBACToken{}, errors.New("signing method differs")
 	})
+
 	if err != nil {
-		return &RBACToken{}, err
-	}
-	if !parsed.Valid {
-		return &RBACToken{}, errors.New("token invalid")
+		e, ok := err.(*jwt.ValidationError)
+		if !ok || ok && e.Errors&jwt.ValidationErrorIssuedAt == 0 { // Don't report error that token used before issued.
+			return &RBACToken{}, err
+		}
 	}
 
 	return parsed.Claims.(*RBACToken), nil

@@ -8,8 +8,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/principal/account"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 

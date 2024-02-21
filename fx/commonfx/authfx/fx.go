@@ -3,12 +3,12 @@ package authfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/auth/general"
-	"github.com/channel-io/ch-app-store/auth/principal"
-	"github.com/channel-io/ch-app-store/auth/principal/account"
-	"github.com/channel-io/ch-app-store/auth/principal/session"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	"github.com/channel-io/ch-app-store/fx/configfx"
+	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
@@ -16,7 +16,7 @@ var AdminAuth = fx.Module(
 	"adminAuth",
 	fx.Provide(
 		fx.Annotate(
-			general.NewRoleClient,
+			general.NewRoleClientImpl,
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 			fx.As(new(remoteapp.RoleClient)),
 		),
@@ -41,7 +41,7 @@ var Auth = fx.Module(
 			fx.ParamTags(configfx.JwtServiceKey),
 		),
 		fx.Annotate(
-			general.NewRoleClient,
+			general.NewRoleClientImpl,
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 		fx.Annotate(

@@ -2,7 +2,7 @@ package invoke
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 

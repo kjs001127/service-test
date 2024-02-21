@@ -41,7 +41,7 @@ FLYWAY_SQL_PATH = $(PROJECT_PATH)/resources/psql/migration
 
 # Mockery
 MOCKERY_TARGET_PATH = $(PROJECT_PATH)/internal
-MOCKERY_OUTPUT_PATH = $(PROJECT_PATH)/test/mock
+MOCKERY_OUTPUT_PATH = $(PROJECT_PATH)/generated/mock
 #----------------------------------- Delete 예정
 
 env:
@@ -81,7 +81,7 @@ gen-boiler:
 
 
 gen-mock:
-	#mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
+	mockery --all --dir=$(MOCKERY_TARGET_PATH) --output=$(MOCKERY_OUTPUT_PATH) --keeptree --with-expecter --inpackage=false --packageprefix='mock'
 
 
 build: init generate docs

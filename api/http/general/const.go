@@ -1,7 +1,7 @@
 package general
 
 import (
-	"github.com/channel-io/ch-app-store/auth/general"
+	"github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
 const (

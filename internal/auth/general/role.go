@@ -18,21 +18,25 @@ const (
 	deleteRole  = roleBaseUri + "/deleteRole"
 )
 
-type RoleClient struct {
+type RoleFetcher interface {
+	GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error)
+}
+
+type RoleClientImpl struct {
 	cli     *resty.Client
 	authUrl string
 }
 
-func (f *RoleClient) UpdateRole(ctx context.Context, roleID string, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
+func (f *RoleClientImpl) UpdateRole(ctx context.Context, roleID string, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewRoleClient(cli *resty.Client, authUrl string) *RoleClient {
-	return &RoleClient{cli: cli, authUrl: authUrl}
+func NewRoleClientImpl(cli *resty.Client, authUrl string) *RoleClientImpl {
+	return &RoleClientImpl{cli: cli, authUrl: authUrl}
 }
 
-func (f *RoleClient) GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error) {
+func (f *RoleClientImpl) GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error) {
 	r := f.cli.R()
 	r.SetContext(ctx)
 	r.SetHeader("Content-Type", "application/x-protobuf")
@@ -57,7 +61,7 @@ func (f *RoleClient) GetRole(ctx context.Context, roleID string) (*service.GetRo
 	return &res, nil
 }
 
-func (f *RoleClient) CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error) {
+func (f *RoleClientImpl) CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error) {
 	r := f.cli.R()
 	r.SetContext(ctx)
 
@@ -81,7 +85,7 @@ func (f *RoleClient) CreateRole(ctx context.Context, request *service.CreateRole
 	return &res, nil
 }
 
-func (f *RoleClient) DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error) {
+func (f *RoleClientImpl) DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error) {
 	r := f.cli.R()
 	r.SetContext(ctx)
 

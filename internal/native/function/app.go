@@ -48,6 +48,7 @@ func (a *CoreApi) WriteUserChatMessage(ctx context.Context, params json.RawMessa
 	r.SetHeader("Content-Type", "application/x-protobuf")
 	r.SetBody(marshaledReq)
 	r.SetContext(ctx)
+
 	resp, err := r.Post(a.adminUrl + messageBaseUri + "/writeUserChatMessage")
 	if err != nil {
 		return domain.WrapError(err)

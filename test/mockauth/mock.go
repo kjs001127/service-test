@@ -3,10 +3,10 @@ package mockauth
 import (
 	"context"
 
-	"github.com/channel-io/ch-app-store/auth/general"
-	"github.com/channel-io/ch-app-store/auth/principal/account"
-	"github.com/channel-io/ch-app-store/auth/principal/session"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 )
 
 type Parser struct {

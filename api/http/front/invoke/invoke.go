@@ -9,8 +9,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/auth/principal/session"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
