@@ -142,6 +142,10 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
 	}
+	descriptionI18nMap, err := json.Marshal(cmd.DescriptionI18nMap)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while marshaling descriptionI18nMap")
+	}
 
 	return &models.Command{
 		ID:                       cmd.ID,
@@ -149,6 +153,7 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		AppID:                    cmd.AppID,
 		Scope:                    string(cmd.Scope),
 		ActionFunctionName:       cmd.ActionFunctionName,
+		DescriptionI18nMap:       null.JSONFrom(descriptionI18nMap),
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfMode:                  cmd.AlfMode,
@@ -168,6 +173,11 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		return nil, fmt.Errorf("parsing name18nMap, cmd: %v, cause: %w", c, err)
 	}
 
+	descriptionI18nMap := make(map[string]string)
+	if err := c.DescriptionI18nMap.Unmarshal(&descriptionI18nMap); err != nil {
+		return nil, fmt.Errorf("parsing descriptionI18nMap, cmd: %v, cause: %w", c, err)
+	}
+
 	return &domain.Command{
 		ID:                       c.ID,
 		Name:                     c.Name,
@@ -176,6 +186,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		ActionFunctionName:       c.ActionFunctionName,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
 		Description:              c.Description.Ptr(),
+		DescriptionI18nMap:       descriptionI18nMap,
 		NameI18nMap:              nameI18nMap,
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
