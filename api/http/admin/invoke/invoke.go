@@ -63,27 +63,18 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //	@Tags		Admin
 
 // @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
-// @Param		channelID			path		string				true	"id of Channel to invoke brief"
 //
 // @Success	200					{object}	brief.BriefResponses
-// @Router		/admin/channels/{channelID}/brief  [put]
+// @Router		/admin/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
-
-	channelID := ctx.Param("channelID")
-
 	var req localdto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		ctx.JSON(http.StatusOK, app.WrapErr(err))
 		return
 	}
 
-	req.Context.Caller.ID = channelID
-
 	var ret brief.BriefResponses
-	ret, err := h.briefInvoker.Invoke(ctx, brief.BriefRequest{
-		Context:   req.Context,
-		ChannelID: channelID,
-	})
+	ret, err := h.briefInvoker.Invoke(ctx, req.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return

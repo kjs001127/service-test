@@ -44,8 +44,8 @@ func NewInvoker(
 	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker}
 }
 
-func (i *Invoker) Invoke(ctx context.Context, req BriefRequest) (BriefResponses, error) {
-	installedApps, err := i.querySvc.QueryAll(ctx, req.ChannelID)
+func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
+	installedApps, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
@@ -65,11 +65,11 @@ func (i *Invoker) Invoke(ctx context.Context, req BriefRequest) (BriefResponses,
 			res := i.invoker.Invoke(ctx, app.TypedRequest[EmptyRequest]{
 				Endpoint: app.Endpoint{
 					AppID:        brief.AppID,
-					ChannelID:    req.ChannelID,
+					ChannelID:    req.Channel.ID,
 					FunctionName: brief.BriefFunctionName,
 				},
 				Body: app.Body[EmptyRequest]{
-					Context: req.Context,
+					Context: req,
 				},
 			})
 			if res.Error == nil {
