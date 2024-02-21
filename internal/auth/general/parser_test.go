@@ -91,3 +91,22 @@ func TestIdentity(t *testing.T) {
 	assert.Equal(t, "user", parsed.Type)
 	assert.Equal(t, userID, parsed.ID)
 }
+
+func TestScopeFail(t *testing.T) {
+	parsed, err := testParser(t).Parse(context.Background(), testToken(t))
+	if err != nil {
+		panic(err)
+	}
+
+	assert.False(t, parsed.CheckScope("notExisting", channelID))
+	assert.False(t, parsed.CheckScope("scope", userID))
+}
+
+func TestActionFail(t *testing.T) {
+	parsed, err := testParser(t).Parse(context.Background(), testToken(t))
+	if err != nil {
+		panic(err)
+	}
+
+	assert.False(t, parsed.CheckAction("not", "existing"))
+}

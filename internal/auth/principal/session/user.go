@@ -50,15 +50,15 @@ func NewUserFetcherImpl(jwtServiceKey string) *UserFetcherImpl {
 func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrincipal, error) {
 	parsed, err := jwt.ParseWithClaims(token, &UserJwt{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
-			return f.jwtServiceKey, nil
+			return []byte(f.jwtServiceKey), nil
 		}
 		return UserPrincipal{}, errors.New("signing method differs")
 	})
 	if err != nil {
-		return UserPrincipal{}, err
-	}
-	if !parsed.Valid {
-		return UserPrincipal{}, errors.New("token invalid")
+		e, ok := err.(*jwt.ValidationError)
+		if !ok || ok && e.Errors&jwt.ValidationErrorIssuedAt == 0 { // Don't report error that token used before issued.
+			return UserPrincipal{}, err
+		}
 	}
 
 	claims := parsed.Claims.(*UserJwt)
@@ -71,5 +71,6 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 	if !ok {
 		return UserPrincipal{}, errors.New("invalid Key")
 	}
+
 	return UserPrincipal{User: User{ID: userID, ChannelID: channelID}, Token: Token(token)}, nil
 }
