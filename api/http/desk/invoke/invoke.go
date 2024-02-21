@@ -13,6 +13,8 @@ import (
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
+const callerTypeManager = "manager"
+
 // executeCommand godoc
 //
 //	@Summary	execute selected Command
@@ -38,7 +40,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	body.Context.Channel = app.Channel{ID: channelID}
 	body.Context.Caller = app.Caller{
-		Type: "manager",
+		Type: callerTypeManager,
 		ID:   manager.ID,
 	}
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
@@ -91,7 +93,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	manager := rawManager.(account.ManagerPrincipal)
 	body.Context.Channel = app.Channel{ID: channelID}
 	body.Context.Caller = app.Caller{
-		Type: "manager",
+		Type: callerTypeManager,
 		ID:   manager.ID,
 	}
 	if err := h.authorizer.Authorize(ctx, body.Context, manager); err != nil {
