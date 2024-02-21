@@ -20,6 +20,10 @@ func (p *Parser) Parse(ctx context.Context, token string) (general.ParsedRBACTok
 		Scopes: map[string][]string{
 			"*": {"*"},
 		},
+		Caller: general.Caller{
+			Type: "user",
+			ID:   "userID",
+		},
 	}, nil
 }
 
