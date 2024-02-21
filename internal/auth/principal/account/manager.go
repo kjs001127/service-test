@@ -23,6 +23,10 @@ func (t Token) Value() string {
 	return string(t)
 }
 
+type ManagerResponse struct {
+	Manager Manager `json:"manager"`
+}
+
 type Manager struct {
 	ID        string `json:"id"`
 	ChannelID string `json:"channelId"`
@@ -63,12 +67,13 @@ func (c *ManagerFetcherImpl) FetchManager(ctx context.Context, channelID string,
 		return ManagerPrincipal{}, errors.New("auth failed")
 	}
 
-	var manager Manager
-	if err := json.Unmarshal(resp.Body(), &manager); err != nil {
+	body := resp.Body()
+	var managerResp ManagerResponse
+	if err := json.Unmarshal(body, &managerResp); err != nil {
 		return ManagerPrincipal{}, err
 	}
 
-	return ManagerPrincipal{manager, Token(token)}, nil
+	return ManagerPrincipal{managerResp.Manager, Token(token)}, nil
 }
 
 func isSuccess(statusCode int) bool {
