@@ -5,6 +5,7 @@ import (
 
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/infra"
@@ -118,7 +119,7 @@ var RemoteAppInfra = fx.Module(
 		fx.Annotate(
 			infra.NewHttpRequester,
 			fx.As(new(domain.HttpRequester)),
-			fx.ParamTags(`name:"app"`),
+			fx.ParamTags(restyfx.App),
 		),
 
 		fx.Annotate(

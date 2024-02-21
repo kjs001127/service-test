@@ -13,7 +13,9 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/configfx"
 	"github.com/channel-io/ch-app-store/fx/testfx/mockauthfx"
 )
 
@@ -26,7 +28,9 @@ var Public = fx.Module(
 	brieffx.Brief,
 	mockauthfx.AuthMocked,
 	appfx.App,
+	configfx.Values,
 	commandfx.Command,
+	nativefx.Native,
 )
 
 var PublicHttp = fx.Module(

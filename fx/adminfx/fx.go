@@ -12,6 +12,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/configfx"
 )
 
 var AdminHttp = fx.Module(
@@ -23,6 +24,7 @@ var AdminHttp = fx.Module(
 var Admin = fx.Module(
 	"appAdmin",
 	dbfx.Postgres,
+	configfx.Values,
 	AdminHttp,
 	remoteappfx.RemoteAppDev,
 	brieffx.Brief,

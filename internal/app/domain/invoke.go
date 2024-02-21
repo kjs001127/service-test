@@ -19,10 +19,10 @@ func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers 
 	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap}
 }
 
-func (i *Invoker) Invoke(ctx context.Context, appID string, channelID string, request JsonFunctionRequest) JsonFunctionResponse {
+func (i *Invoker) Invoke(ctx context.Context, appID string, request JsonFunctionRequest) JsonFunctionResponse {
 	_, err := i.appChRepo.Fetch(ctx, Install{
 		AppID:     appID,
-		ChannelID: channelID,
+		ChannelID: request.Context.Channel.ID,
 	})
 	if err != nil {
 		return WrapErr(err)
@@ -121,7 +121,7 @@ func (i *TypedInvoker[REQ, RES]) Invoke(
 		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
 	}
 
-	res := i.invoker.Invoke(ctx, request.AppID, request.ChannelID, JsonFunctionRequest{
+	res := i.invoker.Invoke(ctx, request.AppID, JsonFunctionRequest{
 		Method:  request.FunctionName,
 		Params:  marshaled,
 		Context: request.Context,

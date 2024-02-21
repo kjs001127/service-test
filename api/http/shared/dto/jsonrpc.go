@@ -6,7 +6,7 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
-type JsonRPCRequest struct {
+type JsonFunctionRequest struct {
 	Method  string             `json:"method"`
 	Params  json.RawMessage    `json:"params"`
 	Context app.ChannelContext `json:"context"`

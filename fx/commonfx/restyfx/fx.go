@@ -8,6 +8,10 @@ import (
 )
 
 const (
+	Dw  = `name:"dw"`
+	App = `name:"app"`
+)
+const (
 	dwTimeout  = time.Second * 10
 	appTimeout = time.Second * 30
 )
@@ -21,7 +25,7 @@ var Clients = fx.Module(
 				ret.SetTimeout(dwTimeout)
 				return ret
 			},
-			fx.ResultTags(`name:"dw"`),
+			fx.ResultTags(Dw),
 		),
 	),
 
@@ -32,7 +36,7 @@ var Clients = fx.Module(
 				ret.SetTimeout(appTimeout)
 				return ret
 			},
-			fx.ResultTags(`name:"app"`),
+			fx.ResultTags(App),
 		),
 	),
 )

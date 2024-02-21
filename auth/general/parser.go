@@ -16,6 +16,9 @@ type Token string
 func (t Token) Value() string {
 	return string(t)
 }
+func (t Token) Header() string {
+	return Header()
+}
 
 func Header() string {
 	return "x-access-token"
@@ -47,7 +50,15 @@ func (f *ParserImpl) Parse(ctx context.Context, token string) (ParsedRBACToken, 
 		return ParsedRBACToken{}, err
 	}
 
-	return f.merge(role, claims)
+	ret, err := f.merge(role, claims)
+	if err != nil {
+		return ParsedRBACToken{}, nil
+	}
+
+	ret.Type, ret.ID, _ = strings.Cut(claims.Identity, "-")
+	ret.Token = Token(token)
+
+	return ret, nil
 }
 
 func (f *ParserImpl) parseJWT(token string) (*RBACToken, error) {
@@ -85,7 +96,6 @@ func (f *ParserImpl) merge(role *service.GetRoleResult, claims *RBACToken) (Pars
 		ret.Actions[Service(c.Service)] = append(ret.Actions[Service(c.Service)], Action(c.Action))
 	}
 
-	ret.Type, ret.ID, _ = strings.Cut(claims.Identity, "-")
 	return ret, nil
 }
 
@@ -111,6 +121,7 @@ type ParsedRBACToken struct {
 	Actions map[Service][]Action
 	Scopes  Scopes
 	Caller
+	Token Token
 }
 
 func (p *ParsedRBACToken) GetCaller() Caller {

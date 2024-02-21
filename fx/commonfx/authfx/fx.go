@@ -7,28 +7,17 @@ import (
 	"github.com/channel-io/ch-app-store/auth/principal"
 	"github.com/channel-io/ch-app-store/auth/principal/account"
 	"github.com/channel-io/ch-app-store/auth/principal/session"
-	"github.com/channel-io/ch-app-store/config"
+	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/configfx"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
-const (
-	jwtServiceKey = `name:"jwtServiceKey"`
-	authGeneral   = `name:"authGeneral"`
-	authAdmin     = `name:"authAdmin"`
-)
-
 var AdminAuth = fx.Module(
-	"authAdmin",
-	fx.Supply(
-		fx.Annotate(
-			config.Get().Auth.AuthAdminURL,
-			fx.ResultTags(authAdmin),
-		),
-	),
+	"adminAuth",
 	fx.Provide(
 		fx.Annotate(
 			general.NewRoleClient,
-			fx.ParamTags(`name:"dw"`, authAdmin),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 			fx.As(new(remoteapp.RoleClient)),
 		),
 	),
@@ -36,43 +25,29 @@ var AdminAuth = fx.Module(
 
 var Auth = fx.Module(
 	"authModule",
-	fx.Supply(
-		fx.Annotate(
-			config.Get().Auth.JWTServiceKey,
-			fx.ResultTags(jwtServiceKey),
-		),
-		fx.Annotate(
-			config.Get().Auth.AuthGeneralURL,
-			fx.ResultTags(authGeneral),
-		),
-		fx.Annotate(
-			config.Get().Auth.AuthAdminURL,
-			fx.ResultTags(authAdmin),
-		),
-	),
 	fx.Provide(
 		fx.Annotate(
 			general.NewRBACExchanger,
-			fx.ParamTags(`name:"dw"`, "", authGeneral),
+			fx.ParamTags(restyfx.Dw, "", configfx.DwGeneral),
 		),
 		fx.Annotate(
 			account.NewManagerFetcherImpl,
 			fx.As(new(account.ManagerFetcher)),
-			fx.ParamTags(`name:"dw"`, authAdmin),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 		fx.Annotate(
 			session.NewUserFetcherImpl,
 			fx.As(new(session.UserFetcher)),
-			fx.ParamTags(jwtServiceKey),
+			fx.ParamTags(configfx.JwtServiceKey),
 		),
 		fx.Annotate(
 			general.NewRoleClient,
-			fx.ParamTags(`name:"dw"`, authAdmin),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 		fx.Annotate(
 			general.NewParser,
 			fx.As(new(general.Parser)),
-			fx.ParamTags(`name:"dw"`, ``, jwtServiceKey),
+			fx.ParamTags(restyfx.Dw, ``, configfx.DwAdmin),
 		),
 		fx.Annotate(
 			session.NewContextAuthorizer,
@@ -85,7 +60,7 @@ var Auth = fx.Module(
 		fx.Annotate(
 			principal.NewChatValidator,
 			fx.As(new(principal.ChatValidator)),
-			fx.ParamTags(`name:"dw"`, authAdmin),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 	),
 )
