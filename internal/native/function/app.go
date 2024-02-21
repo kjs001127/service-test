@@ -12,7 +12,11 @@ import (
 	"github.com/channel-io/ch-proto/coreapi/v1/go/service"
 )
 
-const baseUri = "/api/admin/core"
+const (
+	version        = "v1"
+	baseUri        = "/api/admin/core/" + version
+	messageBaseUri = baseUri + "/messages"
+)
 
 type CoreApi struct {
 	adminUrl string
@@ -44,18 +48,18 @@ func (a *CoreApi) WriteUserChatMessage(ctx context.Context, params json.RawMessa
 	r.SetHeader("Content-Type", "application/x-protobuf")
 	r.SetBody(marshaledReq)
 	r.SetContext(ctx)
-	resp, err := r.Post(a.adminUrl + baseUri + "/writeUserChatMessage")
+	resp, err := r.Post(a.adminUrl + messageBaseUri + "/writeUserChatMessage")
 	if err != nil {
-		return domain.WrapError(err)
-	}
-
-	var res service.WriteUserChatMessageResult
-	if err := proto.Unmarshal(resp.Body(), &res); err != nil {
 		return domain.WrapError(err)
 	}
 
 	if resp.IsError() {
 		return domain.WrapError(fmt.Errorf("request failed, body: %s", resp.Body()))
+	}
+
+	var res service.WriteUserChatMessageResult
+	if err := proto.Unmarshal(resp.Body(), &res); err != nil {
+		return domain.WrapError(err)
 	}
 
 	marshaledRes, err := json.Marshal(&res)

@@ -24,10 +24,10 @@ import (
 //	@Summary	invoke Function
 //	@Tags		General
 //
-//	@Param		x-access-token				header			string							true	"access token"
+//	@Param		x-access-token				header		string						true	"access token"
 //	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200						{object}	domain.NativeFunctionResponse
+//	@Success	200							{object}	domain.NativeFunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req localdto.NativeFunctionRequest
@@ -44,6 +44,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 			Type:  rbac.Token.Header(),
 			Value: rbac.Token.Value(),
 		},
+		Method: req.Method,
 		Params: req.Params,
 	})
 
@@ -59,7 +60,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 //	@Param		appID					path		string					true	"id of App to invoke Function"
 //	@Param		dto.JsonFunctionRequest	body		dto.JsonFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200						{object}	app.JsonFunctionResponse
+//	@Success	200						{object}	object
 //	@Router		/general/v1/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
 	appID := ctx.Param("appID")
