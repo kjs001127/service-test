@@ -18,7 +18,7 @@ var BriefDomain = fx.Module(
 	"briefDomain",
 	fx.Provide(
 		domain.NewInvoker,
-		app.NewTypedInvoker[domain.BriefRequest, domain.BriefResponse],
+		app.NewTypedInvoker[domain.EmptyRequest, domain.BriefResponse],
 	),
 )
 

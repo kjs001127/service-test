@@ -27,16 +27,19 @@ type BriefRequest struct {
 	ChannelID string
 }
 
+type EmptyRequest struct {
+}
+
 type Invoker struct {
 	repo     BriefRepository
 	querySvc *app.QuerySvc
-	invoker  *app.TypedInvoker[BriefRequest, BriefResponse]
+	invoker  *app.TypedInvoker[EmptyRequest, BriefResponse]
 }
 
 func NewInvoker(
 	repo BriefRepository,
 	querySvc *app.QuerySvc,
-	invoker *app.TypedInvoker[BriefRequest, BriefResponse],
+	invoker *app.TypedInvoker[EmptyRequest, BriefResponse],
 ) *Invoker {
 	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker}
 }
@@ -59,13 +62,13 @@ func (i *Invoker) Invoke(ctx context.Context, req BriefRequest) (BriefResponses,
 	for _, brief := range briefs {
 		brief := brief
 		go func() {
-			res := i.invoker.Invoke(ctx, app.TypedRequest[BriefRequest]{
+			res := i.invoker.Invoke(ctx, app.TypedRequest[EmptyRequest]{
 				Endpoint: app.Endpoint{
 					AppID:        brief.AppID,
 					ChannelID:    req.ChannelID,
 					FunctionName: brief.BriefFunctionName,
 				},
-				Body: app.Body[BriefRequest]{
+				Body: app.Body[EmptyRequest]{
 					Context: req.Context,
 				},
 			})

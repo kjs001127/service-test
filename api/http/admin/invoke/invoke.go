@@ -62,17 +62,17 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-//	@Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
-//	@Param		channelID			path		string				true	"id of Channel to invoke brief"
+// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+// @Param		channelID			path		string				true	"id of Channel to invoke brief"
 //
-//	@Success	200					{object}	brief.BriefResponses
-//	@Router		/admin/channels/{channelID}/brief  [put]
+// @Success	200					{object}	brief.BriefResponses
+// @Router		/admin/channels/{channelID}/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 
 	channelID := ctx.Param("channelID")
 
 	var req localdto.BriefRequest
-	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		ctx.JSON(http.StatusOK, app.WrapErr(err))
 		return
 	}
