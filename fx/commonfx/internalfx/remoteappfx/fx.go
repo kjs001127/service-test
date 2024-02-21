@@ -7,32 +7,46 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/infra"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/repo"
 	"github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
-var RemoteApp = fx.Module(
-	"remoteApp",
-	RemoteAppDomain,
-	RemoteAppInfra,
+const (
+	appTypeRemote = app.AppType("remote")
+	remoteAppName = `name:"remoteApp"`
+)
+
+var RemoteAppCommon = fx.Module(
+	"remoteappCommon",
+	RemoteAppCommonsSvcs,
+	RemoteAppHttps,
+	RemoteAppDAOs,
 )
 
 var RemoteAppDev = fx.Module(
-	"remoteAppDev",
-	RemoteAppDevDomain,
-	RemoteAppInfra,
+	"remoteappDev",
+	RemoteAppCommon,
+	RemoteAppDevSvc,
 )
 
-var RemoteAppDomain = fx.Module(
+var RemoteAppCommonsSvcs = fx.Module(
 	"remoteappDomain",
 	fx.Supply(
-		fx.Annotate(app.AppType("remote"),
-			fx.ResultTags(`name:"remoteApp"`),
+		fx.Annotate(
+			appTypeRemote,
+			fx.ResultTags(remoteAppName),
 		),
 	),
 	fx.Provide(
+		fx.Annotate(
+			app.NewAppManagerImpl,
+			fx.As(new(app.AppManager)),
+			fx.ParamTags(``, ``, remoteAppName),
+		),
 		fx.Annotate(
 			domain.NewInstallHandler,
 			fx.As(new(app.InstallHandler)),
@@ -49,61 +63,65 @@ var RemoteAppDomain = fx.Module(
 		domain.NewFileStreamer,
 		fx.Annotate(
 			app.NewTyped[app.InvokeHandler],
-			fx.ParamTags(`name:"remoteApp"`, `name:"remoteInvoker"`),
+			fx.ParamTags(remoteAppName, `name:"remoteInvoker"`),
 			fx.ResultTags(`group:"invokeHandler"`),
 		),
 	),
 )
 
-var RemoteAppDevDomain = fx.Module(
+const (
+	roleTypeChannel = "channel"
+	roleTypeUser    = "user"
+	roleTypeManager = "manager"
+
+	scopeChannel = "channel"
+	scopeUser    = "user"
+	scopeManager = "manager"
+)
+
+var RemoteAppDevSvc = fx.Module(
 	"remoteAppDev",
 	fx.Supply(
 		map[domain.RoleType]domain.TypeRule{
-			"channel": {
+			roleTypeChannel: {
 				GrantTypes: []model.GrantType{
 					model.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
 					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
 				GrantedScopes: []string{
-					"channel",
+					scopeChannel,
 				},
 			},
 
-			"user": {
+			roleTypeUser: {
 				GrantTypes: []model.GrantType{
 					model.GrantType_GRANT_TYPE_PRINCIPAL,
 					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				GrantedPrincipalTypes: []string{"x-session"},
-				GrantedScopes:         []string{"channel", "user"},
+				GrantedPrincipalTypes: []string{session.XSessionHeader},
+				GrantedScopes:         []string{scopeChannel, scopeUser},
 			},
 
-			"manager": {
+			roleTypeManager: {
 				GrantTypes: []model.GrantType{
 					model.GrantType_GRANT_TYPE_PRINCIPAL,
 					model.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				GrantedPrincipalTypes: []string{"x-account"},
-				GrantedScopes:         []string{"channel", "manager"},
+				GrantedPrincipalTypes: []string{account.XAccountHeader},
+				GrantedScopes:         []string{scopeChannel, scopeManager},
 			},
 		},
 	),
 	fx.Provide(
 		fx.Annotate(
-			app.NewAppManagerImpl,
-			fx.As(new(app.AppManager)),
-			fx.ParamTags(``, ``, `name:"remoteApp"`),
-		),
-		fx.Annotate(
 			domain.NewAppDevSvcImpl,
 			fx.As(new(domain.AppDevSvc)),
 		),
 	),
-	RemoteAppDomain,
 )
 
-var RemoteAppInfra = fx.Module(
-	"remoteAppInfra",
+var RemoteAppHttps = fx.Module(
+	"remoteAppHttp",
 	fx.Supply(
 		fx.Annotate(
 			http.DefaultTransport,
@@ -112,16 +130,20 @@ var RemoteAppInfra = fx.Module(
 	),
 	fx.Provide(
 		fx.Annotate(
-			repo.NewAppUrlDao,
-			fx.As(new(domain.AppUrlRepository)),
-		),
-
-		fx.Annotate(
 			infra.NewHttpRequester,
 			fx.As(new(domain.HttpRequester)),
 			fx.ParamTags(restyfx.App),
 		),
+	),
+)
 
+var RemoteAppDAOs = fx.Module(
+	"remoteAppInfra",
+	fx.Provide(
+		fx.Annotate(
+			repo.NewAppUrlDao,
+			fx.As(new(domain.AppUrlRepository)),
+		),
 		fx.Annotate(
 			repo.NewAppRoleDao,
 			fx.As(new(domain.AppRoleRepository)),

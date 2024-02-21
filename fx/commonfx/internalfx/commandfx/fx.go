@@ -10,10 +10,10 @@ import (
 
 var Command = fx.Module(
 	"command",
-	CommandDB,
-	CommandDomain,
+	CommandDAOs,
+	CommandSvcs,
 )
-var CommandDomain = fx.Module(
+var CommandSvcs = fx.Module(
 	"commandDomain",
 	fx.Provide(
 		domain.NewParamValidator,
@@ -25,7 +25,7 @@ var CommandDomain = fx.Module(
 	),
 )
 
-var CommandDB = fx.Module(
+var CommandDAOs = fx.Module(
 	"commandDB",
 	fx.Provide(
 		fx.Annotate(

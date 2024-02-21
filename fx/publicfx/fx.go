@@ -24,7 +24,7 @@ var Public = fx.Module(
 	restyfx.Clients,
 	dbfx.Postgres,
 	PublicHttp,
-	remoteappfx.RemoteApp,
+	remoteappfx.RemoteAppCommon,
 	brieffx.Brief,
 	mockauthfx.AuthMocked,
 	appfx.App,

@@ -37,7 +37,7 @@ type Command struct {
 
 	NameI18nMap        map[string]string `json:"nameI18nMap"`
 	Description        *string           `json:"description"`
-	DescriptionI18nMap map[string]string `json:"descriptionI18nMap"`
+	DescriptionI18nMap map[string]string `json:"descriptionI18NMap"`
 
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        string  `json:"alfMode"`

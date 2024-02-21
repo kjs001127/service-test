@@ -11,11 +11,11 @@ import (
 
 var App = fx.Module(
 	"app",
-	AppDomain,
-	AppDB,
+	AppSvcs,
+	AppDAOs,
 )
 
-var AppDomain = fx.Module(
+var AppSvcs = fx.Module(
 	"appDomain",
 
 	fx.Provide(
@@ -30,7 +30,7 @@ var AppDomain = fx.Module(
 	),
 )
 
-var AppDB = fx.Module(
+var AppDAOs = fx.Module(
 	"appDB",
 	fx.Provide(
 		fx.Annotate(

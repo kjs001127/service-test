@@ -10,11 +10,11 @@ import (
 
 var Brief = fx.Module(
 	"brief",
-	BriefDomain,
-	BriefDB,
+	BriefSvcs,
+	BriefDAOs,
 )
 
-var BriefDomain = fx.Module(
+var BriefSvcs = fx.Module(
 	"briefDomain",
 	fx.Provide(
 		domain.NewInvoker,
@@ -22,7 +22,7 @@ var BriefDomain = fx.Module(
 	),
 )
 
-var BriefDB = fx.Module(
+var BriefDAOs = fx.Module(
 	"briefDB",
 	fx.Provide(
 		fx.Annotate(repo.NewBriefDao, fx.As(new(domain.BriefRepository))),
