@@ -71,7 +71,7 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 		return UserPrincipal{}, errors.New("invalid iss")
 	}
 
-	userID, channelID, ok := strings.Cut(claims.Key, "-")
+	channelID, userID, ok := strings.Cut(claims.Key, "-")
 	if !ok {
 		return UserPrincipal{}, errors.New("invalid Key")
 	}
