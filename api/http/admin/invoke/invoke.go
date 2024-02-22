@@ -29,9 +29,9 @@ var callerAdmin = app.Caller{
 //	@Param		dto.JsonFunctionRequest	body		dto.JsonFunctionRequest	true	"body of Function to invoke"
 //
 //	@Success	200						{object}	json.RawMessage
-//	@Router		/admin/channels/{channelID}/apps/{appID}/functions [put]
+//	@Router		/admin/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID, channelID := ctx.Param("id"), ctx.Param("channelID")
+	appID := ctx.Param("id")
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
@@ -41,13 +41,13 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
 		Endpoint: app.Endpoint{
-			ChannelID:    channelID,
+			ChannelID:    req.Context.Channel.ID,
 			AppID:        appID,
 			FunctionName: req.Method,
 		},
 		Body: app.Body[json.RawMessage]{
 			Context: app.ChannelContext{
-				Channel: app.Channel{ID: channelID},
+				Channel: app.Channel{ID: req.Context.Channel.ID},
 				Caller:  callerAdmin,
 			},
 			Params: req.Params,
