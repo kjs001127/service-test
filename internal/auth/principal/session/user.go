@@ -46,7 +46,7 @@ type UserFetcherImpl struct {
 }
 
 func NewUserFetcherImpl(jwtServiceKey string, logger *log.ChannelLogger) *UserFetcherImpl {
-	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey}
+	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey, logger: logger}
 }
 
 func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrincipal, error) {
