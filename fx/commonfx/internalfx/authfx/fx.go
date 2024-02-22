@@ -23,13 +23,9 @@ var AdminAuth = fx.Module(
 	),
 )
 
-var Auth = fx.Module(
-	"authModule",
+var PrincipalAuth = fx.Module(
+	"authPrincipal",
 	fx.Provide(
-		fx.Annotate(
-			general.NewRBACExchanger,
-			fx.ParamTags(restyfx.Dw, "", configfx.DwGeneral),
-		),
 		fx.Annotate(
 			account.NewManagerFetcherImpl,
 			fx.As(new(account.ManagerFetcher)),
@@ -41,6 +37,21 @@ var Auth = fx.Module(
 			fx.ParamTags(configfx.JwtServiceKey),
 		),
 		fx.Annotate(
+			principal.NewCommandCtxAuthorizer,
+			fx.As(new(principal.CommandCtxAuthorizer)),
+		),
+		fx.Annotate(
+			principal.NewChatValidator,
+			fx.As(new(principal.ChatValidator)),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
+		),
+	),
+)
+
+var GeneralAuth = fx.Module(
+	"authGeneral",
+	fx.Provide(
+		fx.Annotate(
 			general.NewRoleClientImpl,
 			fx.As(new(general.RoleFetcher)),
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
@@ -49,15 +60,6 @@ var Auth = fx.Module(
 			general.NewParser,
 			fx.As(new(general.Parser)),
 			fx.ParamTags(``, configfx.JwtServiceKey),
-		),
-		fx.Annotate(
-			principal.NewCommandCtxAuthorizer,
-			fx.As(new(principal.CommandCtxAuthorizer)),
-		),
-		fx.Annotate(
-			principal.NewChatValidator,
-			fx.As(new(principal.ChatValidator)),
-			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
 	),
 )

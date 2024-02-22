@@ -12,6 +12,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
@@ -27,7 +28,8 @@ var Public = fx.Module(
 	PublicHttp,
 	remoteappfx.RemoteAppCommon,
 	brieffx.Brief,
-	mockauthfx.AuthMocked,
+	mockauthfx.GeneralAuthMocked,
+	authfx.PrincipalAuth,
 	appfx.App,
 	configfx.Values,
 	commandfx.Command,

@@ -4,7 +4,6 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/internal/auth/general"
-	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	"github.com/channel-io/ch-app-store/test/mockauth"
@@ -13,10 +12,6 @@ import (
 var AuthMocked = fx.Module("mockauth",
 	fx.Supply(
 		fx.Annotate(
-			new(mockauth.Parser),
-			fx.As(new(general.Parser)),
-		),
-		fx.Annotate(
 			new(mockauth.UserFetcher),
 			fx.As(new(session.UserFetcher)),
 		),
@@ -24,9 +19,15 @@ var AuthMocked = fx.Module("mockauth",
 			new(mockauth.ManagerFetcher),
 			fx.As(new(account.ManagerFetcher)),
 		),
+	),
+)
+
+var GeneralAuthMocked = fx.Module("mockGeneral",
+	fx.Supply(
+
 		fx.Annotate(
-			new(mockauth.CtxAuthorizer),
-			fx.As(new(principal.CommandCtxAuthorizer)),
+			new(mockauth.Parser),
+			fx.As(new(general.Parser)),
 		),
 	),
 )
