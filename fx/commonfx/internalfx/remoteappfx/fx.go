@@ -3,7 +3,6 @@ package remoteappfx
 import (
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/log"
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
@@ -41,7 +40,6 @@ var RemoteAppCommonsSvcs = fx.Module(
 			appTypeRemote,
 			fx.ResultTags(remoteAppName),
 		),
-		log.New("RemoteApp"),
 		fx.Private,
 	),
 	fx.Provide(

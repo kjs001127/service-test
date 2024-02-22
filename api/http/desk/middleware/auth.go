@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
@@ -15,10 +16,11 @@ const ManagerKey = "Manager"
 
 type Auth struct {
 	managerSvc account.ManagerFetcher
+	logger     *log.ChannelLogger
 }
 
-func NewAuth(managerSvc account.ManagerFetcher) *Auth {
-	return &Auth{managerSvc: managerSvc}
+func NewAuth(managerSvc account.ManagerFetcher, logger *log.ChannelLogger) *Auth {
+	return &Auth{managerSvc: managerSvc, logger: logger}
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
@@ -52,6 +54,6 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		)
 		return
 	}
-
+	a.logger.Debugw("injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager)
 	ctx.Set(ManagerKey, authenticatedManager)
 }

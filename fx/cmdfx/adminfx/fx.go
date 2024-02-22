@@ -1,6 +1,7 @@
 package adminfx
 
 import (
+	"github.com/channel-io/go-lib/pkg/log"
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
@@ -32,4 +33,5 @@ var Admin = fx.Module(
 	appfx.App,
 	commandfx.Command,
 	restyfx.Clients,
+	fx.Supply(log.New("Appstore")),
 )
