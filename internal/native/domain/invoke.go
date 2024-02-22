@@ -18,18 +18,18 @@ type NativeFunctionRequest struct {
 }
 
 type NativeFunctionResponse struct {
-	Error  Error           `json:"error"`
+	Error  NativeErr       `json:"error"`
 	Result json.RawMessage `json:"result"`
 }
 
-type Error struct {
+type NativeErr struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
 func WrapCommonErr(err error) NativeFunctionResponse {
 	return NativeFunctionResponse{
-		Error: Error{
+		Error: NativeErr{
 			Type:    "common",
 			Message: err.Error(),
 		},
@@ -68,7 +68,7 @@ func (i *NativeFunctionInvoker) Invoke(
 ) NativeFunctionResponse {
 	handler, ok := i.router[req.Method]
 	if !ok {
-		return NativeFunctionResponse{Error: Error{
+		return NativeFunctionResponse{Error: NativeErr{
 			Type:    "common",
 			Message: fmt.Sprintf("method not found: %s", req.Method),
 		}}
