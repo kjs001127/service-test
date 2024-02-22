@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
@@ -15,10 +17,11 @@ const RBACKey = "rbacKey"
 
 type Auth struct {
 	parser general.Parser
+	logger *log.ChannelLogger
 }
 
-func NewAuth(parser general.Parser) *Auth {
-	return &Auth{parser: parser}
+func NewAuth(parser general.Parser, logger *log.ChannelLogger) *Auth {
+	return &Auth{parser: parser, logger: logger}
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
@@ -34,9 +37,11 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	rbac, err := a.parser.Parse(ctx, xAccessToken)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(fmt.Errorf("parsing token: %s, cause: %w", xAccessToken, err)))
 		return
 	}
+
+	a.logger.Debugw("parsed rbac", "token", rbac, "request", ctx.Request.RequestURI)
 
 	ctx.Set(RBACKey, rbac)
 }

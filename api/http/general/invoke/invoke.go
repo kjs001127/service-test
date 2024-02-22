@@ -74,6 +74,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	chCtx, err := authorizeRbac(ctx, appID, req.Method, req.Context)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
+		return
 	}
 
 	res := h.invoker.Invoke(
