@@ -42,11 +42,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	channelID := ctx.Param("channelID")
 	if channelID != "" && channelID != user.ChannelID {
-		ctx.AbortWithStatusJSON(
-			http.StatusUnauthorized,
-			dto.HttpUnauthorizedError(errors.New("channelID does not match user channelID")),
-		)
-		return
+		a.logger.Warnw("channelID doest not match jwt", "path", channelID, "jwt", user.ChannelID)
 	}
 
 	a.logger.Debugw("injecting user principal", "request", ctx.Request.RequestURI, "user", user)
