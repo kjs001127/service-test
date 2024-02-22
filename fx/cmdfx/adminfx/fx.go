@@ -5,14 +5,14 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/adminfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/authfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
-	"github.com/channel-io/ch-app-store/fx/configfx"
 )
 
 var AdminHttp = fx.Module(

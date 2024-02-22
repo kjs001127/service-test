@@ -77,6 +77,10 @@ func (f *RoleClientImpl) CreateRole(ctx context.Context, request *service.Create
 	if err != nil {
 		return nil, fmt.Errorf("creatRole fail, body: %s, cause: %w", rawRes.Body(), err)
 	}
+	if rawRes.IsError() {
+		return nil, fmt.Errorf("creatRole fail, status: %s, body: %s, cause: %w", rawRes.Status(), rawRes.Body(), err)
+	}
+
 	var res service.CreateRoleResult
 	if err := proto.Unmarshal(rawRes.Body(), &res); err != nil {
 		return nil, fmt.Errorf("parse creatRole fail, body: %s, cause: %w", rawRes.Body(), err)

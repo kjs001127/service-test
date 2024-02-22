@@ -2,21 +2,24 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/pkg/errors"
 )
 
 type FileStreamer struct {
 	repo      AppUrlRepository
 	requester http.RoundTripper
+	logger    *log.ChannelLogger
 }
 
-func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper) *FileStreamer {
-	return &FileStreamer{repo: repo, requester: tripper}
+func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper, logger *log.ChannelLogger) *FileStreamer {
+	return &FileStreamer{repo: repo, requester: tripper, logger: logger}
 }
 
 type AppProxyRequest struct {
@@ -32,8 +35,14 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 	}
 
 	if urls.WamURL == nil {
-		return apierr.BadRequest(errors.New("wam url invalid"))
+		return apierr.BadRequest(fmt.Errorf("wam url invalid for appID: %s", req.AppID))
 	}
+
+	a.logger.Debugw("http proxy",
+		"appID", req.AppID,
+		"host", *urls.WamURL,
+		"path", req.Req.URL.Path,
+	)
 
 	wamUrl, err := url.Parse(*urls.WamURL)
 	if err != nil {
@@ -43,6 +52,5 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 	proxy := httputil.NewSingleHostReverseProxy(wamUrl)
 	proxy.Transport = a.requester
 	proxy.ServeHTTP(req.Writer, req.Req)
-
 	return nil
 }

@@ -127,8 +127,8 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 			return nil, apierr.NotFound(fmt.Errorf("no role type found %s", r.Type))
 		}
 
-		if err := checkScopes(r.Role, rules); err != nil {
-			return nil, errors.Wrap(err, "error while checking scopes")
+		if err := checkScopes(r, rules); err != nil {
+			return nil, err
 		}
 
 		r.Claims = append(r.Claims, &model.Claim{
@@ -143,7 +143,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 			AllowedGrantTypes:     rules.GrantTypes,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "error while creating roles")
+			return nil, errors.Wrap(err, "create role fail")
 		}
 
 		if err := s.roleRepo.Save(ctx, &AppRole{
@@ -163,7 +163,7 @@ func (s *AppDevSvcImpl) createRoles(ctx context.Context, req AppRequest) ([]*Rol
 	return roles, nil
 }
 
-func checkScopes(role *model.Role, rule TypeRule) error {
+func checkScopes(role *RoleWithType, rule TypeRule) error {
 	for _, c := range role.Claims {
 		for _, s := range c.Scope {
 			scope, _, _ := strings.Cut(s, "-")
@@ -176,7 +176,7 @@ func checkScopes(role *model.Role, rule TypeRule) error {
 			}
 
 			if !checked {
-				return errors.New("scope is not granted for type")
+				return errors.Errorf("scope: %s is not granted for type: %s", scope, role.Type)
 			}
 		}
 	}

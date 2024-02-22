@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -20,10 +21,11 @@ const (
 type Invoker struct {
 	requester HttpRequester
 	repo      AppUrlRepository
+	logger    *log.ChannelLogger
 }
 
-func NewInvoker(requester HttpRequester, repo AppUrlRepository) *Invoker {
-	return &Invoker{requester: requester, repo: repo}
+func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger *log.ChannelLogger) *Invoker {
+	return &Invoker{requester: requester, repo: repo, logger: logger}
 }
 
 func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
@@ -41,16 +43,17 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapErr(err)
 	}
 
+	a.logger.Debugw("function request", "appID", target.ID, "request", request)
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapErr(err)
 	}
 
-	fmt.Printf("requesting remote app function %s : %s \n %s: %s", "request", marshaled, "response", ret)
+	a.logger.Debugw("function response", "appID", target.ID, "response", ret)
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
-		return app.WrapErr(err)
+		return app.WrapErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
 	}
 
 	return jsonResp
@@ -66,13 +69,13 @@ func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) 
 		Url: url,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "error while requesting to app server")
+		return nil, fmt.Errorf("requesting to app server, url: %s, body: %s", url, body)
 	}
 	defer reader.Close()
 
 	ret, err := io.ReadAll(reader)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while reading body")
+		return nil, errors.Wrap(err, "reading body")
 	}
 
 	return ret, nil

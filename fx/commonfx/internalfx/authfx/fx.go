@@ -3,8 +3,8 @@ package authfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
-	"github.com/channel-io/ch-app-store/fx/configfx"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"

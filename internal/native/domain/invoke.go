@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 )
 
 type Token struct {
@@ -26,7 +27,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-func WrapError(err error) NativeFunctionResponse {
+func WrapCommonErr(err error) NativeFunctionResponse {
 	return NativeFunctionResponse{
 		Error: Error{
 			Type:    "common",
@@ -35,31 +36,42 @@ func WrapError(err error) NativeFunctionResponse {
 	}
 }
 
-type NativeFunctions map[string]NativeFunction
-type NativeFunction func(ctx context.Context, params json.RawMessage, token Token) NativeFunctionResponse
-
-type NativeFunctionProvider interface {
-	Provide() NativeFunctions
+type NativeFunctionHandler interface {
+	Handle(ctx context.Context, request NativeFunctionRequest) NativeFunctionResponse
+	ListMethods() []string
 }
 
 type NativeFunctionInvoker struct {
-	functions map[string]NativeFunction
+	router map[string]NativeFunctionHandler
 }
 
-func NewNativeFunctionInvoker(provider NativeFunctionProvider) *NativeFunctionInvoker {
-	return &NativeFunctionInvoker{functions: provider.Provide()}
+func NewNativeFunctionInvoker(handlers []NativeFunctionHandler) *NativeFunctionInvoker {
+	ret := &NativeFunctionInvoker{router: make(map[string]NativeFunctionHandler)}
+	for _, r := range handlers {
+		ret.registerHandler(r)
+	}
+	return ret
+}
+
+func (i *NativeFunctionInvoker) registerHandler(r NativeFunctionHandler) {
+	for _, m := range r.ListMethods() {
+		if _, alreadyExists := i.router[m]; alreadyExists {
+			panic(fmt.Errorf("method %s already has handler registered", m))
+		}
+		i.router[m] = r
+	}
 }
 
 func (i *NativeFunctionInvoker) Invoke(
 	ctx context.Context,
 	req NativeFunctionRequest,
 ) NativeFunctionResponse {
-	fn, ok := i.functions[req.Method]
+	handler, ok := i.router[req.Method]
 	if !ok {
 		return NativeFunctionResponse{Error: Error{
 			Type:    "common",
-			Message: "method not found",
+			Message: fmt.Sprintf("method not found: %s", req.Method),
 		}}
 	}
-	return fn(ctx, req.Params, req.Token)
+	return handler.Handle(ctx, req)
 }
