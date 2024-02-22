@@ -99,9 +99,9 @@ func currentStage() string {
 
 // replaceEnvVars replaces ${ANY_ENV_VAR} in config file to the environment variable ANY_ENV_VAR
 func replaceEnvVars(c string) string {
-	re := regexp.MustCompile(`"\${(\w+)}"`)
+	re := regexp.MustCompile(`\${[^}]+}`)
 	return re.ReplaceAllStringFunc(c, func(matched string) string {
-		envName := matched[3 : len(matched)-2]
+		envName := matched[2 : len(matched)-1]
 		val := os.Getenv(envName)
 		if _, err := strconv.Atoi(val); err == nil {
 			return val
