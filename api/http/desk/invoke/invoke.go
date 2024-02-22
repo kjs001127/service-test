@@ -38,8 +38,9 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 
-	body.Context.Channel = app.Channel{ID: channelID}
-	body.Context.Caller = app.Caller{
+	var chCtx app.ChannelContext
+	chCtx.Channel.ID = channelID
+	chCtx.Caller = app.Caller{
 		Type: callerTypeManager,
 		ID:   manager.ID,
 	}
@@ -55,7 +56,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 			Scope: command.ScopeDesk,
 		},
 		Body: app.Body[command.CommandBody]{
-			Context: body.Context,
+			Context: chCtx,
 			Params:  body.Params,
 		},
 	})
@@ -90,8 +91,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
-	body.Context.Channel = app.Channel{ID: channelID}
-	body.Context.Caller = app.Caller{
+
+	var chCtx app.ChannelContext
+	chCtx.Channel.ID = channelID
+	chCtx.Caller = app.Caller{
 		Type: callerTypeManager,
 		ID:   manager.ID,
 	}
@@ -108,7 +111,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		},
 		Body: app.Body[command.AutoCompleteBody]{
 			Params:  body.Params,
-			Context: body.Context,
+			Context: chCtx,
 		},
 	})
 	if err != nil {

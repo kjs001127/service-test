@@ -8,8 +8,7 @@ import (
 )
 
 type CommandInput struct {
-	Context app.ChannelContext `json:"context"`
-	Params  cmd.CommandBody    `json:"params"`
+	Params cmd.CommandBody `json:"params"`
 }
 
 type AppsAndCommands struct {
@@ -18,8 +17,7 @@ type AppsAndCommands struct {
 }
 
 type ContextAndAutoCompleteArgs struct {
-	Context app.ChannelContext   `json:"context"`
-	Params  cmd.AutoCompleteBody `json:"params"`
+	Params cmd.AutoCompleteBody `json:"params"`
 }
 
 type CommandDTO struct {

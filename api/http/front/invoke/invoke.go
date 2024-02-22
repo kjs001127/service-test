@@ -38,11 +38,13 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	body.Context.Channel = app.Channel{ID: channelID}
-	body.Context.Caller = app.Caller{
+	var chCtx app.ChannelContext
+	chCtx.Channel.ID = channelID
+	chCtx.Caller = app.Caller{
 		Type: "user",
 		ID:   user.ID,
 	}
+
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -56,7 +58,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		},
 		Body: app.Body[command.CommandBody]{
 			Params:  body.Params,
-			Context: body.Context,
+			Context: chCtx,
 		},
 	})
 	if err != nil {
@@ -91,11 +93,13 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	body.Context.Channel = app.Channel{ID: channelID}
-	body.Context.Caller = app.Caller{
+	var chCtx app.ChannelContext
+	chCtx.Channel.ID = channelID
+	chCtx.Caller = app.Caller{
 		Type: "user",
 		ID:   user.ID,
 	}
+
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -109,7 +113,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		},
 		Body: app.Body[command.AutoCompleteBody]{
 			Params:  body.Params,
-			Context: body.Context,
+			Context: chCtx,
 		},
 	})
 	if err != nil {
