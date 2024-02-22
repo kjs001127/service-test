@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/friendsofgo/errors"
 	"github.com/golang-jwt/jwt"
 )
@@ -41,13 +42,16 @@ type UserFetcher interface {
 
 type UserFetcherImpl struct {
 	jwtServiceKey string
+	logger        *log.ChannelLogger
 }
 
-func NewUserFetcherImpl(jwtServiceKey string) *UserFetcherImpl {
+func NewUserFetcherImpl(jwtServiceKey string, logger *log.ChannelLogger) *UserFetcherImpl {
 	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey}
 }
 
 func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrincipal, error) {
+	f.logger.Debugw("trying to parse user token", "token", token, "jwtServiceKey", f.jwtServiceKey)
+
 	parsed, err := jwt.ParseWithClaims(token, &UserJwt{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
 			return []byte(f.jwtServiceKey), nil
