@@ -79,6 +79,9 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		},
 		Body: request.Body,
 	})
+	if res.Error != nil {
+		return nil, res.Error
+	}
 
-	return res.Result, res.Error
+	return res.Result, nil
 }

@@ -123,7 +123,7 @@ func (i *TypedInvoker[REQ, RES]) Invoke(
 	}
 
 	if err := json.Unmarshal(res.Result, &ret); err != nil {
-		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
+		return TypedResponse[RES]{Error: &Error{Type: "common", Message: err.Error()}}
 	}
 
 	return TypedResponse[RES]{Result: ret}

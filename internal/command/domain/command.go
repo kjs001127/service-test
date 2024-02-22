@@ -141,5 +141,9 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	}
 
 	ret := r.requester.Invoke(ctx, ctxReq)
+	if ret.Error != nil {
+		return Action{}, ret.Error
+	}
+
 	return ret.Result, nil
 }
