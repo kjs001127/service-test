@@ -10,9 +10,13 @@ import (
 )
 
 type AutoCompleteRequest struct {
-	Command   CommandKey `json:"command"`
-	ChannelID string     `json:"channelId"`
-	app.Body[AutoCompleteArgs]
+	Command CommandKey `json:"command"`
+	app.Body[AutoCompleteBody]
+}
+
+type AutoCompleteBody struct {
+	CommandContext
+	Input AutoCompleteArgs `json:"input"`
 }
 
 type AutoCompleteArgs []*AutoCompleteArg
@@ -47,12 +51,12 @@ func (choices Choices) validate() error {
 }
 
 type AutoCompleteInvoker struct {
-	invoker *app.TypedInvoker[AutoCompleteArgs, Choices]
+	invoker *app.TypedInvoker[AutoCompleteBody, Choices]
 	repo    CommandRepository
 }
 
 func NewAutoCompleteInvoker(
-	invoker *app.TypedInvoker[AutoCompleteArgs, Choices],
+	invoker *app.TypedInvoker[AutoCompleteBody, Choices],
 	repo CommandRepository,
 ) *AutoCompleteInvoker {
 	return &AutoCompleteInvoker{invoker: invoker, repo: repo}
@@ -67,9 +71,9 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
 	}
 
-	res := i.invoker.Invoke(ctx, app.TypedRequest[AutoCompleteArgs]{
+	res := i.invoker.Invoke(ctx, app.TypedRequest[AutoCompleteBody]{
 		Endpoint: app.Endpoint{
-			ChannelID:    request.ChannelID,
+			ChannelID:    request.Context.Channel.ID,
 			AppID:        request.Command.AppID,
 			FunctionName: *cmd.AutoCompleteFunctionName,
 		},

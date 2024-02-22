@@ -2,7 +2,7 @@ package invoke
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
@@ -14,14 +14,14 @@ type Handler struct {
 	wamDownloader       *remoteapp.FileStreamer
 	autoCompleteInvoker *cmd.AutoCompleteInvoker
 
-	authorizer session.ContextAuthorizer
+	authorizer principal.CommandCtxAuthorizer
 }
 
 func NewHandler(
 	invoker *cmd.Invoker,
 	wamDownloader *remoteapp.FileStreamer,
 	autoCompleteInvoker *cmd.AutoCompleteInvoker,
-	authorizer session.ContextAuthorizer,
+	authorizer principal.CommandCtxAuthorizer,
 ) *Handler {
 	return &Handler{
 		invoker:             invoker,

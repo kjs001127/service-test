@@ -19,15 +19,15 @@ import (
 //	@Summary	execute selected Command
 //	@Tags		Front
 //
-//	@Param		x-session				header		string					true	"access token"
-//	@Param		appID					path		string					true	"id of App"
-//	@Param		channelID				path		string					true	"id of Channel"
-//	@Param		name					path		string					true	"name of Command to execute"
-//	@Param		dto.ParamsAndContext	body		dto.ParamsAndContext	true	"body of Function to invoke"
-//	@Success	200						{object}	json.RawMessage
+//	@Param		x-session			header		string				true	"access token"
+//	@Param		appID				path		string				true	"id of App"
+//	@Param		channelID			path		string				true	"id of Channel"
+//	@Param		name				path		string				true	"name of Command to execute"
+//	@Param		dto.CommandInput	body		dto.CommandInput	true	"body of Function to invoke"
+//	@Success	200					{object}	json.RawMessage
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name} [put]
 func (h *Handler) executeCommand(ctx *gin.Context) {
-	var body dto.ParamsAndContext
+	var body dto.CommandInput
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
 		return
@@ -43,19 +43,18 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		Type: "user",
 		ID:   user.ID,
 	}
-	if err := h.authorizer.Authorize(ctx, body.Context, user); err != nil {
+	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
-		ChannelID: channelID,
 		CommandKey: command.CommandKey{
 			AppID: appID,
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		Body: app.Body[command.ParamInput]{
+		Body: app.Body[command.CommandBody]{
 			Params:  body.Params,
 			Context: body.Context,
 		},
@@ -97,7 +96,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		Type: "user",
 		ID:   user.ID,
 	}
-	if err := h.authorizer.Authorize(ctx, body.Context, user); err != nil {
+	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
 	}
@@ -108,8 +107,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		ChannelID: channelID,
-		Body: app.Body[command.AutoCompleteArgs]{
+		Body: app.Body[command.AutoCompleteBody]{
 			Params:  body.Params,
 			Context: body.Context,
 		},

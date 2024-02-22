@@ -51,12 +51,8 @@ var Auth = fx.Module(
 			fx.ParamTags(``, configfx.JwtServiceKey),
 		),
 		fx.Annotate(
-			session.NewContextAuthorizer,
-			fx.As(new(session.ContextAuthorizer)),
-		),
-		fx.Annotate(
-			account.NewContextAuthorizer,
-			fx.As(new(account.ContextAuthorizer)),
+			principal.NewCommandCtxAuthorizer,
+			fx.As(new(principal.CommandCtxAuthorizer)),
 		),
 		fx.Annotate(
 			principal.NewChatValidator,

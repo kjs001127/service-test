@@ -3,10 +3,11 @@ package mockauth
 import (
 	"context"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
 type Parser struct {
@@ -56,16 +57,9 @@ func (u *UserFetcher) FetchUser(ctx context.Context, token string) (session.User
 	}, nil
 }
 
-type ManagerCtxAuthorizer struct {
+type CtxAuthorizer struct {
 }
 
-func (m ManagerCtxAuthorizer) Authorize(ctx context.Context, channelContext app.ChannelContext, invoker account.ManagerPrincipal) error {
-	return nil
-}
-
-type SessionCtxAuthorizer struct {
-}
-
-func (s SessionCtxAuthorizer) Authorize(ctx context.Context, channelContext app.ChannelContext, invoker session.UserPrincipal) error {
+func (s *CtxAuthorizer) Authorize(ctx context.Context, channelContext cmd.CommandContext, token principal.Token) error {
 	return nil
 }

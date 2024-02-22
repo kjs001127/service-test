@@ -63,14 +63,6 @@ type JsonFunctionRequest struct {
 type ChannelContext struct {
 	Caller  Caller  `json:"caller"`
 	Channel Channel `json:"channel"`
-	Chat    struct {
-		Type string `json:"type"`
-		ID   string `json:"id"`
-	} `json:"chat"`
-	Trigger struct {
-		Type       string            `json:"type"`
-		Attributes map[string]string `json:"attributes"`
-	} `json:"trigger"`
 }
 
 type Channel struct {

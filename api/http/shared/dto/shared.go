@@ -7,9 +7,9 @@ import (
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
-type ParamsAndContext struct {
-	Params  cmd.ParamInput     `json:"params"`
+type CommandInput struct {
 	Context app.ChannelContext `json:"context"`
+	Params  cmd.CommandBody    `json:"params"`
 }
 
 type AppsAndCommands struct {
@@ -19,7 +19,7 @@ type AppsAndCommands struct {
 
 type ContextAndAutoCompleteArgs struct {
 	Context app.ChannelContext   `json:"context"`
-	Params  cmd.AutoCompleteArgs `json:"params"`
+	Params  cmd.AutoCompleteBody `json:"params"`
 }
 
 type CommandDTO struct {

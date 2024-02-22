@@ -20,8 +20,8 @@ var CommandSvcs = fx.Module(
 		domain.NewRegisterService,
 		domain.NewInvoker,
 		domain.NewAutoCompleteInvoker,
-		app.NewTypedInvoker[domain.ParamInput, domain.Action],
-		app.NewTypedInvoker[domain.AutoCompleteArgs, domain.Choices],
+		app.NewTypedInvoker[domain.CommandBody, domain.Action],
+		app.NewTypedInvoker[domain.AutoCompleteBody, domain.Choices],
 	),
 )
 

@@ -144,12 +144,15 @@ func (p *ParsedRBACToken) CheckScope(key string, value string) bool {
 	if len(key) <= 0 {
 		return true
 	}
-	if _, ok := p.Scopes[wildcard]; ok {
+	if len(value) <= 0 {
+		return false
+	}
+
+	if _, scopeExists := p.Scopes[key]; !scopeExists {
 		return true
 	}
 
-	scopes := p.Scopes[key]
-	for _, s := range scopes {
+	for _, s := range p.Scopes[key] {
 		if s == value || s == wildcard {
 			return true
 		}

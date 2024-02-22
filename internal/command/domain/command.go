@@ -88,13 +88,13 @@ type CommandRepository interface {
 type Invoker struct {
 	repository CommandRepository
 
-	requester *app.TypedInvoker[ParamInput, Action]
+	requester *app.TypedInvoker[CommandBody, Action]
 	validator *ParamValidator
 }
 
 func NewInvoker(
 	repository CommandRepository,
-	requester *app.TypedInvoker[ParamInput, Action],
+	requester *app.TypedInvoker[CommandBody, Action],
 	validator *ParamValidator,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, validator: validator}
@@ -102,8 +102,27 @@ func NewInvoker(
 
 type CommandRequest struct {
 	CommandKey
-	ChannelID string
-	app.Body[ParamInput]
+	app.Body[CommandBody]
+}
+
+type CommandContext struct {
+	Chat    Chat    `json:"chat"`
+	Trigger Trigger `json:"trigger"`
+}
+
+type CommandBody struct {
+	CommandContext
+	Input ParamInput `json:"input"`
+}
+
+type Chat struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
+}
+
+type Trigger struct {
+	Type       string            `json:"type"`
+	Attributes map[string]string `json:"attributes"`
 }
 
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
@@ -112,10 +131,10 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		return Action{}, errors.WithStack(err)
 	}
 
-	ctxReq := app.TypedRequest[ParamInput]{
+	ctxReq := app.TypedRequest[CommandBody]{
 		Endpoint: app.Endpoint{
 			AppID:        cmd.AppID,
-			ChannelID:    request.ChannelID,
+			ChannelID:    request.Context.Channel.ID,
 			FunctionName: cmd.ActionFunctionName,
 		},
 		Body: request.Body,

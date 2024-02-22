@@ -2,7 +2,7 @@ package invoke
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
@@ -12,13 +12,13 @@ type Handler struct {
 	invoker             *command.Invoker
 	autoCompleteInvoker *command.AutoCompleteInvoker
 
-	authorizer account.ContextAuthorizer
+	authorizer principal.CommandCtxAuthorizer
 }
 
 func NewHandler(
 	invoker *command.Invoker,
 	autoCompleteInvoker *command.AutoCompleteInvoker,
-	authorizer account.ContextAuthorizer,
+	authorizer principal.CommandCtxAuthorizer,
 ) *Handler {
 	return &Handler{invoker: invoker, autoCompleteInvoker: autoCompleteInvoker, authorizer: authorizer}
 }
