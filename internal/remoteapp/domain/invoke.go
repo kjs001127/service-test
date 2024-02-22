@@ -49,7 +49,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapErr(err)
 	}
 
-	a.logger.Debugw("function response", "appID", target.ID, "response", ret)
+	a.logger.Debugw("function response", "appID", target.ID, "response", string(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
