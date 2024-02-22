@@ -34,7 +34,6 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
 		return
 	}
-
 	user, err := a.userSvc.FetchUser(ctx, xSession)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(errors2.Wrap(err, "middleware user fetch fail")))
