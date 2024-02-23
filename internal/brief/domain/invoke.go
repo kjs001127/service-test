@@ -63,14 +63,9 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 		brief := brief
 		go func() {
 			res := i.invoker.Invoke(ctx, app.TypedRequest[EmptyRequest]{
-				Endpoint: app.Endpoint{
-					AppID:        brief.AppID,
-					ChannelID:    req.Channel.ID,
-					FunctionName: brief.BriefFunctionName,
-				},
-				Body: app.Body[EmptyRequest]{
-					Context: req,
-				},
+				AppID:        brief.AppID,
+				FunctionName: brief.BriefFunctionName,
+				Context:      req,
 			})
 			if res.Error == nil {
 				ch <- &AppBrief{AppId: brief.AppID, Brief: res.Result.Result}

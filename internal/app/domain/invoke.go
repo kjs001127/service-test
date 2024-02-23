@@ -25,22 +25,22 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, request JsonFunction
 		ChannelID: request.Context.Channel.ID,
 	})
 	if err != nil {
-		return WrapErr(err)
+		return WrapCommonErr(err)
 	}
 
 	app, err := i.appRepo.FindApp(ctx, appID)
 	if err != nil {
-		return WrapErr(err)
+		return WrapCommonErr(err)
 	}
 
 	paramMarshaled, err := json.Marshal(request.Params)
 	if err != nil {
-		return WrapErr(err)
+		return WrapCommonErr(err)
 	}
 
 	h, ok := i.handlerMap[app.Type]
 	if !ok {
-		return WrapErr(err)
+		return WrapCommonErr(err)
 	}
 
 	return h.Invoke(ctx, app, JsonFunctionRequest{
@@ -88,64 +88,6 @@ func (e *Error) Error() string {
 	return e.Message
 }
 
-func WrapErr(err error) JsonFunctionResponse {
+func WrapCommonErr(err error) JsonFunctionResponse {
 	return JsonFunctionResponse{Error: &Error{Type: "common", Message: err.Error()}}
-}
-
-type TypedInvoker[REQ any, RES any] struct {
-	invoker *Invoker
-}
-
-func NewTypedInvoker[REQ any, RES any](
-	invoker *Invoker,
-) *TypedInvoker[REQ, RES] {
-	return &TypedInvoker[REQ, RES]{invoker: invoker}
-}
-
-func (i *TypedInvoker[REQ, RES]) Invoke(
-	ctx context.Context,
-	request TypedRequest[REQ],
-) TypedResponse[RES] {
-	var ret RES
-
-	marshaled, err := json.Marshal(request.Params)
-	if err != nil {
-		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
-	}
-
-	res := i.invoker.Invoke(ctx, request.AppID, JsonFunctionRequest{
-		Method:  request.FunctionName,
-		Params:  marshaled,
-		Context: request.Context,
-	})
-	if res.Error != nil {
-		return TypedResponse[RES]{Error: res.Error}
-	}
-
-	if err := json.Unmarshal(res.Result, &ret); err != nil {
-		return TypedResponse[RES]{Error: &Error{Type: "common", Message: err.Error()}}
-	}
-
-	return TypedResponse[RES]{Result: ret}
-}
-
-type TypedRequest[REQ any] struct {
-	Endpoint
-	Body[REQ]
-}
-
-type Endpoint struct {
-	AppID        string
-	ChannelID    string
-	FunctionName string
-}
-
-type Body[REQ any] struct {
-	Context ChannelContext `json:"context"`
-	Params  REQ            `json:"params"`
-}
-
-type TypedResponse[REQ any] struct {
-	Result REQ    `json:"result"`
-	Error  *Error `json:"error"`
 }

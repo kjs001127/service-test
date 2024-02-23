@@ -14,6 +14,8 @@ import (
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
+const callerTypeUser = "user"
+
 // executeCommand godoc
 //
 //	@Summary	execute selected Command
@@ -38,11 +40,14 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	var chCtx app.ChannelContext
-	chCtx.Channel.ID = channelID
-	chCtx.Caller = app.Caller{
-		Type: "user",
-		ID:   user.ID,
+	chCtx := app.ChannelContext{
+		Channel: app.Channel{
+			ID: channelID,
+		},
+		Caller: app.Caller{
+			Type: callerTypeUser,
+			ID:   user.ID,
+		},
 	}
 
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
@@ -56,10 +61,8 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		Body: app.Body[command.CommandBody]{
-			Params:  body.Params,
-			Context: chCtx,
-		},
+		CommandBody:    body.Params,
+		ChannelContext: chCtx,
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
@@ -93,16 +96,19 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	var chCtx app.ChannelContext
-	chCtx.Channel.ID = channelID
-	chCtx.Caller = app.Caller{
-		Type: "user",
-		ID:   user.ID,
-	}
-
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
+	}
+
+	chCtx := app.ChannelContext{
+		Channel: app.Channel{
+			ID: channelID,
+		},
+		Caller: app.Caller{
+			Type: callerTypeUser,
+			ID:   user.ID,
+		},
 	}
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
@@ -111,10 +117,8 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		Body: app.Body[command.AutoCompleteBody]{
-			Params:  body.Params,
-			Context: chCtx,
-		},
+		Body:    body.Params,
+		Context: chCtx,
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))

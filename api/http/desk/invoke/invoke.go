@@ -38,15 +38,19 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 
-	var chCtx app.ChannelContext
-	chCtx.Channel.ID = channelID
-	chCtx.Caller = app.Caller{
-		Type: callerTypeManager,
-		ID:   manager.ID,
-	}
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, manager.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
+	}
+
+	chCtx := app.ChannelContext{
+		Caller: app.Caller{
+			Type: callerTypeManager,
+			ID:   manager.ID,
+		},
+		Channel: app.Channel{
+			ID: channelID,
+		},
 	}
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
@@ -55,10 +59,8 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeDesk,
 		},
-		Body: app.Body[command.CommandBody]{
-			Context: chCtx,
-			Params:  body.Params,
-		},
+		CommandBody:    body.Params,
+		ChannelContext: chCtx,
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
@@ -92,15 +94,19 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 
-	var chCtx app.ChannelContext
-	chCtx.Channel.ID = channelID
-	chCtx.Caller = app.Caller{
-		Type: callerTypeManager,
-		ID:   manager.ID,
-	}
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, manager.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
+	}
+
+	chCtx := app.ChannelContext{
+		Caller: app.Caller{
+			Type: callerTypeManager,
+			ID:   manager.ID,
+		},
+		Channel: app.Channel{
+			ID: channelID,
+		},
 	}
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
@@ -109,10 +115,8 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeDesk,
 		},
-		Body: app.Body[command.AutoCompleteBody]{
-			Params:  body.Params,
-			Context: chCtx,
-		},
+		Body:    body.Params,
+		Context: chCtx,
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))

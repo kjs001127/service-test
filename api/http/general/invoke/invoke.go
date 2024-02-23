@@ -32,7 +32,7 @@ import (
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req localdto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
 
@@ -67,28 +67,23 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
 
 	chCtx, err := authorizeRbac(ctx, appID, req.Method, req.Context)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapErr(err))
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
 
 	res := h.invoker.Invoke(
 		ctx,
 		app.TypedRequest[json.RawMessage]{
-			Endpoint: app.Endpoint{
-				ChannelID:    chCtx.Channel.ID,
-				AppID:        appID,
-				FunctionName: req.Method,
-			},
-			Body: app.Body[json.RawMessage]{
-				Context: chCtx,
-				Params:  req.Params,
-			},
+			AppID:        appID,
+			FunctionName: req.Method,
+			Context:      chCtx,
+			Params:       req.Params,
 		})
 
 	ctx.JSON(http.StatusOK, res)

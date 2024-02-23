@@ -31,29 +31,29 @@ func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger *log.Chan
 func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
 	urls, err := a.repo.Fetch(ctx, target.ID)
 	if err != nil {
-		return app.WrapErr(err)
+		return app.WrapCommonErr(err)
 	}
 
 	if urls.FunctionURL == nil {
-		return app.WrapErr(errors.New("function url empty"))
+		return app.WrapCommonErr(errors.New("function url empty"))
 	}
 
 	marshaled, err := json.Marshal(request)
 	if err != nil {
-		return app.WrapErr(err)
+		return app.WrapCommonErr(err)
 	}
 
 	a.logger.Debugw("function request", "appID", target.ID, "request", request)
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
-		return app.WrapErr(err)
+		return app.WrapCommonErr(err)
 	}
 
 	a.logger.Debugw("function response", "appID", target.ID, "response", string(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
-		return app.WrapErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
+		return app.WrapCommonErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
 	}
 
 	return jsonResp

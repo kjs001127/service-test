@@ -102,7 +102,8 @@ func NewInvoker(
 
 type CommandRequest struct {
 	CommandKey
-	app.Body[CommandBody]
+	CommandBody
+	app.ChannelContext
 }
 
 type CommandContext struct {
@@ -132,12 +133,10 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	}
 
 	ctxReq := app.TypedRequest[CommandBody]{
-		Endpoint: app.Endpoint{
-			AppID:        cmd.AppID,
-			ChannelID:    request.Context.Channel.ID,
-			FunctionName: cmd.ActionFunctionName,
-		},
-		Body: request.Body,
+		AppID:        cmd.AppID,
+		FunctionName: cmd.ActionFunctionName,
+		Params:       request.CommandBody,
+		Context:      request.ChannelContext,
 	}
 
 	ret := r.requester.Invoke(ctx, ctxReq)

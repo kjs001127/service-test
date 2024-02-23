@@ -35,23 +35,18 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.JSON(http.StatusOK, app.WrapErr(err))
+		ctx.JSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
 
 	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
-		Endpoint: app.Endpoint{
-			ChannelID:    req.Context.Channel.ID,
-			AppID:        appID,
-			FunctionName: req.Method,
+		AppID:        appID,
+		FunctionName: req.Method,
+		Context: app.ChannelContext{
+			Channel: app.Channel{ID: req.Context.Channel.ID},
+			Caller:  callerAdmin,
 		},
-		Body: app.Body[json.RawMessage]{
-			Context: app.ChannelContext{
-				Channel: app.Channel{ID: req.Context.Channel.ID},
-				Caller:  callerAdmin,
-			},
-			Params: req.Params,
-		},
+		Params: req.Params,
 	})
 
 	ctx.JSON(http.StatusOK, res)
@@ -69,7 +64,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 func (h *Handler) brief(ctx *gin.Context) {
 	var req localdto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.JSON(http.StatusOK, app.WrapErr(err))
+		ctx.JSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
 

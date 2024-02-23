@@ -85,7 +85,7 @@ type InvokeHandler struct {
 
 func (i InvokeHandler) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
 	if target.ID != "1" {
-		return app.WrapErr(errors.New("cannot find app"))
+		return app.WrapCommonErr(errors.New("cannot find app"))
 	}
 
 	var ret any
@@ -116,7 +116,7 @@ func (i InvokeHandler) Invoke(ctx context.Context, target *app.App, request app.
 			{Name: "테스트1", Value: "testValue1"},
 		}
 	default:
-		return app.WrapErr(apierr.NotFound(errors.New("no command found")))
+		return app.WrapCommonErr(apierr.NotFound(errors.New("no command found")))
 	}
 
 	res, _ := json.Marshal(ret)

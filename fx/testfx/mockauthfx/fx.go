@@ -24,7 +24,6 @@ var AuthMocked = fx.Module("mockauth",
 
 var GeneralAuthMocked = fx.Module("mockGeneral",
 	fx.Supply(
-
 		fx.Annotate(
 			new(mockauth.Parser),
 			fx.As(new(general.Parser)),
