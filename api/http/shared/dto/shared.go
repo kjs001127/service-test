@@ -21,14 +21,14 @@ type ContextAndAutoCompleteArgs struct {
 }
 
 type CommandDTO struct {
-	AppID       string            `json:"appId"`
-	Name        string            `json:"name"`
-	NameI18nMap map[string]string `json:"nameI18NMap"`
+	AppID string    `json:"appId"`
+	Name  string    `json:"name"`
+	Scope cmd.Scope `json:"scope"`
 
-	Scope              cmd.Scope            `json:"scope"`
-	Description        *string              `json:"description"`
-	DescriptionI18nMap map[string]string    `json:"descriptionI18NMap"`
-	ParamDefinitions   cmd.ParamDefinitions `json:"paramDefinitions"`
+	Description            *string        `json:"description"`
+	NameDescriptionI18nMap map[string]any `json:"nameDescriptionI18nMap"`
+	
+	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
@@ -36,15 +36,14 @@ type CommandDTO struct {
 
 func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 	return &CommandDTO{
-		AppID:              origin.AppID,
-		Name:               origin.Name,
-		NameI18nMap:        origin.NameI18nMap,
-		Scope:              origin.Scope,
-		Description:        origin.Description,
-		ParamDefinitions:   origin.ParamDefinitions,
-		DescriptionI18nMap: origin.DescriptionI18nMap,
-		CreatedAt:          origin.CreatedAt,
-		UpdatedAt:          origin.UpdatedAt,
+		AppID:                  origin.AppID,
+		Name:                   origin.Name,
+		NameDescriptionI18nMap: origin.NameDescriptionI18NMap,
+		Scope:                  origin.Scope,
+		Description:            origin.Description,
+		ParamDefinitions:       origin.ParamDefinitions,
+		CreatedAt:              origin.CreatedAt,
+		UpdatedAt:              origin.UpdatedAt,
 	}
 }
 

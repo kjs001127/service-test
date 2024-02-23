@@ -138,13 +138,9 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling paramDef")
 	}
-	nameI18nMap, err := json.Marshal(cmd.NameI18nMap)
+	nameDescriptionMap, err := json.Marshal(cmd.NameDescriptionI18NMap)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
-	}
-	descriptionI18nMap, err := json.Marshal(cmd.DescriptionI18nMap)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling descriptionI18nMap")
 	}
 
 	return &models.Command{
@@ -153,11 +149,11 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		AppID:                    cmd.AppID,
 		Scope:                    string(cmd.Scope),
 		ActionFunctionName:       cmd.ActionFunctionName,
-		DescriptionI18nMap:       null.JSONFrom(descriptionI18nMap),
+		NameDescriptionI18nMap:   null.JSONFrom(nameDescriptionMap),
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfMode:                  cmd.AlfMode,
-		NameI18nMap:              nameI18nMap,
+		NameI18nMap:              nameDescriptionMap,
 		ParamDefinitions:         paramDef,
 	}, nil
 }
@@ -173,9 +169,9 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		return nil, fmt.Errorf("parsing name18nMap, cmd: %v, cause: %w", c, err)
 	}
 
-	descriptionI18nMap := make(map[string]string)
-	if err := c.DescriptionI18nMap.Unmarshal(&descriptionI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing descriptionI18nMap, cmd: %v, cause: %w", c, err)
+	nameDescriptionI18nMap := make(map[string]any)
+	if err := c.NameDescriptionI18nMap.Unmarshal(&nameDescriptionI18nMap); err != nil {
+		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err)
 	}
 
 	return &domain.Command{
@@ -184,10 +180,9 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		AppID:                    c.AppID,
 		Scope:                    domain.Scope(c.Scope),
 		ActionFunctionName:       c.ActionFunctionName,
+		NameDescriptionI18NMap:   nameDescriptionI18nMap,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
 		Description:              c.Description.Ptr(),
-		DescriptionI18nMap:       descriptionI18nMap,
-		NameI18nMap:              nameI18nMap,
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,

@@ -35,9 +35,8 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
-	NameI18nMap        map[string]string `json:"nameI18nMap"`
-	Description        *string           `json:"description"`
-	DescriptionI18nMap map[string]string `json:"descriptionI18NMap"`
+	Description            *string        `json:"description"`
+	NameDescriptionI18NMap map[string]any `json:"nameDescriptionI18nMap"`
 
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        string  `json:"alfMode"`
