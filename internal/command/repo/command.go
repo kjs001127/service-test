@@ -14,6 +14,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
+
 	"github.com/channel-io/ch-app-store/internal/command/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
@@ -153,7 +154,6 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfMode:                  cmd.AlfMode,
-		NameI18nMap:              nameDescriptionMap,
 		ParamDefinitions:         paramDef,
 	}, nil
 }
@@ -162,11 +162,6 @@ func marshal(c *models.Command) (*domain.Command, error) {
 	var paramDefs domain.ParamDefinitions
 	if err := c.ParamDefinitions.Unmarshal(&paramDefs); err != nil {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
-	}
-
-	nameI18nMap := make(map[string]string)
-	if err := c.NameI18nMap.Unmarshal(&nameI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing name18nMap, cmd: %v, cause: %w", c, err)
 	}
 
 	nameDescriptionI18nMap := make(map[string]any)
