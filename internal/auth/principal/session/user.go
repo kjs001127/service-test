@@ -9,7 +9,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-const XSessionHeader = "x-session"
+const (
+	validIssuer    = "ses"
+	XSessionHeader = "x-session"
+)
 
 type Token string
 
@@ -67,7 +70,7 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 
 	claims := parsed.Claims.(*UserJwt)
 
-	if claims.Issuer != "ses" {
+	if claims.Issuer != validIssuer {
 		return UserPrincipal{}, errors.New("invalid iss")
 	}
 

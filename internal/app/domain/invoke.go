@@ -5,18 +5,29 @@ import (
 	"encoding/json"
 )
 
+type FunctionRequestListener interface {
+	OnEvent(ctx context.Context, appID string, req JsonFunctionRequest)
+}
+
 type Invoker struct {
 	appChRepo  AppChannelRepository
 	appRepo    AppRepository
 	handlerMap map[AppType]InvokeHandler
+
+	listener FunctionRequestListener
 }
 
-func NewInvoker(appChRepo AppChannelRepository, appRepo AppRepository, handlers []Typed[InvokeHandler]) *Invoker {
+func NewInvoker(
+	appChRepo AppChannelRepository,
+	appRepo AppRepository,
+	handlers []Typed[InvokeHandler],
+	listener FunctionRequestListener,
+) *Invoker {
 	handlerMap := make(map[AppType]InvokeHandler)
 	for _, h := range handlers {
 		handlerMap[h.Type] = h.Handler
 	}
-	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap}
+	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap, listener: listener}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, request JsonFunctionRequest) JsonFunctionResponse {
@@ -42,6 +53,8 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, request JsonFunction
 	if !ok {
 		return WrapCommonErr(err)
 	}
+
+	i.listener.OnEvent(ctx, appID, request)
 
 	return h.Invoke(ctx, app, JsonFunctionRequest{
 		Method:  request.Method,

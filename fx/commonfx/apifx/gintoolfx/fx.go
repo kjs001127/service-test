@@ -18,11 +18,6 @@ var ApiServer = fx.Module("gintool",
 			fx.As(new(gintool.Middleware)),
 			fx.ResultTags(`group:"middlewares"`),
 		),
-		fx.Annotate(
-			middleware.NewDatadog,
-			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"middlewares"`),
-		),
 	),
 
 	fx.Supply(

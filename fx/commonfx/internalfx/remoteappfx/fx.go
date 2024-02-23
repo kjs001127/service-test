@@ -1,8 +1,6 @@
 package remoteappfx
 
 import (
-	"net/http"
-
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
@@ -61,7 +59,10 @@ var RemoteAppCommonsSvcs = fx.Module(
 			fx.ResultTags(`name:"remoteInvoker"`),
 			fx.As(new(app.InvokeHandler)),
 		),
-		domain.NewFileStreamer,
+		fx.Annotate(
+			domain.NewFileStreamer,
+			fx.ParamTags(``, restyfx.App, ``),
+		),
 		fx.Annotate(
 			app.NewTyped[app.InvokeHandler],
 			fx.ParamTags(remoteAppName, `name:"remoteInvoker"`),
@@ -123,12 +124,7 @@ var RemoteAppDevSvc = fx.Module(
 
 var RemoteAppHttps = fx.Module(
 	"remoteAppHttp",
-	fx.Supply(
-		fx.Annotate(
-			http.DefaultTransport,
-			fx.As(new(http.RoundTripper)),
-		),
-	),
+
 	fx.Provide(
 		fx.Annotate(
 			infra.NewHttpRequester,

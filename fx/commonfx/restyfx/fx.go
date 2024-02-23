@@ -1,6 +1,7 @@
 package restyfx
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -20,22 +21,26 @@ var Clients = fx.Module(
 	"resty",
 	fx.Provide(
 		fx.Annotate(
-			func() *resty.Client {
+			func(tripper http.RoundTripper) *resty.Client {
 				ret := resty.New()
 				ret.SetTimeout(dwTimeout)
+				ret.SetTransport(tripper)
 				return ret
 			},
+			fx.ParamTags(Dw),
 			fx.ResultTags(Dw),
 		),
 	),
 
 	fx.Provide(
 		fx.Annotate(
-			func() *resty.Client {
+			func(tripper http.RoundTripper) *resty.Client {
 				ret := resty.New()
 				ret.SetTimeout(appTimeout)
+				ret.SetTransport(tripper)
 				return ret
 			},
+			fx.ParamTags(App),
 			fx.ResultTags(App),
 		),
 	),

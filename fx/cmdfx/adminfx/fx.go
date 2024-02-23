@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
@@ -34,4 +35,5 @@ var Admin = fx.Module(
 	commandfx.Command,
 	restyfx.Clients,
 	fx.Supply(log.New("Appstore")),
+	datadogfx.Datadog,
 )
