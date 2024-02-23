@@ -22,7 +22,7 @@ import (
 )
 
 var Public = fx.Module(
-	"appAdmin",
+	"appPublic",
 	restyfx.Clients,
 	dbfx.Postgres,
 	PublicHttp,

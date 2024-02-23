@@ -34,7 +34,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	appID := ctx.Param("id")
 
 	var req dto.JsonFunctionRequest
-	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		ctx.JSON(http.StatusOK, app.WrapErr(err))
 		return
 	}

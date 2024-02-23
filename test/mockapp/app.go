@@ -19,7 +19,7 @@ func SetUpMockApp(manager app.AppManager, reg *cmd.RegisterSvc) error {
 		ID:        "1",
 		State:     app.AppStateStable,
 		Title:     "TestApp",
-		IsPrivate: true,
+		IsPrivate: false,
 	})
 	if err != nil {
 		return err

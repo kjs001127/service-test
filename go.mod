@@ -14,6 +14,7 @@ require (
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.3
+	github.com/jarcoal/httpmock v1.3.1
 	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.37.0

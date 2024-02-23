@@ -1,0 +1,17 @@
+stage: development
+auth:
+  authGeneralUrl: https://api.exp.channel.io
+  authAdminURL: https://admin.api.exp.channel.io
+  jwtServiceKey: test
+port: 3020
+psql:
+  schema: public
+  dbname: app_store
+  host: localhost
+  port: 5432
+  user: app_store
+  password: abc
+  sslmode: disable
+sentry:
+  dsn: ''
+  tracesSampleRate: 0
