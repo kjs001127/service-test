@@ -19,6 +19,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/generalfx"
 	publichandlerfx "github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
@@ -45,6 +46,7 @@ var fullAppModule = fx.Module(
 	configfx.Values,
 	httpModule,
 	remoteappfx.RemoteAppDev,
+	datadogfx.Datadog,
 	brieffx.Brief,
 	appfx.App,
 	mockauth.Module,
