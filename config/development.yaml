@@ -2,7 +2,7 @@ stage: development
 auth:
   authGeneralUrl: https://api.exp.channel.io
   authAdminURL: https://admin.api.exp.channel.io
-  jwtServiceKey: ${JWT_SERVICE_KEY}
+  jwtServiceKey: test
 port: 3020
 psql:
   schema: public
