@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
 	"go.uber.org/fx"
@@ -50,6 +51,8 @@ var fullAppModule = fx.Module(
 	commandfx.Command,
 	restyfx.Clients,
 	nativefx.Native,
+
+	fx.Supply(log.New("Test")),
 )
 
 func truncateDB(db *sql.DB) {
