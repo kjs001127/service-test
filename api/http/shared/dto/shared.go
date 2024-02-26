@@ -27,7 +27,7 @@ type CommandDTO struct {
 
 	Description            *string        `json:"description"`
 	NameDescriptionI18nMap map[string]any `json:"nameDescriptionI18nMap"`
-	
+
 	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
 
 	CreatedAt time.Time `json:"createdAt"`
@@ -38,7 +38,7 @@ func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 	return &CommandDTO{
 		AppID:                  origin.AppID,
 		Name:                   origin.Name,
-		NameDescriptionI18nMap: origin.NameDescriptionI18NMap,
+		NameDescriptionI18nMap: origin.NameDescI18NMap,
 		Scope:                  origin.Scope,
 		Description:            origin.Description,
 		ParamDefinitions:       origin.ParamDefinitions,
