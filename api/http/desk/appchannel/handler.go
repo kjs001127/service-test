@@ -27,6 +27,7 @@ func NewHandler(
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/desk/v1/channels/:channelID/app-channels")
 
+	// CORS 이슈가 있어 / 제거
 	group.GET("", h.queryAll)
 	group.GET("/:appID", h.query)
 	group.PUT("/:appID", h.install)
