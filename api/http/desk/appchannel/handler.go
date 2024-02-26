@@ -27,7 +27,7 @@ func NewHandler(
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/desk/v1/channels/:channelID/app-channels")
 
-	group.GET("/", h.queryAll)
+	group.GET("", h.queryAll)
 	group.GET("/:appID", h.query)
 	group.PUT("/:appID", h.install)
 	group.DELETE("/:appID", h.uninstall)
