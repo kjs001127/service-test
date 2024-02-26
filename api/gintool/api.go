@@ -36,9 +36,11 @@ func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine 
 			AllowCredentials: true,
 			AllowWildcard:    true,
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
-			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "X-Account", "X-session", "X-Access-Token"},
-			ExposeHeaders:    []string{"Content-Length"},
-			MaxAge:           12 * time.Hour,
+			AllowHeaders: []string{"Origin", "Content-Length", "Content-Type",
+				"X-Account", "X-session", "X-Access-Token", "Accept", "Referer", "Sec-Ch-Ua", "Sec-Ch-Ua-Mobile",
+				"Sec-Ch-Ua-Platform", "User-Agent"},
+			ExposeHeaders: []string{"Content-Length"},
+			MaxAge:        12 * time.Hour,
 		},
 	))
 	for _, m := range middlewares {
