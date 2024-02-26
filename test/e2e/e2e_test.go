@@ -154,6 +154,31 @@ func Test(t *testing.T) {
 				successfulAppServerFunctionInvoke(),
 			},
 		},
+		{
+			name: "update(upsert) command",
+			req: request{
+				method: "POST",
+				path:   "/admin/apps/{appId}/commands",
+				body: toJSONMap(command.Command{
+					ActionFunctionName: "newActionFunctionName",
+				}),
+			},
+			expectedResponse: expectedResponse{
+				statusCode: http.StatusCreated,
+			},
+			beforeTest: func() map[string]string {
+				res := make(map[string]string)
+				res["appId"] = createRemoteApp()
+				commandName := "deskCommand"
+
+				registerCommand(res["appId"], "testFunction", commandName, "desk")
+				installApp(res["appId"], "1")
+				return res
+			},
+			mockServers: []mockServer{
+				successfulAppServerFunctionInvoke(),
+			},
+		},
 	}
 
 	restClient := resty.New()

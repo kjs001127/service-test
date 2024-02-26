@@ -153,6 +153,7 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 		NameDescriptionI18nMap:   null.JSONFrom(nameDescriptionMap),
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
+		AlfDescription:           null.StringFromPtr(cmd.AlfDescription),
 		AlfMode:                  cmd.AlfMode,
 		ParamDefinitions:         paramDef,
 	}, nil
@@ -178,6 +179,7 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		NameDescriptionI18NMap:   nameDescriptionI18nMap,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
 		Description:              c.Description.Ptr(),
+		AlfDescription:           c.AlfDescription.Ptr(),
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,
