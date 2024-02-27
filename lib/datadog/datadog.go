@@ -31,10 +31,11 @@ func WrapHttpHandler(tripper http.RoundTripper) http.RoundTripper {
 }
 
 type Datadog struct {
+	middleware gin.HandlerFunc
 }
 
 func NewDatadog() *Datadog {
-	return &Datadog{}
+	return &Datadog{middleware: gintrace.Middleware(ddServiceName)}
 }
 
 func (d *Datadog) Handle(ctx *gin.Context) {
@@ -46,8 +47,7 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 		tracer.Start(tracer.WithRuntimeMetrics())
 	})
 
-	ginTraceFunc := gintrace.Middleware(ddServiceName)
-	ginTraceFunc(ctx)
+	d.middleware(ctx)
 }
 
 type MethodSpanTagger struct {
@@ -66,6 +66,6 @@ func (d *MethodSpanTagger) BeforeCall(ctx context.Context, appID string, req app
 		return
 	}
 
-	span.SetTag("rpc.service", appID)
-	span.SetTag("rpc.method", req.Method)
+	span.SetTag("appID", appID)
+	span.SetTag("method", req.Method)
 }
