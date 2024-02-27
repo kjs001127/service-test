@@ -6,7 +6,7 @@ import (
 )
 
 type FunctionRequestListener interface {
-	OnEvent(ctx context.Context, appID string, req JsonFunctionRequest)
+	BeforeCall(ctx context.Context, appID string, req JsonFunctionRequest)
 }
 
 type Invoker struct {
@@ -44,23 +44,14 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, request JsonFunction
 		return WrapCommonErr(err)
 	}
 
-	paramMarshaled, err := json.Marshal(request.Params)
-	if err != nil {
-		return WrapCommonErr(err)
-	}
-
 	h, ok := i.handlerMap[app.Type]
 	if !ok {
 		return WrapCommonErr(err)
 	}
 
-	i.listener.OnEvent(ctx, appID, request)
+	i.listener.BeforeCall(ctx, appID, request)
 
-	return h.Invoke(ctx, app, JsonFunctionRequest{
-		Method:  request.Method,
-		Params:  paramMarshaled,
-		Context: request.Context,
-	})
+	return h.Invoke(ctx, app, request)
 }
 
 type InvokeHandler interface {

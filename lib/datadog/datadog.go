@@ -57,20 +57,15 @@ func NewMethodSpanTagger() *MethodSpanTagger {
 	return &MethodSpanTagger{}
 }
 
-func (d *MethodSpanTagger) OnEvent(ctx context.Context, appID string, req app.JsonFunctionRequest) {
+func (d *MethodSpanTagger) BeforeCall(ctx context.Context, appID string, req app.JsonFunctionRequest) {
 	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
 		return
 	}
-
-	once.Do(func() {
-		tracer.Start(tracer.WithRuntimeMetrics())
-	})
-
 	span, ok := tracer.SpanFromContext(ctx)
 	if !ok {
-		tracer.ContextWithSpan(ctx, span)
+		return
 	}
 
-	span.SetTag("custom.appId", appID)
-	span.SetTag("custom.method", req.Method)
+	span.SetTag("rpc.service", appID)
+	span.SetTag("rpc.method", req.Method)
 }
