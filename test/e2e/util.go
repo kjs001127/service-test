@@ -71,7 +71,11 @@ func truncateDB(db *sql.DB) {
 			panic(err)
 		}
 		if tableName != "flyway_schema_history" {
-			db.Query(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", tableName))
+			r, err := db.Query(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", tableName))
+			if err != nil {
+				panic(err)
+			}
+			defer r.Close()
 		}
 	}
 }

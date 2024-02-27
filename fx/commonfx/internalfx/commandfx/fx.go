@@ -12,16 +12,23 @@ var Command = fx.Module(
 	"command",
 	CommandDAOs,
 	CommandSvcs,
+	CommandListeners,
 )
 var CommandSvcs = fx.Module(
 	"commandDomain",
 	fx.Provide(
 		domain.NewParamValidator,
 		domain.NewRegisterService,
-		domain.NewInvoker,
 		domain.NewAutoCompleteInvoker,
 		app.NewTypedInvoker[domain.CommandBody, domain.Action],
 		app.NewTypedInvoker[domain.AutoCompleteBody, domain.Choices],
+	),
+
+	fx.Provide(
+		fx.Annotate(
+			domain.NewInvoker,
+			fx.ParamTags(``, ``, ``, `group:"commandListeners"`),
+		),
 	),
 )
 
@@ -31,6 +38,17 @@ var CommandDAOs = fx.Module(
 		fx.Annotate(
 			repo.NewCommandDao,
 			fx.As(new(domain.CommandRepository)),
+		),
+	),
+)
+
+var CommandListeners = fx.Module(
+	"commandListeners",
+	fx.Provide(
+		fx.Annotate(
+			domain.NewCommandDBLogger,
+			fx.As(new(domain.CommandRequestListener)),
+			fx.ResultTags(`group:"commandListeners"`),
 		),
 	),
 )

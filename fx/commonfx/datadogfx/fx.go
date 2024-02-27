@@ -30,6 +30,7 @@ var Datadog = fx.Module("datadog",
 		fx.Annotate(
 			datadog.NewMethodSpanTagger,
 			fx.As(new(app.FunctionRequestListener)),
+			fx.ResultTags(`group:"functionListeners"`),
 		),
 		fx.Annotate(
 			datadog.NewDatadog,

@@ -57,7 +57,7 @@ func NewMethodSpanTagger() *MethodSpanTagger {
 	return &MethodSpanTagger{}
 }
 
-func (d *MethodSpanTagger) BeforeCall(ctx context.Context, appID string, req app.JsonFunctionRequest) {
+func (d *MethodSpanTagger) OnInvoke(ctx context.Context, appID string, req app.JsonFunctionRequest, _ app.JsonFunctionResponse) {
 	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
 		return
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/event"
 )
 
 type Scope string
@@ -84,19 +85,23 @@ type CommandRepository interface {
 	Save(ctx context.Context, resource *Command) (*Command, error)
 }
 
+type CommandRequestListener event.RequestListener[CommandRequest, app.TypedResponse[Action]]
 type Invoker struct {
 	repository CommandRepository
 
 	requester *app.TypedInvoker[CommandBody, Action]
 	validator *ParamValidator
+
+	listeners []CommandRequestListener
 }
 
 func NewInvoker(
 	repository CommandRepository,
 	requester *app.TypedInvoker[CommandBody, Action],
 	validator *ParamValidator,
+	listeners []CommandRequestListener,
 ) *Invoker {
-	return &Invoker{repository: repository, requester: requester, validator: validator}
+	return &Invoker{repository: repository, requester: requester, validator: validator, listeners: listeners}
 }
 
 type CommandRequest struct {
@@ -142,6 +147,13 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	if ret.Error != nil {
 		return Action{}, ret.Error
 	}
+	r.onInvoke(ctx, cmd.ID, request, ret)
 
 	return ret.Result, nil
+}
+
+func (r *Invoker) onInvoke(ctx context.Context, cmdID string, req CommandRequest, res app.TypedResponse[Action]) {
+	for _, listener := range r.listeners {
+		go listener.OnInvoke(ctx, cmdID, req, res)
+	}
 }
