@@ -23,7 +23,7 @@ func successfulAppServerFunctionInvoke() mockServer {
 				},
 				expectedResponse: expectedResponse{
 					statusCode: 200,
-					body:       map[string]any{"result": res, "error": nil},
+					body:       map[string]any{"result": res},
 				},
 			},
 		},
