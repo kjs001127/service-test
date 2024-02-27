@@ -14,11 +14,6 @@ import (
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 )
 
-var callerAdmin = app.Caller{
-	Type: "admin",
-	ID:   "-",
-}
-
 // invoke godoc
 //
 //	@Summary	invoke Function
@@ -42,11 +37,8 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
 		AppID:        appID,
 		FunctionName: req.Method,
-		Context: app.ChannelContext{
-			Channel: app.Channel{ID: req.Context.Channel.ID},
-			Caller:  callerAdmin,
-		},
-		Params: req.Params,
+		Context:      req.Context,
+		Params:       req.Params,
 	})
 
 	ctx.JSON(http.StatusOK, res)
