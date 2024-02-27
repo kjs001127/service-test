@@ -16,6 +16,12 @@
 make init
 ```
 
+- Simply user `make database-init` to create user & database.
+
+```bash
+make database-init
+```
+
 ### Generate database schema & mock files
 
 - Simply use `make generate`
