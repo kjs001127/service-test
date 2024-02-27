@@ -13,7 +13,10 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
-const RBACKey = "rbacKey"
+const (
+	generalScopePrefix = "/general"
+	RBACKey            = "rbacKey"
+)
 
 type Auth struct {
 	parser general.Parser
@@ -25,23 +28,23 @@ func NewAuth(parser general.Parser, logger *log.ChannelLogger) *Auth {
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
-	if !strings.HasPrefix(ctx.Request.RequestURI, "/general") {
+	if !strings.HasPrefix(ctx.Request.RequestURI, generalScopePrefix) {
 		return
 	}
 
 	xAccessToken := ctx.GetHeader(general.Header())
-	if xAccessToken == "" {
+	if len(xAccessToken) <= 0 {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
 		return
 	}
 
 	rbac, err := a.parser.Parse(ctx, xAccessToken)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(fmt.Errorf("parsing token: %s, cause: %w", xAccessToken, err)))
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(fmt.Errorf("parsing token. cause: %w", err)))
 		return
 	}
 
-	a.logger.Debugw("parsed rbac", "token", rbac, "request", ctx.Request.RequestURI)
+	a.logger.Debugw("parsed rbac", "token", rbac, "request", ctx.Request.RequestURI) // TODO: remove
 
 	ctx.Set(RBACKey, rbac)
 }
