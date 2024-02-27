@@ -14,6 +14,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 )
 
@@ -29,6 +30,7 @@ var Admin = fx.Module(
 	configfx.Values,
 	AdminHttp,
 	remoteappfx.RemoteAppDev,
+	nativefx.Native,
 	brieffx.Brief,
 	authfx.AdminAuth,
 	appfx.App,

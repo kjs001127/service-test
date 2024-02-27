@@ -12,7 +12,32 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
+	"github.com/channel-io/ch-app-store/internal/native/domain"
 )
+
+// invokeNative godoc
+//
+//	@Summary	invoke Function
+//	@Tags		Admin
+//
+//	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
+//
+//	@Success	200							{object}	domain.NativeFunctionResponse
+//	@Router		/admin/native/functions [put]
+func (h *Handler) invokeNative(ctx *gin.Context) {
+	var req dto.NativeFunctionRequest
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		return
+	}
+
+	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
+		Method: req.Method,
+		Params: req.Params,
+	})
+
+	ctx.JSON(http.StatusOK, resp)
+}
 
 // invoke godoc
 //
