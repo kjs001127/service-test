@@ -36,13 +36,12 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 		return
 	}
 
-	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	rbac := rawRbac.(genauth.ParsedRBACToken)
+	rbacToken := rbac(ctx)
 
 	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
 		Token: domain.Token{
-			Type:  rbac.Token.Header(),
-			Value: rbac.Token.Value(),
+			Type:  rbacToken.Token.Header(),
+			Value: rbacToken.Token.Value(),
 		},
 		Method: req.Method,
 		Params: req.Params,
@@ -71,8 +70,9 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	chCtx, err := authorizeRbac(ctx, appID, req.Method, req.Context)
-	if err != nil {
+	rbacToken := rbac(ctx)
+
+	if err := authFnCall(rbacToken, appID, req.Context.Channel.ID, req.Method); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
 	}
@@ -82,7 +82,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		app.TypedRequest[json.RawMessage]{
 			AppID:        appID,
 			FunctionName: req.Method,
-			Context:      chCtx,
+			Context:      fillCaller(rbacToken, req.Context),
 			Params:       req.Params,
 		})
 
@@ -94,24 +94,23 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func authorizeRbac(ctx *gin.Context, appID string, fn string, chCtx app.ChannelContext) (app.ChannelContext, error) {
+func rbac(ctx *gin.Context) genauth.ParsedRBACToken {
 	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	rbac := rawRbac.(genauth.ParsedRBACToken)
+	return rawRbac.(genauth.ParsedRBACToken)
+}
 
+func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn string) error {
 	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(fn)); !ok {
-		return app.ChannelContext{}, errors.New("function call unauthorized")
+		return errors.New("function call unauthorized")
 	}
-	if ok := rbac.CheckScope(general.ChannelScope, chCtx.Channel.ID); !ok {
-		return app.ChannelContext{}, errors.New("function call unauthorized")
+	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
+		return errors.New("function call unauthorized")
 	}
+	return nil
+}
 
-	return app.ChannelContext{
-		Caller: app.Caller{
-			Type: rbac.Caller.Type,
-			ID:   rbac.Caller.ID,
-		},
-		Channel: app.Channel{
-			ID: chCtx.Channel.ID,
-		},
-	}, nil
+func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.ChannelContext {
+	chCtx.Caller.Type = rbac.Caller.Type
+	chCtx.Caller.ID = rbac.Caller.ID
+	return chCtx
 }
