@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/channel-io/go-lib/pkg/log"
+	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -43,13 +44,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapCommonErr(err)
 	}
 
-	a.logger.Debugw("function request", "appID", target.ID, "request", request)
+	id := uid.New()
+	a.logger.Debugw("function request", "id", id, "appID", target.ID, "request", request)
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapCommonErr(err)
 	}
 
-	a.logger.Debugw("function response", "appID", target.ID, "response", string(ret))
+	a.logger.Debugw("function response", "id", id, "appID", target.ID, "response", string(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
