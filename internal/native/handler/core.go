@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	version        = "v1"
-	v1BaseUri      = "/api/admin/core/" + version
-	messageBaseUri = v1BaseUri + "/messages"
-	managerBaseUri = v1BaseUri + "/managers"
-
+	version           = "v1"
+	v1BaseUri         = "/api/admin/core/" + version
+	messageBaseUri    = v1BaseUri + "/messages"
+	managerBaseUri    = v1BaseUri + "/managers"
+	userChatBaseUri   = v1BaseUri + "/user-chats"
 	contentTypeHeader = "Content-Type"
 	mimeTypeJson      = "application/json"
 )
@@ -36,6 +36,8 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		"getManager":       managerBaseUri + "/getManager",
 		"batchGetManagers": managerBaseUri + "/batchGetManagers",
 		"searchManagers":   managerBaseUri + "/searchManagers",
+
+		"getUserChat": userChatBaseUri + "/getUserChat",
 	}
 	return api
 }
