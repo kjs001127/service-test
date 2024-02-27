@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 
-	"github.com/channel-io/ch-proto/auth/v1/go/service"
+	"github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
 type Token string
@@ -38,22 +38,22 @@ func NewParser(roleCli RoleFetcher, jwtServiceKey string) *ParserImpl {
 
 func (f *ParserImpl) Parse(ctx context.Context, token string) (ParsedRBACToken, error) {
 
-	claims, err := f.parseJWT(token)
+	parsedToken, err := f.parseJWT(token)
 	if err != nil {
 		return ParsedRBACToken{}, err
 	}
 
-	role, err := f.roleCli.GetRole(ctx, claims.RoleId)
+	getRoleRes, err := f.roleCli.GetRole(ctx, parsedToken.RoleId)
 	if err != nil {
 		return ParsedRBACToken{}, err
 	}
 
-	ret, err := f.merge(role, claims)
+	ret, err := f.merge(getRoleRes.Role, parsedToken)
 	if err != nil {
 		return ParsedRBACToken{}, nil
 	}
 
-	ret.Type, ret.ID, _ = strings.Cut(claims.Identity, "-")
+	ret.Type, ret.ID, _ = strings.Cut(parsedToken.Identity, "-")
 	ret.Token = Token(token)
 
 	return ret, nil
@@ -77,13 +77,13 @@ func (f *ParserImpl) parseJWT(token string) (*RBACToken, error) {
 	return parsed.Claims.(*RBACToken), nil
 }
 
-func (f *ParserImpl) merge(role *service.GetRoleResult, claims *RBACToken) (ParsedRBACToken, error) {
+func (f *ParserImpl) merge(role *model.Role, token *RBACToken) (ParsedRBACToken, error) {
 	ret := ParsedRBACToken{
 		Actions: make(map[Service][]Action),
 		Scopes:  make(Scopes),
 	}
 
-	for _, scopeKeyVal := range claims.Scope {
+	for _, scopeKeyVal := range token.Scope {
 		key, val, ok := strings.Cut(scopeKeyVal, "-")
 		if !ok {
 			return ParsedRBACToken{}, errors.New("invalid scope")
@@ -91,7 +91,7 @@ func (f *ParserImpl) merge(role *service.GetRoleResult, claims *RBACToken) (Pars
 		ret.Scopes[key] = append(ret.Scopes[key], val)
 	}
 
-	for _, c := range role.Role.Claims {
+	for _, c := range role.Claims {
 		ret.Actions[Service(c.Service)] = append(ret.Actions[Service(c.Service)], Action(c.Action))
 	}
 
@@ -141,10 +141,7 @@ func (p *ParsedRBACToken) CheckAction(service Service, action Action) bool {
 }
 
 func (p *ParsedRBACToken) CheckScope(key string, value string) bool {
-	if len(key) <= 0 {
-		return true
-	}
-	if len(value) <= 0 {
+	if len(value) <= 0 || len(key) <= 0 {
 		return false
 	}
 
