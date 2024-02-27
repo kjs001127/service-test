@@ -128,9 +128,14 @@ func (p *ParsedRBACToken) GetCaller() Caller {
 }
 
 func (p *ParsedRBACToken) CheckAction(service Service, action Action) bool {
+	if len(service) <= 0 || len(action) <= 0 {
+		return false
+	}
+
 	if _, ok := p.Actions[wildcard]; ok {
 		return true
 	}
+
 	actions := p.Actions[service]
 	for _, a := range actions {
 		if a == action || a == wildcard {
