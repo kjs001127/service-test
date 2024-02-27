@@ -63,7 +63,11 @@ func (a *CoreApi) Handle(ctx context.Context, fnReq domain.NativeFunctionRequest
 	}
 
 	r := a.resty.R()
-	r.SetHeader(fnReq.Token.Type, fnReq.Token.Value)
+
+	if len(fnReq.Token.Type) > 0 && len(fnReq.Token.Value) > 0 {
+		r.SetHeader(fnReq.Token.Type, fnReq.Token.Value)
+	}
+
 	r.SetHeader(contentTypeHeader, mimeTypeJson)
 	r.SetBody(marshaled)
 	r.SetContext(ctx)
