@@ -8,7 +8,6 @@ import (
 
 const (
 	JwtServiceKey = `name:"jwtServiceKey"`
-	DwGeneral     = `name:"dwGeneral"`
 	DwAdmin       = `name:"dwAdmin"`
 )
 
@@ -22,10 +21,6 @@ var Values = fx.Module(
 		fx.Annotate(
 			config.Get().Auth.JWTServiceKey,
 			fx.ResultTags(JwtServiceKey),
-		),
-		fx.Annotate(
-			config.Get().Auth.AuthGeneralURL,
-			fx.ResultTags(DwGeneral),
 		),
 	),
 )

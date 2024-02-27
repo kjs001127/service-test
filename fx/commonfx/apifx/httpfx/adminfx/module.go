@@ -11,8 +11,6 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/doc"
 )
 
-const adminPort = `name:"admin.port"`
-
 var AdminHandlers = fx.Module(
 	"adminHttpModule",
 

@@ -26,9 +26,8 @@ type Config struct {
 	Stage string `required:"true" name:"config.stage"`
 	Port  string `required:"true"`
 	Auth  struct {
-		AuthGeneralURL string `required:"true"`
-		AuthAdminURL   string `required:"true"`
-		JWTServiceKey  string `required:"true"`
+		AuthAdminURL  string `required:"true"`
+		JWTServiceKey string `required:"true"`
 	}
 	Psql struct {
 		Schema   string `required:"true"`
