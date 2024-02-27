@@ -32,17 +32,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 
 	appID, channelID := ctx.Param("appID"), ctx.Param("channelID")
 
-	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	rbac := rawRbac.(authgen.ParsedRBACToken)
-	if ok := rbac.CheckAction(general.AppStoreService, fetchConfig); !ok {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
-		return
-	}
-
-	if ok := rbac.CheckScopes(authgen.Scopes{
-		general.ChannelScope: {channelID},
-		general.AppScope:     {appID},
-	}); !ok {
+	if err := authorize(middleware.RBAC(ctx), channelID, appID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
 		return
 	}
@@ -55,4 +45,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, installedApp.AppChannel.Configs)
+}
+
+func authorize(rbac authgen.ParsedRBACToken, channelID, appID string) error {
+	if ok := rbac.CheckScopes(authgen.Scopes{
+		general.ChannelScope: {channelID},
+		general.AppScope:     {appID},
+	}); !ok {
+		return errors.New("fnCall unauthorized")
+	}
+	return nil
 }

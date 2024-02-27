@@ -36,7 +36,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 		return
 	}
 
-	rbacToken := rbac(ctx)
+	rbacToken := middleware.RBAC(ctx)
 
 	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
 		Token: domain.Token{
@@ -70,7 +70,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	rbacToken := rbac(ctx)
+	rbacToken := middleware.RBAC(ctx)
 
 	if err := authFnCall(rbacToken, appID, req.Context.Channel.ID, req.Method); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
@@ -92,11 +92,6 @@ func (h *Handler) invoke(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
-}
-
-func rbac(ctx *gin.Context) genauth.ParsedRBACToken {
-	rawRbac, _ := ctx.Get(middleware.RBACKey)
-	return rawRbac.(genauth.ParsedRBACToken)
 }
 
 func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn string) error {

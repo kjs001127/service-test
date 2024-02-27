@@ -15,7 +15,7 @@ import (
 
 const (
 	generalScopePrefix = "/general"
-	RBACKey            = "rbacKey"
+	rbacKey            = "rbacKey"
 )
 
 type Auth struct {
@@ -46,5 +46,10 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	a.logger.Debugw("parsed rbac", "token", rbac, "request", ctx.Request.RequestURI) // TODO: remove
 
-	ctx.Set(RBACKey, rbac)
+	ctx.Set(rbacKey, rbac)
+}
+
+func RBAC(ctx *gin.Context) general.ParsedRBACToken {
+	rawRbac, _ := ctx.Get(rbacKey)
+	return rawRbac.(general.ParsedRBACToken)
 }
