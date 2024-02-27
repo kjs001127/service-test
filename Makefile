@@ -54,6 +54,9 @@ env:
 	@echo "STAGE:\t\t${STAGE}"
 	@echo "VERSION:\t${VERSION}"
 
+submodule-init:
+	git submodule update --init --recursive
+
 install-tools:
 	# SqlBoiler
 	go install github.com/volatiletech/sqlboiler/v4@v4.14.1
@@ -63,7 +66,7 @@ install-tools:
 	# Swagger
 	go install github.com/swaggo/swag/cmd/swag@v1.16.2
 
-init: install-tools
+init: submodule-init install-tools
 	GOPRIVATE=${GOPRIVATE} go mod download
 
 generate: flyway-migrate gen-boiler gen-mock
