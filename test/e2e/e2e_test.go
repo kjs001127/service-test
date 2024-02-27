@@ -50,6 +50,7 @@ func Test(t *testing.T) {
 					assert.Equal(t, false, resMap["isPrivate"])
 					assert.Equal(t, FakeFunctionUrl, resMap["functionUrl"])
 					assert.Equal(t, FakeWamUrl, resMap["wamUrl"])
+					assert.Equal(t, nil, resMap["roles"]) // omit empty
 				},
 			},
 		},

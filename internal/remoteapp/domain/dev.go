@@ -54,7 +54,7 @@ type AppRequest struct {
 
 type AppResponse struct {
 	*RemoteApp
-	Roles []*RoleWithCredential
+	Roles []*RoleWithCredential `json:"roles,omitempty"`
 }
 
 type TypeRule struct {

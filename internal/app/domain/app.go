@@ -14,10 +14,10 @@ type App struct {
 
 	IsPrivate          bool             `json:"isPrivate"`
 	ManualURL          *string          `json:"manualUrl,omitempty"`
-	DetailDescriptions []map[string]any `json:"detailDescriptions"`
-	DetailImageURLs    []string         `json:"detailImageUrls"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
-	ConfigSchemas ConfigSchemas `json:"configSchemas"`
+	ConfigSchemas ConfigSchemas `json:"configSchemas,omitempty"`
 	Type          AppType       `json:"appType"`
 }
 

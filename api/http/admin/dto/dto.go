@@ -6,8 +6,8 @@ import (
 )
 
 type AppsAndFullCommands struct {
-	Apps     []*app.App     `json:"apps"`
-	Commands []*cmd.Command `json:"commands"`
+	Apps     []*app.App     `json:"apps,omitempty"`
+	Commands []*cmd.Command `json:"commands,omitempty"`
 }
 
 type RegisterRequest struct {
