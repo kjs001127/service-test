@@ -18,8 +18,8 @@ type NativeFunctionRequest struct {
 }
 
 type NativeFunctionResponse struct {
-	Error  NativeErr       `json:"error"`
-	Result json.RawMessage `json:"result"`
+	Error  NativeErr       `json:"error,omitempty"`
+	Result json.RawMessage `json:"result,omitempty"`
 }
 
 type NativeErr struct {

@@ -14,7 +14,7 @@ type TypedRequest[REQ any] struct {
 
 type TypedResponse[REQ any] struct {
 	Result REQ    `json:"result"`
-	Error  *Error `json:"error"`
+	Error  *Error `json:"error,omitempty"`
 }
 
 type TypedInvoker[REQ any, RES any] struct {

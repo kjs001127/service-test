@@ -12,8 +12,8 @@ type RemoteApp struct {
 }
 
 type Urls struct {
-	FunctionURL *string `json:"functionUrl"`
-	WamURL      *string `json:"wamUrl"`
+	FunctionURL *string `json:"functionUrl,omitempty"`
+	WamURL      *string `json:"wamUrl,omitempty"`
 }
 
 type AppUrlRepository interface {

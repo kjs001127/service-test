@@ -9,11 +9,11 @@ type App struct {
 	State AppState `json:"state"`
 
 	Title       string  `json:"title"`
-	AvatarURL   *string `json:"avatarUrl"`
-	Description *string `json:"description"`
+	AvatarURL   *string `json:"avatarUrl,omitempty"`
+	Description *string `json:"description,omitempty"`
 
 	IsPrivate          bool             `json:"isPrivate"`
-	ManualURL          *string          `json:"manualUrl"`
+	ManualURL          *string          `json:"manualUrl,omitempty"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions"`
 	DetailImageURLs    []string         `json:"detailImageUrls"`
 
@@ -34,8 +34,8 @@ type ConfigSchema struct {
 	Name       string         `json:"name"`
 	Type       string         `json:"type"`
 	Key        string         `json:"key"`
-	Default    *string        `json:"default"`
-	Help       *string        `json:"help"`
+	Default    *string        `json:"default,omitempty"`
+	Help       *string        `json:"help,omitempty"`
 	Attributes map[string]any `json:"attributes"`
 }
 

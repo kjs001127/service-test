@@ -21,7 +21,7 @@ type ContextAndAutoCompleteArgs struct {
 }
 
 type CommandDTO struct {
-	AppID string    `json:"appId"`
+	AppID string    `json:"appId,o"`
 	Name  string    `json:"name"`
 	Scope cmd.Scope `json:"scope"`
 
