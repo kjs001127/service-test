@@ -24,13 +24,15 @@ func (f *FunctionDBLogger) OnInvoke(
 	req JsonFunctionRequest,
 	res JsonFunctionResponse,
 ) {
-	functionLog := &models.FunctionLog{
-		AppID:      null.StringFrom(appID),
-		Name:       null.StringFrom(req.Method),
-		CallerType: null.StringFrom(req.Context.Caller.Type),
-		CallerID:   null.StringFrom(req.Context.Caller.ID),
-		IsSuccess:  null.BoolFrom(res.Error != nil),
-	}
+	go func() {
+		functionLog := &models.FunctionLog{
+			AppID:      null.StringFrom(appID),
+			Name:       null.StringFrom(req.Method),
+			CallerType: null.StringFrom(req.Context.Caller.Type),
+			CallerID:   null.StringFrom(req.Context.Caller.ID),
+			IsSuccess:  null.BoolFrom(res.Error != nil),
+		}
 
-	_ = functionLog.Insert(ctx, f.db, boil.Infer())
+		_ = functionLog.Insert(ctx, f.db, boil.Infer())
+	}()
 }

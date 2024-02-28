@@ -154,6 +154,6 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 
 func (r *Invoker) onInvoke(ctx context.Context, cmdID string, req CommandRequest, res app.TypedResponse[Action]) {
 	for _, listener := range r.listeners {
-		go listener.OnInvoke(ctx, cmdID, req, res)
+		listener.OnInvoke(ctx, cmdID, req, res)
 	}
 }

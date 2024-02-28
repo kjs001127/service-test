@@ -56,7 +56,7 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 
 func (i *Invoker) onInvoke(ctx context.Context, appID string, req JsonFunctionRequest, res JsonFunctionResponse) {
 	for _, listener := range i.listeners {
-		go listener.OnInvoke(ctx, appID, req, res)
+		listener.OnInvoke(ctx, appID, req, res)
 	}
 }
 
