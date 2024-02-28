@@ -3,7 +3,6 @@ package infra
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/go-resty/resty/v2"
@@ -20,7 +19,7 @@ func NewHttpRequester(cli *resty.Client) *HttpRequester {
 	return &HttpRequester{cli: cli}
 }
 
-func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.ReadCloser, error) {
+func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) ([]byte, error) {
 	r := h.cli.R()
 	r.SetContext(ctx)
 	r.SetBody(req.Body)
@@ -45,8 +44,8 @@ func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.
 	}
 
 	if resp.StatusCode() < 200 || resp.StatusCode() >= 400 {
-		return resp.RawBody(), fmt.Errorf("http response fail, %d", resp.StatusCode())
+		return resp.Body(), fmt.Errorf("http response fail, %d", resp.StatusCode())
 	}
 
-	return resp.RawBody(), nil
+	return resp.Body(), nil
 }

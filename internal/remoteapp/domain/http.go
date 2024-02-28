@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"io"
 )
 
 type HttpRequest struct {
@@ -13,5 +12,5 @@ type HttpRequest struct {
 }
 
 type HttpRequester interface {
-	Request(ctx context.Context, request HttpRequest) (io.ReadCloser, error)
+	Request(ctx context.Context, request HttpRequest) ([]byte, error)
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/channel-io/go-lib/pkg/log"
@@ -63,7 +62,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 }
 
 func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) ([]byte, error) {
-	reader, err := a.requester.Request(ctx, HttpRequest{
+	return a.requester.Request(ctx, HttpRequest{
 		Body:   body,
 		Method: http.MethodPut,
 		Headers: map[string]string{
@@ -71,15 +70,4 @@ func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) 
 		},
 		Url: url,
 	})
-	if err != nil {
-		return nil, fmt.Errorf("requesting to app server, url: %s, body: %s", url, body)
-	}
-	defer reader.Close()
-
-	ret, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, errors.Wrap(err, "reading body")
-	}
-
-	return ret, nil
 }
