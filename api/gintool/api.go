@@ -28,6 +28,7 @@ func NewApiServer(port string, routes []RouteRegistrant, middlewares ...Middlewa
 
 func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine {
 	router := gin.Default()
+	router.ContextWithFallback = true
 	router.Use(cors.New(
 		cors.Config{
 			AllowOriginFunc: func(origin string) bool {
