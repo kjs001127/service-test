@@ -55,7 +55,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	a.logger.Debugw("injecting user principal", "request", ctx.Request.RequestURI, "user", user)
+	a.logger.Debugw("injecting user principal", "request", ctx.Request.RequestURI, "user", user.ID)
 
 	ctx.Set(UserKey, user)
 }

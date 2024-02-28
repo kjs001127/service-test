@@ -54,6 +54,6 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		)
 		return
 	}
-	a.logger.Debugw("injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager)
+	a.logger.Debugw("injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager.ID)
 	ctx.Set(ManagerKey, authenticatedManager)
 }
