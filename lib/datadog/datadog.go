@@ -19,11 +19,10 @@ const ddServiceName = "ch-app-store"
 var once sync.Once
 
 type Datadog struct {
-	middleware gin.HandlerFunc
 }
 
 func NewDatadog() *Datadog {
-	return &Datadog{middleware: gintrace.Middleware(ddServiceName)}
+	return &Datadog{}
 }
 
 func (d *Datadog) Handle(ctx *gin.Context) {
@@ -33,10 +32,10 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 
 	once.Do(func() {
 		tracer.Start()
-		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithService(ddServiceName))
+		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithGlobalServiceName(true))
 	})
 
-	ginTraceFunc := gintrace.Middleware(ddServiceName)
+	ginTraceFunc := gintrace.Middleware("")
 	ginTraceFunc(ctx)
 }
 

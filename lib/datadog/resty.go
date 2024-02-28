@@ -16,7 +16,6 @@ func DecorateResty(r *resty.Client) *resty.Client {
 			tracer.SpanType(ext.SpanTypeWeb),
 			tracer.Tag(ext.HTTPMethod, request.Method),
 			tracer.Tag(ext.HTTPURL, request.URL),
-			tracer.ServiceName(ddServiceName),
 		}
 
 		_, ctx := tracer.StartSpanFromContext(request.Context(), "resty.request", opts...)
