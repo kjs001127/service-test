@@ -3,6 +3,7 @@ package remoteappfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
@@ -129,7 +130,7 @@ var RemoteAppHttps = fx.Module(
 		fx.Annotate(
 			infra.NewHttpRequester,
 			fx.As(new(domain.HttpRequester)),
-			fx.ParamTags(restyfx.App),
+			fx.ParamTags(datadogfx.AppResty),
 		),
 	),
 )

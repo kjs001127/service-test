@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 	"gopkg.in/DataDog/dd-trace-go.v1/contrib/google.golang.org/api"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -60,6 +61,6 @@ func NewMethodSpanTagger() *MethodSpanTagger {
 func (d *MethodSpanTagger) OnInvoke(ctx context.Context, appID string, req app.JsonFunctionRequest, _ app.JsonFunctionResponse) {
 	span, _ := tracer.SpanFromContext(ctx)
 
-	span.SetTag("appID", appID)
-	span.SetTag("method", req.Method)
+	span.SetTag(ext.RPCService, appID)
+	span.SetTag(ext.RPCMethod, req.Method)
 }

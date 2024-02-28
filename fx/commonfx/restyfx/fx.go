@@ -19,6 +19,18 @@ const (
 
 var Clients = fx.Module(
 	"resty",
+	fx.Supply(
+		fx.Annotate(
+			http.DefaultTransport,
+			fx.ResultTags(Dw),
+			fx.As(new(http.RoundTripper)),
+		),
+		fx.Annotate(
+			http.DefaultTransport,
+			fx.ResultTags(App),
+			fx.As(new(http.RoundTripper)),
+		),
+	),
 	fx.Provide(
 		fx.Annotate(
 			func(tripper http.RoundTripper) *resty.Client {

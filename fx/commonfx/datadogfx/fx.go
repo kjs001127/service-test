@@ -1,8 +1,7 @@
 package datadogfx
 
 import (
-	"net/http"
-
+	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -11,19 +10,26 @@ import (
 	"github.com/channel-io/ch-app-store/lib/datadog"
 )
 
+const (
+	DwResty  = `name:"dwResty"`
+	AppResty = `name:"appResty"`
+)
+
 var Datadog = fx.Module("datadog",
 	fx.Provide(
 		fx.Annotate(
-			func() http.RoundTripper {
-				return datadog.WrapHttpHandler(http.DefaultTransport)
+			func(client *resty.Client) *resty.Client {
+				return datadog.DecorateResty(client)
 			},
-			fx.ResultTags(restyfx.Dw),
+			fx.ResultTags(DwResty),
+			fx.ParamTags(restyfx.Dw),
 		),
 		fx.Annotate(
-			func() http.RoundTripper {
-				return datadog.WrapHttpHandler(http.DefaultTransport)
+			func(client *resty.Client) *resty.Client {
+				return datadog.DecorateResty(client)
 			},
-			fx.ResultTags(restyfx.App),
+			fx.ResultTags(AppResty),
+			fx.ParamTags(restyfx.App),
 		),
 	),
 	fx.Provide(
