@@ -30,8 +30,8 @@ func (c *CommandDBLogger) OnInvoke(ctx context.Context, cmdID string, req Comman
 			CallerType:  null.StringFrom(req.Caller.Type),
 			CallerID:    null.StringFrom(req.Caller.ID),
 			TriggerType: null.StringFrom(req.Trigger.Type),
-			IsSuccess:   null.BoolFrom(res.Error != nil),
+			IsSuccess:   null.BoolFrom(res.Error == nil),
 		}
-		_ = cmdLog.Insert(ctx, c.db, boil.Infer())
+		_ = cmdLog.Insert(context.Background(), c.db, boil.Infer())
 	}()
 }

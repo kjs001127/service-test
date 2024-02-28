@@ -30,8 +30,8 @@ func (f *FunctionDBLogger) OnInvoke(
 			Name:       null.StringFrom(req.Method),
 			CallerType: null.StringFrom(req.Context.Caller.Type),
 			CallerID:   null.StringFrom(req.Context.Caller.ID),
-			IsSuccess:  null.BoolFrom(res.Error != nil),
+			IsSuccess:  null.BoolFrom(res.Error == nil),
 		}
-		_ = functionLog.Insert(ctx, f.db, boil.Infer())
+		_ = functionLog.Insert(context.Background(), f.db, boil.Infer())
 	}()
 }
