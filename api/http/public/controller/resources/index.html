@@ -83,7 +83,7 @@
       function loadWam() {
         const wamIframe = document.createElement('iframe')
         wamIframe.id = 'wam'
-        wamIframe.src = `https://app-store-api.exp.channel.io/public/v1/apps/${appId}/wams/order-list/`
+        wamIframe.src = `https://app-store-api.channel.io/public/v1/apps/${appId}/wams/order-list/`
         document.body.appendChild(wamIframe)
 
         wamIframe.onload = function () {
