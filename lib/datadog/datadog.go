@@ -31,10 +31,10 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 	}
 
 	once.Do(func() {
-		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithGlobalServiceName(true))
+		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithService(ddServiceName), tracer.WithGlobalServiceName(true))
 	})
 
-	ginTraceFunc := gintrace.Middleware("")
+	ginTraceFunc := gintrace.Middleware(ddServiceName)
 	ginTraceFunc(ctx)
 }
 
