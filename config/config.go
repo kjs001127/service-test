@@ -14,15 +14,45 @@ import (
 
 var (
 	cfg          *Config
-	cfgExtension = "json"
-	validStages  = []string{"dev", "test", "exp", "production"}
+	cfgExtension = "yaml"
+	validStages  = []string{"development", "test", "exp", "production"}
 )
 
+//
 //go:embed *
 var configFiles embed.FS
 
 type Config struct {
-	Stage string `required:"true"`
+	Stage string `required:"true" name:"config.stage"`
+	Port  string `required:"true"`
+	Auth  struct {
+		AuthAdminURL  string `required:"true"`
+		JWTServiceKey string `required:"true"`
+	}
+	Psql struct {
+		Schema   string `required:"true"`
+		DBName   string `required:"true"`
+		Host     string `required:"true"`
+		Port     string `required:"true"`
+		User     string `required:"true"`
+		Password string `required:"true"`
+		SSLMode  string `required:"true"`
+	}
+	Sentry struct {
+		DSN              string  `required:"false"`
+		TracesSampleRate float64 `required:"false"`
+	}
+}
+
+func init() {
+	fillDefaultValues()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+}
+
+func fillDefaultValues() {
+	viper.SetDefault("stage", "development")
+	viper.SetDefault("port", "3020")
 }
 
 func Get() *Config {
@@ -59,14 +89,18 @@ func configAsString() string {
 }
 
 func currentStage() string {
-	return fmt.Sprintf("%s.%s", os.Getenv("GO_ENV"), cfgExtension)
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "development"
+	}
+	return env
 }
 
 // replaceEnvVars replaces ${ANY_ENV_VAR} in config file to the environment variable ANY_ENV_VAR
 func replaceEnvVars(c string) string {
-	re := regexp.MustCompile(`"\${(\w+)}"`)
+	re := regexp.MustCompile(`\${[^}]+}`)
 	return re.ReplaceAllStringFunc(c, func(matched string) string {
-		envName := matched[3 : len(matched)-2]
+		envName := matched[2 : len(matched)-1]
 		val := os.Getenv(envName)
 		if _, err := strconv.Atoi(val); err == nil {
 			return val

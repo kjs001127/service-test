@@ -1,0 +1,29 @@
+CREATE TABLE command_logs
+(
+    id SERIAL PRIMARY KEY,
+    app_id CHARACTER VARYING,
+    channel_id CHARACTER VARYING,
+    command_id CHARACTER VARYING,
+    chat_type CHARACTER VARYING,
+    chat_id CHARACTER VARYING,
+    caller_type CHARACTER VARYING,
+    caller_id CHARACTER VARYING,
+    trigger_type CHARACTER VARYING,
+    is_success BOOLEAN,
+
+    created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);
+ALTER TABLE command_logs ALTER COLUMN id TYPE CHARACTER VARYING;
+
+CREATE TABLE function_logs
+(
+    id SERIAL PRIMARY KEY,
+    app_id CHARACTER VARYING,
+    name CHARACTER VARYING,
+    caller_type CHARACTER VARYING,
+    caller_id CHARACTER VARYING,
+    is_success BOOLEAN,
+
+    created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+);
+ALTER TABLE function_logs ALTER COLUMN id TYPE CHARACTER VARYING;

@@ -1,0 +1,225 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@8.2.1
+  aws-cli: circleci/aws-cli@3.1.4
+  channel-utils: channel-io/utils@1.0.5
+
+parameters:
+  tag_exp:
+    default: exp-${CIRCLE_SHA1:0:10}
+    type: string
+  tag_feature:
+    default: feature-${CIRCLE_SHA1:0:10}
+    type: string
+  tag_production:
+    default: ${CIRCLE_TAG}
+    type: string
+
+references:
+  ecr_repo_name: &ecr_repo_name ch-app-store
+  working_directory: &working_directory /home/circleci/ch-app-store
+  target_app: &target_app ch-app-store
+  target_public_port: &target_public_port 3020
+  target_admin_port: &target_admin_port 3021
+
+  test_branches_only: &test_branches_only
+    context: ci-local
+    filters:
+      branches:
+        ignore:
+          - exp
+          - /^feature\/.*/
+
+  release_branches_only: &release_branches_only
+    context: ci-local
+    filters:
+      tags:
+        only: /^v.*/
+      branches:
+        only:
+          - exp
+          - /^feature\/.*/
+
+  feature_only: &feature_only
+    context: ci-feature
+    filters:
+      branches:
+        only:
+          - /^feature\/.*/
+
+  exp_only: &exp_only
+    context: ci-exp
+    filters:
+      branches:
+        only:
+          - exp
+
+  production_only: &production_only
+    context: ci-production
+    filters:
+      tags:
+        only: /^v.*/
+      branches:
+        ignore: /.*/
+
+  # env ref
+  aws_ecr_env: &aws_ecr_env
+    assume-web-identity: true
+    role-arn: ${AWS_CIRCLECI_ROLE_ARN}
+    registry-id: AWS_ECR_REGISTRY_ID
+    region: ${AWS_REGION}
+
+  common_aws_ecr_config: &common_aws_ecr_config
+    checkout: false
+    attach-workspace: true
+    workspace-root: *working_directory
+    repo: *ecr_repo_name
+    platform: linux/amd64,linux/arm64
+
+executors:
+  test_executor:
+    docker:
+      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
+      - image: cimg/postgres:14.10
+        environment:
+          POSTGRES_USER: ci
+          POSTGRES_DB: ci_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+    working_directory: *working_directory
+    environment:
+      STAGE: test
+      PSQL_DBNAME: ci_test
+      PSQL_USER: ci
+
+  compile_executor:
+    docker:
+      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
+      - image: cimg/postgres:14.10
+        environment:
+          POSTGRES_USER: ci
+          POSTGRES_DB: ci
+          POSTGRES_HOST_AUTH_METHOD: trust
+    working_directory: *working_directory
+    environment:
+      # For now, use the development config for compilation.
+      # This ensures compilation is done with the generated code from the development database,
+      # which is located at the machine itself.
+      # Perhaps this could be improved by introducing a separate build stage for CI environment,
+      # compared to the runtime stage.
+      STAGE: development
+      PSQL_DBNAME: ci
+      PSQL_USER: ci
+
+  build_container_executor:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    working_directory: *working_directory
+    environment:
+      TARGET_APP: *target_app
+      TARGET_PUBLIC_PORT: *target_public_port
+      TARGET_ADMIN_PORT: *target_admin_port
+
+jobs:
+  test:
+    executor: test_executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-{{ checksum "go.sum" }}
+            - repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-
+      - channel-utils/update-submodule:
+          github-role-arn: ${AWS_GITHUB_TOKEN_ROLE_ARN}
+      - run:
+          # 추후 해당 부분을 추후 규격화 하기 위해, Makefile을 그대로 사용하게 설정
+          name: Migrate
+          command: make migrate
+      - run:
+          name: Run test
+          command: make test
+      - save_cache:
+          paths:
+            - /go
+          key: repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-{{ checksum "go.sum" }}
+
+  compile:
+    executor: compile_executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-{{ checksum "go.sum" }}
+            - repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-
+      - channel-utils/update-submodule:
+          github-role-arn: ${AWS_GITHUB_TOKEN_ROLE_ARN}
+      - run:
+          name: Migrate
+          command: make migrate
+      - run:
+          name: build
+          command: |
+            make build GOOS=linux GOARCH=amd64
+            make build GOOS=linux GOARCH=arm64
+      - save_cache:
+          paths:
+            - /go
+          key: repo-{{ .Environment.CIRCLE_PROJECT_REPONAME }}-v1-dependencies-{{ checksum "go.sum" }}
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - .
+
+  build_and_push_image:
+    executor: build_container_executor
+    parameters:
+      tag:
+        description: "Container image tag"
+        type: string
+      tag_migration:
+        description: "Container image tag for migration"
+        type: string
+    steps:
+      - aws-ecr/build-and-push-image:
+          <<: [*aws_ecr_env, *common_aws_ecr_config]
+          dockerfile: deploy/Dockerfile
+          extra-build-args: --build-arg="TARGET_APP=$TARGET_APP" --build-arg="TARGET_PUBLIC_PORT=$TARGET_PUBLIC_PORT" --build-arg="TARGET_ADMIN_PORT=$TARGET_ADMIN_PORT"
+          tag: <<parameters.tag>>
+      - aws-ecr/build-and-push-image:
+          <<: [*aws_ecr_env, *common_aws_ecr_config]
+          dockerfile: deploy/Dockerfile.migration
+          tag: <<parameters.tag_migration>>
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test:
+          <<: *test_branches_only
+
+  build_n_test_n_delivery:
+    jobs:
+      - test:
+          <<: *release_branches_only
+
+      - compile:
+          <<: *release_branches_only
+
+      - build_and_push_image:
+          name: build_and_push_image_exp
+          <<: *exp_only
+          tag: <<pipeline.parameters.tag_exp>>,latest
+          tag_migration: <<pipeline.parameters.tag_exp>>-migration
+          requires:
+            - test
+            - compile
+
+      - build_and_push_image:
+          name: build_and_push_image_production
+          <<: *production_only
+          tag: <<pipeline.parameters.tag_production>>
+          tag_migration: <<pipeline.parameters.tag_production>>-migration
+          requires:
+            - test
+            - compile

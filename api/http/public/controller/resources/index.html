@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100vh;
+      }
+      #wam {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 30px 30px 0 0;
+        display: block;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const searchParams = new URLSearchParams(window.location.search)
+
+      const channelId = searchParams.get('channel_id')
+      const appId = searchParams.get('app_id')
+      const wamName = searchParams.get('wam_name')
+      const wamId = searchParams.get('wam_id')
+      const accessToken = searchParams.get('access_token')
+      const refreshToken = searchParams.get('refresh_token')
+
+      function sendToClient({ type, appId, name, params, wamId }) {
+        if (window.Android) {
+          window.Android.channelMobileWamController(type, { appId, name, params })
+          return
+        }
+      
+        if (window.webkit) {
+          window.webkit.messageHandlers.channelMobileWamController.postMessage(type, { appId, name, params })
+          return
+        }
+      
+        window.parent.postMessage({
+          type,
+          appId,
+          name,
+          params,
+          wamId,
+        }, '*')
+      }
+
+      function close() {
+        sendToClient({ type: 'close', wamId })
+      }
+
+      function callCommand(appId, commandName, params) {
+        sendToClient({ type: 'command', appId, name: commandName, params, wamId })
+      }
+
+      function callFunction(appId, functionName, params) {
+        return fetch(`https://app-store-api.exp.channel.io/general/v1/apps/${appId}/functions`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            method: functionName,
+            params,
+            context: {
+              channel: {
+                id: channelId,
+              }
+            }
+          }),
+          headers: {
+            'x-access-token': accessToken,
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => response.json())
+      }
+
+      function loadWam() {
+        const wamIframe = document.createElement('iframe')
+        wamIframe.id = 'wam'
+        wamIframe.src = `https://app-store-api.exp.channel.io/public/v1/apps/${appId}/wams/order-list/`
+        document.body.appendChild(wamIframe)
+
+        wamIframe.onload = function () {
+          wamIframe.contentWindow.sendToClient = sendToClient
+          wamIframe.contentWindow.close = close
+          wamIframe.contentWindow.callCommand = callCommand
+          wamIframe.contentWindow.callFunction = callFunction
+        }
+      }
+
+      window.onload = loadWam
+    </script>
+  </body>
+</html>

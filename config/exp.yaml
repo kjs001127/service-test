@@ -1,0 +1,17 @@
+stage: exp
+auth:
+  authGeneralUrl: https://api.exp.channel.io
+  authAdminURL: https://admin.api.exp.channel.io
+  jwtServiceKey: ${JWT_SERVICE_KEY}
+port: ${PORT}
+psql:
+  schema: public
+  dbname: app_store_exp
+  host: db.exp.channel.io
+  port: 5432
+  user: app_store
+  password: ${PSQL_PASSWORD}
+  sslmode: disable
+sentry:
+  dsn: https://94086f3f685212aaeed799d618411501@o104101.ingest.sentry.io/4506738076418048
+  tracesSampleRate: 1.0
