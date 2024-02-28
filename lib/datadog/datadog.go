@@ -2,12 +2,11 @@ package datadog
 
 import (
 	"context"
-	"net/http"
 	"sync"
 
+	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/gin-gonic/gin"
 	gintrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
-	"gopkg.in/DataDog/dd-trace-go.v1/contrib/google.golang.org/api"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
@@ -18,18 +17,6 @@ import (
 const ddServiceName = "ch-app-store"
 
 var once sync.Once
-
-func WrapHttpHandler(tripper http.RoundTripper) http.RoundTripper {
-	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
-		return tripper
-	}
-
-	once.Do(func() {
-		tracer.Start(tracer.WithRuntimeMetrics())
-	})
-
-	return api.WrapRoundTripper(tripper, api.WithServiceName(ddServiceName))
-}
 
 type Datadog struct {
 	middleware gin.HandlerFunc
@@ -48,18 +35,23 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 		tracer.Start(tracer.WithRuntimeMetrics())
 	})
 
-	d.middleware(ctx)
+	ginTraceFunc := gintrace.Middleware(ddServiceName)
+	ginTraceFunc(ctx)
 }
 
 type MethodSpanTagger struct {
+	logger *log.ChannelLogger
 }
 
-func NewMethodSpanTagger() *MethodSpanTagger {
-	return &MethodSpanTagger{}
+func NewMethodSpanTagger(logger *log.ChannelLogger) *MethodSpanTagger {
+	return &MethodSpanTagger{logger: logger}
 }
 
 func (d *MethodSpanTagger) OnInvoke(ctx context.Context, appID string, req app.JsonFunctionRequest, _ app.JsonFunctionResponse) {
-	span, _ := tracer.SpanFromContext(ctx)
+	span, ok := tracer.SpanFromContext(ctx)
+	if !ok {
+		d.logger.Warn("span not found on MethodSpanTagger")
+	}
 
 	span.SetTag(ext.RPCService, appID)
 	span.SetTag(ext.RPCMethod, req.Method)
