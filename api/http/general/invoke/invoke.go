@@ -87,11 +87,6 @@ func (h *Handler) invoke(ctx *gin.Context) {
 			Params:       req.Params,
 		})
 
-	if res.Error != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, res)
-		return
-	}
-
 	ctx.JSON(http.StatusOK, res)
 }
 
