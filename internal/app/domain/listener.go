@@ -24,6 +24,7 @@ func (f *FunctionDBLogger) OnInvoke(
 	req JsonFunctionRequest,
 	res JsonFunctionResponse,
 ) {
+<<<<<<< Updated upstream
 	go func() {
 		functionLog := &models.FunctionLog{
 			AppID:      null.StringFrom(appID),
@@ -32,6 +33,15 @@ func (f *FunctionDBLogger) OnInvoke(
 			CallerID:   null.StringFrom(req.Context.Caller.ID),
 			IsSuccess:  null.BoolFrom(res.Error != nil),
 		}
+=======
+	functionLog := &models.FunctionLog{
+		AppID:      null.StringFrom(appID),
+		Name:       null.StringFrom(req.Method),
+		CallerType: null.StringFrom(req.Context.Caller.Type),
+		CallerID:   null.StringFrom(req.Context.Caller.ID),
+		IsSuccess:  null.BoolFrom(res.Error == nil),
+	}
+>>>>>>> Stashed changes
 
 		_ = functionLog.Insert(ctx, f.db, boil.Infer())
 	}()

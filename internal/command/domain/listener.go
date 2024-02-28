@@ -20,6 +20,7 @@ func NewCommandDBLogger(src db.DB) *CommandDBLogger {
 }
 
 func (c *CommandDBLogger) OnInvoke(ctx context.Context, cmdID string, req CommandRequest, res domain.TypedResponse[Action]) {
+<<<<<<< Updated upstream
 
 	go func() {
 		cmdLog := &models.CommandLog{
@@ -35,4 +36,18 @@ func (c *CommandDBLogger) OnInvoke(ctx context.Context, cmdID string, req Comman
 		}
 		_ = cmdLog.Insert(ctx, c.db, boil.Infer())
 	}()
+=======
+	cmdLog := &models.CommandLog{
+		AppID:       null.StringFrom(req.AppID),
+		ChannelID:   null.StringFrom(req.Channel.ID),
+		CommandID:   null.StringFrom(cmdID),
+		ChatType:    null.StringFrom(req.Chat.Type),
+		ChatID:      null.StringFrom(req.Chat.ID),
+		CallerType:  null.StringFrom(req.Caller.Type),
+		CallerID:    null.StringFrom(req.Caller.ID),
+		TriggerType: null.StringFrom(req.Trigger.Type),
+		IsSuccess:   null.BoolFrom(res.Error == nil),
+	}
+	_ = cmdLog.Insert(ctx, c.db, boil.Infer())
+>>>>>>> Stashed changes
 }
