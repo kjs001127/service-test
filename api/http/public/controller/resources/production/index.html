@@ -60,7 +60,7 @@
       }
 
       function callFunction(appId, functionName, params) {
-        return fetch(`https://app-store-api.exp.channel.io/general/v1/apps/${appId}/functions`, {
+        return fetch(`https://app-store-api.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
           body: JSON.stringify({
             method: functionName,
