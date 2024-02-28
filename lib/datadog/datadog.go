@@ -31,7 +31,6 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 	}
 
 	once.Do(func() {
-		tracer.Start()
 		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithGlobalServiceName(true))
 	})
 
