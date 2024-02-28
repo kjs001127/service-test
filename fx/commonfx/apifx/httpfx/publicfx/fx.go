@@ -7,13 +7,19 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/api/http/public/controller"
 	"github.com/channel-io/ch-app-store/api/http/public/wam"
+	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 )
 
 var PublicHandlers = fx.Module(
 	"public",
 	fx.Provide(
 		gintool.AddTag(wam.NewHandler),
-		gintool.AddTag(controller.NewHandler),
+		fx.Annotate(
+			controller.NewHandler,
+			fx.As(new(gintool.RouteRegistrant)),
+			fx.ParamTags(configfx.Stage),
+			fx.ResultTags(`group:"routes"`),
+		),
 	),
 
 	fx.Supply(

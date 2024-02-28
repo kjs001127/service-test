@@ -2,6 +2,7 @@ package controller
 
 import (
 	"embed"
+	"fmt"
 	"io/fs"
 	"net/http"
 
@@ -14,14 +15,15 @@ var resources embed.FS
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
+	env string
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(env string) *Handler {
+	return &Handler{env: env}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	static, err := fs.Sub(resources, "resources")
+	static, err := fs.Sub(resources, fmt.Sprintf("resources/%s", h.env))
 	if err != nil {
 		panic(err)
 	}
