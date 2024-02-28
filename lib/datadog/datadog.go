@@ -58,13 +58,7 @@ func NewMethodSpanTagger() *MethodSpanTagger {
 }
 
 func (d *MethodSpanTagger) OnInvoke(ctx context.Context, appID string, req app.JsonFunctionRequest, _ app.JsonFunctionResponse) {
-	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
-		return
-	}
-	span, ok := tracer.SpanFromContext(ctx)
-	if !ok {
-		return
-	}
+	span, _ := tracer.SpanFromContext(ctx)
 
 	span.SetTag("appID", appID)
 	span.SetTag("method", req.Method)

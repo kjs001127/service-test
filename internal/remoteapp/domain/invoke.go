@@ -10,7 +10,6 @@ import (
 	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
@@ -47,14 +46,6 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 
 	id := uid.New()
 	a.logger.Debugw("function request", "id", id, "appID", target.ID, "request", request)
-
-	span, ctx := tracer.StartSpanFromContext(
-		ctx,
-		"functionCall",
-		tracer.Tag("appID", target.ID),
-		tracer.Tag("method", request.Method),
-	)
-	defer span.Finish()
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
