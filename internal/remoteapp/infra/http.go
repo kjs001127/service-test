@@ -25,7 +25,6 @@ func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) (io.
 	r.SetContext(ctx)
 	r.SetBody(req.Body)
 	r.SetHeaders(req.Headers)
-	r.SetDoNotParseResponse(true)
 
 	var resp *resty.Response
 	var err error
