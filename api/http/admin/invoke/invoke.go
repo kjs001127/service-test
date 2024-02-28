@@ -45,7 +45,6 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 //	@Tags		Admin
 //
 //	@Param		appID					path		string					true	"id of App to invoke Function"
-//	@Param		name					path		string					true	"name of Function to invoke"
 //	@Param		dto.JsonFunctionRequest	body		dto.JsonFunctionRequest	true	"body of Function to invoke"
 //
 //	@Success	200						{object}	json.RawMessage
