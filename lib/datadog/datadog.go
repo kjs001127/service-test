@@ -30,6 +30,10 @@ func (d *Datadog) Handle(ctx *gin.Context) {
 		return
 	}
 
+	if ctx.Request.RequestURI == "/ping" {
+		return
+	}
+
 	once.Do(func() {
 		tracer.Start(tracer.WithRuntimeMetrics(), tracer.WithService(ddServiceName), tracer.WithGlobalServiceName(true))
 	})
