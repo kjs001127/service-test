@@ -32,23 +32,39 @@
       const refreshToken = searchParams.get('refresh_token')
 
       function sendToClient({ type, appId, name, params, wamId }) {
-        if (window.Android) {
+        if (
+          window.Android &&
+          window.Android.channelMobileWamController &&
+          typeof window.Android.channelMobileWamController === 'function'
+        ) {
           window.Android.channelMobileWamController(type, { appId, name, params })
           return
         }
       
-        if (window.webkit) {
+        if (
+          window.webkit &&
+          window.webkit.messageHandlers &&
+          window.webkit.messageHandlers.channelMobileWamController &&
+          window.webkit.messageHandlers.channelMobileWamController.postMessage &&
+          typeof window.webkit.messageHandlers.channelMobileWamController.postMessage === 'function'
+        ) {
           window.webkit.messageHandlers.channelMobileWamController.postMessage(type, { appId, name, params })
           return
         }
-      
-        window.parent.postMessage({
-          type,
-          appId,
-          name,
-          params,
-          wamId,
-        }, '*')
+
+        if (
+          window.parent &&
+          window.parent.postMessage &&
+          typeof window.parent.postMessage === 'function'
+        ) {
+          window.parent.postMessage({
+            type,
+            appId,
+            name,
+            params,
+            wamId,
+          }, '*')
+        }
       }
 
       function close() {
