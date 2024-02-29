@@ -58,6 +58,10 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapCommonErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
 	}
 
+	if jsonResp.Error != nil && len(jsonResp.Error.Type) > 0 {
+		a.logger.Warnw("function returned err", "id", id, "appID", target.ID, "error", jsonResp.Error)
+	}
+
 	return jsonResp
 }
 

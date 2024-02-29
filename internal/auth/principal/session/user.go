@@ -53,8 +53,6 @@ func NewUserFetcherImpl(jwtServiceKey string, logger *log.ChannelLogger) *UserFe
 }
 
 func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrincipal, error) {
-	f.logger.Debugw("trying to parse user token", "token", token, "jwtServiceKey", f.jwtServiceKey)
-
 	parsed, err := jwt.ParseWithClaims(token, &UserJwt{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
 			return []byte(f.jwtServiceKey), nil

@@ -9,7 +9,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
@@ -40,16 +39,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	chCtx := app.ChannelContext{
-		Channel: app.Channel{
-			ID: channelID,
-		},
-		Caller: app.Caller{
-			Type: callerTypeUser,
-			ID:   user.ID,
-		},
-	}
-
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -61,8 +50,12 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		CommandBody:    body.Params,
-		ChannelContext: chCtx,
+		CommandBody: body.Params,
+		Caller: command.Caller{
+			ChannelID: channelID,
+			Type:      callerTypeUser,
+			ID:        user.ID,
+		},
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
@@ -101,24 +94,18 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		return
 	}
 
-	chCtx := app.ChannelContext{
-		Channel: app.Channel{
-			ID: channelID,
-		},
-		Caller: app.Caller{
-			Type: callerTypeUser,
-			ID:   user.ID,
-		},
-	}
-
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		Command: command.CommandKey{
 			AppID: appID,
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		Body:    body.Params,
-		Context: chCtx,
+		Body: body.Params,
+		Caller: command.Caller{
+			ID:        user.ID,
+			Type:      callerTypeUser,
+			ChannelID: channelID,
+		},
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))

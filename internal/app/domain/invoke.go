@@ -3,11 +3,18 @@ package domain
 import (
 	"context"
 	"encoding/json"
-
-	"github.com/channel-io/ch-app-store/internal/event"
 )
 
-type FunctionRequestListener event.RequestListener[JsonFunctionRequest, JsonFunctionResponse]
+type FunctionInvokeEvent struct {
+	AppID    string
+	Request  JsonFunctionRequest
+	Response JsonFunctionResponse
+}
+
+type FunctionRequestListener interface {
+	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
+}
+
 type Invoker struct {
 	appChRepo  AppChannelRepository
 	appRepo    AppRepository
@@ -49,14 +56,20 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 	}
 
 	res := h.Invoke(ctx, app, req)
-	i.onInvoke(ctx, appID, req, res)
+
+	event := FunctionInvokeEvent{
+		Request:  req,
+		Response: res,
+		AppID:    appID,
+	}
+	i.callListeners(ctx, event)
 
 	return res
 }
 
-func (i *Invoker) onInvoke(ctx context.Context, appID string, req JsonFunctionRequest, res JsonFunctionResponse) {
+func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) {
 	for _, listener := range i.listeners {
-		listener.OnInvoke(ctx, appID, req, res)
+		listener.OnInvoke(ctx, event)
 	}
 }
 

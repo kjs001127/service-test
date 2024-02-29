@@ -44,7 +44,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	a.logger.Debugw("parsed rbac", "token", rbac, "request", ctx.Request.RequestURI) // TODO: remove
+	a.logger.Debugw("parsed rbac", "id", rbac.ID, "type", rbac.Type)
 
 	ctx.Set(rbacKey, rbac)
 }

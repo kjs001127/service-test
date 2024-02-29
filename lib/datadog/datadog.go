@@ -50,12 +50,12 @@ func NewMethodSpanTagger(logger *log.ChannelLogger) *MethodSpanTagger {
 	return &MethodSpanTagger{logger: logger}
 }
 
-func (d *MethodSpanTagger) OnInvoke(ctx context.Context, appID string, req app.JsonFunctionRequest, _ app.JsonFunctionResponse) {
+func (d *MethodSpanTagger) OnInvoke(ctx context.Context, event app.FunctionInvokeEvent) {
 	span, ok := tracer.SpanFromContext(ctx)
 	if !ok {
 		d.logger.Warn("span not found on MethodSpanTagger")
 	}
 
-	span.SetTag(ext.RPCService, appID)
-	span.SetTag(ext.RPCMethod, req.Method)
+	span.SetTag(ext.RPCService, event.AppID)
+	span.SetTag(ext.RPCMethod, event.Request.Method)
 }
