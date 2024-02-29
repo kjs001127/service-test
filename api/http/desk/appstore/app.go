@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
 // getApps godoc
@@ -41,7 +40,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 		ids = append(ids, a.ID)
 	}
 
-	cmds, err := h.cmdRepo.FetchByQuery(ctx, command.Query{Scope: command.ScopeDesk, AppIDs: ids})
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, ids)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
