@@ -10,15 +10,14 @@ import (
 )
 
 type AutoCompleteRequest struct {
-	Command CommandKey         `json:"command"`
-	Body    AutoCompleteBody   `json:"body"`
-	Context app.ChannelContext `json:"context"`
+	Command CommandKey       `json:"command"`
+	Body    AutoCompleteBody `json:"body"`
+	Caller  Caller           `json:"caller"`
 }
 
 type AutoCompleteBody struct {
 	CommandContext
-	Caller Caller           `json:"caller"`
-	Input  AutoCompleteArgs `json:"input"`
+	Input AutoCompleteArgs `json:"input"`
 }
 
 type AutoCompleteArgs []*AutoCompleteArg
@@ -76,8 +75,15 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 	res := i.invoker.Invoke(ctx, app.TypedRequest[AutoCompleteBody]{
 		AppID:        request.Command.AppID,
 		FunctionName: *cmd.AutoCompleteFunctionName,
-		Context:      request.Context,
-		Params:       request.Body,
+		Context: app.ChannelContext{
+			Channel: app.Channel{
+				ID: request.Caller.ChannelID,
+			}, Caller: app.Caller{
+				Type: request.Caller.Type,
+				ID:   request.Caller.ID,
+			},
+		},
+		Params: request.Body,
 	})
 	if res.Error != nil {
 		return nil, res.Error
