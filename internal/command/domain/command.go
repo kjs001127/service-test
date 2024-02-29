@@ -170,10 +170,14 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 
 	event := CommandInvokeEvent{
 		Request: request,
-		Err:     ret.Error,
 		Result:  ret.Result,
 		ID:      cmd.ID,
+		Err:     nil,
 	}
+	if ret.Error != nil {
+		event.Err = ret.Error
+	}
+
 	r.callListeners(ctx, event)
 
 	if ret.Error != nil {
