@@ -16,6 +16,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
@@ -34,6 +35,7 @@ var Public = fx.Module(
 	configfx.Values,
 	commandfx.Command,
 	nativefx.Native,
+	logfx.Loggers,
 	datadogfx.Datadog,
 
 	fx.Supply(log.New("Appstore")),

@@ -8,7 +8,6 @@ import (
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	"github.com/channel-io/ch-app-store/internal/event"
 )
 
 type Scope string
@@ -85,7 +84,17 @@ type CommandRepository interface {
 	Save(ctx context.Context, resource *Command) (*Command, error)
 }
 
-type CommandRequestListener event.RequestListener[CommandRequest, app.TypedResponse[Action]]
+type CommandInvokeEvent struct {
+	ID      string
+	Err     error
+	Result  Action
+	Request CommandRequest
+}
+
+type CommandRequestListener interface {
+	OnInvoke(ctx context.Context, event CommandInvokeEvent)
+}
+
 type Invoker struct {
 	repository CommandRepository
 
@@ -107,7 +116,7 @@ func NewInvoker(
 type CommandRequest struct {
 	CommandKey
 	CommandBody
-	app.ChannelContext
+	Caller Caller
 }
 
 type CommandContext struct {
@@ -130,6 +139,12 @@ type Trigger struct {
 	Attributes map[string]string `json:"attributes"`
 }
 
+type Caller struct {
+	ChannelID string `json:"channelID"`
+	Type      string `json:"type"`
+	ID        string `json:"id"`
+}
+
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
 	cmd, err := r.repository.Fetch(ctx, request.CommandKey)
 	if err != nil {
@@ -140,20 +155,36 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		AppID:        cmd.AppID,
 		FunctionName: cmd.ActionFunctionName,
 		Params:       request.CommandBody,
-		Context:      request.ChannelContext,
+		Context: app.ChannelContext{
+			Channel: app.Channel{
+				ID: request.Caller.ChannelID,
+			},
+			Caller: app.Caller{
+				ID:   request.Caller.ID,
+				Type: request.Caller.Type,
+			},
+		},
 	}
 
 	ret := r.requester.Invoke(ctx, ctxReq)
+
+	event := CommandInvokeEvent{
+		Request: request,
+		Err:     ret.Error,
+		Result:  ret.Result,
+		ID:      cmd.ID,
+	}
+	r.callListeners(ctx, event)
+
 	if ret.Error != nil {
 		return Action{}, ret.Error
 	}
-	r.onInvoke(ctx, cmd.ID, request, ret)
 
 	return ret.Result, nil
 }
 
-func (r *Invoker) onInvoke(ctx context.Context, cmdID string, req CommandRequest, res app.TypedResponse[Action]) {
+func (r *Invoker) callListeners(ctx context.Context, event CommandInvokeEvent) {
 	for _, listener := range r.listeners {
-		listener.OnInvoke(ctx, cmdID, req, res)
+		listener.OnInvoke(ctx, event)
 	}
 }

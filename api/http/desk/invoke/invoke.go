@@ -43,24 +43,18 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		return
 	}
 
-	chCtx := app.ChannelContext{
-		Caller: app.Caller{
-			Type: callerTypeManager,
-			ID:   manager.ID,
-		},
-		Channel: app.Channel{
-			ID: channelID,
-		},
-	}
-
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		CommandKey: command.CommandKey{
 			AppID: appID,
 			Name:  name,
 			Scope: command.ScopeDesk,
 		},
-		CommandBody:    body.Params,
-		ChannelContext: chCtx,
+		CommandBody: body.Params,
+		Caller: command.Caller{
+			ChannelID: channelID,
+			Type:      callerTypeManager,
+			ID:        manager.ID,
+		},
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))

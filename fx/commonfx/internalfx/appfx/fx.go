@@ -13,7 +13,6 @@ var App = fx.Module(
 	"app",
 	AppSvcs,
 	AppDAOs,
-	AppListeners,
 )
 
 var AppSvcs = fx.Module(
@@ -41,17 +40,6 @@ var AppDAOs = fx.Module(
 		fx.Annotate(
 			repo.NewAppDAO,
 			fx.As(new(app.AppRepository)),
-		),
-	),
-)
-
-var AppListeners = fx.Module(
-	"appListeners",
-	fx.Provide(
-		fx.Annotate(
-			app.NewFunctionDBLogger,
-			fx.As(new(app.FunctionRequestListener)),
-			fx.ResultTags(`group:"functionListeners"`),
 		),
 	),
 )

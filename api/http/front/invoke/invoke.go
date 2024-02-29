@@ -40,16 +40,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawUser, _ := ctx.Get(middleware.UserKey)
 	user := rawUser.(session.UserPrincipal)
 
-	chCtx := app.ChannelContext{
-		Channel: app.Channel{
-			ID: channelID,
-		},
-		Caller: app.Caller{
-			Type: callerTypeUser,
-			ID:   user.ID,
-		},
-	}
-
 	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
 		return
@@ -61,8 +51,12 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 			Name:  name,
 			Scope: command.ScopeFront,
 		},
-		CommandBody:    body.Params,
-		ChannelContext: chCtx,
+		CommandBody: body.Params,
+		Caller: command.Caller{
+			ChannelID: channelID,
+			Type:      callerTypeUser,
+			ID:        user.ID,
+		},
 	})
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))

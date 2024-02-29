@@ -12,7 +12,6 @@ var Command = fx.Module(
 	"command",
 	CommandDAOs,
 	CommandSvcs,
-	CommandListeners,
 )
 var CommandSvcs = fx.Module(
 	"commandDomain",
@@ -38,17 +37,6 @@ var CommandDAOs = fx.Module(
 		fx.Annotate(
 			repo.NewCommandDao,
 			fx.As(new(domain.CommandRepository)),
-		),
-	),
-)
-
-var CommandListeners = fx.Module(
-	"commandListeners",
-	fx.Provide(
-		fx.Annotate(
-			domain.NewCommandDBLogger,
-			fx.As(new(domain.CommandRequestListener)),
-			fx.ResultTags(`group:"commandListeners"`),
 		),
 	),
 )

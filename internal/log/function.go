@@ -1,4 +1,4 @@
-package domain
+package log
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 
 	"github.com/channel-io/ch-app-store/generated/models"
+	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -20,17 +21,15 @@ func NewFunctionDBLogger(db db.DB) *FunctionDBLogger {
 
 func (f *FunctionDBLogger) OnInvoke(
 	ctx context.Context,
-	appID string,
-	req JsonFunctionRequest,
-	res JsonFunctionResponse,
+	event app.FunctionInvokeEvent,
 ) {
 	go func() {
 		functionLog := &models.FunctionLog{
-			AppID:      null.StringFrom(appID),
-			Name:       null.StringFrom(req.Method),
-			CallerType: null.StringFrom(req.Context.Caller.Type),
-			CallerID:   null.StringFrom(req.Context.Caller.ID),
-			IsSuccess:  null.BoolFrom(res.Error == nil),
+			AppID:      null.StringFrom(event.AppID),
+			Name:       null.StringFrom(event.Request.Method),
+			CallerType: null.StringFrom(event.Request.Context.Caller.Type),
+			CallerID:   null.StringFrom(event.Request.Context.Caller.ID),
+			IsSuccess:  null.BoolFrom(event.Response.Error == nil),
 		}
 		_ = functionLog.Insert(context.Background(), f.db, boil.Infer())
 	}()

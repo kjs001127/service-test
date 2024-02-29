@@ -17,7 +17,8 @@ type AutoCompleteRequest struct {
 
 type AutoCompleteBody struct {
 	CommandContext
-	Input AutoCompleteArgs `json:"input"`
+	Caller Caller           `json:"caller"`
+	Input  AutoCompleteArgs `json:"input"`
 }
 
 type AutoCompleteArgs []*AutoCompleteArg
