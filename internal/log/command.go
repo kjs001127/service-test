@@ -21,16 +21,18 @@ func NewCommandDBLogger(src db.DB) *CommandDBLogger {
 
 func (c *CommandDBLogger) OnInvoke(ctx context.Context, event command.CommandInvokeEvent) {
 	go func() {
+		messageID := event.Request.Trigger.Attributes["messageId"]
 		cmdLog := &models.CommandLog{
-			AppID:       null.StringFrom(event.Request.AppID),
-			ChannelID:   null.StringFrom(event.Request.Caller.ChannelID),
-			CommandID:   null.StringFrom(event.ID),
-			ChatType:    null.StringFrom(event.Request.Chat.Type),
-			ChatID:      null.StringFrom(event.Request.Chat.ID),
-			CallerType:  null.StringFrom(event.Request.Caller.Type),
-			CallerID:    null.StringFrom(event.Request.Caller.ID),
-			TriggerType: null.StringFrom(event.Request.Trigger.Type),
-			IsSuccess:   null.BoolFrom(event.Err == nil),
+			AppID:            null.StringFrom(event.Request.AppID),
+			ChannelID:        null.StringFrom(event.Request.Caller.ChannelID),
+			CommandID:        null.StringFrom(event.ID),
+			ChatType:         null.StringFrom(event.Request.Chat.Type),
+			ChatID:           null.StringFrom(event.Request.Chat.ID),
+			CallerType:       null.StringFrom(event.Request.Caller.Type),
+			CallerID:         null.StringFrom(event.Request.Caller.ID),
+			TriggerType:      null.StringFrom(event.Request.Trigger.Type),
+			TriggerMessageID: null.NewString(messageID, messageID != ""),
+			IsSuccess:        null.BoolFrom(event.Err == nil),
 		}
 		_ = cmdLog.Insert(context.Background(), c.db, boil.Infer())
 	}()
