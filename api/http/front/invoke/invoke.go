@@ -9,7 +9,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
@@ -35,14 +34,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
-
-	rawUser, _ := ctx.Get(middleware.UserKey)
-	user := rawUser.(session.UserPrincipal)
-
-	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
+	user := middleware.User(ctx)
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		CommandKey: command.CommandKey{
@@ -86,13 +78,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	rawUser, _ := ctx.Get(middleware.UserKey)
-	user := rawUser.(session.UserPrincipal)
-
-	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, user.Token); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
+	user := middleware.User(ctx)
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		Command: command.CommandKey{

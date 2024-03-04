@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/api/http/public/controller"
 	"github.com/channel-io/ch-app-store/api/http/public/wam"
+	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 )
 
@@ -18,7 +19,7 @@ var PublicHandlers = fx.Module(
 			controller.NewHandler,
 			fx.As(new(gintool.RouteRegistrant)),
 			fx.ParamTags(configfx.Stage),
-			fx.ResultTags(`group:"routes"`),
+			fx.ResultTags(gintoolfx.GroupRoutes),
 		),
 	),
 
@@ -26,7 +27,7 @@ var PublicHandlers = fx.Module(
 		fx.Annotate(
 			doc.NewHandler("/swagger/public/*any", "swagger_public"),
 			fx.As(new(gintool.RouteRegistrant)),
-			fx.ResultTags(`group:"routes"`),
+			fx.ResultTags(gintoolfx.GroupRoutes),
 		),
 	),
 )

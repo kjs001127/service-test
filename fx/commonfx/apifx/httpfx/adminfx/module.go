@@ -10,6 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
 	"github.com/channel-io/ch-app-store/api/http/doc"
+	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 )
 
 var AdminHandlers = fx.Module(
@@ -27,7 +28,7 @@ var AdminHandlers = fx.Module(
 		fx.Annotate(
 			doc.NewHandler("/swagger/admin/*any", "swagger_admin"),
 			fx.As(new(gintool.RouteRegistrant)),
-			fx.ResultTags(`group:"routes"`),
+			fx.ResultTags(gintoolfx.GroupRoutes),
 		),
 	),
 )

@@ -4,6 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
@@ -67,7 +68,7 @@ var RemoteAppCommonsSvcs = fx.Module(
 		fx.Annotate(
 			app.NewTyped[app.InvokeHandler],
 			fx.ParamTags(remoteAppName, `name:"remoteInvoker"`),
-			fx.ResultTags(`group:"invokeHandler"`),
+			fx.ResultTags(appfx.InvokeHandlerGroup),
 		),
 	),
 )

@@ -3,6 +3,8 @@ package logfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/command/domain"
 	"github.com/channel-io/ch-app-store/internal/log"
@@ -20,7 +22,7 @@ var functionLogger = fx.Module(
 		fx.Annotate(
 			log.NewFunctionDBLogger,
 			fx.As(new(app.FunctionRequestListener)),
-			fx.ResultTags(`group:"functionListeners"`),
+			fx.ResultTags(appfx.FunctionListenersGroup),
 		),
 	),
 )
@@ -31,7 +33,7 @@ var commandLogger = fx.Module(
 		fx.Annotate(
 			log.NewCommandDBLogger,
 			fx.As(new(domain.CommandRequestListener)),
-			fx.ResultTags(`group:"commandListeners"`),
+			fx.ResultTags(commandfx.CommandListenersGroup),
 		),
 	),
 )

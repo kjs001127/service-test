@@ -59,3 +59,8 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	ctx.Set(UserKey, user)
 }
+
+func User(ctx *gin.Context) session.UserPrincipal {
+	rawUser, _ := ctx.Get(UserKey)
+	return rawUser.(session.UserPrincipal)
+}

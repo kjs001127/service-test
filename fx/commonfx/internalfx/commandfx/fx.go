@@ -8,6 +8,10 @@ import (
 	"github.com/channel-io/ch-app-store/internal/command/repo"
 )
 
+const (
+	CommandListenersGroup = `group:"commandListeners"`
+)
+
 var Command = fx.Module(
 	"command",
 	CommandDAOs,
@@ -26,7 +30,7 @@ var CommandSvcs = fx.Module(
 	fx.Provide(
 		fx.Annotate(
 			domain.NewInvoker,
-			fx.ParamTags(``, ``, ``, `group:"commandListeners"`),
+			fx.ParamTags(``, ``, ``, CommandListenersGroup),
 		),
 	),
 )

@@ -9,6 +9,11 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/repo"
 )
 
+const (
+	FunctionListenersGroup = `group:"functionListeners"`
+	InvokeHandlerGroup     = `group:"invokeHandler"`
+)
+
 var App = fx.Module(
 	"app",
 	AppSvcs,
@@ -24,7 +29,7 @@ var AppSvcs = fx.Module(
 		app.NewConfigSvc,
 		fx.Annotate(
 			app.NewInvoker,
-			fx.ParamTags(``, ``, `group:"invokeHandler"`, `group:"functionListeners"`),
+			fx.ParamTags(``, ``, InvokeHandlerGroup, FunctionListenersGroup),
 		),
 		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
 	),

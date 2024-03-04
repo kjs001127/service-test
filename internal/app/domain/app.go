@@ -18,7 +18,7 @@ type App struct {
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas,omitempty"`
-	Type          AppType       `json:"appType"`
+	Type          AppType       `json:"-"`
 }
 
 type AppState string

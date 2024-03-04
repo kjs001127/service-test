@@ -9,14 +9,18 @@ import (
 	"github.com/channel-io/ch-app-store/config"
 )
 
-const port = `name:"port"`
+const (
+	GroupRoutes      = `group:"routes"`
+	GroupMiddlewares = `group:"middlewares"`
+	port             = `name:"port"`
+)
 
 var ApiServer = fx.Module("gintool",
 	fx.Provide(
 		fx.Annotate(
 			middleware.NewSentry,
 			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"middlewares"`),
+			fx.ResultTags(GroupMiddlewares),
 		),
 	),
 
@@ -31,7 +35,7 @@ var ApiServer = fx.Module("gintool",
 		gintool.AddTag(util.NewHandler),
 		fx.Annotate(
 			gintool.NewApiServer,
-			fx.ParamTags(port, `group:"routes"`, `group:"middlewares"`),
+			fx.ParamTags(port, GroupRoutes, GroupMiddlewares),
 		),
 	),
 

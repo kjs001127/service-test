@@ -8,6 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/general/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/general/invoke"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
+	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 )
 
 var GeneralHandlers = fx.Module(
@@ -16,7 +17,7 @@ var GeneralHandlers = fx.Module(
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(`group:"middlewares"`),
+			fx.ResultTags(gintoolfx.GroupMiddlewares),
 		),
 		gintool.AddTag(invoke.NewHandler),
 		gintool.AddTag(appchannel.NewHandler),
@@ -25,7 +26,7 @@ var GeneralHandlers = fx.Module(
 		fx.Annotate(
 			doc.NewHandler("/swagger/general/*any", "swagger_general"),
 			fx.As(new(gintool.RouteRegistrant)),
-			fx.ResultTags(`group:"routes"`),
+			fx.ResultTags(gintoolfx.GroupRoutes),
 		),
 	),
 )

@@ -24,9 +24,9 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )

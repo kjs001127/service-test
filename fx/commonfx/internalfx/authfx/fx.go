@@ -12,7 +12,7 @@ import (
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
-var AdminAuth = fx.Module(
+var RoleClientOnly = fx.Module(
 	"adminAuth",
 	fx.Provide(
 		fx.Annotate(

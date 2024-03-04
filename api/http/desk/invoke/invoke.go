@@ -37,11 +37,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
 
-	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, manager.Token); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
-
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		CommandKey: command.CommandKey{
 			AppID: appID,
@@ -86,11 +81,6 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	rawManager, _ := ctx.Get(middleware.ManagerKey)
 	manager := rawManager.(account.ManagerPrincipal)
-
-	if err := h.authorizer.Authorize(ctx, body.Params.CommandContext, manager.Token); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
-		return
-	}
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		Command: command.CommandKey{

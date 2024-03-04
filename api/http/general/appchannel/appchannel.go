@@ -48,6 +48,10 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 }
 
 func authorize(rbac authgen.ParsedRBACToken, channelID, appID string) error {
+	if ok := rbac.CheckAction(general.AppStoreService, fetchConfig); !ok {
+		return errors.New("fnCall unauthorized")
+	}
+
 	if ok := rbac.CheckScopes(authgen.Scopes{
 		general.ChannelScope: {channelID},
 		general.AppScope:     {appID},
