@@ -25,7 +25,7 @@ type AppState string
 
 const (
 	AppStateStable   = AppState("stable")
-	AppStateUnStable = AppState("unstable")
+	AppStateUnstable = AppState("unstable")
 )
 
 type ConfigMap map[string]string
