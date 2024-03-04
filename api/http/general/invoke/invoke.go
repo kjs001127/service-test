@@ -29,7 +29,7 @@ import (
 //	@Success	200							{object}	domain.NativeFunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req domain.NativeFunctionRequest
+	var req dto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
