@@ -6,10 +6,11 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/channel-io/ch-app-store/api/http/general"
+	"github.com/channel-io/ch-app-store/internal/native/domain"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-
-	"github.com/channel-io/ch-app-store/api/http/general"
 
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
@@ -17,7 +18,6 @@ import (
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
-/*
 // invokeNative godoc
 //
 //	@Summary	invoke Function
@@ -29,7 +29,7 @@ import (
 //	@Success	200							{object}	domain.NativeFunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req localdto.NativeFunctionRequest
+	var req domain.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
 		return
@@ -48,8 +48,6 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, resp)
 }
-
-*/
 
 // invoke godoc
 //
