@@ -33,22 +33,22 @@
 
       function sendToClient({ type, appId, name, params, wamId }) {
         if (
-          window.Android &&
-          window.Android.channelMobileWamController &&
-          typeof window.Android.channelMobileWamController === 'function'
+          window.channelMobileWamController &&
+          typeof window.channelMobileWamController[type] === 'function'
         ) {
-          window.Android.channelMobileWamController(type, { appId, name, params })
+          window.channelMobileWamController[type](JSON.stringify({ appId, name, params, wamId }))
           return
         }
+      
+        const webkitControllerKey = `channelMobileWamController_${type}`
       
         if (
           window.webkit &&
           window.webkit.messageHandlers &&
-          window.webkit.messageHandlers.channelMobileWamController &&
-          window.webkit.messageHandlers.channelMobileWamController.postMessage &&
-          typeof window.webkit.messageHandlers.channelMobileWamController.postMessage === 'function'
+          window.webkit.messageHandlers[webkitControllerKey] &&
+          typeof window.webkit.messageHandlers[webkitControllerKey].postMessage === 'function'
         ) {
-          window.webkit.messageHandlers.channelMobileWamController.postMessage(type, { appId, name, params })
+          window.webkit.messageHandlers[webkitControllerKey].postMessage({ appId, name, params, wamId })
           return
         }
 
