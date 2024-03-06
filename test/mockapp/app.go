@@ -17,7 +17,7 @@ import (
 func SetUpMockApp(manager app.AppManager, reg *cmd.RegisterSvc) error {
 	_, err := manager.Create(context.Background(), &app.App{
 		ID:        "1",
-		State:     app.AppStateStable,
+		State:     app.AppStateEnabled,
 		Title:     "TestApp",
 		IsPrivate: false,
 	})
