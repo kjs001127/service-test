@@ -5,7 +5,6 @@ import (
 
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/lib/datadog"
 	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
@@ -23,13 +22,6 @@ var Postgres = fx.Module(
 			postgres,
 			fx.ResultTags(driverName),
 		),
-	),
-	fx.Provide(
-		fx.Annotate(
-			datadog.NewDataSource,
-			fx.ParamTags(driverName, ``),
-		),
-		fx.Private,
 	),
 
 	fx.Invoke(func(db *sql.DB) {
