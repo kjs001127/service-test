@@ -33,7 +33,7 @@ func NewAppManagerImpl(
 func (a *AppManagerImpl) Create(ctx context.Context, app *App) (*App, error) {
 	app.ID = uid.New().Hex()
 	app.Type = a.Type
-	app.State = AppStateStable
+	app.State = AppStateEnabled
 
 	return a.appRepo.Save(ctx, app)
 }

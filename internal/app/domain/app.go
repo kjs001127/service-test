@@ -24,8 +24,8 @@ type App struct {
 type AppState string
 
 const (
-	AppStateStable   = AppState("stable")
-	AppStateUnstable = AppState("unstable")
+	AppStateEnabled  = AppState("enabled")
+	AppStateDisabled = AppState("disabled")
 )
 
 type ConfigMap map[string]string
