@@ -10,6 +10,7 @@ const (
 	JwtServiceKey = `name:"jwtServiceKey"`
 	DwAdmin       = `name:"dwAdmin"`
 	Stage         = `name:"stage"`
+	Sentry
 )
 
 var Values = fx.Module(
@@ -27,5 +28,6 @@ var Values = fx.Module(
 			config.Get().Stage,
 			fx.ResultTags(Stage),
 		),
+		config.Get().Log,
 	),
 )

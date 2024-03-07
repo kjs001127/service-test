@@ -18,8 +18,7 @@ const (
 var ApiServer = fx.Module("gintool",
 	fx.Provide(
 		fx.Annotate(
-			middleware.NewSentry,
-			fx.As(new(gintool.Middleware)),
+			middleware.NewLoggingMiddleware,
 			fx.ResultTags(GroupMiddlewares),
 		),
 	),

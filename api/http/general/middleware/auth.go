@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
@@ -20,10 +20,10 @@ const (
 
 type Auth struct {
 	parser general.Parser
-	logger *log.ChannelLogger
+	logger log.ContextAwareLogger
 }
 
-func NewAuth(parser general.Parser, logger *log.ChannelLogger) *Auth {
+func NewAuth(parser general.Parser, logger log.ContextAwareLogger) *Auth {
 	return &Auth{parser: parser, logger: logger}
 }
 
@@ -44,7 +44,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	a.logger.Debugw("parsed rbac", "id", rbac.ID, "type", rbac.Type)
+	a.logger.Debugw(ctx, "parsed rbac", "id", rbac.ID, "type", rbac.Type)
 
 	ctx.Set(rbacKey, rbac)
 }

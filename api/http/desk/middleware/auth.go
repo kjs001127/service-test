@@ -5,21 +5,21 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const ManagerKey = "Manager"
 
 type Auth struct {
 	managerSvc account.ManagerFetcher
-	logger     *log.ChannelLogger
+	logger     log.ContextAwareLogger
 }
 
-func NewAuth(managerSvc account.ManagerFetcher, logger *log.ChannelLogger) *Auth {
+func NewAuth(managerSvc account.ManagerFetcher, logger log.ContextAwareLogger) *Auth {
 	return &Auth{managerSvc: managerSvc, logger: logger}
 }
 
@@ -54,6 +54,6 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		)
 		return
 	}
-	a.logger.Debugw("injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager.ID)
+	a.logger.Debugw(ctx, "injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager.ID)
 	ctx.Set(ManagerKey, authenticatedManager)
 }

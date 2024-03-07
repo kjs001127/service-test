@@ -8,18 +8,16 @@ import (
 	"net/url"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/pkg/errors"
 )
 
 type FileStreamer struct {
 	repo      AppUrlRepository
 	requester http.RoundTripper
-	logger    *log.ChannelLogger
 }
 
-func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper, logger *log.ChannelLogger) *FileStreamer {
-	return &FileStreamer{repo: repo, requester: tripper, logger: logger}
+func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper) *FileStreamer {
+	return &FileStreamer{repo: repo, requester: tripper}
 }
 
 type AppProxyRequest struct {
@@ -37,12 +35,6 @@ func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) erro
 	if urls.WamURL == nil {
 		return apierr.BadRequest(fmt.Errorf("wam url invalid for appID: %s", req.AppID))
 	}
-
-	a.logger.Debugw("http proxy",
-		"appID", req.AppID,
-		"host", *urls.WamURL,
-		"path", req.Req.URL.Path,
-	)
 
 	wamUrl, err := url.Parse(*urls.WamURL)
 	if err != nil {

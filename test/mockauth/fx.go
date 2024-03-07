@@ -47,12 +47,6 @@ var Module = fx.Module(
 		func(t *testing.T) general.Parser {
 			return mockgeneral.NewParser(t)
 		},
-		func(t *testing.T) principal.CommandCtxAuthorizer {
-			mocked := mockprincipal.NewCommandCtxAuthorizer(t)
-			mocked.On("Authorize", mock.Anything, mock.Anything, mock.Anything).
-				Return(nil).Maybe()
-			return mocked
-		},
 		func(t *testing.T) principal.ChatValidator {
 			return mockprincipal.NewChatValidator(t)
 		},

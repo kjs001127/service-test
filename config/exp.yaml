@@ -12,6 +12,10 @@ psql:
   user: app_store
   password: ${PSQL_PASSWORD}
   sslmode: disable
-sentry:
-  dsn: https://94086f3f685212aaeed799d618411501@o104101.ingest.sentry.io/4506738076418048
-  tracesSampleRate: 1.0
+log:
+  console:
+    level: debug
+  sentry:
+    level: error
+    dsn: https://94086f3f685212aaeed799d618411501@o104101.ingest.sentry.io/4506738076418048
+    tracesSampleRate: 1.0

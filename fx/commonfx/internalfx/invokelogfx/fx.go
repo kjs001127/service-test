@@ -1,4 +1,4 @@
-package logfx
+package invokelogfx
 
 import (
 	"go.uber.org/fx"

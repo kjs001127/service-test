@@ -12,6 +12,10 @@ psql:
   user: app_store
   password: abc
   sslmode: disable
-sentry:
-  dsn: ''
-  tracesSampleRate: 0
+log:
+  console:
+    level: debug
+  sentry:
+    level: error
+    dsn:
+    tracesSampleRate: 0

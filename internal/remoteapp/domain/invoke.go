@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
@@ -21,10 +21,10 @@ const (
 type Invoker struct {
 	requester HttpRequester
 	repo      AppUrlRepository
-	logger    *log.ChannelLogger
+	logger    log.ContextAwareLogger
 }
 
-func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger *log.ChannelLogger) *Invoker {
+func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger log.ContextAwareLogger) *Invoker {
 	return &Invoker{requester: requester, repo: repo, logger: logger}
 }
 
@@ -44,14 +44,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	}
 
 	id := uid.New()
-	a.logger.Debugw("function request", "id", id, "appID", target.ID, "request", request)
+	a.logger.Debugw(ctx, "function request", "id", id, "appID", target.ID, "request", request)
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapCommonErr(err)
 	}
 
-	a.logger.Debugw("function response", "id", id, "appID", target.ID, "response", string(ret))
+	a.logger.Debugw(ctx, "function response", "id", id, "appID", target.ID, "response", string(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
@@ -59,7 +59,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	}
 
 	if jsonResp.Error != nil && len(jsonResp.Error.Type) > 0 {
-		a.logger.Warnw("function returned err", "id", id, "appID", target.ID, "error", jsonResp.Error)
+		a.logger.Warnw(ctx, "function returned err", "id", id, "appID", target.ID, "error", jsonResp.Error)
 	}
 
 	return jsonResp

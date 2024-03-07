@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+
+	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
 var (
@@ -38,10 +40,7 @@ type Config struct {
 		Password string `required:"true"`
 		SSLMode  string `required:"true"`
 	}
-	Sentry struct {
-		DSN              string  `required:"false"`
-		TracesSampleRate float64 `required:"false"`
-	}
+	Log chlog.Config
 }
 
 func init() {

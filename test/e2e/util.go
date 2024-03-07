@@ -24,9 +24,10 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/commonfx/logfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
@@ -50,7 +51,8 @@ var fullAppModule = fx.Module(
 	datadogfx.Datadog,
 	brieffx.Brief,
 	appfx.App,
-	logfx.Loggers,
+	invokelogfx.Loggers,
+	logfx.Logger,
 	mockauth.Module,
 	commandfx.Command,
 	restyfx.Clients,
