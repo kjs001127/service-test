@@ -13,16 +13,15 @@ type SpanCorrelatingLogger struct {
 }
 
 func (s *SpanCorrelatingLogger) Debug(ctx context.Context, logs ...interface{}) {
-	if span, exists := tracer.SpanFromContext(ctx); exists {
-		logs = append(logs, span)
-	}
 	s.delegate.Debug(ctx, logs...)
 }
 
 func (s *SpanCorrelatingLogger) Debugw(ctx context.Context, msg string, kvs ...interface{}) {
 	if span, exists := tracer.SpanFromContext(ctx); exists {
-		kvs = append(kvs, "span")
-		kvs = append(kvs, span)
+		kvs = append(kvs, "dd.spanId")
+		kvs = append(kvs, span.Context().SpanID())
+		kvs = append(kvs, "dd.traceId")
+		kvs = append(kvs, span.Context().TraceID())
 	}
 	s.delegate.Debugw(ctx, msg, kvs...)
 }
@@ -32,46 +31,43 @@ func NewSpanCorrelatingLogger(delegate log.ContextAwareLogger) *SpanCorrelatingL
 }
 
 func (s *SpanCorrelatingLogger) Info(ctx context.Context, logs ...interface{}) {
-	if span, exists := tracer.SpanFromContext(ctx); exists {
-		logs = append(logs, span)
-	}
 	s.delegate.Info(ctx, logs...)
 }
 
 func (s *SpanCorrelatingLogger) Warn(ctx context.Context, logs ...interface{}) {
-	if span, exists := tracer.SpanFromContext(ctx); exists {
-		logs = append(logs, span)
-	}
 	s.delegate.Warn(ctx, logs...)
 }
 
 func (s *SpanCorrelatingLogger) Error(ctx context.Context, logs ...interface{}) {
-	if span, exists := tracer.SpanFromContext(ctx); exists {
-		logs = append(logs, span)
-	}
 	s.delegate.Error(ctx, logs...)
 }
 
 func (s *SpanCorrelatingLogger) Infow(ctx context.Context, msg string, kvs ...interface{}) {
 	if span, exists := tracer.SpanFromContext(ctx); exists {
-		kvs = append(kvs, "span")
-		kvs = append(kvs, span)
+		kvs = append(kvs, "dd.spanId")
+		kvs = append(kvs, span.Context().SpanID())
+		kvs = append(kvs, "dd.traceId")
+		kvs = append(kvs, span.Context().TraceID())
 	}
 	s.delegate.Infow(ctx, msg, kvs...)
 }
 
 func (s *SpanCorrelatingLogger) Warnw(ctx context.Context, msg string, kvs ...interface{}) {
 	if span, exists := tracer.SpanFromContext(ctx); exists {
-		kvs = append(kvs, "span")
-		kvs = append(kvs, span)
+		kvs = append(kvs, "dd.spanId")
+		kvs = append(kvs, span.Context().SpanID())
+		kvs = append(kvs, "dd.traceId")
+		kvs = append(kvs, span.Context().TraceID())
 	}
 	s.delegate.Warnw(ctx, msg, kvs...)
 }
 
 func (s *SpanCorrelatingLogger) Errorw(ctx context.Context, msg string, kvs ...interface{}) {
 	if span, exists := tracer.SpanFromContext(ctx); exists {
-		kvs = append(kvs, "span")
-		kvs = append(kvs, span)
+		kvs = append(kvs, "dd.spanId")
+		kvs = append(kvs, span.Context().SpanID())
+		kvs = append(kvs, "dd.traceId")
+		kvs = append(kvs, span.Context().TraceID())
 	}
 	s.delegate.Errorw(ctx, msg, kvs...)
 }
