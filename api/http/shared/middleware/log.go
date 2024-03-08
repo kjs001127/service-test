@@ -7,28 +7,39 @@ import (
 )
 
 type LoggingMiddleware struct {
-	logger log.ContextAwareLogger
+	logger           log.ContextAwareLogger
+	headersToExclude []string
 }
 
-func NewLoggingMiddleware(logger log.ContextAwareLogger) *LoggingMiddleware {
-	return &LoggingMiddleware{logger: logger}
+func NewLoggingMiddleware(logger log.ContextAwareLogger, headersToExclude []string) *LoggingMiddleware {
+	return &LoggingMiddleware{logger: logger, headersToExclude: headersToExclude}
 }
 
 func (l *LoggingMiddleware) Handle(ctx *gin.Context) {
+	var loggingCtx *gin.Context
 	defer func() {
 		if err := recover(); err != nil {
-			l.logger.Errorw(ctx, "http request failed", "req", ctx.Request, "err", err)
+			l.logger.Errorw(loggingCtx, "http request failed", "req", loggingCtx.Request, "err", err)
 			panic(err)
 		}
 	}()
 
 	ctx.Next()
+	loggingCtx = omitSensitive(ctx, l.headersToExclude)
 
-	switch errTypeOf(ctx) {
+	switch errTypeOf(loggingCtx) {
 	case err:
-		l.logger.Errorw(ctx, "http request failed", "req", ctx.Request, "err", ctx.Errors)
+		l.logger.Errorw(loggingCtx, "http request failed",
+			"req", loggingCtx.Request,
+			"res", loggingCtx.Request.Response,
+			"err", loggingCtx.Errors,
+		)
 	case warn:
-		l.logger.Warnw(ctx, "http request failed", "req", ctx.Request, "err", ctx.Errors)
+		l.logger.Warnw(loggingCtx, "http request failed",
+			"req", loggingCtx.Request,
+			"res", loggingCtx.Request.Response,
+			"err", loggingCtx.Errors,
+		)
 	}
 }
 
@@ -48,4 +59,12 @@ func errTypeOf(ctx *gin.Context) errorType {
 		return warn
 	}
 	return none
+}
+
+func omitSensitive(ctx *gin.Context, headersToExclude []string) *gin.Context {
+	copied := ctx.Copy()
+	for _, k := range headersToExclude {
+		copied.Header(k, "")
+	}
+	return copied
 }
