@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 type BriefResponses struct {
@@ -34,14 +35,16 @@ type Invoker struct {
 	repo     BriefRepository
 	querySvc *app.QuerySvc
 	invoker  *app.TypedInvoker[EmptyRequest, BriefResponse]
+	logger   log.ContextAwareLogger
 }
 
 func NewInvoker(
 	repo BriefRepository,
 	querySvc *app.QuerySvc,
 	invoker *app.TypedInvoker[EmptyRequest, BriefResponse],
+	logger log.ContextAwareLogger,
 ) *Invoker {
-	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker}
+	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker, logger: logger}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
@@ -54,6 +57,11 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
+
+	i.logger.Infow(ctx, "invoking brief",
+		"channelID", req.Channel,
+		"appIds", app.AppIDsOf(installedApps.AppChannels),
+	)
 
 	ch := make(chan *AppBrief, len(briefs))
 	var wg sync.WaitGroup
@@ -70,6 +78,8 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 			})
 			if res.Error == nil {
 				ch <- &AppBrief{AppId: brief.AppID, Brief: res.Result.Result}
+			} else {
+				i.logger.Warnw(childCtx, "brief request returned err", "error", res.Error)
 			}
 			wg.Done()
 		}()
