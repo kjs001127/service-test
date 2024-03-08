@@ -46,6 +46,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
+		a.logger.Warnw(ctx, "function returned err", "appID", target.ID, "error", err)
 		return app.WrapCommonErr(err)
 	}
 
