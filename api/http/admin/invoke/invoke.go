@@ -27,7 +27,7 @@ import (
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req dto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -87,7 +87,7 @@ func (h *Handler) brief(ctx *gin.Context) {
 	var ret brief.BriefResponses
 	ret, err := h.briefInvoker.Invoke(ctx, req.Context)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

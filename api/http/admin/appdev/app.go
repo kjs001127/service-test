@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
@@ -22,13 +21,13 @@ import (
 func (h *Handler) create(ctx *gin.Context) {
 	var target app.AppRequest
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
 	created, err := h.appDevSvc.CreateApp(ctx, target)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -49,7 +48,7 @@ func (h *Handler) delete(ctx *gin.Context) {
 
 	err := h.appDevSvc.DeleteApp(ctx, ID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -70,7 +69,7 @@ func (h *Handler) query(ctx *gin.Context) {
 
 	appFound, err := h.appDevSvc.FetchAppByRoleID(ctx, ID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -90,7 +89,7 @@ func (h *Handler) queryDetail(ctx *gin.Context) {
 	ID := ctx.Param("appID")
 	appFound, err := h.appDevSvc.FetchApp(ctx, ID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

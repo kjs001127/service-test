@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	shareddto "github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 )
 
@@ -30,7 +29,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -53,7 +52,7 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -76,7 +75,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 
 	var configMap map[string]string
 	if err := ctx.ShouldBindBodyWith(&configMap, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, shareddto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -85,7 +84,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		ChannelID: channelID,
 	}, configMap)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -110,7 +109,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		AppID:     appID,
 	})
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, shareddto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

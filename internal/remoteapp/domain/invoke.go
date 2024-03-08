@@ -44,14 +44,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	}
 
 	id := uid.New()
-	a.logger.Debugw(ctx, "function request", "id", id, "appID", target.ID, "request", request)
+	a.logger.Debugw(ctx, "function request", "id", id, "appID", target.ID, "request", json.RawMessage(marshaled))
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapCommonErr(err)
 	}
 
-	a.logger.Debugw(ctx, "function response", "id", id, "appID", target.ID, "response", string(ret))
+	a.logger.Debugw(ctx, "function response", "id", id, "appID", target.ID, "response", json.RawMessage(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {

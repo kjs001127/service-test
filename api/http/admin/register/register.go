@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	admindto "github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 )
 
 // registerCommand godoc
@@ -23,13 +22,13 @@ import (
 func (h *Handler) registerCommand(ctx *gin.Context) {
 	var request admindto.RegisterRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 	appID := ctx.Param("appID")
 
 	if err := h.registerSaga.Register(ctx, appID, request.Commands); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

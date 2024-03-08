@@ -1,11 +1,8 @@
 package wam
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
@@ -31,7 +28,7 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

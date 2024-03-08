@@ -29,7 +29,7 @@ const callerTypeManager = "manager"
 func (h *Handler) executeCommand(ctx *gin.Context) {
 	var body dto.CommandInput
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		},
 	})
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -73,7 +73,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body dto.ContextAndAutoCompleteArgs
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -96,7 +96,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		},
 	})
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

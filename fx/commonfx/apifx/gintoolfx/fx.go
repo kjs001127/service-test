@@ -21,7 +21,7 @@ var ApiServer = fx.Module("gintool",
 		fx.Annotate(
 			middleware.NewLoggingMiddleware,
 			fx.ResultTags(GroupMiddlewares),
-			fx.ParamTags(``, headersToExclude),
+			fx.As(new(gintool.Middleware)),
 		),
 	),
 

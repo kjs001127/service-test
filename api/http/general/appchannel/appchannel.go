@@ -8,7 +8,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 )
@@ -33,14 +32,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 	appID, channelID := ctx.Param("appID"), ctx.Param("channelID")
 
 	if err := authorize(middleware.RBAC(ctx), channelID, appID); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("function call unauthorized"))
+		_ = ctx.Error(err)
 		return
 	}
 
 	installedApp, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

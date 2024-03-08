@@ -3,13 +3,12 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	wraperr "github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
@@ -29,6 +28,10 @@ func NewAuth(managerSvc session.UserFetcher, logger log.ContextAwareLogger) *Aut
 	return &Auth{userSvc: managerSvc, logger: logger}
 }
 
+func (a *Auth) Priority() int {
+	return 2
+}
+
 func (a *Auth) Handle(ctx *gin.Context) {
 	if !strings.HasPrefix(ctx.Request.RequestURI, FrontPathPrefix) {
 		return
@@ -36,22 +39,23 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	xSession := ctx.GetHeader(session.XSessionHeader)
 	if len(xSession) <= 0 {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(errors.New("x-session header not found")))
 		return
 	}
 
 	user, err := a.userSvc.FetchUser(ctx, xSession)
 	if err != nil {
-		wrapped := wraperr.Wrap(err, "middleware user fetch fail")
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(wrapped))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(wraperr.Wrap(err, "middleware user fetch fail")))
 		return
 	}
 
 	channelID := ctx.Param(PathParamChannelID)
 	if len(channelID) >= 0 && channelID != user.ChannelID {
-		a.logger.Warnw(ctx, "channelID doest not match jwt", "path", channelID, "jwt", user.ChannelID)
-		err := fmt.Errorf("user auth failed, channelId does not match")
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnauthorizedError(err))
+		err := fmt.Errorf("channelID doest not match jwt, Path: %s, User: %s", channelID, user.ChannelID)
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(err))
 		return
 	}
 

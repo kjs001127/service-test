@@ -15,6 +15,10 @@ func NewDatadog() *Datadog {
 	return &Datadog{}
 }
 
+func (d *Datadog) Priority() int {
+	return 1
+}
+
 func (d *Datadog) Handle(ctx *gin.Context) {
 	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
 		return

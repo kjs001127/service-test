@@ -31,7 +31,7 @@ import (
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req dto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -65,14 +65,14 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
 	rbacToken := middleware.RBAC(ctx)
 
 	if err := authFnCall(rbacToken, appID, req.Context.Channel.ID, req.Method); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 

@@ -27,7 +27,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 
 	installedApps, err := h.appQuerySvc.QueryAll(ctx, channelID)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	commands, err := h.cmdRepo.FetchByQuery(ctx, query)
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

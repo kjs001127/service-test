@@ -2,6 +2,7 @@ package gintool
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -42,9 +43,14 @@ func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine 
 			MaxAge:           12 * time.Hour,
 		},
 	))
-	for _, m := range middlewares {
+
+	middlewareSlice := MiddlewareSlice(middlewares)
+	sort.Sort(middlewareSlice)
+
+	for _, m := range middlewareSlice {
 		router.Use(m.Handle)
 	}
+
 	for _, route := range routes {
 		route.RegisterRoutes(router)
 	}
@@ -54,4 +60,18 @@ func newRouter(routes []RouteRegistrant, middlewares ...Middleware) *gin.Engine 
 
 func (svr *ApiServer) Run() error {
 	return svr.router.Run(svr.address)
+}
+
+type MiddlewareSlice []Middleware
+
+func (ms MiddlewareSlice) Len() int {
+	return len(ms)
+}
+
+func (ms MiddlewareSlice) Swap(i, j int) {
+	ms[i], ms[j] = ms[j], ms[i]
+}
+
+func (ms MiddlewareSlice) Less(i, j int) bool {
+	return ms[i].Priority() < ms[j].Priority()
 }
