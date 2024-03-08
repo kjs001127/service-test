@@ -13,14 +13,20 @@ const (
 	GroupRoutes      = `group:"routes"`
 	GroupMiddlewares = `group:"middlewares"`
 	port             = `name:"port"`
-	headersToExclude = `name:"headersToExclude"`
+	excludePath      = `name:"excludePath"`
 )
 
 var ApiServer = fx.Module("gintool",
 	fx.Provide(
 		fx.Annotate(
-			middleware.NewLoggingMiddleware,
+			middleware.NewErrHandler,
 			fx.ResultTags(GroupMiddlewares),
+			fx.As(new(gintool.Middleware)),
+		),
+		fx.Annotate(
+			middleware.NewLogger,
+			fx.ResultTags(GroupMiddlewares),
+			fx.ParamTags(``, excludePath),
 			fx.As(new(gintool.Middleware)),
 		),
 	),
@@ -34,8 +40,8 @@ var ApiServer = fx.Module("gintool",
 
 	fx.Supply(
 		fx.Annotate(
-			[]string{"x-access-token", "x-account", "x-session"},
-			fx.ResultTags(headersToExclude),
+			[]string{"/ping"},
+			fx.ResultTags(excludePath),
 		),
 	),
 

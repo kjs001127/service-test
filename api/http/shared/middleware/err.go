@@ -12,19 +12,19 @@ import (
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
-type LoggingMiddleware struct {
+type ErrHandler struct {
 	logger log.ContextAwareLogger
 }
 
-func (l *LoggingMiddleware) Priority() int {
+func (l *ErrHandler) Priority() int {
 	return -1
 }
 
-func NewLoggingMiddleware(logger log.ContextAwareLogger) *LoggingMiddleware {
-	return &LoggingMiddleware{logger: logger}
+func NewErrHandler(logger log.ContextAwareLogger) *ErrHandler {
+	return &ErrHandler{logger: logger}
 }
 
-func (l *LoggingMiddleware) Handle(ctx *gin.Context) {
+func (l *ErrHandler) Handle(ctx *gin.Context) {
 	ctx.Next()
 
 	if len(ctx.Errors) <= 0 {
@@ -36,7 +36,7 @@ func (l *LoggingMiddleware) Handle(ctx *gin.Context) {
 	ctx.JSON(dto.Status, dto)
 }
 
-func (l *LoggingMiddleware) log(ctx *gin.Context, dto *errorsDTO) {
+func (l *ErrHandler) log(ctx *gin.Context, dto *errorsDTO) {
 	body, _ := io.ReadAll(ctx.Request.Body)
 	if dto.Status >= 500 {
 		l.logger.Errorw(ctx, "http request failed",
