@@ -61,8 +61,10 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 
 	for _, brief := range briefs {
 		brief := brief
+		childCtx, cancel := context.WithCancel(ctx)
 		go func() {
-			res := i.invoker.Invoke(ctx, brief.AppID, app.TypedRequest[EmptyRequest]{
+			defer cancel()
+			res := i.invoker.Invoke(childCtx, brief.AppID, app.TypedRequest[EmptyRequest]{
 				FunctionName: brief.BriefFunctionName,
 				Context:      req,
 			})
