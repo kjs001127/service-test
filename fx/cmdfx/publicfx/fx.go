@@ -22,8 +22,8 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
 
-var Public = fx.Module(
-	"appPublic",
+var Public = fx.Options(
+
 	PublicHttp,
 
 	authfx.GeneralAuth,
@@ -44,8 +44,7 @@ var Public = fx.Module(
 	logfx.Logger,
 )
 
-var PublicHttp = fx.Module(
-	"httpPublic",
+var PublicHttp = fx.Options(
 	generalfx.GeneralHandlers,
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,

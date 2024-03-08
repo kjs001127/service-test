@@ -10,7 +10,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/datadog"
-	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 var Datadog = fx.Options(
@@ -29,10 +28,7 @@ var Datadog = fx.Options(
 			fx.ResultTags(restyfx.App),
 			fx.ParamTags(restyfx.App),
 		),
-		fx.Annotate(
-			datadog.NewSpanCorrelatingLogger,
-			fx.As(new(log.ContextAwareLogger)),
-		),
+		datadog.DecorateLogger,
 	),
 	fx.Provide(
 		fx.Annotate(

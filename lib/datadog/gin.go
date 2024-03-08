@@ -4,8 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	gintracer "gopkg.in/DataDog/dd-trace-go.v1/contrib/gin-gonic/gin"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
-
-	"github.com/channel-io/ch-app-store/config"
 )
 
 type GinMiddleware struct {
@@ -20,9 +18,6 @@ func (d *GinMiddleware) Priority() int {
 }
 
 func (d *GinMiddleware) Handle(ctx *gin.Context) {
-	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
-		return
-	}
 
 	if ctx.Request.RequestURI == "/ping" {
 		return

@@ -19,14 +19,13 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
 
-var AdminHttp = fx.Module(
-	"adminHttp",
+var AdminHttp = fx.Options(
 	gintoolfx.ApiServer,
 	adminfx.AdminHandlers,
 )
 
-var Admin = fx.Module(
-	"appAdmin",
+var Admin = fx.Options(
+
 	AdminHttp,
 
 	authfx.RoleClientOnly,

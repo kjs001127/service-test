@@ -26,7 +26,7 @@ func (s *SpanCorrelatingLogger) Debugw(ctx context.Context, msg string, kvs ...i
 	s.delegate.Debugw(ctx, msg, kvs...)
 }
 
-func NewSpanCorrelatingLogger(delegate log.ContextAwareLogger) *SpanCorrelatingLogger {
+func DecorateLogger(delegate log.ContextAwareLogger) log.ContextAwareLogger {
 	return &SpanCorrelatingLogger{delegate: delegate}
 }
 
