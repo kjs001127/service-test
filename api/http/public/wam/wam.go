@@ -21,7 +21,7 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 
 	reqCloned := *ctx.Request
 	reqCloned.URL.Path = path
-	err := h.wamDownloader.StreamFile(ctx, remoteapp.AppProxyRequest{
+	err := h.wamDownloader.StreamFile(ctx, remoteapp.WamProxyRequest{
 		AppID:  appID,
 		Writer: ctx.Writer,
 		Req:    ctx.Request,

@@ -3,21 +3,13 @@ package dto
 import (
 	"time"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/app/domain"
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
-type CommandInput struct {
-	Params cmd.CommandBody `json:"params"`
-}
-
 type AppsAndCommands struct {
-	Apps     []*app.App    `json:"apps"`
+	Apps     []*domain.App `json:"apps"`
 	Commands []*CommandDTO `json:"commands"`
-}
-
-type ContextAndAutoCompleteArgs struct {
-	Params cmd.AutoCompleteBody `json:"params"`
 }
 
 type CommandDTO struct {

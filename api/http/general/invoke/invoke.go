@@ -6,18 +6,19 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/channel-io/ch-app-store/api/http/general"
-	"github.com/channel-io/ch-app-store/internal/native/domain"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/general"
+
+	"github.com/channel-io/ch-app-store/api/http/dto"
+
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
+/*
 // invokeNative godoc
 //
 //	@Summary	invoke Function
@@ -49,6 +50,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
+*/
 // invoke godoc
 //
 //	@Summary	invoke Function
@@ -78,12 +80,13 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	res := h.invoker.Invoke(
 		ctx,
+		appID,
 		app.TypedRequest[json.RawMessage]{
-			AppID:        appID,
 			FunctionName: req.Method,
 			Context:      fillCaller(rbacToken, req.Context),
 			Params:       req.Params,
-		})
+		},
+	)
 
 	ctx.JSON(http.StatusOK, res)
 }

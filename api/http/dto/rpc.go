@@ -11,8 +11,3 @@ type JsonFunctionRequest struct {
 	Params  json.RawMessage    `json:"params"`
 	Context app.ChannelContext `json:"context"`
 }
-
-type NativeFunctionRequest struct {
-	Method string          `json:"method"`
-	Params json.RawMessage `json:"params"`
-}

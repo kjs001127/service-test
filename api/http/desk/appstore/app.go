@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
+	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
 )
 
 // getApps godoc
@@ -46,5 +46,5 @@ func (h *Handler) getApps(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Apps: apps, Commands: dto.NewCommandDTOs(cmds)})
+	ctx.JSON(http.StatusOK, deskdto.AppsAndCommands{Apps: apps, Commands: deskdto.NewCommandDTOs(cmds)})
 }

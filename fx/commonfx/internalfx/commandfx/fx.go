@@ -12,13 +12,11 @@ const (
 	CommandListenersGroup = `group:"commandListeners"`
 )
 
-var Command = fx.Module(
-	"command",
+var Command = fx.Options(
 	CommandDAOs,
 	CommandSvcs,
 )
-var CommandSvcs = fx.Module(
-	"commandDomain",
+var CommandSvcs = fx.Options(
 	fx.Provide(
 		domain.NewParamValidator,
 		domain.NewRegisterService,
@@ -35,8 +33,7 @@ var CommandSvcs = fx.Module(
 	),
 )
 
-var CommandDAOs = fx.Module(
-	"commandDB",
+var CommandDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewCommandDao,

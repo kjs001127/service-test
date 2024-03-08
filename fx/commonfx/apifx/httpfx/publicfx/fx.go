@@ -11,10 +11,9 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
 )
 
-var PublicHandlers = fx.Module(
-	"public",
+var PublicHandlers = fx.Options(
 	fx.Provide(
-		gintool.AddTag(wam.NewHandler),
+		gintoolfx.AddTag(wam.NewHandler),
 		fx.Annotate(
 			controller.NewHandler,
 			fx.As(new(gintool.RouteRegistrant)),

@@ -3,7 +3,6 @@ package remoteappfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -20,21 +19,18 @@ const (
 	remoteAppName = `name:"remoteApp"`
 )
 
-var RemoteAppCommon = fx.Module(
-	"remoteappCommon",
+var RemoteAppCommon = fx.Options(
 	RemoteAppCommonsSvcs,
 	RemoteAppHttps,
 	RemoteAppDAOs,
 )
 
-var RemoteAppDev = fx.Module(
-	"remoteappDev",
+var RemoteAppDev = fx.Options(
 	RemoteAppCommon,
 	RemoteAppDevSvc,
 )
 
-var RemoteAppCommonsSvcs = fx.Module(
-	"remoteappDomain",
+var RemoteAppCommonsSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			appTypeRemote,
@@ -83,8 +79,7 @@ const (
 	scopeManager = "manager"
 )
 
-var RemoteAppDevSvc = fx.Module(
-	"remoteAppDev",
+var RemoteAppDevSvc = fx.Options(
 	fx.Supply(
 		map[domain.RoleType]domain.TypeRule{
 			roleTypeChannel: {
@@ -124,20 +119,17 @@ var RemoteAppDevSvc = fx.Module(
 	),
 )
 
-var RemoteAppHttps = fx.Module(
-	"remoteAppHttp",
-
+var RemoteAppHttps = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			infra.NewHttpRequester,
 			fx.As(new(domain.HttpRequester)),
-			fx.ParamTags(datadogfx.AppResty),
+			fx.ParamTags(restyfx.App),
 		),
 	),
 )
 
-var RemoteAppDAOs = fx.Module(
-	"remoteAppInfra",
+var RemoteAppDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppUrlDao,

@@ -24,18 +24,22 @@ import (
 
 var Public = fx.Module(
 	"appPublic",
-	restyfx.Clients,
-	dbfx.Postgres,
 	PublicHttp,
-	remoteappfx.RemoteAppCommon,
-	brieffx.Brief,
+
 	authfx.GeneralAuth,
 	authfx.PrincipalAuth,
+
 	appfx.App,
-	configfx.Values,
+	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
+	remoteappfx.RemoteAppCommon,
+
 	invokelogfx.Loggers,
+
+	configfx.Values,
+	restyfx.Clients,
+	dbfx.Postgres,
 	datadogfx.Datadog,
 	logfx.Logger,
 )

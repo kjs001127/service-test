@@ -24,7 +24,7 @@ func (c *CommandDBLogger) OnInvoke(ctx context.Context, event command.CommandInv
 		messageID := event.Request.Trigger.Attributes["messageId"]
 		cmdLog := &models.CommandLog{
 			AppID:            null.StringFrom(event.Request.AppID),
-			ChannelID:        null.StringFrom(event.Request.Caller.ChannelID),
+			ChannelID:        null.StringFrom(event.Request.ChannelID),
 			CommandID:        null.StringFrom(event.ID),
 			ChatType:         null.StringFrom(event.Request.Chat.Type),
 			ChatID:           null.StringFrom(event.Request.Chat.ID),

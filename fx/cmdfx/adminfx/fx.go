@@ -27,17 +27,21 @@ var AdminHttp = fx.Module(
 
 var Admin = fx.Module(
 	"appAdmin",
-	dbfx.Postgres,
-	configfx.Values,
 	AdminHttp,
+
+	authfx.RoleClientOnly,
+
+	appfx.App,
+	commandfx.Command,
 	remoteappfx.RemoteAppDev,
 	nativefx.Native,
 	brieffx.Brief,
-	authfx.RoleClientOnly,
-	appfx.App,
-	commandfx.Command,
-	restyfx.Clients,
+
 	invokelogfx.Loggers,
+
+	restyfx.Clients,
+	configfx.Values,
+	dbfx.Postgres,
 	logfx.Logger,
 	datadogfx.Datadog,
 )

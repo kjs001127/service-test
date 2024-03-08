@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -50,26 +49,21 @@ func (a *CoreApi) ListMethods() []string {
 	return methods
 }
 
-func (a *CoreApi) Handle(ctx context.Context, fnReq domain.NativeFunctionRequest) domain.NativeFunctionResponse {
+func (a *CoreApi) Handle(ctx context.Context, token domain.Token, fnReq domain.NativeFunctionRequest) domain.NativeFunctionResponse {
 
 	uri, ok := a.urlRouter[fnReq.Method]
 	if !ok {
 		return domain.WrapCommonErr(errors.New("mapping not found on core api handler"))
 	}
 
-	marshaled, err := json.Marshal(fnReq.Params)
-	if err != nil {
-		return domain.WrapCommonErr(err)
-	}
-
 	r := a.resty.R()
 
-	if len(fnReq.Token.Type) > 0 && len(fnReq.Token.Value) > 0 {
-		r.SetHeader(fnReq.Token.Type, fnReq.Token.Value)
+	if len(token.Type) > 0 && len(token.Value) > 0 {
+		r.SetHeader(token.Type, token.Value)
 	}
 
 	r.SetHeader(contentTypeHeader, mimeTypeJson)
-	r.SetBody(marshaled)
+	r.SetBody(fnReq.Params)
 	r.SetContext(ctx)
 
 	resp, err := r.Post(a.adminUrl + uri)

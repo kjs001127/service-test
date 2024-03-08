@@ -17,8 +17,7 @@ const (
 	appTimeout = time.Second * 30
 )
 
-var Clients = fx.Module(
-	"resty",
+var Clients = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			http.DefaultTransport,

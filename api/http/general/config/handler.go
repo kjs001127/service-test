@@ -1,4 +1,4 @@
-package appchannel
+package config
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"

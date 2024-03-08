@@ -4,8 +4,8 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/api/http/admin/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
+	"github.com/channel-io/ch-app-store/api/http/admin/install"
 	"github.com/channel-io/ch-app-store/api/http/admin/invoke"
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
@@ -13,15 +13,13 @@ import (
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 )
 
-var AdminHandlers = fx.Module(
-	"adminHttpModule",
-
+var AdminHandlers = fx.Options(
 	fx.Provide(
-		gintool.AddTag(appdev.NewHandler),
-		gintool.AddTag(register.NewHandler),
-		gintool.AddTag(invoke.NewHandler),
-		gintool.AddTag(query.NewHandler),
-		gintool.AddTag(appchannel.NewHandler),
+		gintoolfx.AddTag(appdev.NewHandler),
+		gintoolfx.AddTag(register.NewHandler),
+		gintoolfx.AddTag(invoke.NewHandler),
+		gintoolfx.AddTag(query.NewHandler),
+		gintoolfx.AddTag(install.NewHandler),
 	),
 
 	fx.Supply(

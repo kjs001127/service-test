@@ -27,7 +27,7 @@ func NewCommandDao(src db.DB) *CommandDao {
 	return &CommandDao{db: src}
 }
 
-func (c *CommandDao) FetchByQuery(ctx context.Context, query domain.Query) ([]*domain.Command, error) {
+func (c *CommandDao) FetchByAppIDsAndScope(ctx context.Context, query domain.Query) ([]*domain.Command, error) {
 
 	slice := make([]interface{}, len(query.AppIDs))
 	for i, v := range query.AppIDs {

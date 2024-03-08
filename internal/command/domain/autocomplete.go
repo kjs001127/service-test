@@ -10,13 +10,14 @@ import (
 )
 
 type AutoCompleteRequest struct {
-	Command CommandKey       `json:"command"`
-	Body    AutoCompleteBody `json:"body"`
-	Caller  Caller           `json:"caller"`
+	ChannelID string           `json:"channelId"`
+	Command   CommandKey       `json:"command"`
+	Body      AutoCompleteBody `json:"body"`
+	Caller    Caller           `json:"caller"`
 }
 
 type AutoCompleteBody struct {
-	CommandContext
+	Chat  Chat             `json:"chat"`
 	Input AutoCompleteArgs `json:"input"`
 }
 
@@ -72,12 +73,11 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
 	}
 
-	res := i.invoker.Invoke(ctx, app.TypedRequest[AutoCompleteBody]{
-		AppID:        request.Command.AppID,
+	res := i.invoker.Invoke(ctx, request.Command.AppID, app.TypedRequest[AutoCompleteBody]{
 		FunctionName: *cmd.AutoCompleteFunctionName,
 		Context: app.ChannelContext{
 			Channel: app.Channel{
-				ID: request.Caller.ChannelID,
+				ID: request.ChannelID,
 			}, Caller: app.Caller{
 				Type: request.Caller.Type,
 				ID:   request.Caller.ID,

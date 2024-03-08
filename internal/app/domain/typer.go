@@ -6,7 +6,6 @@ import (
 )
 
 type TypedRequest[REQ any] struct {
-	AppID        string         `json:"appId"`
 	FunctionName string         `json:"functionName"`
 	Context      ChannelContext `json:"context"`
 	Params       REQ            `json:"params"`
@@ -29,6 +28,7 @@ func NewTypedInvoker[REQ any, RES any](
 
 func (i *TypedInvoker[REQ, RES]) Invoke(
 	ctx context.Context,
+	appID string,
 	request TypedRequest[REQ],
 ) TypedResponse[RES] {
 	var ret RES
@@ -38,7 +38,7 @@ func (i *TypedInvoker[REQ, RES]) Invoke(
 		return TypedResponse[RES]{Error: &Error{Type: "appstore", Message: err.Error()}}
 	}
 
-	res := i.invoker.Invoke(ctx, request.AppID, JsonFunctionRequest{
+	res := i.invoker.Invoke(ctx, appID, JsonFunctionRequest{
 		Method:  request.FunctionName,
 		Params:  marshaled,
 		Context: request.Context,

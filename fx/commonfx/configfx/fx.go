@@ -10,11 +10,9 @@ const (
 	JwtServiceKey = `name:"jwtServiceKey"`
 	DwAdmin       = `name:"dwAdmin"`
 	Stage         = `name:"stage"`
-	Sentry
 )
 
-var Values = fx.Module(
-	"configValues",
+var Values = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			config.Get().Auth.AuthAdminURL,

@@ -5,16 +5,6 @@ import (
 	"encoding/json"
 )
 
-type FunctionInvokeEvent struct {
-	AppID    string
-	Request  JsonFunctionRequest
-	Response JsonFunctionResponse
-}
-
-type FunctionRequestListener interface {
-	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
-}
-
 type Invoker struct {
 	appChRepo  AppChannelRepository
 	appRepo    AppRepository
@@ -113,4 +103,14 @@ func (e *Error) Error() string {
 
 func WrapCommonErr(err error) JsonFunctionResponse {
 	return JsonFunctionResponse{Error: &Error{Type: "common", Message: err.Error()}}
+}
+
+type FunctionInvokeEvent struct {
+	AppID    string
+	Request  JsonFunctionRequest
+	Response JsonFunctionResponse
+}
+
+type FunctionRequestListener interface {
+	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
 }

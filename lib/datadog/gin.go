@@ -8,18 +8,18 @@ import (
 	"github.com/channel-io/ch-app-store/config"
 )
 
-type Datadog struct {
+type GinMiddleware struct {
 }
 
-func NewDatadog() *Datadog {
-	return &Datadog{}
+func NewGinMiddleware() *GinMiddleware {
+	return &GinMiddleware{}
 }
 
-func (d *Datadog) Priority() int {
+func (d *GinMiddleware) Priority() int {
 	return -2
 }
 
-func (d *Datadog) Handle(ctx *gin.Context) {
+func (d *GinMiddleware) Handle(ctx *gin.Context) {
 	if config.Get().Stage != "exp" && config.Get().Stage != "production" {
 		return
 	}

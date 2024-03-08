@@ -62,8 +62,7 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 	for _, brief := range briefs {
 		brief := brief
 		go func() {
-			res := i.invoker.Invoke(ctx, app.TypedRequest[EmptyRequest]{
-				AppID:        brief.AppID,
+			res := i.invoker.Invoke(ctx, brief.AppID, app.TypedRequest[EmptyRequest]{
 				FunctionName: brief.BriefFunctionName,
 				Context:      req,
 			})

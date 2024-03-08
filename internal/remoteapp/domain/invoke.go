@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
@@ -43,15 +42,14 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 		return app.WrapCommonErr(err)
 	}
 
-	id := uid.New()
-	a.logger.Debugw(ctx, "function request", "id", id, "appID", target.ID, "request", json.RawMessage(marshaled))
+	a.logger.Debugw(ctx, "function request", "appID", target.ID, "request", json.RawMessage(marshaled))
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
 		return app.WrapCommonErr(err)
 	}
 
-	a.logger.Debugw(ctx, "function response", "id", id, "appID", target.ID, "response", json.RawMessage(ret))
+	a.logger.Debugw(ctx, "function response", "appID", target.ID, "response", json.RawMessage(ret))
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
@@ -59,7 +57,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	}
 
 	if jsonResp.Error != nil && len(jsonResp.Error.Type) > 0 {
-		a.logger.Warnw(ctx, "function returned err", "id", id, "appID", target.ID, "error", jsonResp.Error)
+		a.logger.Warnw(ctx, "function returned err", "appID", target.ID, "error", jsonResp.Error)
 	}
 
 	return jsonResp

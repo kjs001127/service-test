@@ -32,8 +32,7 @@ import (
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
-var httpModule = fx.Module(
-	"httpModule",
+var httpModule = fx.Options(
 	generalfx.GeneralHandlers,
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,

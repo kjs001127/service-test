@@ -14,7 +14,6 @@ type Token struct {
 type NativeFunctionRequest struct {
 	Method string          `json:"method"`
 	Params json.RawMessage `json:"params"`
-	Token  Token           `json:"token"`
 }
 
 type NativeFunctionResponse struct {
@@ -37,7 +36,7 @@ func WrapCommonErr(err error) NativeFunctionResponse {
 }
 
 type NativeFunctionHandler interface {
-	Handle(ctx context.Context, request NativeFunctionRequest) NativeFunctionResponse
+	Handle(ctx context.Context, token Token, request NativeFunctionRequest) NativeFunctionResponse
 	ListMethods() []string
 }
 
@@ -64,6 +63,7 @@ func (i *NativeFunctionInvoker) registerHandler(r NativeFunctionHandler) {
 
 func (i *NativeFunctionInvoker) Invoke(
 	ctx context.Context,
+	token Token,
 	req NativeFunctionRequest,
 ) NativeFunctionResponse {
 	handler, ok := i.router[req.Method]
@@ -73,5 +73,5 @@ func (i *NativeFunctionInvoker) Invoke(
 			Message: fmt.Sprintf("method not found: %s", req.Method),
 		}}
 	}
-	return handler.Handle(ctx, req)
+	return handler.Handle(ctx, token, req)
 }

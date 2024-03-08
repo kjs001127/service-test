@@ -9,8 +9,8 @@ import (
 	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
+	"github.com/channel-io/ch-app-store/internal/command/util"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
-	"github.com/channel-io/ch-app-store/lib/deltaupdater"
 )
 
 type RegisterSvc struct {
@@ -23,7 +23,7 @@ func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) 
 }
 
 func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Command) error {
-	return tx.Run(ctx, func(ctx context.Context) error {
+	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.validateRequest(appID, cmds); err != nil {
 			return errors.WithStack(err)
 		}
@@ -33,7 +33,7 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Comman
 			return errors.WithStack(err)
 		}
 
-		updater := deltaupdater.DeltaUpdater[*Command, UpdateKey]{
+		updater := util.DeltaUpdater[*Command, UpdateKey]{
 			IDOf:     s.updateKey,
 			DoInsert: s.insertResource,
 			DoUpdate: s.updateResource,
@@ -41,7 +41,7 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Comman
 		}
 
 		return updater.Update(ctx, oldbies, cmds)
-	}, tx.WithIsolation(sql.LevelSerializable))
+	}, tx.Isolation(sql.LevelSerializable))
 }
 
 func (s *RegisterSvc) validateRequest(appID string, cmds []*Command) error {

@@ -10,14 +10,12 @@ import (
 	"github.com/channel-io/ch-app-store/internal/log"
 )
 
-var Loggers = fx.Module(
-	"logListeners",
+var Loggers = fx.Options(
 	functionLogger,
 	commandLogger,
 )
 
-var functionLogger = fx.Module(
-	"functionLogger",
+var functionLogger = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			log.NewFunctionDBLogger,
@@ -27,8 +25,7 @@ var functionLogger = fx.Module(
 	),
 )
 
-var commandLogger = fx.Module(
-	"commandLogger",
+var commandLogger = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			log.NewCommandDBLogger,

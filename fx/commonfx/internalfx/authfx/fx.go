@@ -12,8 +12,7 @@ import (
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
-var RoleClientOnly = fx.Module(
-	"adminAuth",
+var RoleClientOnly = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			general.NewRoleClientImpl,
@@ -23,8 +22,7 @@ var RoleClientOnly = fx.Module(
 	),
 )
 
-var PrincipalAuth = fx.Module(
-	"authPrincipal",
+var PrincipalAuth = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			account.NewManagerFetcherImpl,
@@ -37,10 +35,6 @@ var PrincipalAuth = fx.Module(
 			fx.ParamTags(configfx.JwtServiceKey),
 		),
 		fx.Annotate(
-			principal.NewCommandCtxAuthorizer,
-			fx.As(new(principal.CommandCtxAuthorizer)),
-		),
-		fx.Annotate(
 			principal.NewChatValidator,
 			fx.As(new(principal.ChatValidator)),
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
@@ -48,8 +42,7 @@ var PrincipalAuth = fx.Module(
 	),
 )
 
-var GeneralAuth = fx.Module(
-	"authGeneral",
+var GeneralAuth = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			general.NewRoleClientImpl,

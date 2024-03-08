@@ -74,7 +74,7 @@ type CommandKey struct {
 }
 
 type CommandRepository interface {
-	FetchByQuery(ctx context.Context, query Query) ([]*Command, error)
+	FetchByAppIDsAndScope(ctx context.Context, query Query) ([]*Command, error)
 	Fetch(ctx context.Context, key CommandKey) (*Command, error)
 
 	FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*Command, error)
@@ -116,17 +116,14 @@ func NewInvoker(
 type CommandRequest struct {
 	CommandKey
 	CommandBody
-	Caller Caller
-}
-
-type CommandContext struct {
-	Chat    Chat    `json:"chat"`
-	Trigger Trigger `json:"trigger"`
+	ChannelID string
+	Caller    Caller
 }
 
 type CommandBody struct {
-	CommandContext
-	Input ParamInput `json:"input"`
+	Chat    Chat       `json:"chat"`
+	Trigger Trigger    `json:"trigger"`
+	Input   ParamInput `json:"input"`
 }
 
 type Chat struct {
@@ -140,9 +137,8 @@ type Trigger struct {
 }
 
 type Caller struct {
-	ChannelID string `json:"channelID"`
-	Type      string `json:"type"`
-	ID        string `json:"id"`
+	Type string `json:"type"`
+	ID   string `json:"id"`
 }
 
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
@@ -151,13 +147,12 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		return Action{}, errors.WithStack(err)
 	}
 
-	ctxReq := app.TypedRequest[CommandBody]{
-		AppID:        cmd.AppID,
+	cmdReq := app.TypedRequest[CommandBody]{
 		FunctionName: cmd.ActionFunctionName,
 		Params:       request.CommandBody,
 		Context: app.ChannelContext{
 			Channel: app.Channel{
-				ID: request.Caller.ChannelID,
+				ID: request.ChannelID,
 			},
 			Caller: app.Caller{
 				ID:   request.Caller.ID,
@@ -166,7 +161,7 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 		},
 	}
 
-	ret := r.requester.Invoke(ctx, ctxReq)
+	ret := r.requester.Invoke(ctx, cmd.AppID, cmdReq)
 
 	event := CommandInvokeEvent{
 		Request: request,

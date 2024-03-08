@@ -8,22 +8,19 @@ import (
 	"github.com/channel-io/ch-app-store/internal/brief/repo"
 )
 
-var Brief = fx.Module(
-	"brief",
+var Brief = fx.Options(
 	BriefSvcs,
 	BriefDAOs,
 )
 
-var BriefSvcs = fx.Module(
-	"briefDomain",
+var BriefSvcs = fx.Options(
 	fx.Provide(
 		domain.NewInvoker,
 		app.NewTypedInvoker[domain.EmptyRequest, domain.BriefResponse],
 	),
 )
 
-var BriefDAOs = fx.Module(
-	"briefDB",
+var BriefDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(repo.NewBriefDao, fx.As(new(domain.BriefRepository))),
 	),

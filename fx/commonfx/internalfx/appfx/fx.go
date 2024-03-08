@@ -14,15 +14,12 @@ const (
 	InvokeHandlerGroup     = `group:"invokeHandler"`
 )
 
-var App = fx.Module(
-	"app",
+var App = fx.Options(
 	AppSvcs,
 	AppDAOs,
 )
 
-var AppSvcs = fx.Module(
-	"appDomain",
-
+var AppSvcs = fx.Options(
 	fx.Provide(
 		app.NewAppInstallSvc,
 		app.NewQuerySvc,
@@ -35,8 +32,7 @@ var AppSvcs = fx.Module(
 	),
 )
 
-var AppDAOs = fx.Module(
-	"appDB",
+var AppDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppChannelDao,

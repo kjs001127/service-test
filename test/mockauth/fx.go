@@ -26,8 +26,7 @@ var mockedManager = account.Manager{
 	Email:     "fake@fake.io",
 }
 
-var Module = fx.Module(
-	"mockedAuth",
+var Module = fx.Options(
 	fx.Provide(
 		func(t *testing.T) domain.RoleClient {
 			return mockdomain.NewRoleClient(t)

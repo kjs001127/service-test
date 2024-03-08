@@ -11,7 +11,11 @@ import (
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
-const ManagerKey = "Manager"
+const (
+	deskScopePrefix    = "/desk"
+	channelIDPathParam = "channelID"
+	ManagerKey         = "Manager"
+)
 
 type Auth struct {
 	managerSvc account.ManagerFetcher
@@ -27,12 +31,12 @@ func (a *Auth) Priority() int {
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
-	if !strings.HasPrefix(ctx.Request.RequestURI, "/desk") {
+	if !strings.HasPrefix(ctx.Request.RequestURI, deskScopePrefix) {
 		return
 	}
 
 	xAccount := ctx.GetHeader(account.XAccountHeader)
-	if xAccount == "" {
+	if len(xAccount) <= 0 {
 		ctx.Abort()
 		_ = ctx.Error(
 			apierr.Unauthorized(errors.New("authorization header is empty")),
@@ -40,7 +44,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	channelID := ctx.Param("channelID")
+	channelID := ctx.Param(channelIDPathParam)
 	if len(channelID) <= 0 {
 		ctx.Abort()
 		_ = ctx.Error(
@@ -57,6 +61,11 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		)
 		return
 	}
-	a.logger.Debugw(ctx, "injecting manager principal", "request", ctx.Request.RequestURI, "manager", authenticatedManager.ID)
+	a.logger.Debugw(ctx, "injecting manager principal", "manager", authenticatedManager.ID)
 	ctx.Set(ManagerKey, authenticatedManager)
+}
+
+func Manager(ctx *gin.Context) account.ManagerPrincipal {
+	rawManager, _ := ctx.Get(ManagerKey)
+	return rawManager.(account.ManagerPrincipal)
 }

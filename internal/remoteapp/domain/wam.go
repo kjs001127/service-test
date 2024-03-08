@@ -20,13 +20,13 @@ func NewFileStreamer(repo AppUrlRepository, tripper http.RoundTripper) *FileStre
 	return &FileStreamer{repo: repo, requester: tripper}
 }
 
-type AppProxyRequest struct {
+type WamProxyRequest struct {
 	Req    *http.Request
 	Writer http.ResponseWriter
 	AppID  string
 }
 
-func (a *FileStreamer) StreamFile(ctx context.Context, req AppProxyRequest) error {
+func (a *FileStreamer) StreamFile(ctx context.Context, req WamProxyRequest) error {
 	urls, err := a.repo.Fetch(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)

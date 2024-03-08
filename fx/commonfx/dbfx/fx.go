@@ -9,13 +9,12 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
-var Postgres = fx.Module(
-	"postgres",
+var Postgres = fx.Options(
 	fx.Provide(
 		db.BuildDataSource,
 	),
 	fx.Invoke(func(db *sql.DB) {
-		tx.SetDB(db)
+		tx.EnableDatabase(db)
 	}),
 
 	fx.Provide(

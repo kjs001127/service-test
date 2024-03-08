@@ -4,27 +4,24 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/api/http/desk/appchannel"
 	"github.com/channel-io/ch-app-store/api/http/desk/appstore"
+	"github.com/channel-io/ch-app-store/api/http/desk/install"
 	"github.com/channel-io/ch-app-store/api/http/desk/invoke"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
-	"github.com/channel-io/ch-app-store/api/http/desk/query"
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
 )
 
-var DeskHandlers = fx.Module(
-	"deskHttpModule",
+var DeskHandlers = fx.Options(
 	fx.Provide(
 
-		gintool.AddTag(appstore.NewHandler),
-		gintool.AddTag(appchannel.NewHandler),
-		gintool.AddTag(invoke.NewHandler),
-		gintool.AddTag(query.NewHandler),
+		gintoolfx.AddTag(appstore.NewHandler),
+		gintoolfx.AddTag(install.NewHandler),
+		gintoolfx.AddTag(invoke.NewHandler),
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(gintoolfx.GroupMiddlewares),
+			fx.ResultTags(gintoolfx.MiddlewaresGroup),
 		),
 	),
 	fx.Supply(

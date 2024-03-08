@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
+	"github.com/channel-io/ch-app-store/api/http/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
@@ -20,18 +20,18 @@ import (
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
+//	@Param		domain.NativeFunctionRequest	body		domain.NativeFunctionRequest	true	"body of Function to invoke"
 //
 //	@Success	200							{object}	domain.NativeFunctionResponse
 //	@Router		/admin/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req dto.NativeFunctionRequest
+	var req domain.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
+	resp := h.nativeInvoker.Invoke(ctx, domain.Token{}, domain.NativeFunctionRequest{
 		Method: req.Method,
 		Params: req.Params,
 	})
@@ -58,8 +58,7 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	res := h.invoker.Invoke(ctx, app.TypedRequest[json.RawMessage]{
-		AppID:        appID,
+	res := h.invoker.Invoke(ctx, appID, app.TypedRequest[json.RawMessage]{
 		FunctionName: req.Method,
 		Context:      req.Context,
 		Params:       req.Params,

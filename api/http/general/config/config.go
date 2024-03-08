@@ -1,4 +1,4 @@
-package appchannel
+package config
 
 import (
 	"errors"

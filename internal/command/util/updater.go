@@ -1,4 +1,4 @@
-package deltaupdater
+package util
 
 import (
 	"context"

@@ -11,21 +11,21 @@ import (
 
 const (
 	GroupRoutes      = `group:"routes"`
-	GroupMiddlewares = `group:"middlewares"`
+	MiddlewaresGroup = `group:"middlewares"`
 	port             = `name:"port"`
 	excludePath      = `name:"excludePath"`
 )
 
-var ApiServer = fx.Module("gintool",
+var ApiServer = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			middleware.NewErrHandler,
-			fx.ResultTags(GroupMiddlewares),
+			fx.ResultTags(MiddlewaresGroup),
 			fx.As(new(gintool.Middleware)),
 		),
 		fx.Annotate(
 			middleware.NewLogger,
-			fx.ResultTags(GroupMiddlewares),
+			fx.ResultTags(MiddlewaresGroup),
 			fx.ParamTags(``, excludePath),
 			fx.As(new(gintool.Middleware)),
 		),
@@ -46,10 +46,10 @@ var ApiServer = fx.Module("gintool",
 	),
 
 	fx.Provide(
-		gintool.AddTag(util.NewHandler),
+		AddTag(util.NewHandler),
 		fx.Annotate(
 			gintool.NewApiServer,
-			fx.ParamTags(port, GroupRoutes, GroupMiddlewares),
+			fx.ParamTags(port, GroupRoutes, MiddlewaresGroup),
 		),
 	),
 
@@ -57,4 +57,13 @@ var ApiServer = fx.Module("gintool",
 		go func() {
 			panic(svr.Run())
 		}()
-	}))
+	}),
+)
+
+func AddTag(handlerConstructor any) any {
+	return fx.Annotate(
+		handlerConstructor,
+		fx.As(new(gintool.RouteRegistrant)),
+		fx.ResultTags(`group:"routes"`),
+	)
+}
