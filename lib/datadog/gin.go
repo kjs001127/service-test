@@ -16,7 +16,7 @@ func NewDatadog() *Datadog {
 }
 
 func (d *Datadog) Priority() int {
-	return 1
+	return -2
 }
 
 func (d *Datadog) Handle(ctx *gin.Context) {
