@@ -5,9 +5,9 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/lib/datadog"
 	"github.com/channel-io/ch-app-store/lib/log"

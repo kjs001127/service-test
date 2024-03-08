@@ -3,8 +3,8 @@ package nativefx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
 	"github.com/channel-io/ch-app-store/internal/native/handler"
 )

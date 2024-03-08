@@ -7,7 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/api/http/front/invoke"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 )
 
 var FrontHandlers = fx.Options(

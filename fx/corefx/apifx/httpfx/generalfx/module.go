@@ -8,7 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/general/config"
 	"github.com/channel-io/ch-app-store/api/http/general/invoke"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 )
 
 var GeneralHandlers = fx.Options(

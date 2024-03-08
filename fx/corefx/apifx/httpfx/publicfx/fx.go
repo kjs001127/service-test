@@ -7,8 +7,8 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/api/http/public/controller"
 	"github.com/channel-io/ch-app-store/api/http/public/wam"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 )
 
 var PublicHandlers = fx.Options(

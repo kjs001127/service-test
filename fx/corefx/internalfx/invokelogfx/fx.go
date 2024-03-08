@@ -3,11 +3,11 @@ package invokelogfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/command/domain"
-	"github.com/channel-io/ch-app-store/internal/log"
+	"github.com/channel-io/ch-app-store/internal/invokelog"
 )
 
 var Loggers = fx.Options(
@@ -18,7 +18,7 @@ var Loggers = fx.Options(
 var functionLogger = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			log.NewFunctionDBLogger,
+			invokelog.NewFunctionDBLogger,
 			fx.As(new(app.FunctionRequestListener)),
 			fx.ResultTags(appfx.FunctionListenersGroup),
 		),
@@ -28,7 +28,7 @@ var functionLogger = fx.Options(
 var commandLogger = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			log.NewCommandDBLogger,
+			invokelog.NewCommandDBLogger,
 			fx.As(new(domain.CommandRequestListener)),
 			fx.ResultTags(commandfx.CommandListenersGroup),
 		),

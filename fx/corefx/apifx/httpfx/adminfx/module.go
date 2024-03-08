@@ -10,7 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/admin/query"
 	"github.com/channel-io/ch-app-store/api/http/admin/register"
 	"github.com/channel-io/ch-app-store/api/http/doc"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 )
 
 var AdminHandlers = fx.Options(
