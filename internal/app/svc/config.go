@@ -8,10 +8,6 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
-type ConfigValidator interface {
-	ValidateConfig(ctx context.Context, app *model.App, channelID string, input model.ConfigMap) error
-}
-
 type ConfigSvc struct {
 	appChRepo AppChannelRepository
 	appRepo   AppRepository
@@ -49,4 +45,8 @@ func (s *ConfigSvc) SetConfig(ctx context.Context, install model.Install, input 
 	}
 
 	return saved, nil
+}
+
+type ConfigValidator interface {
+	ValidateConfig(ctx context.Context, app *model.App, channelID string, input model.ConfigMap) error
 }
