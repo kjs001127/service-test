@@ -5,17 +5,6 @@ import (
 	"encoding/json"
 )
 
-type TypedRequest[REQ any] struct {
-	FunctionName string         `json:"functionName"`
-	Context      ChannelContext `json:"context"`
-	Params       REQ            `json:"params"`
-}
-
-type TypedResponse[REQ any] struct {
-	Result REQ    `json:"result"`
-	Error  *Error `json:"error,omitempty"`
-}
-
 type TypedInvoker[REQ any, RES any] struct {
 	invoker *Invoker
 }
@@ -52,4 +41,15 @@ func (i *TypedInvoker[REQ, RES]) Invoke(
 	}
 
 	return TypedResponse[RES]{Result: ret}
+}
+
+type TypedRequest[REQ any] struct {
+	FunctionName string         `json:"functionName"`
+	Context      ChannelContext `json:"context"`
+	Params       REQ            `json:"params"`
+}
+
+type TypedResponse[REQ any] struct {
+	Result REQ    `json:"result"`
+	Error  *Error `json:"error,omitempty"`
 }
