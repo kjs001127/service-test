@@ -1,15 +1,12 @@
-package domain
+package svc
 
 import (
 	"context"
 
 	"github.com/pkg/errors"
-)
 
-type InstallHandler interface {
-	OnInstall(ctx context.Context, app *App, channelID string) error
-	OnUnInstall(ctx context.Context, app *App, channelID string) error
-}
+	"github.com/channel-io/ch-app-store/internal/app/model"
+)
 
 type AppInstallSvc struct {
 	appChRepo       AppChannelRepository
@@ -25,32 +22,29 @@ func NewAppInstallSvc(
 	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installLHandler: installLHandler}
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledApp, error) {
+func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.Install) (*model.App, *model.AppChannel, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return InstalledApp{}, errors.WithStack(err)
+		return nil, nil, errors.WithStack(err)
 	}
 
 	if err = s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
-		return InstalledApp{}, errors.Wrap(err, "error while handling onInstall")
+		return nil, nil, errors.Wrap(err, "error while handling onInstall")
 	}
 
-	ret, err := s.appChRepo.Save(ctx, &AppChannel{
+	appCh, err := s.appChRepo.Save(ctx, &model.AppChannel{
 		AppID:     app.ID,
 		ChannelID: req.ChannelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
 	})
 	if err != nil {
-		return InstalledApp{}, errors.WithStack(err)
+		return nil, nil, errors.WithStack(err)
 	}
 
-	return InstalledApp{
-		App:        app,
-		AppChannel: ret,
-	}, nil
+	return app, appCh, nil
 }
 
-func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req Install) error {
+func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.Install) error {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)
@@ -65,4 +59,9 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req Install) error {
 	}
 
 	return nil
+}
+
+type InstallHandler interface {
+	OnInstall(ctx context.Context, app *model.App, channelID string) error
+	OnUnInstall(ctx context.Context, app *model.App, channelID string) error
 }

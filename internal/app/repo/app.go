@@ -10,7 +10,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 

@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 // install godoc
@@ -25,7 +27,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	installed, err := h.installer.InstallApp(ctx, app.Install{
+	appFound, appCh, err := h.installer.InstallApp(ctx, appmodel.Install{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -35,7 +37,10 @@ func (h *Handler) install(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, installed)
+	ctx.JSON(http.StatusOK, dto.InstalledApp{
+		App:        appFound,
+		AppChannel: appCh,
+	})
 }
 
 // uninstall godoc
@@ -51,7 +56,7 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	if err := h.installer.UnInstallApp(ctx, app.Install{
+	if err := h.installer.UnInstallApp(ctx, appmodel.Install{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -83,7 +88,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	ret, err := h.configSvc.SetConfig(ctx, app.Install{
+	ret, err := h.configSvc.SetConfig(ctx, appmodel.Install{
 		AppID:     appID,
 		ChannelID: channelID,
 	}, configMap)
@@ -109,7 +114,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	res, err := h.querySvc.Query(ctx, app.Install{
+	_, appChs, err := h.querySvc.Query(ctx, appmodel.Install{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -118,7 +123,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res.AppChannel.Configs)
+	ctx.JSON(http.StatusOK, appChs.Configs)
 }
 
 // query godoc
@@ -136,7 +141,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	res, err := h.querySvc.Query(ctx, app.Install{
+	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.Install{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -152,8 +157,9 @@ func (h *Handler) query(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppWithCommands{
-		Commands:     dto.NewCommandDTOs(cmds),
-		InstalledApp: res,
+		Commands:   dto.NewCommandDTOs(cmds),
+		App:        appFound,
+		AppChannel: appCh,
 	})
 }
 
@@ -171,20 +177,21 @@ func (h *Handler) query(ctx *gin.Context) {
 func (h *Handler) queryAll(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	res, err := h.querySvc.QueryAll(ctx, channelID)
+	apps, appChs, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(res.AppChannels))
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppsWithCommands{
-		Commands:      dto.NewCommandDTOs(cmds),
-		InstalledApps: res,
+		Commands:    dto.NewCommandDTOs(cmds),
+		Apps:        apps,
+		AppChannels: appChs,
 	})
 }

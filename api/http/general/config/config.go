@@ -8,7 +8,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
@@ -36,14 +36,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	installedApp, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
+	_, appCh, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, installedApp.AppChannel.Configs)
+	ctx.JSON(http.StatusOK, appCh.Configs)
 }
 
 func authorize(rbac authgen.ParsedRBACToken, channelID, appID string) error {

@@ -5,13 +5,12 @@ import (
 
 	"go.uber.org/fx"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	"github.com/channel-io/ch-app-store/internal/app/repo"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 const (
 	FunctionListenersGroup = `group:"functionListeners"`
-	InvokeHandlerGroup     = `group:"invokeHandler"`
 )
 
 var App = fx.Options(
@@ -25,8 +24,12 @@ var AppSvcs = fx.Options(
 		app.NewQuerySvc,
 		app.NewConfigSvc,
 		fx.Annotate(
+			app.NewAppManagerImpl,
+			fx.As(new(app.AppManager)),
+		),
+		fx.Annotate(
 			app.NewInvoker,
-			fx.ParamTags(``, ``, InvokeHandlerGroup, FunctionListenersGroup),
+			fx.ParamTags(``, ``, ``, FunctionListenersGroup),
 		),
 		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
 	),

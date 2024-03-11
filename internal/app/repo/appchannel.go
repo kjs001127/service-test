@@ -12,7 +12,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	appChannel "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -26,7 +26,7 @@ func NewAppChannelDao(db db.DB) *AppChannelDao {
 	return &AppChannelDao{db: db}
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.Install) (*appChannel.AppChannel, error) {
+func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.Install) (*model.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -42,7 +42,7 @@ func (a *AppChannelDao) Fetch(ctx context.Context, identifier appChannel.Install
 	return unmarshal(appCh)
 }
 
-func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*appChannel.AppChannel, error) {
+func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
@@ -56,7 +56,7 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	return unmarshalAll(appCh)
 }
 
-func (a *AppChannelDao) Save(ctx context.Context, appChannel *appChannel.AppChannel) (*appChannel.AppChannel, error) {
+func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppChannel) (*model.AppChannel, error) {
 	model, err := marshal(appChannel)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling appChannel")
@@ -81,8 +81,8 @@ func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.WithStack(err)
 }
 
-func (a *AppChannelDao) Delete(ctx context.Context, identifier appChannel.Install) error {
-	model, err := models.AppChannels(
+func (a *AppChannelDao) Delete(ctx context.Context, identifier model.Install) error {
+	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
 		qm.Where("channel_id = $2", identifier.ChannelID),
@@ -94,27 +94,27 @@ func (a *AppChannelDao) Delete(ctx context.Context, identifier appChannel.Instal
 		return errors.Wrap(err, "error while querying appChannel")
 	}
 
-	if _, err = model.Delete(ctx, a.db); err != nil {
+	if _, err = appCh.Delete(ctx, a.db); err != nil {
 		return errors.Wrap(err, "error while deleting appChannel")
 	}
 
 	return nil
 }
 
-func unmarshal(channel *models.AppChannel) (*appChannel.AppChannel, error) {
-	cfgMap := make(appChannel.ConfigMap)
+func unmarshal(channel *models.AppChannel) (*model.AppChannel, error) {
+	cfgMap := make(model.ConfigMap)
 	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
 		return nil, errors.Wrap(err, "error while unmarshaling appChannel")
 	}
 
-	return &appChannel.AppChannel{
+	return &model.AppChannel{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
 		Configs:   cfgMap,
 	}, nil
 }
 
-func marshal(channel *appChannel.AppChannel) (*models.AppChannel, error) {
+func marshal(channel *model.AppChannel) (*models.AppChannel, error) {
 	cfg, err := json.Marshal(channel.Configs)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling appChannel")
@@ -127,8 +127,8 @@ func marshal(channel *appChannel.AppChannel) (*models.AppChannel, error) {
 	}, nil
 }
 
-func unmarshalAll(channels models.AppChannelSlice) ([]*appChannel.AppChannel, error) {
-	ret := make([]*appChannel.AppChannel, 0, len(channels))
+func unmarshalAll(channels models.AppChannelSlice) ([]*model.AppChannel, error) {
+	ret := make([]*model.AppChannel, 0, len(channels))
 	for _, ch := range channels {
 		unmarshalled, err := unmarshal(ch)
 		if err != nil {

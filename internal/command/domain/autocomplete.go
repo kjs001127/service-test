@@ -6,7 +6,7 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/friendsofgo/errors"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 type AutoCompleteRequest struct {

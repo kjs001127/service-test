@@ -1,8 +1,4 @@
-package domain
-
-import (
-	"context"
-)
+package model
 
 type App struct {
 	ID    string   `json:"id"`
@@ -28,7 +24,6 @@ const (
 	AppStateUnstable = AppState("unstable")
 )
 
-type ConfigMap map[string]string
 type ConfigSchemas []ConfigSchema
 type ConfigSchema struct {
 	Name       string         `json:"name"`
@@ -51,38 +46,3 @@ func (s ConfigSchemas) DefaultConfig() ConfigMap {
 }
 
 type AppType string
-type Typed[T any] struct {
-	Type    AppType
-	Handler T
-}
-
-func NewTyped[T any](t AppType, handler T) Typed[T] {
-	return Typed[T]{Type: t, Handler: handler}
-}
-
-type AppRepository interface {
-	Save(ctx context.Context, app *App) (*App, error)
-	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
-	FindApp(ctx context.Context, appID string) (*App, error)
-	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
-	Delete(ctx context.Context, appID string) error
-}
-
-type AppChannel struct {
-	AppID     string    `json:"appId"`
-	ChannelID string    `json:"channelId"`
-	Configs   ConfigMap `json:"configs"`
-}
-
-type Install struct {
-	AppID     string
-	ChannelID string
-}
-
-type AppChannelRepository interface {
-	Fetch(ctx context.Context, identifier Install) (*AppChannel, error)
-	FindAllByChannel(ctx context.Context, channelID string) ([]*AppChannel, error)
-	Save(ctx context.Context, appChannel *AppChannel) (*AppChannel, error)
-	Delete(ctx context.Context, identifier Install) error
-	DeleteByAppID(ctx context.Context, appID string) error
-}

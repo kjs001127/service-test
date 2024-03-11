@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/api/http/admin/dto"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 // install godoc
@@ -23,7 +24,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	installed, err := h.installer.InstallApp(ctx, app.Install{
+	appInstalled, appCh, err := h.installer.InstallApp(ctx, app.Install{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -33,7 +34,10 @@ func (h *Handler) install(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, installed)
+	ctx.JSON(http.StatusOK, dto.InstalledApp{
+		App:        appInstalled,
+		AppChannel: appCh,
+	})
 }
 
 // uninstall godoc
@@ -104,7 +108,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	res, err := h.querySvc.Query(ctx, app.Install{
+	_, appCh, err := h.querySvc.Query(ctx, app.Install{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -113,5 +117,5 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res.AppChannel.Configs)
+	ctx.JSON(http.StatusOK, appCh.Configs)
 }

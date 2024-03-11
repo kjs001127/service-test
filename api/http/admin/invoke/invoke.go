@@ -10,7 +10,7 @@ import (
 
 	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
 	"github.com/channel-io/ch-app-store/api/http/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
 )

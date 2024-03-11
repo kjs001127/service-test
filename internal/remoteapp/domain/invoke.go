@@ -8,7 +8,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -27,7 +28,7 @@ func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger log.Conte
 	return &Invoker{requester: requester, repo: repo, logger: logger}
 }
 
-func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
+func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
 	urls, err := a.repo.Fetch(ctx, target.ID)
 	if err != nil {
 		return app.WrapCommonErr(err)

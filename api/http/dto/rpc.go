@@ -3,7 +3,7 @@ package dto
 import (
 	"encoding/json"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 type JsonFunctionRequest struct {

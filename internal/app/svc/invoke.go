@@ -1,14 +1,16 @@
-package domain
+package svc
 
 import (
 	"context"
 	"encoding/json"
+
+	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 type Invoker struct {
-	appChRepo  AppChannelRepository
-	appRepo    AppRepository
-	handlerMap map[AppType]InvokeHandler
+	appChRepo AppChannelRepository
+	appRepo   AppRepository
+	handler   InvokeHandler
 
 	listeners []FunctionRequestListener
 }
@@ -16,18 +18,14 @@ type Invoker struct {
 func NewInvoker(
 	appChRepo AppChannelRepository,
 	appRepo AppRepository,
-	handlers []Typed[InvokeHandler],
+	handler InvokeHandler,
 	listeners []FunctionRequestListener,
 ) *Invoker {
-	handlerMap := make(map[AppType]InvokeHandler)
-	for _, h := range handlers {
-		handlerMap[h.Type] = h.Handler
-	}
-	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handlerMap: handlerMap, listeners: listeners}
+	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handler: handler, listeners: listeners}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	_, err := i.appChRepo.Fetch(ctx, Install{
+	_, err := i.appChRepo.Fetch(ctx, model.Install{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
 	})
@@ -40,12 +38,7 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 		return WrapCommonErr(err)
 	}
 
-	h, ok := i.handlerMap[app.Type]
-	if !ok {
-		return WrapCommonErr(err)
-	}
-
-	res := h.Invoke(ctx, app, req)
+	res := i.handler.Invoke(ctx, app, req)
 
 	event := FunctionInvokeEvent{
 		Request:  req,
@@ -64,7 +57,7 @@ func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) 
 }
 
 type InvokeHandler interface {
-	Invoke(ctx context.Context, app *App, request JsonFunctionRequest) JsonFunctionResponse
+	Invoke(ctx context.Context, app *model.App, request JsonFunctionRequest) JsonFunctionResponse
 }
 
 type JsonFunctionRequest struct {

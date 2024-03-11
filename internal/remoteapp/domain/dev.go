@@ -8,7 +8,8 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 	"github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
@@ -67,7 +68,7 @@ type AppDevSvc interface {
 	CreateApp(ctx context.Context, req AppRequest) (AppResponse, error)
 	FetchApp(ctx context.Context, appID string) (AppResponse, error)
 	DeleteApp(ctx context.Context, appID string) error
-	FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error)
+	FetchAppByRoleID(ctx context.Context, clientID string) (*appmodel.App, error)
 }
 
 type AppDevSvcImpl struct {
@@ -215,7 +216,7 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 	}, tx.ReadOnly())
 }
 
-func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error) {
+func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (*appmodel.App, error) {
 	appRole, err := s.roleRepo.FetchByRoleID(ctx, clientID)
 	if err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 type Scope string

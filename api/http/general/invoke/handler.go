@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
 )
 

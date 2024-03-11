@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 

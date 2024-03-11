@@ -3,7 +3,7 @@ package commandfx
 import (
 	"go.uber.org/fx"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/domain"
 	"github.com/channel-io/ch-app-store/internal/command/repo"
 )

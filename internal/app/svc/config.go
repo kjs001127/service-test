@@ -1,13 +1,15 @@
-package domain
+package svc
 
 import (
 	"context"
 
 	"github.com/pkg/errors"
+
+	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 type ConfigValidator interface {
-	ValidateConfig(ctx context.Context, app *App, channelID string, input ConfigMap) error
+	ValidateConfig(ctx context.Context, app *model.App, channelID string, input model.ConfigMap) error
 }
 
 type ConfigSvc struct {
@@ -24,7 +26,7 @@ func NewConfigSvc(
 	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo, validator: validator}
 }
 
-func (s *ConfigSvc) SetConfig(ctx context.Context, install Install, input ConfigMap) (*AppChannel, error) {
+func (s *ConfigSvc) SetConfig(ctx context.Context, install model.Install, input model.ConfigMap) (*model.AppChannel, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)

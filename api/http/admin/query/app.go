@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 // query godoc
@@ -21,16 +21,16 @@ import (
 func (h *Handler) query(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, err := h.querySvc.QueryAll(ctx, channelID)
+	appsInstalled, appChs, err := h.querySvc.QueryAll(ctx, channelID)
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(apps.AppChannels))
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.AppsAndFullCommands{
-		Apps:     apps.Apps,
+		Apps:     appsInstalled,
 		Commands: cmds,
 	})
 }

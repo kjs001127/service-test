@@ -5,7 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/domain"
 	"github.com/channel-io/ch-app-store/internal/invokelog"
 )

@@ -3,20 +3,14 @@ package remoteappfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/infra"
 	"github.com/channel-io/ch-app-store/internal/remoteapp/repo"
 	"github.com/channel-io/ch-proto/auth/v1/go/model"
-)
-
-const (
-	appTypeRemote = app.AppType("remote")
-	remoteAppName = `name:"remoteApp"`
 )
 
 var RemoteAppCommon = fx.Options(
@@ -31,19 +25,7 @@ var RemoteAppDev = fx.Options(
 )
 
 var RemoteAppCommonsSvcs = fx.Options(
-	fx.Supply(
-		fx.Annotate(
-			appTypeRemote,
-			fx.ResultTags(remoteAppName),
-		),
-		fx.Private,
-	),
 	fx.Provide(
-		fx.Annotate(
-			app.NewAppManagerImpl,
-			fx.As(new(app.AppManager)),
-			fx.ParamTags(``, ``, remoteAppName),
-		),
 		fx.Annotate(
 			domain.NewInstallHandler,
 			fx.As(new(app.InstallHandler)),
@@ -54,17 +36,11 @@ var RemoteAppCommonsSvcs = fx.Options(
 		),
 		fx.Annotate(
 			domain.NewInvoker,
-			fx.ResultTags(`name:"remoteInvoker"`),
 			fx.As(new(app.InvokeHandler)),
 		),
 		fx.Annotate(
 			domain.NewFileStreamer,
 			fx.ParamTags(``, restyfx.App, ``),
-		),
-		fx.Annotate(
-			app.NewTyped[app.InvokeHandler],
-			fx.ParamTags(remoteAppName, `name:"remoteInvoker"`),
-			fx.ResultTags(appfx.InvokeHandlerGroup),
 		),
 	),
 )

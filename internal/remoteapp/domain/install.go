@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 type InstallHandler struct {

@@ -41,8 +41,7 @@ var httpModule = fx.Options(
 	gintoolfx.ApiServer,
 )
 
-var fullAppModule = fx.Module(
-	"appTest",
+var fullAppModule = fx.Options(
 	dbfx.Postgres,
 	configfx.Values,
 	httpModule,

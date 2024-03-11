@@ -2,7 +2,7 @@ package query
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
