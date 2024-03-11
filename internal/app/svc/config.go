@@ -47,6 +47,15 @@ func (s *ConfigSvc) SetConfig(ctx context.Context, install model.AppChannelID, i
 	return saved, nil
 }
 
+func (s *ConfigSvc) GetConfig(ctx context.Context, install model.AppChannelID) (model.ConfigMap, error) {
+	appCh, err := s.appChRepo.Fetch(ctx, install)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return appCh.Configs, nil
+}
+
 type ConfigValidator interface {
 	ValidateConfig(ctx context.Context, app *model.App, channelID string, input model.ConfigMap) error
 }

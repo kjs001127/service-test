@@ -114,7 +114,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	_, appChs, err := h.querySvc.Query(ctx, appmodel.AppChannelID{
+	cfgs, err := h.configSvc.GetConfig(ctx, appmodel.AppChannelID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -123,7 +123,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, appChs.Configs)
+	ctx.JSON(http.StatusOK, cfgs)
 }
 
 // query godoc
