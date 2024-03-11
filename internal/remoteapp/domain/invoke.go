@@ -34,11 +34,16 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 	}
 
 	if urls.FunctionURL == nil {
+		a.logger.Debugw(ctx, "function url is nil", "appID", target.ID)
 		return app.WrapCommonErr(errors.New("function url empty"))
 	}
 
 	marshaled, err := json.Marshal(request)
 	if err != nil {
+		a.logger.Debugw(ctx, "function request cannot be marshalled",
+			"appID", target.ID,
+			"request", request,
+		)
 		return app.WrapCommonErr(err)
 	}
 
@@ -46,7 +51,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 
 	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
 	if err != nil {
-		a.logger.Warnw(ctx, "function returned err", "appID", target.ID, "error", err)
+		a.logger.Warnw(ctx, "function http request failed", "appID", target.ID, "error", err)
 		return app.WrapCommonErr(err)
 	}
 
@@ -54,6 +59,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *app.App, request app.JsonF
 
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
+		a.logger.Warnw(ctx, "function response cannot be unmarshalled", "appID", target.ID, "error", err)
 		return app.WrapCommonErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
 	}
 

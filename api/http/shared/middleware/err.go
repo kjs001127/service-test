@@ -27,6 +27,8 @@ func NewErrHandler(logger log.ContextAwareLogger) *ErrHandler {
 func (l *ErrHandler) Handle(ctx *gin.Context) {
 	ctx.Next()
 
+	l.propagateStatusToErr(ctx)
+
 	if len(ctx.Errors) <= 0 {
 		return
 	}
@@ -36,16 +38,28 @@ func (l *ErrHandler) Handle(ctx *gin.Context) {
 	ctx.JSON(dto.Status, dto)
 }
 
+func (l *ErrHandler) propagateStatusToErr(ctx *gin.Context) {
+	if len(ctx.Errors) > 0 {
+		return
+	}
+
+	if ctx.Writer.Status() >= http.StatusInternalServerError {
+		_ = ctx.Error(errors.New("unknown internal error"))
+	} else if ctx.Writer.Status() >= http.StatusBadRequest {
+		_ = ctx.Error(apierr.BadRequest(errors.New("unknown bad request error")))
+	}
+}
+
 func (l *ErrHandler) log(ctx *gin.Context, dto *errorsDTO) {
 	body, _ := io.ReadAll(ctx.Request.Body)
-	if dto.Status >= 500 {
+	if dto.Status >= http.StatusInternalServerError {
 		l.logger.Errorw(ctx, "http request failed",
 			"uri", ctx.Request.RequestURI,
 			"status", ctx.Writer.Status(),
 			"body", json.RawMessage(body),
 			"err", dto.Errors,
 		)
-	} else if dto.Status >= 400 {
+	} else if dto.Status >= http.StatusBadRequest {
 		l.logger.Warnw(ctx, "http request failed",
 			"uri", ctx.Request.RequestURI,
 			"status", ctx.Writer.Status(),
