@@ -25,7 +25,7 @@ func NewAppInstallSvc(
 func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.Install) (*model.App, *model.AppChannel, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return nil, nil, errors.WithStack(err)
+		return nil, nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
 	}
 
 	if err = s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
