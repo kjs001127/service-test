@@ -24,8 +24,8 @@ var AppSvcs = fx.Options(
 		app.NewQuerySvc,
 		app.NewConfigSvc,
 		fx.Annotate(
-			app.NewAppManagerImpl,
-			fx.As(new(app.AppManager)),
+			app.NewAppCrudSvcImpl,
+			fx.As(new(app.AppCrudSvc)),
 		),
 		fx.Annotate(
 			app.NewInvoker,

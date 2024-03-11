@@ -75,7 +75,7 @@ type AppDevSvcImpl struct {
 	roleCli   RoleClient
 	roleRepo  AppRoleRepository
 	urlRepo   AppUrlRepository
-	manager   app.AppManager
+	manager   app.AppCrudSvc
 	typeRules map[RoleType]TypeRule
 }
 
@@ -83,7 +83,7 @@ func NewAppDevSvcImpl(
 	roleCli RoleClient,
 	roleRepo AppRoleRepository,
 	urlRepo AppUrlRepository,
-	manager app.AppManager,
+	manager app.AppCrudSvc,
 	typeRules map[RoleType]TypeRule,
 ) *AppDevSvcImpl {
 	return &AppDevSvcImpl{roleCli: roleCli, roleRepo: roleRepo, urlRepo: urlRepo, manager: manager, typeRules: typeRules}
@@ -191,7 +191,7 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 			return AppResponse{}, errors.WithStack(err)
 		}
 
-		found, err := s.manager.Fetch(ctx, appID)
+		found, err := s.manager.Read(ctx, appID)
 		if err != nil {
 			return AppResponse{}, errors.WithStack(err)
 		}
@@ -222,7 +222,7 @@ func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (
 		return nil, err
 	}
 
-	found, err := s.manager.Fetch(ctx, appRole.AppID)
+	found, err := s.manager.Read(ctx, appRole.AppID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

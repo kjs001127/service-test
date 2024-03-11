@@ -10,37 +10,37 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
-type AppManager interface {
+type AppCrudSvc interface {
 	Create(ctx context.Context, app *model.App) (*model.App, error)
 	Delete(ctx context.Context, appID string) error
-	Modify(ctx context.Context, app *model.App) (*model.App, error)
-	Fetch(ctx context.Context, appID string) (*model.App, error)
+	Update(ctx context.Context, app *model.App) (*model.App, error)
+	Read(ctx context.Context, appID string) (*model.App, error)
 }
 
-type AppManagerImpl struct {
+type AppCrudSvcImpl struct {
 	appRepo AppRepository
 	repo    AppChannelRepository
 }
 
-func NewAppManagerImpl(
+func NewAppCrudSvcImpl(
 	appRepo AppRepository,
 	repo AppChannelRepository,
-) *AppManagerImpl {
-	return &AppManagerImpl{appRepo: appRepo, repo: repo}
+) *AppCrudSvcImpl {
+	return &AppCrudSvcImpl{appRepo: appRepo, repo: repo}
 }
 
-func (a *AppManagerImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
+func (a *AppCrudSvcImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
 	app.ID = uid.New().Hex()
 	app.State = model.AppStateStable
 
 	return a.appRepo.Save(ctx, app)
 }
 
-func (a *AppManagerImpl) Modify(ctx context.Context, app *model.App) (*model.App, error) {
+func (a *AppCrudSvcImpl) Update(ctx context.Context, app *model.App) (*model.App, error) {
 	return a.appRepo.Save(ctx, app)
 }
 
-func (a *AppManagerImpl) Delete(ctx context.Context, appID string) error {
+func (a *AppCrudSvcImpl) Delete(ctx context.Context, appID string) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := a.repo.DeleteByAppID(ctx, appID); err != nil {
 			return errors.WithStack(err)
@@ -52,6 +52,6 @@ func (a *AppManagerImpl) Delete(ctx context.Context, appID string) error {
 	})
 }
 
-func (a *AppManagerImpl) Fetch(ctx context.Context, appID string) (*model.App, error) {
+func (a *AppCrudSvcImpl) Read(ctx context.Context, appID string) (*model.App, error) {
 	return a.appRepo.FindApp(ctx, appID)
 }
