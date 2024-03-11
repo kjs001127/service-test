@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/api/http/dto"
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
@@ -72,10 +72,10 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-//	@Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
 //
-//	@Success	200					{object}	brief.BriefResponses
-//	@Router		/admin/brief  [put]
+// @Success	200					{object}	brief.BriefResponses
+// @Router		/admin/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 	var req localdto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {

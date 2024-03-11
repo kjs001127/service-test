@@ -11,7 +11,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 
-	"github.com/channel-io/ch-app-store/api/http/dto"
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
