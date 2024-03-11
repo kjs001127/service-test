@@ -22,7 +22,7 @@ func NewAppInstallSvc(
 	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installLHandler: installLHandler}
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.Install) (*model.App, *model.AppChannel, error) {
+func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.AppChannelID) (*model.App, *model.AppChannel, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return nil, nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
@@ -44,7 +44,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.Install) (*mod
 	return app, appCh, nil
 }
 
-func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.Install) error {
+func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.AppChannelID) error {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)

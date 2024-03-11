@@ -26,7 +26,7 @@ func NewAppChannelDao(db db.DB) *AppChannelDao {
 	return &AppChannelDao{db: db}
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.Install) (*model.AppChannel, error) {
+func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.AppChannelID) (*model.AppChannel, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -81,7 +81,7 @@ func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.WithStack(err)
 }
 
-func (a *AppChannelDao) Delete(ctx context.Context, identifier model.Install) error {
+func (a *AppChannelDao) Delete(ctx context.Context, identifier model.AppChannelID) error {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),

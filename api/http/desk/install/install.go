@@ -27,7 +27,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	appFound, appCh, err := h.installer.InstallApp(ctx, appmodel.Install{
+	appFound, appCh, err := h.installer.InstallApp(ctx, appmodel.AppChannelID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -56,7 +56,7 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	if err := h.installer.UnInstallApp(ctx, appmodel.Install{
+	if err := h.installer.UnInstallApp(ctx, appmodel.AppChannelID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -88,7 +88,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	ret, err := h.configSvc.SetConfig(ctx, appmodel.Install{
+	ret, err := h.configSvc.SetConfig(ctx, appmodel.AppChannelID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}, configMap)
@@ -114,7 +114,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	_, appChs, err := h.querySvc.Query(ctx, appmodel.Install{
+	_, appChs, err := h.querySvc.Query(ctx, appmodel.AppChannelID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -141,7 +141,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.Install{
+	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.AppChannelID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})

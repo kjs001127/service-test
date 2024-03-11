@@ -31,7 +31,7 @@ func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App
 	return apps, appChs, nil
 }
 
-func (s *QuerySvc) Query(ctx context.Context, install model.Install) (*model.App, *model.AppChannel, error) {
+func (s *QuerySvc) Query(ctx context.Context, install model.AppChannelID) (*model.App, *model.AppChannel, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)

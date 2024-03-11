@@ -36,7 +36,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	_, appCh, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
+	_, appCh, err := h.querySvc.Query(ctx, app.AppChannelID{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
 		_ = ctx.Error(err)

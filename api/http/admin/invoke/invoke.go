@@ -22,7 +22,7 @@ import (
 //
 //	@Param		domain.NativeFunctionRequest	body		domain.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200							{object}	domain.NativeFunctionResponse
+//	@Success	200								{object}	domain.NativeFunctionResponse
 //	@Router		/admin/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req domain.NativeFunctionRequest
@@ -72,10 +72,10 @@ func (h *Handler) invoke(ctx *gin.Context) {
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+//	@Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
 //
-// @Success	200					{object}	brief.BriefResponses
-// @Router		/admin/brief  [put]
+//	@Success	200					{object}	brief.BriefResponses
+//	@Router		/admin/brief  [put]
 func (h *Handler) brief(ctx *gin.Context) {
 	var req localdto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {

@@ -8,7 +8,7 @@ type AppChannel struct {
 
 type ConfigMap map[string]string
 
-type Install struct {
+type AppChannelID struct {
 	AppID     string
 	ChannelID string
 }
