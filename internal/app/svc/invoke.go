@@ -85,6 +85,17 @@ type JsonFunctionResponse struct {
 	Result json.RawMessage `json:"result"`
 }
 
+func (r *JsonFunctionResponse) IsError() bool {
+	if r.Error == nil {
+		return false
+	}
+	if len(r.Error.Type) <= 0 {
+		return false
+	}
+
+	return true
+}
+
 type Error struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`

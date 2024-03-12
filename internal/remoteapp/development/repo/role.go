@@ -10,9 +10,9 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/development/model"
 	"github.com/channel-io/ch-app-store/lib/db"
-	"github.com/channel-io/ch-proto/auth/v1/go/model"
+	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
 type AppRoleDao struct {
@@ -23,11 +23,11 @@ func NewAppRoleDao(db db.DB) *AppRoleDao {
 	return &AppRoleDao{db: db}
 }
 
-func (a *AppRoleDao) Save(ctx context.Context, role *domain.AppRole) error {
+func (a *AppRoleDao) Save(ctx context.Context, role *model.AppRole) error {
 	return marshal(role).Insert(ctx, a.db, boil.Infer())
 }
 
-func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*domain.AppRole, error) {
+func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*model.AppRole, error) {
 	appRoles, err := models.AppRoles(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
@@ -38,7 +38,7 @@ func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*domain.
 	return unmarshalAll(appRoles), nil
 }
 
-func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*domain.AppRole, error) {
+func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*model.AppRole, error) {
 	appRole, err := models.AppRoles(
 		qm.Select("*"),
 		qm.Where("role_id = $1", roleID),
@@ -58,7 +58,7 @@ func (a *AppRoleDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.Wrap(err, "error while deleting appRole")
 }
 
-func marshal(role *domain.AppRole) *models.AppRole {
+func marshal(role *model.AppRole) *models.AppRole {
 	return &models.AppRole{
 		AppID:    role.AppID,
 		RoleID:   role.RoleID,
@@ -68,20 +68,20 @@ func marshal(role *domain.AppRole) *models.AppRole {
 	}
 }
 
-func unmarshal(role *models.AppRole) *domain.AppRole {
-	return &domain.AppRole{
+func unmarshal(role *models.AppRole) *model.AppRole {
+	return &model.AppRole{
 		AppID:  role.AppID,
 		RoleID: role.RoleID,
-		RoleCredentials: &model.RoleCredentials{
+		RoleCredentials: &protomodel.RoleCredentials{
 			ClientSecret: role.Secret,
 			ClientId:     role.ClientID,
 		},
-		Type: domain.RoleType(role.Type),
+		Type: model.RoleType(role.Type),
 	}
 }
 
-func unmarshalAll(roles models.AppRoleSlice) []*domain.AppRole {
-	ret := make([]*domain.AppRole, 0, len(roles))
+func unmarshalAll(roles models.AppRoleSlice) []*model.AppRole {
+	ret := make([]*model.AppRole, 0, len(roles))
 	for _, r := range roles {
 		ret = append(ret, unmarshal(r))
 	}

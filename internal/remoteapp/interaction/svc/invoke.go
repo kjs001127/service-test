@@ -1,4 +1,4 @@
-package domain
+package svc
 
 import (
 	"context"
@@ -64,7 +64,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 		return app.WrapCommonErr(fmt.Errorf("unmarshaling function response to JsonResp, cause: %w", err))
 	}
 
-	if jsonResp.Error != nil && len(jsonResp.Error.Type) > 0 {
+	if jsonResp.IsError() {
 		a.logger.Warnw(ctx, "function returned err", "appID", target.ID, "error", jsonResp.Error)
 	}
 

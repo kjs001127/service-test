@@ -8,7 +8,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/internal/remoteapp/domain"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/interaction/svc"
 )
 
 type HttpRequester struct {
@@ -19,7 +19,7 @@ func NewHttpRequester(cli *resty.Client) *HttpRequester {
 	return &HttpRequester{cli: cli}
 }
 
-func (h HttpRequester) Request(ctx context.Context, req domain.HttpRequest) ([]byte, error) {
+func (h HttpRequester) Request(ctx context.Context, req svc.HttpRequest) ([]byte, error) {
 	r := h.cli.R()
 	r.SetContext(ctx)
 	r.SetBody(req.Body)

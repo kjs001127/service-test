@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	app "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
 )
 
 // create godoc
@@ -19,7 +19,7 @@ import (
 //	@Success	201				{object}	app.AppResponse
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
-	var target app.AppRequest
+	var target svc.AppRequest
 	if err := ctx.ShouldBindBodyWith(&target, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
