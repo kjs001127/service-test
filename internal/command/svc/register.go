@@ -1,4 +1,4 @@
-package domain
+package svc
 
 import (
 	"context"
@@ -9,20 +9,20 @@ import (
 	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
+	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/util"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type RegisterSvc struct {
-	repo           CommandRepository
-	paramValidator *ParamValidator
+	repo CommandRepository
 }
 
-func NewRegisterService(repo CommandRepository, paramValidator *ParamValidator) *RegisterSvc {
-	return &RegisterSvc{repo: repo, paramValidator: paramValidator}
+func NewRegisterService(repo CommandRepository) *RegisterSvc {
+	return &RegisterSvc{repo: repo}
 }
 
-func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Command) error {
+func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*model.Command) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.validateRequest(appID, cmds); err != nil {
 			return errors.WithStack(err)
@@ -33,7 +33,7 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Comman
 			return errors.WithStack(err)
 		}
 
-		updater := util.DeltaUpdater[*Command, UpdateKey]{
+		updater := util.DeltaUpdater[*model.Command, UpdateKey]{
 			IDOf:     s.updateKey,
 			DoInsert: s.insertResource,
 			DoUpdate: s.updateResource,
@@ -44,7 +44,7 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*Comman
 	}, tx.Isolation(sql.LevelSerializable))
 }
 
-func (s *RegisterSvc) validateRequest(appID string, cmds []*Command) error {
+func (s *RegisterSvc) validateRequest(appID string, cmds []*model.Command) error {
 	for _, cmd := range cmds {
 		if len(cmd.AppID) <= 0 {
 			cmd.AppID = appID
@@ -54,24 +54,21 @@ func (s *RegisterSvc) validateRequest(appID string, cmds []*Command) error {
 		if err := cmd.Validate(); err != nil {
 			return apierr.BadRequest(err)
 		}
-		if err := s.paramValidator.ValidateDefs(cmd.ParamDefinitions); err != nil {
-			return apierr.BadRequest(err)
-		}
 	}
 
 	return nil
 }
 
 type UpdateKey struct {
-	Scope Scope
+	Scope model.Scope
 	Name  string
 }
 
-func (s *RegisterSvc) updateKey(resource *Command) UpdateKey {
+func (s *RegisterSvc) updateKey(resource *model.Command) UpdateKey {
 	return UpdateKey{Scope: resource.Scope, Name: resource.Name}
 }
 
-func (s *RegisterSvc) insertResource(ctx context.Context, newbie *Command) error {
+func (s *RegisterSvc) insertResource(ctx context.Context, newbie *model.Command) error {
 	newbie.ID = uid.New().Hex()
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save command fail. cmd: %v, cause: %w", newbie, err)
@@ -79,7 +76,7 @@ func (s *RegisterSvc) insertResource(ctx context.Context, newbie *Command) error
 	return nil
 }
 
-func (s *RegisterSvc) updateResource(ctx context.Context, oldbie *Command, newbie *Command) error {
+func (s *RegisterSvc) updateResource(ctx context.Context, oldbie *model.Command, newbie *model.Command) error {
 	newbie.ID = oldbie.ID
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save command fail. cmd: %v, cause: %w", newbie, err)
@@ -87,8 +84,8 @@ func (s *RegisterSvc) updateResource(ctx context.Context, oldbie *Command, newbi
 	return nil
 }
 
-func (s *RegisterSvc) deleteResource(ctx context.Context, oldbie *Command) error {
-	key := CommandKey{
+func (s *RegisterSvc) deleteResource(ctx context.Context, oldbie *model.Command) error {
+	key := model.CommandKey{
 		AppID: oldbie.AppID,
 		Name:  oldbie.Name,
 		Scope: oldbie.Scope,

@@ -32,7 +32,7 @@ var RemoteAppInteractionSvcs = fx.Options(
 		),
 		fx.Annotate(
 			svc.NewFileStreamer,
-			fx.ParamTags(``, restyfx.App, ``),
+			fx.ParamTags(``, restyfx.App),
 		),
 	),
 )

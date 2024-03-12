@@ -14,8 +14,8 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 
-	"github.com/channel-io/ch-app-store/internal/command/domain"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -27,16 +27,16 @@ func NewCommandDao(src db.DB) *CommandDao {
 	return &CommandDao{db: src}
 }
 
-func (c *CommandDao) FetchByAppIDsAndScope(ctx context.Context, query domain.Query) ([]*domain.Command, error) {
+func (c *CommandDao) FetchByAppIDsAndScope(ctx context.Context, appIDs []string, scope model.Scope) ([]*model.Command, error) {
 
-	slice := make([]interface{}, len(query.AppIDs))
-	for i, v := range query.AppIDs {
+	slice := make([]interface{}, len(appIDs))
+	for i, v := range appIDs {
 		slice[i] = v
 	}
 
 	cmds, err := models.Commands(
 		qm.Select("*"),
-		qm.Where("scope = ?", query.Scope),
+		qm.Where("scope = ?", scope),
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
@@ -46,8 +46,8 @@ func (c *CommandDao) FetchByAppIDsAndScope(ctx context.Context, query domain.Que
 	return marshalAll(cmds)
 }
 
-func (c *CommandDao) Fetch(ctx context.Context, key domain.CommandKey) (*domain.Command, error) {
-	model, err := models.Commands(
+func (c *CommandDao) Fetch(ctx context.Context, key model.CommandKey) (*model.Command, error) {
+	cmd, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("scope = $2", key.Scope),
@@ -60,10 +60,10 @@ func (c *CommandDao) Fetch(ctx context.Context, key domain.CommandKey) (*domain.
 		return nil, errors.Wrap(err, "error while querying command")
 	}
 
-	return marshal(model)
+	return marshal(cmd)
 }
 
-func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*domain.Command, error) {
+func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*model.Command, error) {
 	cmds, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
@@ -75,9 +75,8 @@ func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*doma
 	return marshalAll(cmds)
 }
 
-func (c *CommandDao) Delete(ctx context.Context, key domain.CommandKey) error {
-
-	model, err := models.Commands(
+func (c *CommandDao) Delete(ctx context.Context, key model.CommandKey) error {
+	cmd, err := models.Commands(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("scope = $2", key.Scope),
@@ -90,20 +89,20 @@ func (c *CommandDao) Delete(ctx context.Context, key domain.CommandKey) error {
 		return errors.Wrap(err, "error while deleting command")
 	}
 
-	if _, err = model.Delete(ctx, c.db); err != nil {
+	if _, err = cmd.Delete(ctx, c.db); err != nil {
 		return errors.Wrap(err, "error while deleting command")
 	}
 
 	return nil
 }
 
-func (c *CommandDao) Save(ctx context.Context, resource *domain.Command) (*domain.Command, error) {
-	model, err := unmarshal(resource)
+func (c *CommandDao) Save(ctx context.Context, resource *model.Command) (*model.Command, error) {
+	cmd, err := unmarshal(resource)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	if err = model.Upsert(
+	if err = cmd.Upsert(
 		ctx,
 		c.db,
 		true,
@@ -117,7 +116,7 @@ func (c *CommandDao) Save(ctx context.Context, resource *domain.Command) (*domai
 	return resource, nil
 }
 
-func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*domain.Command, error) {
+func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.Command, error) {
 	slice := make([]interface{}, len(appIDs))
 	for i, v := range appIDs {
 		slice[i] = v
@@ -134,7 +133,7 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 	return marshalAll(cmds)
 }
 
-func unmarshal(cmd *domain.Command) (*models.Command, error) {
+func unmarshal(cmd *model.Command) (*models.Command, error) {
 	paramDef, err := json.Marshal(cmd.ParamDefinitions)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling paramDef")
@@ -159,8 +158,8 @@ func unmarshal(cmd *domain.Command) (*models.Command, error) {
 	}, nil
 }
 
-func marshal(c *models.Command) (*domain.Command, error) {
-	var paramDefs domain.ParamDefinitions
+func marshal(c *models.Command) (*model.Command, error) {
+	var paramDefs model.ParamDefinitions
 	if err := c.ParamDefinitions.Unmarshal(&paramDefs); err != nil {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
 	}
@@ -170,11 +169,11 @@ func marshal(c *models.Command) (*domain.Command, error) {
 		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err)
 	}
 
-	return &domain.Command{
+	return &model.Command{
 		ID:                       c.ID,
 		Name:                     c.Name,
 		AppID:                    c.AppID,
-		Scope:                    domain.Scope(c.Scope),
+		Scope:                    model.Scope(c.Scope),
 		ActionFunctionName:       c.ActionFunctionName,
 		NameDescI18NMap:          nameDescriptionI18nMap,
 		AutoCompleteFunctionName: c.AutocompleteFunctionName.Ptr(),
@@ -187,8 +186,8 @@ func marshal(c *models.Command) (*domain.Command, error) {
 	}, nil
 }
 
-func marshalAll(cmds models.CommandSlice) ([]*domain.Command, error) {
-	ret := make([]*domain.Command, 0, len(cmds))
+func marshalAll(cmds models.CommandSlice) ([]*model.Command, error) {
+	ret := make([]*model.Command, 0, len(cmds))
 	for _, model := range cmds {
 		res, err := marshal(model)
 		if err != nil {

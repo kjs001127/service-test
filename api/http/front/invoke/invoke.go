@@ -10,7 +10,8 @@ import (
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
+	command "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 const callerTypeUser = "user"
@@ -39,16 +40,16 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
-		CommandKey: command.CommandKey{
+		CommandKey: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeFront,
+			Scope: model.ScopeFront,
 		},
-		CommandBody: body,
 		Caller: command.Caller{
 			Type: callerTypeUser,
 			ID:   user.ID,
 		},
+		CommandBody: body,
 	})
 	if err != nil {
 		_ = ctx.Error(err)
@@ -83,16 +84,16 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
-		Command: command.CommandKey{
+		Command: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeFront,
+			Scope: model.ScopeFront,
 		},
-		Body: body,
 		Caller: command.Caller{
 			ID:   user.ID,
 			Type: callerTypeUser,
 		},
+		Body: body,
 	})
 	if err != nil {
 		_ = ctx.Error(err)
@@ -121,11 +122,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 		return
 	}
 
-	query := command.Query{
-		AppIDs: app.AppIDsOf(appChs),
-		Scope:  command.ScopeFront,
-	}
-	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, query)
+	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, app.AppIDsOf(appChs), model.ScopeFront)
 
 	if err != nil {
 		_ = ctx.Error(err)

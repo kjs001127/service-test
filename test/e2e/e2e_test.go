@@ -12,7 +12,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 const srvPort = 3020
@@ -59,7 +59,7 @@ func Test(t *testing.T) {
 			req: request{
 				method: "POST",
 				path:   "/admin/apps/{appId}/commands",
-				body: toJSONMap(dto.RegisterRequest{Commands: []*command.Command{
+				body: toJSONMap(dto.RegisterRequest{Commands: []*model.Command{
 					{
 						Name:               "testCommand",
 						Scope:              "desk",
@@ -160,7 +160,7 @@ func Test(t *testing.T) {
 			req: request{
 				method: "POST",
 				path:   "/admin/apps/{appId}/commands",
-				body: toJSONMap(command.Command{
+				body: toJSONMap(model.Command{
 					ActionFunctionName: "newActionFunctionName",
 				}),
 			},

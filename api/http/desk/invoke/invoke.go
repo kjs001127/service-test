@@ -9,7 +9,8 @@ import (
 	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
+	command "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 const callerTypeManager = "manager"
@@ -38,10 +39,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
-		CommandKey: command.CommandKey{
+		CommandKey: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeDesk,
+			Scope: model.ScopeDesk,
 		},
 		Caller: command.Caller{
 			Type: callerTypeManager,
@@ -81,10 +82,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
-		Command: command.CommandKey{
+		Command: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeDesk,
+			Scope: model.ScopeDesk,
 		},
 		Caller: command.Caller{
 			Type: callerTypeManager,
@@ -119,11 +120,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 		return
 	}
 
-	query := command.Query{
-		AppIDs: app.AppIDsOf(appChs),
-		Scope:  command.ScopeDesk,
-	}
-	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, query)
+	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, app.AppIDsOf(appChs), model.ScopeDesk)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

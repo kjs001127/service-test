@@ -53,3 +53,13 @@ type TypedResponse[REQ any] struct {
 	Result REQ    `json:"result"`
 	Error  *Error `json:"error,omitempty"`
 }
+
+func (r *TypedResponse[REQ]) IsError() bool {
+	if r.Error == nil {
+		return false
+	}
+	if len(r.Error.Type) <= 0 {
+		return false
+	}
+	return true
+}

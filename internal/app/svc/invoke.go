@@ -50,12 +50,6 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 	return res
 }
 
-func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) {
-	for _, listener := range i.listeners {
-		listener.OnInvoke(ctx, event)
-	}
-}
-
 type InvokeHandler interface {
 	Invoke(ctx context.Context, app *model.App, request JsonFunctionRequest) JsonFunctionResponse
 }
@@ -117,4 +111,10 @@ type FunctionInvokeEvent struct {
 
 type FunctionRequestListener interface {
 	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
+}
+
+func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) {
+	for _, listener := range i.listeners {
+		listener.OnInvoke(ctx, event)
+	}
 }

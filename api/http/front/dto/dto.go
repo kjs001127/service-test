@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 type AppsAndCommands struct {

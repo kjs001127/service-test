@@ -4,8 +4,9 @@ import (
 	"go.uber.org/fx"
 
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/repo"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 const (
@@ -18,17 +19,16 @@ var Command = fx.Options(
 )
 var CommandSvcs = fx.Options(
 	fx.Provide(
-		domain.NewParamValidator,
-		domain.NewRegisterService,
-		domain.NewAutoCompleteInvoker,
-		app.NewTypedInvoker[domain.CommandBody, domain.Action],
-		app.NewTypedInvoker[domain.AutoCompleteBody, domain.Choices],
+		svc.NewRegisterService,
+		svc.NewAutoCompleteInvoker,
+		app.NewTypedInvoker[svc.CommandBody, svc.Action],
+		app.NewTypedInvoker[svc.AutoCompleteBody, model.Choices],
 	),
 
 	fx.Provide(
 		fx.Annotate(
-			domain.NewInvoker,
-			fx.ParamTags(``, ``, ``, CommandListenersGroup),
+			svc.NewInvoker,
+			fx.ParamTags(``, ``, CommandListenersGroup),
 		),
 	),
 )
@@ -37,7 +37,7 @@ var CommandDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewCommandDao,
-			fx.As(new(domain.CommandRepository)),
+			fx.As(new(svc.CommandRepository)),
 		),
 	),
 )
