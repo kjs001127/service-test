@@ -1,6 +1,6 @@
 package model
 
-type AppChannel struct {
+type Installation struct {
 	AppID     string    `json:"appId"`
 	ChannelID string    `json:"channelId"`
 	Configs   ConfigMap `json:"configs"`
@@ -8,7 +8,7 @@ type AppChannel struct {
 
 type ConfigMap map[string]string
 
-type AppChannelID struct {
+type InstallationID struct {
 	AppID     string
 	ChannelID string
 }

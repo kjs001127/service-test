@@ -26,7 +26,7 @@ func NewAppChannelDao(db db.DB) *AppChannelDao {
 	return &AppChannelDao{db: db}
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.AppChannelID) (*model.AppChannel, error) {
+func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.Installation, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -42,7 +42,7 @@ func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.AppChannelID
 	return unmarshal(appCh)
 }
 
-func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppChannel, error) {
+func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.Installation, error) {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
@@ -56,7 +56,7 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	return unmarshalAll(appCh)
 }
 
-func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppChannel) (*model.AppChannel, error) {
+func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.Installation) (*model.Installation, error) {
 	model, err := marshal(appChannel)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling appChannel")
@@ -81,7 +81,7 @@ func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.WithStack(err)
 }
 
-func (a *AppChannelDao) Delete(ctx context.Context, identifier model.AppChannelID) error {
+func (a *AppChannelDao) Delete(ctx context.Context, identifier model.InstallationID) error {
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -101,20 +101,20 @@ func (a *AppChannelDao) Delete(ctx context.Context, identifier model.AppChannelI
 	return nil
 }
 
-func unmarshal(channel *models.AppChannel) (*model.AppChannel, error) {
+func unmarshal(channel *models.AppChannel) (*model.Installation, error) {
 	cfgMap := make(model.ConfigMap)
 	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
 		return nil, errors.Wrap(err, "error while unmarshaling appChannel")
 	}
 
-	return &model.AppChannel{
+	return &model.Installation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
 		Configs:   cfgMap,
 	}, nil
 }
 
-func marshal(channel *model.AppChannel) (*models.AppChannel, error) {
+func marshal(channel *model.Installation) (*models.AppChannel, error) {
 	cfg, err := json.Marshal(channel.Configs)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling appChannel")
@@ -127,8 +127,8 @@ func marshal(channel *model.AppChannel) (*models.AppChannel, error) {
 	}, nil
 }
 
-func unmarshalAll(channels models.AppChannelSlice) ([]*model.AppChannel, error) {
-	ret := make([]*model.AppChannel, 0, len(channels))
+func unmarshalAll(channels models.AppChannelSlice) ([]*model.Installation, error) {
+	ret := make([]*model.Installation, 0, len(channels))
 	for _, ch := range channels {
 		unmarshalled, err := unmarshal(ch)
 		if err != nil {

@@ -19,12 +19,12 @@ import (
 //	@Param		appID		path		string	true	"id of App to install"
 //
 //	@Success	200			{object}	app.InstalledApp
-//	@Router		/admin/channels/{channelID}/app-channels/{appID} [put]
+//	@Router		/admin/channels/{channelID}/installed-apps/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	appInstalled, appCh, err := h.installer.InstallApp(ctx, app.AppChannelID{
+	appInstalled, appCh, err := h.installer.InstallApp(ctx, app.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -49,10 +49,10 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Param		appID		path	string	true	"id of App to uninstall"
 //
 //	@Success	200
-//	@Router		/admin/channels/{channelID}/app-channels/{appID} [delete]
+//	@Router		/admin/channels/{channelID}/installed-apps/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	if err := h.installer.UnInstallApp(ctx, app.AppChannelID{
+	if err := h.installer.UnInstallApp(ctx, app.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -73,7 +73,7 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 //	@Param		object		body		object	true	"key-value of Config to set"
 //
 //	@Success	200			{object}	app.ConfigMap
-//	@Router		/admin/channels/{channelID}/app-channels/{appID}/configs [put]
+//	@Router		/admin/channels/{channelID}/installed-apps/{appID}/configs [put]
 func (h *Handler) setConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
@@ -83,7 +83,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	ret, err := h.configSvc.SetConfig(ctx, app.AppChannelID{
+	ret, err := h.configSvc.SetConfig(ctx, app.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}, configMap)
@@ -97,18 +97,18 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 
 // getConfig godoc
 //
-//	@Summary	get App config of a AppChannel
+//	@Summary	get App config of a Installation
 //	@Tags		Admin
 //
 //	@Param		appID		path		string	true	"id of app"
 //	@Param		channelID	path		string	true	"id of channel"
 //
 //	@Success	200			{object}	any		"JSON of configMap"
-//	@Router		/admin/channels/{channelID}/app-channels/{appID}/configs [get]
+//	@Router		/admin/channels/{channelID}/installed-apps/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	cfgs, err := h.configSvc.GetConfig(ctx, app.AppChannelID{
+	cfgs, err := h.configSvc.GetConfig(ctx, app.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})

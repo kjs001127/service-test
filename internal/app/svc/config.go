@@ -22,7 +22,7 @@ func NewConfigSvc(
 	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo, validator: validator}
 }
 
-func (s *ConfigSvc) SetConfig(ctx context.Context, install model.AppChannelID, input model.ConfigMap) (*model.AppChannel, error) {
+func (s *ConfigSvc) SetConfig(ctx context.Context, install model.InstallationID, input model.ConfigMap) (*model.Installation, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -47,7 +47,7 @@ func (s *ConfigSvc) SetConfig(ctx context.Context, install model.AppChannelID, i
 	return saved, nil
 }
 
-func (s *ConfigSvc) GetConfig(ctx context.Context, install model.AppChannelID) (model.ConfigMap, error) {
+func (s *ConfigSvc) GetConfig(ctx context.Context, install model.InstallationID) (model.ConfigMap, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -7,8 +7,8 @@ import (
 )
 
 type InstalledApp struct {
-	App        *appmodel.App        `json:"app"`
-	AppChannel *appmodel.AppChannel `json:"appChannel"`
+	App        *appmodel.App          `json:"app"`
+	AppChannel *appmodel.Installation `json:"appChannel"`
 }
 
 type AppsAndFullCommands struct {

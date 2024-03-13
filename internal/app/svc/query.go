@@ -17,7 +17,7 @@ func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository) *QuerySv
 	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo}
 }
 
-func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, []*model.AppChannel, error) {
+func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, []*model.Installation, error) {
 	appChs, err := s.appChRepo.FindAllByChannel(ctx, channelID)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
@@ -31,7 +31,7 @@ func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App
 	return apps, appChs, nil
 }
 
-func (s *QuerySvc) Query(ctx context.Context, install model.AppChannelID) (*model.App, *model.AppChannel, error) {
+func (s *QuerySvc) Query(ctx context.Context, install model.InstallationID) (*model.App, *model.Installation, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
@@ -45,7 +45,7 @@ func (s *QuerySvc) Query(ctx context.Context, install model.AppChannelID) (*mode
 	return app, appCh, nil
 }
 
-func AppIDsOf(appChannels []*model.AppChannel) []string {
+func AppIDsOf(appChannels []*model.Installation) []string {
 	var appIDs []string
 	for _, appChannelTarget := range appChannels {
 		appIDs = append(appIDs, appChannelTarget.AppID)

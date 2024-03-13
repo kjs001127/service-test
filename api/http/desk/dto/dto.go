@@ -8,20 +8,20 @@ import (
 )
 
 type InstalledApp struct {
-	App        *model.App        `json:"app"`
-	AppChannel *model.AppChannel `json:"appChannel"`
+	App        *model.App          `json:"app"`
+	AppChannel *model.Installation `json:"appChannel"`
 }
 
 type InstalledAppsWithCommands struct {
-	Apps        []*model.App        `json:"apps"`
-	AppChannels []*model.AppChannel `json:"appChannels"`
-	Commands    []*CommandDTO       `json:"commands"`
+	Apps        []*model.App          `json:"apps"`
+	AppChannels []*model.Installation `json:"appChannels"`
+	Commands    []*CommandDTO         `json:"commands"`
 }
 
 type InstalledAppWithCommands struct {
-	App        *model.App        `json:"app"`
-	AppChannel *model.AppChannel `json:"appChannel"`
-	Commands   []*CommandDTO     `json:"commands"`
+	App        *model.App          `json:"app"`
+	AppChannel *model.Installation `json:"appChannel"`
+	Commands   []*CommandDTO       `json:"commands"`
 }
 
 type AppsAndCommands struct {

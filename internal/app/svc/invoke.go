@@ -25,7 +25,7 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	_, err := i.appChRepo.Fetch(ctx, model.AppChannelID{
+	_, err := i.appChRepo.Fetch(ctx, model.InstallationID{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
 	})

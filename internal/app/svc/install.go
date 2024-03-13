@@ -22,7 +22,7 @@ func NewAppInstallSvc(
 	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installLHandler: installLHandler}
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.AppChannelID) (*model.App, *model.AppChannel, error) {
+func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.InstallationID) (*model.App, *model.Installation, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return nil, nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
@@ -32,7 +32,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.AppChannelID) 
 		return nil, nil, errors.Wrap(err, "error while handling onInstall")
 	}
 
-	appCh, err := s.appChRepo.Save(ctx, &model.AppChannel{
+	appCh, err := s.appChRepo.Save(ctx, &model.Installation{
 		AppID:     app.ID,
 		ChannelID: req.ChannelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
@@ -44,7 +44,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, req model.AppChannelID) 
 	return app, appCh, nil
 }
 
-func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.AppChannelID) error {
+func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.InstallationID) error {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)

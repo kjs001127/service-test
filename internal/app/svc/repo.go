@@ -15,9 +15,9 @@ type AppRepository interface {
 }
 
 type AppChannelRepository interface {
-	Fetch(ctx context.Context, identifier model.AppChannelID) (*model.AppChannel, error)
-	FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppChannel, error)
-	Save(ctx context.Context, appChannel *model.AppChannel) (*model.AppChannel, error)
-	Delete(ctx context.Context, identifier model.AppChannelID) error
+	Fetch(ctx context.Context, identifier model.InstallationID) (*model.Installation, error)
+	FindAllByChannel(ctx context.Context, channelID string) ([]*model.Installation, error)
+	Save(ctx context.Context, appChannel *model.Installation) (*model.Installation, error)
+	Delete(ctx context.Context, identifier model.InstallationID) error
 	DeleteByAppID(ctx context.Context, appID string) error
 }
