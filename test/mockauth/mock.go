@@ -4,10 +4,8 @@ import (
 	"context"
 
 	"github.com/channel-io/ch-app-store/internal/auth/general"
-	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
 type Parser struct {
@@ -55,11 +53,4 @@ func (u *UserFetcher) FetchUser(ctx context.Context, token string) (session.User
 			ChannelID: "1",
 		},
 	}, nil
-}
-
-type CtxAuthorizer struct {
-}
-
-func (s *CtxAuthorizer) Authorize(ctx context.Context, channelContext cmd.CommandContext, token principal.Token) error {
-	return nil
 }

@@ -106,7 +106,7 @@ func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppRespo
 }
 
 func (s *AppDevSvcImpl) createRemoteApp(ctx context.Context, req AppRequest) (*RemoteApp, error) {
-	return tx.RunWith(ctx, func(ctx context.Context) (*RemoteApp, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*RemoteApp, error) {
 		created, err := s.manager.Create(ctx, req.App)
 		if err != nil {
 			return nil, errors.WithStack(err)
@@ -184,7 +184,7 @@ func checkScopes(role *RoleWithType, rule TypeRule) error {
 }
 
 func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse, error) {
-	return tx.RunWith(ctx, func(ctx context.Context) (AppResponse, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (AppResponse, error) {
 		urls, err := s.urlRepo.Fetch(ctx, appID)
 		if err != nil {
 			return AppResponse{}, errors.WithStack(err)
@@ -212,7 +212,7 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 				Urls: urls,
 			},
 		}, nil
-	}, tx.WithReadOnly())
+	}, tx.ReadOnly())
 }
 
 func (s *AppDevSvcImpl) FetchAppByRoleID(ctx context.Context, clientID string) (*app.App, error) {
@@ -255,7 +255,7 @@ func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
 		}
 	}
 
-	return tx.Run(ctx, func(ctx context.Context) error {
+	return tx.Do(ctx, func(ctx context.Context) error {
 		if err = s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}

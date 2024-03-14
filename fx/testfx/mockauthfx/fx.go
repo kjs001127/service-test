@@ -9,7 +9,7 @@ import (
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
-var AuthMocked = fx.Module("mockauth",
+var AuthMocked = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			new(mockauth.UserFetcher),
@@ -22,7 +22,7 @@ var AuthMocked = fx.Module("mockauth",
 	),
 )
 
-var GeneralAuthMocked = fx.Module("mockGeneral",
+var GeneralAuthMocked = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			new(mockauth.Parser),

@@ -1,48 +1,50 @@
 package publicfx
 
 import (
-	"github.com/channel-io/go-lib/pkg/log"
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/deskfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/frontfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/generalfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/publicfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/generalfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
 
-var Public = fx.Module(
-	"appPublic",
-	restyfx.Clients,
-	dbfx.Postgres,
+var Public = fx.Options(
+
 	PublicHttp,
-	remoteappfx.RemoteAppCommon,
-	brieffx.Brief,
+
 	authfx.GeneralAuth,
 	authfx.PrincipalAuth,
+
 	appfx.App,
-	configfx.Values,
+	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
-	logfx.Loggers,
-	datadogfx.Datadog,
+	remoteappfx.RemoteAppCommon,
 
-	fx.Supply(log.New("Appstore")),
+	invokelogfx.Loggers,
+
+	configfx.Values,
+	restyfx.Clients,
+	dbfx.Postgres,
+	datadogfx.Datadog,
+	logfx.Logger,
 )
 
-var PublicHttp = fx.Module(
-	"httpPublic",
+var PublicHttp = fx.Options(
 	generalfx.GeneralHandlers,
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,

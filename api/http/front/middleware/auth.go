@@ -3,15 +3,14 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/log"
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	wraperr "github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
@@ -22,11 +21,15 @@ const (
 
 type Auth struct {
 	userSvc session.UserFetcher
-	logger  *log.ChannelLogger
+	logger  log.ContextAwareLogger
 }
 
-func NewAuth(managerSvc session.UserFetcher, logger *log.ChannelLogger) *Auth {
+func NewAuth(managerSvc session.UserFetcher, logger log.ContextAwareLogger) *Auth {
 	return &Auth{userSvc: managerSvc, logger: logger}
+}
+
+func (a *Auth) Priority() int {
+	return 2
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
@@ -36,26 +39,32 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	xSession := ctx.GetHeader(session.XSessionHeader)
 	if len(xSession) <= 0 {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(errors.New("x-session header not found")))
 		return
 	}
 
 	user, err := a.userSvc.FetchUser(ctx, xSession)
 	if err != nil {
-		wrapped := wraperr.Wrap(err, "middleware user fetch fail")
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(wrapped))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(wraperr.Wrap(err, "middleware user fetch fail")))
 		return
 	}
 
 	channelID := ctx.Param(PathParamChannelID)
 	if len(channelID) >= 0 && channelID != user.ChannelID {
-		a.logger.Warnw("channelID doest not match jwt", "path", channelID, "jwt", user.ChannelID)
-		err := fmt.Errorf("user auth failed, channelId does not match")
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnauthorizedError(err))
+		err := fmt.Errorf("channelID doest not match jwt, Path: %s, User: %s", channelID, user.ChannelID)
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(err))
 		return
 	}
 
-	a.logger.Debugw("injecting user principal", "request", ctx.Request.RequestURI, "user", user.ID)
+	a.logger.Debugw(ctx, "injecting user principal", "user", user.ID)
 
 	ctx.Set(UserKey, user)
+}
+
+func User(ctx *gin.Context) session.UserPrincipal {
+	rawUser, _ := ctx.Get(UserKey)
+	return rawUser.(session.UserPrincipal)
 }

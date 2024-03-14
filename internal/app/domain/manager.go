@@ -43,7 +43,7 @@ func (a *AppManagerImpl) Modify(ctx context.Context, app *App) (*App, error) {
 }
 
 func (a *AppManagerImpl) Delete(ctx context.Context, appID string) error {
-	return tx.Run(ctx, func(ctx context.Context) error {
+	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := a.repo.DeleteByAppID(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}

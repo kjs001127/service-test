@@ -11,8 +11,9 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 
+	"github.com/channel-io/ch-app-store/api/http/dto"
+
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
@@ -29,9 +30,9 @@ import (
 //	@Success	200							{object}	domain.NativeFunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req localdto.NativeFunctionRequest
+	var req dto.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -50,7 +51,6 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 }
 
 */
-
 // invoke godoc
 //
 //	@Summary	invoke Function
@@ -67,25 +67,26 @@ func (h *Handler) invoke(ctx *gin.Context) {
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
 	rbacToken := middleware.RBAC(ctx)
 
 	if err := authFnCall(rbacToken, appID, req.Context.Channel.ID, req.Method); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusOK, app.WrapCommonErr(err))
+		_ = ctx.Error(err)
 		return
 	}
 
 	res := h.invoker.Invoke(
 		ctx,
+		appID,
 		app.TypedRequest[json.RawMessage]{
-			AppID:        appID,
 			FunctionName: req.Method,
 			Context:      fillCaller(rbacToken, req.Context),
 			Params:       req.Params,
-		})
+		},
+	)
 
 	ctx.JSON(http.StatusOK, res)
 }

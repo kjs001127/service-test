@@ -1,43 +1,46 @@
 package adminfx
 
 import (
-	"github.com/channel-io/go-lib/pkg/log"
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/adminfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/authfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
 
-var AdminHttp = fx.Module(
-	"adminHttp",
+var AdminHttp = fx.Options(
 	gintoolfx.ApiServer,
 	adminfx.AdminHandlers,
 )
 
-var Admin = fx.Module(
-	"appAdmin",
-	dbfx.Postgres,
-	configfx.Values,
+var Admin = fx.Options(
+
 	AdminHttp,
+
+	authfx.RoleClientOnly,
+
+	appfx.App,
+	commandfx.Command,
 	remoteappfx.RemoteAppDev,
 	nativefx.Native,
 	brieffx.Brief,
-	authfx.AdminAuth,
-	appfx.App,
-	commandfx.Command,
+
+	invokelogfx.Loggers,
+
 	restyfx.Clients,
-	logfx.Loggers,
-	fx.Supply(log.New("Appstore")),
+	configfx.Values,
+	dbfx.Postgres,
+	logfx.Logger,
 	datadogfx.Datadog,
 )

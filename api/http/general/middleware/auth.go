@@ -2,15 +2,14 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/log"
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
+	wraperr "github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
@@ -20,11 +19,15 @@ const (
 
 type Auth struct {
 	parser general.Parser
-	logger *log.ChannelLogger
+	logger log.ContextAwareLogger
 }
 
-func NewAuth(parser general.Parser, logger *log.ChannelLogger) *Auth {
+func NewAuth(parser general.Parser, logger log.ContextAwareLogger) *Auth {
 	return &Auth{parser: parser, logger: logger}
+}
+
+func (a *Auth) Priority() int {
+	return 2
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
@@ -34,17 +37,19 @@ func (a *Auth) Handle(ctx *gin.Context) {
 
 	xAccessToken := ctx.GetHeader(general.Header())
 	if len(xAccessToken) <= 0 {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, errors.New("authorization header is empty"))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(errors.New("authorization header is empty")))
 		return
 	}
 
 	rbac, err := a.parser.Parse(ctx, xAccessToken)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(fmt.Errorf("parsing token. cause: %w", err)))
+		ctx.Abort()
+		_ = ctx.Error(apierr.Unauthorized(wraperr.Wrap(err, "parsing x-access-token fail")))
 		return
 	}
 
-	a.logger.Debugw("parsed rbac", "id", rbac.ID, "type", rbac.Type)
+	a.logger.Debugw(ctx, "parsed rbac", "id", rbac.ID, "type", rbac.Type)
 
 	ctx.Set(rbacKey, rbac)
 }

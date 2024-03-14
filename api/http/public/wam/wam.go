@@ -1,11 +1,8 @@
 package wam
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
 )
 
@@ -24,14 +21,14 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 
 	reqCloned := *ctx.Request
 	reqCloned.URL.Path = path
-	err := h.wamDownloader.StreamFile(ctx, remoteapp.AppProxyRequest{
+	err := h.wamDownloader.StreamFile(ctx, remoteapp.WamProxyRequest{
 		AppID:  appID,
 		Writer: ctx.Writer,
 		Req:    ctx.Request,
 	})
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 

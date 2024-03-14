@@ -26,8 +26,7 @@ var mockedManager = account.Manager{
 	Email:     "fake@fake.io",
 }
 
-var Module = fx.Module(
-	"mockedAuth",
+var Module = fx.Options(
 	fx.Provide(
 		func(t *testing.T) domain.RoleClient {
 			return mockdomain.NewRoleClient(t)
@@ -46,12 +45,6 @@ var Module = fx.Module(
 		},
 		func(t *testing.T) general.Parser {
 			return mockgeneral.NewParser(t)
-		},
-		func(t *testing.T) principal.CommandCtxAuthorizer {
-			mocked := mockprincipal.NewCommandCtxAuthorizer(t)
-			mocked.On("Authorize", mock.Anything, mock.Anything, mock.Anything).
-				Return(nil).Maybe()
-			return mocked
 		},
 		func(t *testing.T) principal.ChatValidator {
 			return mockprincipal.NewChatValidator(t)

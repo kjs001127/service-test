@@ -3,17 +3,9 @@ package domain
 import (
 	"context"
 	"encoding/json"
+
+	"github.com/pkg/errors"
 )
-
-type FunctionInvokeEvent struct {
-	AppID    string
-	Request  JsonFunctionRequest
-	Response JsonFunctionResponse
-}
-
-type FunctionRequestListener interface {
-	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
-}
 
 type Invoker struct {
 	appChRepo  AppChannelRepository
@@ -42,7 +34,7 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 		ChannelID: req.Context.Channel.ID,
 	})
 	if err != nil {
-		return WrapCommonErr(err)
+		return WrapCommonErr(errors.Wrap(err, "checking installation before function invocation fail"))
 	}
 
 	app, err := i.appRepo.FindApp(ctx, appID)
@@ -113,4 +105,14 @@ func (e *Error) Error() string {
 
 func WrapCommonErr(err error) JsonFunctionResponse {
 	return JsonFunctionResponse{Error: &Error{Type: "common", Message: err.Error()}}
+}
+
+type FunctionInvokeEvent struct {
+	AppID    string
+	Request  JsonFunctionRequest
+	Response JsonFunctionResponse
+}
+
+type FunctionRequestListener interface {
+	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
 }

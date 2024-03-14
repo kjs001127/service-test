@@ -12,27 +12,27 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/config"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/gintoolfx"
-	adminhandlerfx "github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/adminfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/deskfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/frontfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/generalfx"
-	publichandlerfx "github.com/channel-io/ch-app-store/fx/commonfx/apifx/httpfx/publicfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/configfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/dbfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/brieffx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/logfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/internalfx/remoteappfx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/commonfx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	adminhandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/generalfx"
+	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
-var httpModule = fx.Module(
-	"httpModule",
+var httpModule = fx.Options(
 	generalfx.GeneralHandlers,
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,
@@ -50,7 +50,8 @@ var fullAppModule = fx.Module(
 	datadogfx.Datadog,
 	brieffx.Brief,
 	appfx.App,
-	logfx.Loggers,
+	invokelogfx.Loggers,
+	logfx.Logger,
 	mockauth.Module,
 	commandfx.Command,
 	restyfx.Clients,

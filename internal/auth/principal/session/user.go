@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/channel-io/go-lib/pkg/log"
 	"github.com/friendsofgo/errors"
 	"github.com/golang-jwt/jwt"
 )
@@ -45,11 +44,10 @@ type UserFetcher interface {
 
 type UserFetcherImpl struct {
 	jwtServiceKey string
-	logger        *log.ChannelLogger
 }
 
-func NewUserFetcherImpl(jwtServiceKey string, logger *log.ChannelLogger) *UserFetcherImpl {
-	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey, logger: logger}
+func NewUserFetcherImpl(jwtServiceKey string) *UserFetcherImpl {
+	return &UserFetcherImpl{jwtServiceKey: jwtServiceKey}
 }
 
 func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrincipal, error) {
@@ -76,6 +74,5 @@ func (f *UserFetcherImpl) FetchUser(ctx context.Context, token string) (UserPrin
 	if !ok {
 		return UserPrincipal{}, errors.New("invalid Key")
 	}
-
 	return UserPrincipal{User: User{ID: userID, ChannelID: channelID}, Token: Token(token)}, nil
 }

@@ -9,6 +9,7 @@ type RouteRegistrant interface {
 }
 
 type Middleware interface {
+	Priority() int
 	Handle(ctx *gin.Context)
 }
 

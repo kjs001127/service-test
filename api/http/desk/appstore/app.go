@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/api/http/shared/dto"
+	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
 )
 
 // getApps godoc
@@ -25,13 +25,13 @@ func (h *Handler) getApps(ctx *gin.Context) {
 	since, limit := ctx.Query("since"), ctx.Query("limit")
 	limitNumber, err := strconv.Atoi(limit)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, dto.HttpBadRequestError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
 	apps, err := h.appRepo.FindPublicApps(ctx, since, limitNumber)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
@@ -42,9 +42,9 @@ func (h *Handler) getApps(ctx *gin.Context) {
 
 	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, ids)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, dto.HttpUnprocessableEntityError(err))
+		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppsAndCommands{Apps: apps, Commands: dto.NewCommandDTOs(cmds)})
+	ctx.JSON(http.StatusOK, deskdto.AppsAndCommands{Apps: apps, Commands: deskdto.NewCommandDTOs(cmds)})
 }
