@@ -3,6 +3,8 @@ package domain
 import (
 	"context"
 	"encoding/json"
+
+	"github.com/pkg/errors"
 )
 
 type Invoker struct {
@@ -32,7 +34,7 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 		ChannelID: req.Context.Channel.ID,
 	})
 	if err != nil {
-		return WrapCommonErr(err)
+		return WrapCommonErr(errors.Wrap(err, "checking installation before function invocation fail"))
 	}
 
 	app, err := i.appRepo.FindApp(ctx, appID)
