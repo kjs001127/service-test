@@ -29,8 +29,15 @@ type CoreApi struct {
 func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 	api := &CoreApi{adminUrl: adminUrl, resty: resty}
 	api.urlRouter = map[string]string{
-		"writeUserChatMessage": messageBaseUri + "/writeUserChatMessage",
-		"writeGroupMessage":    messageBaseUri + "/writeGroupMessage",
+		"writeGroupMessage":          messageBaseUri + "/writeGroupMessage",
+		"writeGroupMessageAsManager": messageBaseUri + "/writeGroupMessageAsManager",
+
+		"writeUserChatMessage":          messageBaseUri + "/writeUserChatMessage",
+		"writeUserChatMessageAsManager": messageBaseUri + "/writeUserChatMessageAsManager",
+		"writeUserChatMessageAsUser":    messageBaseUri + "/writeUserChatMessageAsUser",
+
+		"writeDirectChatMessageAsManager": messageBaseUri + "/writeDirectChatMessageAsManager",
+		"createDirectChat":                messageBaseUri + "/createDirectChat",
 
 		"getManager":       managerBaseUri + "/getManager",
 		"batchGetManagers": managerBaseUri + "/batchGetManagers",
