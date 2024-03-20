@@ -93,7 +93,7 @@
         }
       }
 
-      function close({ appId, name, params } = {}) {
+      function close({ appId, name, params = null } = {}) {
         const wamEvent = appId && name ? {
           type: 'command',
           wamId,
@@ -113,7 +113,7 @@
         })
       }
 
-      function callCommand({ appId, name, params } = {}) {
+      function callCommand({ appId, name, params = null } = {}) {
         sendToClient({
           type: 'command',
           wamId,
@@ -125,7 +125,7 @@
         })
       }
 
-      function callFunction({ appId, name, params } = {}) {
+      function callFunction({ appId, name, params = null } = {}) {
         return fetch(`https://app-store-api.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
           body: JSON.stringify({
