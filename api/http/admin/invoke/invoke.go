@@ -31,7 +31,8 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 		return
 	}
 
-	resp := h.nativeInvoker.Invoke(ctx, domain.Token{}, domain.NativeFunctionRequest{
+	token := ctx.GetHeader("x-access-token")
+	resp := h.nativeInvoker.Invoke(ctx, domain.Token{Type: "x-access-token", Value: token}, domain.NativeFunctionRequest{
 		Method: req.Method,
 		Params: req.Params,
 	})
