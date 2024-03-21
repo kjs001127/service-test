@@ -30,13 +30,14 @@ func (defs ParamDefinitions) toMap() map[ParamName]*ParamDefinition {
 }
 
 type ParamDefinition struct {
-	Name           ParamName `json:"name"`
-	Type           ParamType `json:"type"`
-	Required       bool      `json:"required"`
-	Description    string    `json:"description"`
-	Choices        Choices   `json:"choices"`
-	AutoComplete   bool      `json:"autoComplete"`
-	AlfDescription string    `json:"alfDescription"`
+	Name            ParamName      `json:"name"`
+	Type            ParamType      `json:"type"`
+	Required        bool           `json:"required"`
+	Description     string         `json:"description"`
+	Choices         Choices        `json:"choices"`
+	AutoComplete    bool           `json:"autoComplete"`
+	NameDescI18nMap map[string]any `json:"nameDescI18nMap"`
+	AlfDescription  string         `json:"alfDescription"`
 }
 
 type Validator func(param any) error
