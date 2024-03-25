@@ -22,7 +22,7 @@ var CommandSvcs = fx.Options(
 		domain.NewRegisterService,
 		domain.NewAutoCompleteInvoker,
 		app.NewTypedInvoker[domain.CommandBody, domain.Action],
-		app.NewTypedInvoker[domain.AutoCompleteBody, domain.Choices],
+		app.NewTypedInvoker[domain.AutoCompleteBody, domain.AutoCompleteResponse],
 	),
 
 	fx.Provide(

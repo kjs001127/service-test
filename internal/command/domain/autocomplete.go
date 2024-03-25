@@ -37,6 +37,10 @@ func (args AutoCompleteArgs) validate() error {
 	return nil
 }
 
+type AutoCompleteResponse struct {
+	Choices Choices `json:"choices"`
+}
+
 type Choices []Choice
 type Choice struct {
 	Name  string `json:"name"`
@@ -53,24 +57,24 @@ func (choices Choices) validate() error {
 }
 
 type AutoCompleteInvoker struct {
-	invoker *app.TypedInvoker[AutoCompleteBody, Choices]
+	invoker *app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse]
 	repo    CommandRepository
 }
 
 func NewAutoCompleteInvoker(
-	invoker *app.TypedInvoker[AutoCompleteBody, Choices],
+	invoker *app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse],
 	repo CommandRepository,
 ) *AutoCompleteInvoker {
 	return &AutoCompleteInvoker{invoker: invoker, repo: repo}
 }
 
-func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRequest) (Choices, error) {
+func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRequest) (AutoCompleteResponse, error) {
 	cmd, err := i.repo.Fetch(ctx, request.Command)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return AutoCompleteResponse{}, errors.WithStack(err)
 	}
 	if cmd.AutoCompleteFunctionName == nil {
-		return nil, apierr.NotFound(errors.New("autocomplete function not found"))
+		return AutoCompleteResponse{}, apierr.NotFound(errors.New("autocomplete function not found"))
 	}
 
 	res := i.invoker.Invoke(ctx, request.Command.AppID, app.TypedRequest[AutoCompleteBody]{
@@ -86,7 +90,7 @@ func (i *AutoCompleteInvoker) Invoke(ctx context.Context, request AutoCompleteRe
 		Params: request.Body,
 	})
 	if res.Error != nil {
-		return nil, res.Error
+		return AutoCompleteResponse{}, res.Error
 	}
 
 	return res.Result, nil
