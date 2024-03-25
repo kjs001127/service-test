@@ -130,6 +130,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		State:              string(appTarget.State),
 		IsPrivate:          appTarget.IsPrivate,
 		ConfigSchema:       null.JSONFrom(cfgSchema),
+		IsBuiltIn:          null.BoolFrom(appTarget.IsBuiltIn),
 	}, nil
 }
 
@@ -156,6 +157,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 		DetailImageURLs:    rawApp.DetailImageUrls,
 		ConfigSchemas:      cfgSchemas,
 		IsPrivate:          rawApp.IsPrivate,
+		IsBuiltIn:          rawApp.IsBuiltIn.Bool,
 	}, nil
 }
 

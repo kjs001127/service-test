@@ -18,6 +18,7 @@ type App struct {
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas,omitempty"`
+	IsBuiltIn     bool          `json:"isBuiltIn"`
 	Type          AppType       `json:"-"`
 }
 
