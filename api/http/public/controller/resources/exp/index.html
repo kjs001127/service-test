@@ -125,6 +125,17 @@
         })
       }
 
+      function setSize({ width, height }) {
+        sendToClient({
+          type: 'setSize',
+          wamId,
+          attributes: {
+            width,
+            height,
+          }
+        })
+      }
+
       function callFunction({ appId, name, params = null } = {}) {
         return fetch(`https://app-store-api.exp.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
@@ -159,6 +170,7 @@
         wamIframe.onload = function () {
           wamIframe.contentWindow.close = close
           wamIframe.contentWindow.callCommand = callCommand
+          wamIframe.contentWindow.setSize = setSize
           wamIframe.contentWindow.callFunction = callFunction
           wamIframe.contentWindow.getWamData = getWamData
         }
