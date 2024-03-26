@@ -66,21 +66,19 @@
       function sendToClient(wamEvent) {
         if (
           window.channelMobileWamController &&
-          typeof window.channelMobileWamController[wamEvent.type] === 'function'
+          typeof window.channelMobileWamController.postMessage === 'function'
         ) {
-          window.channelMobileWamController[wamEvent.type](JSON.stringify(wamEvent))
+          window.channelMobileWamController.postMessage(JSON.stringify(wamEvent))
           return
         }
-      
-        const webkitControllerKey = `channelMobileWamController_${wamEvent.type}`
       
         if (
           window.webkit &&
           window.webkit.messageHandlers &&
-          window.webkit.messageHandlers[webkitControllerKey] &&
-          typeof window.webkit.messageHandlers[webkitControllerKey].postMessage === 'function'
+          window.webkit.messageHandlers.channelMobileWamController &&
+          typeof window.webkit.messageHandlers.channelMobileWamController.postMessage === 'function'
         ) {
-          window.webkit.messageHandlers[webkitControllerKey].postMessage(wamEvent)
+          window.webkit.messageHandlers.channelMobileWamController.postMessage(wamEvent)
           return
         }
 
