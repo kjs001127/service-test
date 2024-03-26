@@ -21,12 +21,19 @@ func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) (InstalledApp
 		return InstalledApps{}, errors.WithStack(err)
 	}
 
-	apps, err := s.appRepo.FindApps(ctx, AppIDsOf(appChs))
+	builtInApps, err := s.appRepo.FindBuiltInApps(ctx)
+	if err != nil {
+		return InstalledApps{}, errors.Wrap(err, "queryAll fail")
+	}
+
+	installedApps, err := s.appRepo.FindApps(ctx, AppIDsOf(appChs))
 	if err != nil {
 		return InstalledApps{}, errors.WithStack(err)
 	}
 
-	return InstalledApps{Apps: apps, AppChannels: appChs}, nil
+	installedApps = append(builtInApps, installedApps...)
+
+	return InstalledApps{Apps: installedApps, AppChannels: appChs}, nil
 }
 
 func (s *QuerySvc) Query(ctx context.Context, install Install) (InstalledApp, error) {

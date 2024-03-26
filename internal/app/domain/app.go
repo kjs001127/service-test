@@ -65,6 +65,7 @@ type AppRepository interface {
 	Save(ctx context.Context, app *App) (*App, error)
 	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
 	FindApp(ctx context.Context, appID string) (*App, error)
+	FindBuiltInApps(ctx context.Context) ([]*App, error)
 	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
 	Delete(ctx context.Context, appID string) error
 }

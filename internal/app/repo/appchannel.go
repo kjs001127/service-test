@@ -44,7 +44,6 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	appCh, err := models.AppChannels(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
-		qm.Or("is_built_in = $2", true),
 	).All(ctx, a.db)
 
 	if err != nil {

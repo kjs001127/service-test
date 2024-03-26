@@ -22,6 +22,18 @@ func NewAppDAO(db db.DB) *AppDAO {
 	return &AppDAO{db: db}
 }
 
+func (a *AppDAO) FindBuiltInApps(ctx context.Context) ([]*app.App, error) {
+	apps, err := models.Apps(
+		qm.Select("*"),
+		qm.Where("is_built_in = $1", true),
+	).All(ctx, a.db)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while querying app")
+	}
+
+	return a.unmarshalAll(apps)
+}
+
 func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([]*app.App, error) {
 	var queries []qm.QueryMod
 	queries = append(queries, qm.Where("is_private = false"))
