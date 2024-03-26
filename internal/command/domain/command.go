@@ -36,13 +36,13 @@ type Command struct {
 	Scope Scope  `json:"scope"`
 
 	Description     *string        `json:"description"`
-	NameDescI18NMap map[string]any `json:"nameDescI18nMap"`
+	NameDescI18NMap map[string]any `json:"nameDescI18nMap,omitempty"`
 
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        string  `json:"alfMode"`
 
 	ActionFunctionName       string  `json:"actionFunctionName"`
-	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
+	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName,omitempty"`
 
 	ParamDefinitions ParamDefinitions `json:"paramDefinitions"`
 

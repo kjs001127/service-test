@@ -36,8 +36,8 @@ type ParamDefinition struct {
 	Description     string         `json:"description"`
 	Choices         Choices        `json:"choices"`
 	AutoComplete    bool           `json:"autoComplete"`
-	NameDescI18nMap map[string]any `json:"nameDescI18nMap"`
-	AlfDescription  string         `json:"alfDescription"`
+	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
+	AlfDescription  string         `json:"alfDescription,omitempty"`
 }
 
 type Validator func(param any) error
