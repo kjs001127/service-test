@@ -34,7 +34,7 @@ type ParamDefinition struct {
 	Type            ParamType      `json:"type"`
 	Required        bool           `json:"required"`
 	Description     string         `json:"description"`
-	Choices         Choices        `json:"choices"`
+	Choices         Choices        `json:"choices,omitempty"`
 	AutoComplete    bool           `json:"autoComplete"`
 	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
 	AlfDescription  string         `json:"alfDescription,omitempty"`
