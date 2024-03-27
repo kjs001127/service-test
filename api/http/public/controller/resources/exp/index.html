@@ -163,13 +163,11 @@
         wamIframe.src = `https://app-store-api.exp.channel.io/public/v1/apps/${appId}/wams/${wamName}/`
         document.body.appendChild(wamIframe)
 
-        wamIframe.onload = function () {
-          wamIframe.contentWindow.close = close
-          wamIframe.contentWindow.callCommand = callCommand
-          wamIframe.contentWindow.setSize = setSize
-          wamIframe.contentWindow.callFunction = callFunction
-          wamIframe.contentWindow.getWamData = getWamData
-        }
+        wamIframe.contentWindow.close = close
+        wamIframe.contentWindow.callCommand = callCommand
+        wamIframe.contentWindow.setSize = setSize
+        wamIframe.contentWindow.callFunction = callFunction
+        wamIframe.contentWindow.getWamData = getWamData
       }
 
       window.onload = loadWam
