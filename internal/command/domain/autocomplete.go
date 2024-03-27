@@ -38,7 +38,7 @@ func (args AutoCompleteArgs) validate() error {
 }
 
 type AutoCompleteResponse struct {
-	Choices Choices `json:"choices,omitempty"`
+	Choices Choices `json:"choices"`
 }
 
 type Choices []Choice
