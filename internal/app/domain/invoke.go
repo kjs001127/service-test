@@ -29,16 +29,12 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	_, err := i.appChRepo.Fetch(ctx, Install{
-		AppID:     appID,
-		ChannelID: req.Context.Channel.ID,
-	})
-	if err != nil {
-		return WrapCommonErr(errors.Wrap(err, "checking installation before function invocation fail"))
-	}
-
 	app, err := i.appRepo.FindApp(ctx, appID)
 	if err != nil {
+		return WrapCommonErr(err)
+	}
+
+	if err := i.checkInvocable(ctx, app, req.Context.Channel.ID); err != nil {
 		return WrapCommonErr(err)
 	}
 
@@ -57,6 +53,22 @@ func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequ
 	i.callListeners(ctx, event)
 
 	return res
+}
+
+func (i *Invoker) checkInvocable(ctx context.Context, app *App, channelID string) error {
+	if app.IsBuiltIn {
+		return nil
+	}
+
+	_, err := i.appChRepo.Fetch(ctx, Install{
+		AppID:     app.ID,
+		ChannelID: channelID,
+	})
+	if err != nil {
+		return errors.Wrap(err, "checking installation before function invocation fail")
+	}
+
+	return nil
 }
 
 func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) {

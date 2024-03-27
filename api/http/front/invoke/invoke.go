@@ -9,7 +9,6 @@ import (
 
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
 	command "github.com/channel-io/ch-app-store/internal/command/domain"
 )
 
@@ -115,25 +114,14 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	installedApps, err := h.appQuerySvc.QueryAll(ctx, channelID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	query := command.Query{
-		AppIDs: app.AppIDsOf(installedApps.AppChannels),
-		Scope:  command.ScopeFront,
-	}
-	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, query)
-
+	apps, cmds, err := h.querySvc.Query(ctx, channelID, command.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, frontdto.AppsAndCommands{
-		Apps:     installedApps.Apps,
-		Commands: frontdto.NewCommandDTOs(commands),
+		Apps:     apps,
+		Commands: frontdto.NewCommandDTOs(cmds),
 	})
 }

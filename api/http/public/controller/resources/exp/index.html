@@ -14,9 +14,7 @@
         width: 100%;
         height: 100%;
         border: none;
-        border-radius: 30px 30px 0 0;
         display: block;
-        overflow: hidden;
       }
     </style>
   </head>
@@ -66,21 +64,19 @@
       function sendToClient(wamEvent) {
         if (
           window.channelMobileWamController &&
-          typeof window.channelMobileWamController[wamEvent.type] === 'function'
+          typeof window.channelMobileWamController.postMessage === 'function'
         ) {
-          window.channelMobileWamController[wamEvent.type](JSON.stringify(wamEvent))
+          window.channelMobileWamController.postMessage(JSON.stringify(wamEvent))
           return
         }
-      
-        const webkitControllerKey = `channelMobileWamController_${wamEvent.type}`
       
         if (
           window.webkit &&
           window.webkit.messageHandlers &&
-          window.webkit.messageHandlers[webkitControllerKey] &&
-          typeof window.webkit.messageHandlers[webkitControllerKey].postMessage === 'function'
+          window.webkit.messageHandlers.channelMobileWamController &&
+          typeof window.webkit.messageHandlers.channelMobileWamController.postMessage === 'function'
         ) {
-          window.webkit.messageHandlers[webkitControllerKey].postMessage(wamEvent)
+          window.webkit.messageHandlers.channelMobileWamController.postMessage(wamEvent)
           return
         }
 
@@ -125,6 +121,17 @@
         })
       }
 
+      function setSize({ width, height }) {
+        sendToClient({
+          type: 'setSize',
+          wamId,
+          attributes: {
+            width,
+            height,
+          }
+        })
+      }
+
       function callFunction({ appId, name, params = null } = {}) {
         return fetch(`https://app-store-api.exp.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
@@ -156,12 +163,11 @@
         wamIframe.src = `https://app-store-api.exp.channel.io/public/v1/apps/${appId}/wams/${wamName}/`
         document.body.appendChild(wamIframe)
 
-        wamIframe.onload = function () {
-          wamIframe.contentWindow.close = close
-          wamIframe.contentWindow.callCommand = callCommand
-          wamIframe.contentWindow.callFunction = callFunction
-          wamIframe.contentWindow.getWamData = getWamData
-        }
+        wamIframe.contentWindow.close = close
+        wamIframe.contentWindow.callCommand = callCommand
+        wamIframe.contentWindow.setSize = setSize
+        wamIframe.contentWindow.callFunction = callFunction
+        wamIframe.contentWindow.getWamData = getWamData
       }
 
       window.onload = loadWam

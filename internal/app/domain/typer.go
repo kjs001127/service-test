@@ -12,7 +12,7 @@ type TypedRequest[REQ any] struct {
 }
 
 type TypedResponse[REQ any] struct {
-	Result REQ    `json:"result"`
+	Result REQ    `json:"result,omitempty"`
 	Error  *Error `json:"error,omitempty"`
 }
 

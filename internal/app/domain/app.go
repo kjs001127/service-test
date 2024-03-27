@@ -18,6 +18,7 @@ type App struct {
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
 	ConfigSchemas ConfigSchemas `json:"configSchemas,omitempty"`
+	IsBuiltIn     bool          `json:"isBuiltIn"`
 	Type          AppType       `json:"-"`
 }
 
@@ -64,6 +65,7 @@ type AppRepository interface {
 	Save(ctx context.Context, app *App) (*App, error)
 	FindApps(ctx context.Context, appIDs []string) ([]*App, error)
 	FindApp(ctx context.Context, appID string) (*App, error)
+	FindBuiltInApps(ctx context.Context) ([]*App, error)
 	FindPublicApps(ctx context.Context, since string, limit int) ([]*App, error)
 	Delete(ctx context.Context, appID string) error
 }

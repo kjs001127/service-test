@@ -55,6 +55,9 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req Install) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	if app.IsBuiltIn {
+		return errors.New("cannot uninstall builtin app")
+	}
 
 	if err = s.appChRepo.Delete(ctx, req); err != nil {
 		return errors.WithStack(err)
