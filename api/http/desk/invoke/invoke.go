@@ -129,8 +129,28 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 		return
 	}
 
+	appsToReturn := h.filterAppWithCmds(installedApps.Apps, commands)
+
 	ctx.JSON(http.StatusOK, deskdto.AppsAndCommands{
-		Apps:     installedApps.Apps,
+		Apps:     appsToReturn,
 		Commands: deskdto.NewCommandDTOs(commands),
 	})
+}
+
+func (h *Handler) filterAppWithCmds(apps []*app.App, cmds []*command.Command) []*app.App {
+	appMap := make(map[string]*app.App)
+	for _, a := range apps {
+		appMap[a.ID] = a
+	}
+
+	filteredApps := make(map[string]*app.App)
+	for _, cmd := range cmds {
+		filteredApps[cmd.AppID] = appMap[cmd.AppID]
+	}
+
+	ret := make([]*app.App, len(appMap))
+	for _, filteredApp := range appMap {
+		ret = append(ret, filteredApp)
+	}
+	return ret
 }
