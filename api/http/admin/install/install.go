@@ -23,7 +23,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	installed, err := h.installer.InstallApp(ctx, app.Install{
+	installed, err := h.installer.InstallAppById(ctx, app.Install{
 		AppID:     appID,
 		ChannelID: channelID,
 	})

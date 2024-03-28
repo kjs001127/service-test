@@ -47,7 +47,7 @@ func (s *AppCommandQuerySvc) filterAppWithCmds(installedApps []*app.App, cmds []
 	}
 
 	ret := make([]*app.App, 0, len(appMap))
-	for _, filteredApp := range appMap {
+	for _, filteredApp := range filteredApps {
 		ret = append(ret, filteredApp)
 	}
 	return ret

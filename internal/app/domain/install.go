@@ -25,19 +25,24 @@ func NewAppInstallSvc(
 	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installLHandler: installLHandler}
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, req Install) (InstalledApp, error) {
+func (s *AppInstallSvc) InstallAppById(ctx context.Context, req Install) (InstalledApp, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return InstalledApp{}, errors.WithStack(err)
 	}
 
-	if err = s.installLHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
+	return s.InstallApp(ctx, req.ChannelID, app)
+}
+
+func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *App) (InstalledApp, error) {
+
+	if err := s.installLHandler.OnInstall(ctx, app, channelID); err != nil {
 		return InstalledApp{}, errors.Wrap(err, "error while handling onInstall")
 	}
 
 	ret, err := s.appChRepo.Save(ctx, &AppChannel{
 		AppID:     app.ID,
-		ChannelID: req.ChannelID,
+		ChannelID: channelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
 	})
 	if err != nil {
