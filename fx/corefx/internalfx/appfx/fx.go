@@ -12,6 +12,8 @@ import (
 const (
 	FunctionListenersGroup = `group:"functionListeners"`
 	InvokeHandlerGroup     = `group:"invokeHandler"`
+	RemoteAppName          = `name:"remoteApp"`
+	LifecycleHookGroup     = `group:"lifecycle"`
 )
 
 var App = fx.Options(
@@ -24,6 +26,11 @@ var AppSvcs = fx.Options(
 		app.NewAppInstallSvc,
 		app.NewQuerySvc,
 		app.NewConfigSvc,
+		fx.Annotate(
+			app.NewAppManagerImpl,
+			fx.As(new(app.AppManager)),
+			fx.ParamTags(``, ``, RemoteAppName, LifecycleHookGroup),
+		),
 		fx.Annotate(
 			app.NewInvoker,
 			fx.ParamTags(``, ``, InvokeHandlerGroup, FunctionListenersGroup),
