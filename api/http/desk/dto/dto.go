@@ -34,10 +34,10 @@ type CommandDTO struct {
 	Name  string    `json:"name"`
 	Scope cmd.Scope `json:"scope"`
 
-	Description     *string        `json:"description"`
-	NameDescI18nMap map[string]any `json:"nameDescI18nMap"`
+	Description     *string        `json:"description,omitempty"`
+	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
 
-	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
+	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions,omitempty"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`

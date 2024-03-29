@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -51,19 +49,16 @@ func (l *ErrHandler) propagateStatusToErr(ctx *gin.Context) {
 }
 
 func (l *ErrHandler) log(ctx *gin.Context, dto *errorsDTO) {
-	body, _ := io.ReadAll(ctx.Request.Body)
 	if dto.Status >= http.StatusInternalServerError {
 		l.logger.Errorw(ctx, "http request failed",
 			"uri", ctx.Request.RequestURI,
 			"status", ctx.Writer.Status(),
-			"body", json.RawMessage(body),
 			"err", dto.Errors,
 		)
 	} else if dto.Status >= http.StatusBadRequest {
 		l.logger.Warnw(ctx, "http request failed",
 			"uri", ctx.Request.RequestURI,
 			"status", ctx.Writer.Status(),
-			"body", json.RawMessage(body),
 			"err", dto.Errors,
 		)
 	}
@@ -76,8 +71,9 @@ func errorsDTOFrom(ctx *gin.Context) *errorsDTO {
 			dto := newErrorsDTOFromHTTPErrorBuildable(httpErrorBuildable)
 			return dto
 		}
+		return newErrorsDTO(http.StatusUnprocessableEntity, apierr.NewCause(err))
 	}
-	return newErrorsDTO(http.StatusUnprocessableEntity)
+	return newErrorsDTO(http.StatusInternalServerError)
 }
 
 type errorsDTO struct {

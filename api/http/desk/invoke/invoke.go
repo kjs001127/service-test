@@ -68,7 +68,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Param		appID							path	string						true	"id of App"
 //	@Param		name							path	string						true	"name of Command to execute autoComplete"
 //	@Param		dto.ContextAndAutoCompleteArgs	body	command.AutoCompleteBody	true	"body"
-//	@Success	200								{array}	command.Choice
+//	@Success	200								{object}	command.AutoCompleteResponse
 //	@Router		/desk/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body command.AutoCompleteBody
@@ -114,13 +114,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, appChs, err := h.appQuerySvc.QueryAll(ctx, channelID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, app.AppIDsOf(appChs), model.ScopeDesk)
+	apps, cmds, err := h.querySvc.Query(ctx, channelID, command.ScopeDesk)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -128,6 +122,6 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, deskdto.AppsAndCommands{
 		Apps:     apps,
-		Commands: deskdto.NewCommandDTOs(commands),
+		Commands: deskdto.NewCommandDTOs(cmds),
 	})
 }

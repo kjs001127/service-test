@@ -69,7 +69,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Param		name						path	string						true	"name of Command to execute autoComplete"
 //	@Param		channelID					path	string						true	"channelID"
 //	@Param		command.AutoCompleteBody	body	command.AutoCompleteBody	true	"context and params to execute autoComplete"
-//	@Success	200							{array}	command.Choice
+//	@Success	200							{object} command.AutoCompleteResponse
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body command.AutoCompleteBody
@@ -116,14 +116,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, appChs, err := h.appQuerySvc.QueryAll(ctx, channelID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	commands, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, app.AppIDsOf(appChs), model.ScopeFront)
-
+	apps, cmds, err := h.querySvc.Query(ctx, channelID, command.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -131,6 +124,6 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, frontdto.AppsAndCommands{
 		Apps:     apps,
-		Commands: frontdto.NewCommandDTOs(commands),
+		Commands: frontdto.NewCommandDTOs(cmds),
 	})
 }

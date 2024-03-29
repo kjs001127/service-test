@@ -27,6 +27,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
@@ -48,6 +49,7 @@ var fullAppModule = fx.Options(
 	developmentfx.RemoteAppDevelopment,
 	datadogfx.Datadog,
 	brieffx.Brief,
+	wysiwygfx.WysiwygQuery,
 	appfx.App,
 	invokelogfx.Loggers,
 	logfx.Logger,

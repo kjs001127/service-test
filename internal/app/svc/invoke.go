@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
+
+	"github.com/pkg/errors"
 )
 
 type Invoker struct {

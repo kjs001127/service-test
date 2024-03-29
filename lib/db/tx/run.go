@@ -52,13 +52,15 @@ func DoReturn[R any](
 			panic(err)
 		}
 
-		if retErr != nil && tx.Rollback() != nil {
-			retErr = fmt.Errorf("rollback fail, rollback cause: %w", err)
+		if retErr != nil {
+			if err := tx.Rollback(); err != nil {
+				retErr = fmt.Errorf("rollback fail, rollback cause: %w", err)
+			}
 			return
 		}
 
 		if err := tx.Commit(); err != nil {
-			retErr = err
+			retErr = fmt.Errorf("commit failed. cause: %v", err)
 		}
 	}()
 

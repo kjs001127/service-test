@@ -22,33 +22,63 @@
   </head>
   <body>
     <script>
-      const searchParams = new URLSearchParams(window.location.search)
+      function flattenObject(obj) {
+        const result = {};
 
-      const channelId = searchParams.get('channel_id')
-      const appId = searchParams.get('app_id')
-      const wamName = searchParams.get('wam_name')
-      const wamId = searchParams.get('wam_id')
-      const accessToken = searchParams.get('access_token')
-      const refreshToken = searchParams.get('refresh_token')
-
-      function sendToClient({ type, appId, name, params, wamId }) {
-        if (
-          window.channelMobileWamController &&
-          typeof window.channelMobileWamController[type] === 'function'
-        ) {
-          window.channelMobileWamController[type](JSON.stringify({ appId, name, params, wamId }))
-          return
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+              for (const nestedKey in obj[key]) {
+                if (obj[key].hasOwnProperty(nestedKey)) {
+                  result[nestedKey] = obj[key][nestedKey];
+                }
+              }
+            } else {
+              result[key] = obj[key];
+            }
+          }
         }
 
-        const webkitControllerKey = `channelMobileWamController_${type}`
+        return result;
+      }
+    </script>
+    <script>
+      const wamData = (() => {
+        try {
+          const searchParams = new URLSearchParams(window.location.search)
+          const wamDataFromQueryParam = searchParams.get('wam_data')
+          const decodedWamData = decodeURIComponent(wamDataFromQueryParam)
+          const parsedWamData = JSON.parse(decodedWamData)
+          const flattenedWamData = flattenObject(parsedWamData)
+          return flattenedWamData
+        } catch (e) {
+          return {}
+        }
+      })()
+
+      const channelId = wamData.channelId
+      const appId = wamData.appId
+      const wamName = wamData.wamName
+      const wamId = wamData.wamId
+      const accessToken = wamData.accessToken
+      const refreshToken = wamData.refreshToken
+
+      function sendToClient(wamEvent) {
+        if (
+          window.channelMobileWamController &&
+          typeof window.channelMobileWamController.postMessage === 'function'
+        ) {
+          window.channelMobileWamController.postMessage(JSON.stringify(wamEvent))
+          return
+        }
       
         if (
           window.webkit &&
           window.webkit.messageHandlers &&
-          window.webkit.messageHandlers[webkitControllerKey] &&
-          typeof window.webkit.messageHandlers[webkitControllerKey].postMessage === 'function'
+          window.webkit.messageHandlers.channelMobileWamController &&
+          typeof window.webkit.messageHandlers.channelMobileWamController.postMessage === 'function'
         ) {
-          window.webkit.messageHandlers[webkitControllerKey].postMessage({ appId, name, params, wamId })
+          window.webkit.messageHandlers.channelMobileWamController.postMessage(wamEvent)
           return
         }
 
@@ -57,29 +87,58 @@
           window.parent.postMessage &&
           typeof window.parent.postMessage === 'function'
         ) {
-          window.parent.postMessage({
-            type,
-            appId,
-            name,
-            params,
-            wamId,
-          }, '*')
+          window.parent.postMessage(wamEvent, '*')
         }
       }
 
-      function close() {
-        sendToClient({ type: 'close', wamId })
+      function close({ appId, name, params = null } = {}) {
+        const wamEvent = appId && name ? {
+          type: 'command',
+          wamId,
+          attributes: {
+            appId,
+            name,
+            params,
+          }
+        } : null
+
+        sendToClient({
+          type: 'close',
+          wamId,
+          attributes: {
+            wamEvent,
+          }
+        })
       }
 
-      function callCommand(appId, commandName, params) {
-        sendToClient({ type: 'command', appId, name: commandName, params, wamId })
+      function callCommand({ appId, name, params = null } = {}) {
+        sendToClient({
+          type: 'command',
+          wamId,
+          attributes: {
+            appId,
+            name,
+            params,
+          }
+        })
       }
 
-      function callFunction(appId, functionName, params) {
+      function setSize({ width, height }) {
+        sendToClient({
+          type: 'setSize',
+          wamId,
+          attributes: {
+            width,
+            height,
+          }
+        })
+      }
+
+      function callFunction({ appId, name, params = null } = {}) {
         return fetch(`https://app-store-api.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
           body: JSON.stringify({
-            method: functionName,
+            method: name,
             params,
             context: {
               channel: {
@@ -96,19 +155,21 @@
         .then(response => response.json())
       }
 
+      function getWamData(key) {
+        return wamData[key]
+      }
+
       function loadWam() {
         const wamIframe = document.createElement('iframe')
         wamIframe.id = 'wam'
-        const wamNameParam = wamName === 'order-list' || wamName === 'cancel-order' || wamName === 'estimate-send-date' ? 'order-list' : wamName
-        wamIframe.src = `https://app-store-api.channel.io/public/v1/apps/${appId}/wams/${wamNameParam}/`
+        wamIframe.src = `https://app-store-api.channel.io/public/v1/apps/${appId}/wams/${wamName}/`
         document.body.appendChild(wamIframe)
 
-        wamIframe.onload = function () {
-          wamIframe.contentWindow.sendToClient = sendToClient
-          wamIframe.contentWindow.close = close
-          wamIframe.contentWindow.callCommand = callCommand
-          wamIframe.contentWindow.callFunction = callFunction
-        }
+        wamIframe.contentWindow.close = close
+        wamIframe.contentWindow.callCommand = callCommand
+        wamIframe.contentWindow.setSize = setSize
+        wamIframe.contentWindow.callFunction = callFunction
+        wamIframe.contentWindow.getWamData = getWamData
       }
 
       window.onload = loadWam

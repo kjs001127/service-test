@@ -18,6 +18,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/interactionfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -33,6 +34,7 @@ var Public = fx.Options(
 	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
+	wysiwygfx.WysiwygQuery,
 	interactionfx.RemoteAppInteraction,
 
 	invokelogfx.Loggers,
