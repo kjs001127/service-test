@@ -40,4 +40,15 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.PUT("/:appID/configs", h.setConfig)
 	group.GET("/:appID/configs", h.getConfig)
+
+	//legacy routes
+	legacyGroup := router.Group("/desk/v1/channels/:channelID/app-channels")
+
+	legacyGroup.GET("", h.queryAllLegacy)
+	legacyGroup.GET("/:appID", h.queryLegacy)
+	legacyGroup.PUT("/:appID", h.installLegacy)
+	legacyGroup.DELETE("/:appID", h.uninstallLegacy)
+
+	legacyGroup.PUT("/:appID/configs", h.setConfigLegacy)
+	legacyGroup.GET("/:appID/configs", h.getConfigLegacy)
 }
