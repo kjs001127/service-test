@@ -4,7 +4,6 @@ import (
 	"go.uber.org/fx"
 
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/repo"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
@@ -22,7 +21,7 @@ var CommandSvcs = fx.Options(
 		svc.NewRegisterService,
 		svc.NewAutoCompleteInvoker,
 		app.NewTypedInvoker[svc.CommandBody, svc.Action],
-		app.NewTypedInvoker[svc.AutoCompleteBody, model.Choices],
+		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
 	),
 
 	fx.Provide(

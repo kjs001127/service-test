@@ -9,7 +9,6 @@ import (
 
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 )
@@ -116,7 +115,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, cmds, err := h.querySvc.Query(ctx, channelID, command.ScopeFront)
+	apps, cmds, err := h.querySvc.Query(ctx, channelID, model.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

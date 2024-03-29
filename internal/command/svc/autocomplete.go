@@ -12,7 +12,7 @@ import (
 
 type AutoCompleteRequest struct {
 	ChannelID string           `json:"channelId"`
-	Command   CommandKey       `json:"command"`
+	Command   model.CommandKey `json:"command"`
 	Body      AutoCompleteBody `json:"body"`
 	Caller    Caller           `json:"caller"`
 }

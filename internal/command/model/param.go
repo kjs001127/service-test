@@ -18,13 +18,14 @@ func (defs ParamDefinitions) toMap() map[ParamName]*ParamDefinition {
 }
 
 type ParamDefinition struct {
-	Name           ParamName `json:"name"`
-	Type           ParamType `json:"type"`
-	Required       bool      `json:"required"`
-	Description    string    `json:"description"`
-	Choices        Choices   `json:"choices"`
-	AutoComplete   bool      `json:"autoComplete"`
-	AlfDescription string    `json:"alfDescription"`
+	Name            ParamName      `json:"name"`
+	Type            ParamType      `json:"type"`
+	Required        bool           `json:"required"`
+	Description     string         `json:"description,omitempty"`
+	Choices         Choices        `json:"choices,omitempty"`
+	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
+	AutoComplete    bool           `json:"autoComplete,omitempty"`
+	AlfDescription  string         `json:"alfDescription,omitempty"`
 }
 
 type Choices []Choice
