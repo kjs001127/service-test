@@ -12,6 +12,6 @@ type Brief struct {
 
 type BriefRepository interface {
 	Fetch(ctx context.Context, appID string) (*Brief, error)
-	DeleteAllByAppID(ctx context.Context, appID string) error
+	DeleteByAppID(ctx context.Context, appID string) error
 	FetchAll(ctx context.Context, appIDs []string) ([]*Brief, error)
 }
