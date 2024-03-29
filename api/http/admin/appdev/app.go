@@ -14,9 +14,9 @@ import (
 //	@Summary	create App to app-store
 //	@Tags		Admin
 //
-//	@Param		app.AppRequest	body		app.AppRequest	true	"App to create"
+//	@Param		app.AppRequest	body		svc.AppRequest	true	"App to create"
 //
-//	@Success	201				{object}	app.AppResponse
+//	@Success	201				{object}	svc.AppResponse
 //	@Router		/admin/apps [post]
 func (h *Handler) create(ctx *gin.Context) {
 	var target svc.AppRequest
@@ -62,7 +62,7 @@ func (h *Handler) delete(ctx *gin.Context) {
 //
 //	@Param		roleId	query	string	true "roleId of App to query"
 //
-//	@Success	200  	{object} domain.App
+//	@Success	200  	{object} model.App
 //	@Router		/admin/apps [get]
 func (h *Handler) query(ctx *gin.Context) {
 	ID := ctx.Query("roleId")
@@ -83,7 +83,7 @@ func (h *Handler) query(ctx *gin.Context) {
 //
 //	@Param		appID	path	string	true "appId"
 //
-//	@Success	200  	{object} app.AppResponse
+//	@Success	200  	{object} svc.AppResponse
 //	@Router		/admin/apps/{appID} [get]
 func (h *Handler) queryDetail(ctx *gin.Context) {
 	ID := ctx.Param("appID")

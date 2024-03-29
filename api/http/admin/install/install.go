@@ -18,7 +18,7 @@ import (
 //	@Param		channelID	path		string	true	"id of Channel"
 //	@Param		appID		path		string	true	"id of App to install"
 //
-//	@Success	200			{object}	app.InstalledApp
+//	@Success	200			{object}	dto.InstalledApp
 //	@Router		/admin/channels/{channelID}/installed-apps/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")

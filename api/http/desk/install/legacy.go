@@ -20,7 +20,7 @@ import (
 //	@Param		channelID	path		string	true	"id of Channel"
 //	@Param		appID		path		string	true	"id of App to install"
 //
-//	@Success	200			{object}	app.InstalledApp
+//	@Success	200			{object}	dto.InstalledApp
 //	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [put]
 func (h *Handler) installLegacy(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
@@ -76,7 +76,7 @@ func (h *Handler) uninstallLegacy(ctx *gin.Context) {
 //	@Param		appID		path		string	true	"id of App"
 //	@Param		object		body		object	true	"key-value of Config to set"
 //
-//	@Success	200			{object}	app.ConfigMap
+//	@Success	200			{object}	model.ConfigMap
 //	@Router		/desk/v1/channels/{channelID}/app-channels/{appID}/configs [put]
 func (h *Handler) setConfigLegacy(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
@@ -96,7 +96,7 @@ func (h *Handler) setConfigLegacy(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, ret)
+	ctx.JSON(http.StatusOK, ret.Configs)
 }
 
 // getConfigLegacy godoc
@@ -135,7 +135,7 @@ func (h *Handler) getConfigLegacy(ctx *gin.Context) {
 //	@Param			channelID	path		string	true	"id of Channel"
 //	@Param			appID		path		string	false	"id of App"
 //
-//	@Success		200			{object}	app.InstalledApp
+//	@Success		200			{object}	dto.InstalledAppWithCommands
 //	@Router			/desk/v1/channels/{channelID}/app-channels/{appID} [get]
 func (h *Handler) queryLegacy(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
@@ -171,7 +171,7 @@ func (h *Handler) queryLegacy(ctx *gin.Context) {
 //	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
 //
-//	@Success		200			{object}	app.InstalledApps
+//	@Success		200			{object}	dto.InstalledAppsWithCommands
 //	@Router			/desk/v1/channels/{channelID}/app-channels [get]
 func (h *Handler) queryAllLegacy(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")

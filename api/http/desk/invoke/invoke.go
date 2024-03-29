@@ -62,11 +62,11 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Summary	execute selected AutoComplete of Command
 //	@Tags		Desk
 //
-//	@Param		x-account						header	string						true	"access token"
-//	@Param		channelID						path	string						true	"id of Channel"
-//	@Param		appID							path	string						true	"id of App"
-//	@Param		name							path	string						true	"name of Command to execute autoComplete"
-//	@Param		dto.ContextAndAutoCompleteArgs	body	command.AutoCompleteBody	true	"body"
+//	@Param		x-account						header		string						true	"access token"
+//	@Param		channelID						path		string						true	"id of Channel"
+//	@Param		appID							path		string						true	"id of App"
+//	@Param		name							path		string						true	"name of Command to execute autoComplete"
+//	@Param		dto.ContextAndAutoCompleteArgs	body		command.AutoCompleteBody	true	"body"
 //	@Success	200								{object}	command.AutoCompleteResponse
 //	@Router		/desk/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
