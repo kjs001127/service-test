@@ -30,8 +30,9 @@ type ParamDefinition struct {
 
 type Choices []Choice
 type Choice struct {
-	Name  string `json:"name"`
-	Value any    `json:"value"`
+	Name            string         `json:"name"`
+	Value           any            `json:"value"`
+	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
 }
 
 func (choices Choices) validate() error {

@@ -12,8 +12,8 @@ type InstalledApp struct {
 }
 
 type AppsAndFullCommands struct {
-	Apps     []*appmodel.App `json:"apps,omitempty"`
-	Commands []*cmd.Command  `json:"commands,omitempty"`
+	Apps     []*appmodel.App `json:"apps"`
+	Commands []*cmd.Command  `json:"commands"`
 }
 
 type RegisterRequest struct {

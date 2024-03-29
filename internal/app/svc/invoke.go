@@ -8,32 +8,27 @@ import (
 )
 
 type Invoker struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
-	handler   InvokeHandler
+	querySvc *QuerySvc
+	appRepo  AppRepository
+	handler  InvokeHandler
 
 	listeners []FunctionRequestListener
 }
 
 func NewInvoker(
-	appChRepo AppChannelRepository,
+	querySvc *QuerySvc,
 	appRepo AppRepository,
 	handler InvokeHandler,
 	listeners []FunctionRequestListener,
 ) *Invoker {
-	return &Invoker{appChRepo: appChRepo, appRepo: appRepo, handler: handler, listeners: listeners}
+	return &Invoker{querySvc: querySvc, appRepo: appRepo, handler: handler, listeners: listeners}
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	_, err := i.appChRepo.Fetch(ctx, model.InstallationID{
+	app, _, err := i.querySvc.Query(ctx, model.InstallationID{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
 	})
-	if err != nil {
-		return WrapCommonErr(err)
-	}
-
-	app, err := i.appRepo.FindApp(ctx, appID)
 	if err != nil {
 		return WrapCommonErr(err)
 	}
