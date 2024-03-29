@@ -16,7 +16,6 @@ import (
 
 const (
 	appTypeRemote = app.AppType("remote")
-	remoteAppName = `name:"remoteApp"`
 )
 
 var RemoteAppCommon = fx.Options(
@@ -34,16 +33,11 @@ var RemoteAppCommonsSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
 			appTypeRemote,
-			fx.ResultTags(remoteAppName),
+			fx.ResultTags(appfx.RemoteAppName),
 		),
 		fx.Private,
 	),
 	fx.Provide(
-		fx.Annotate(
-			app.NewAppManagerImpl,
-			fx.As(new(app.AppManager)),
-			fx.ParamTags(``, ``, remoteAppName),
-		),
 		fx.Annotate(
 			domain.NewInstallHandler,
 			fx.As(new(app.InstallHandler)),
@@ -63,7 +57,7 @@ var RemoteAppCommonsSvcs = fx.Options(
 		),
 		fx.Annotate(
 			app.NewTyped[app.InvokeHandler],
-			fx.ParamTags(remoteAppName, `name:"remoteInvoker"`),
+			fx.ParamTags(appfx.RemoteAppName, `name:"remoteInvoker"`),
 			fx.ResultTags(appfx.InvokeHandlerGroup),
 		),
 	),
