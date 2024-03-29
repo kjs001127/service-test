@@ -18,6 +18,11 @@ var Command = fx.Options(
 )
 var CommandSvcs = fx.Options(
 	fx.Provide(
+		fx.Annotate(
+			domain.NewCommandClearHook,
+			fx.As(new(app.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
+		),
 		svc.NewRegisterService,
 		svc.NewAutoCompleteInvoker,
 		app.NewTypedInvoker[svc.CommandBody, svc.Action],

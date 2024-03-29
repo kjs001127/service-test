@@ -17,6 +17,11 @@ var BriefSvcs = fx.Options(
 	fx.Provide(
 		domain.NewInvoker,
 		app.NewTypedInvoker[domain.EmptyRequest, domain.BriefResponse],
+		fx.Annotate(
+			domain.NewBriefClearHook,
+			fx.As(new(app.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
+		),
 	),
 )
 

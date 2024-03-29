@@ -17,6 +17,11 @@ type BriefDao struct {
 	db db.DB
 }
 
+func (b BriefDao) DeleteAllByAppID(ctx context.Context, appID string) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewBriefDao(db db.DB) *BriefDao {
 	return &BriefDao{db: db}
 }
@@ -51,6 +56,11 @@ func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brie
 	}
 
 	return unmarshalAll(all), nil
+}
+
+func (b *BriefDao) DeleteByAppID(ctx context.Context, appID string) error {
+	_, err := models.Briefs(qm.Where("app_id = $1", appID)).DeleteAll(ctx, b.db)
+	return errors.WithStack(err)
 }
 
 func unmarshal(model *models.Brief) *domain.Brief {

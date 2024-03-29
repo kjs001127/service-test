@@ -234,7 +234,6 @@ func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
 		if err = s.urlRepo.Delete(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}
-
 		if err = s.manager.Delete(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}

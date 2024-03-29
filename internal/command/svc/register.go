@@ -22,6 +22,10 @@ func NewRegisterService(repo CommandRepository) *RegisterSvc {
 	return &RegisterSvc{repo: repo}
 }
 
+func (s *RegisterSvc) UnregisterAll(ctx context.Context, appID string) error {
+	return s.Register(ctx, appID, nil)
+}
+
 func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*model.Command) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.validateRequest(appID, cmds); err != nil {
