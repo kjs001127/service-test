@@ -11,13 +11,14 @@ type AppRepository interface {
 	FindApps(ctx context.Context, appIDs []string) ([]*model.App, error)
 	FindApp(ctx context.Context, appID string) (*model.App, error)
 	FindPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error)
+	FindBuiltInApps(ctx context.Context) ([]*model.App, error)
 	Delete(ctx context.Context, appID string) error
 }
 
 type AppChannelRepository interface {
-	Fetch(ctx context.Context, identifier model.InstallationID) (*model.Installation, error)
-	FindAllByChannel(ctx context.Context, channelID string) ([]*model.Installation, error)
-	Save(ctx context.Context, appChannel *model.Installation) (*model.Installation, error)
+	Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error)
+	FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error)
+	Save(ctx context.Context, appChannel *model.AppInstallation) (*model.AppInstallation, error)
 	Delete(ctx context.Context, identifier model.InstallationID) error
 	DeleteByAppID(ctx context.Context, appID string) error
 }

@@ -64,7 +64,7 @@ func registerCommand(appID, functionName, name string, scope model.Scope) {
 func installApp(appID, channelID string) {
 	requester := cli.R()
 	requester.SetHeader("x-account", "1")
-	res, err := requester.Put(baseUrl + "/desk/v1/channels/" + channelID + "/app-channels/" + appID)
+	res, err := requester.Put(baseUrl + "/desk/v1/channels/" + channelID + "/installed-apps/" + appID)
 	if err != nil {
 		panic(err)
 	}

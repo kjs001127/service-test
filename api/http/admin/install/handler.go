@@ -23,7 +23,7 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/admin/channels/:channelID/app-channels")
+	group := router.Group("/admin/channels/:channelID/installed-apps")
 
 	// CORS 이슈가 있어 / 제거
 	group.PUT("/:appID", h.install)

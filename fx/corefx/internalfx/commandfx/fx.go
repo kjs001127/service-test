@@ -3,6 +3,7 @@ package commandfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/repo"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
@@ -19,7 +20,7 @@ var Command = fx.Options(
 var CommandSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			domain.NewCommandClearHook,
+			svc.NewCommandClearHook,
 			fx.As(new(app.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),

@@ -113,7 +113,7 @@ func Test(t *testing.T) {
 			name: "install app in desk",
 			req: request{
 				method: "PUT",
-				path:   "/desk/v1/channels/{channelId}/app-channels/{appId}",
+				path:   "/desk/v1/channels/{channelId}/installed-apps/{appId}",
 				header: map[string]string{
 					"x-account": "1",
 				},

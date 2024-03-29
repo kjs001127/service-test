@@ -1,1 +1,0 @@
-ALTER TABLE app_channels RENAME TO installations;

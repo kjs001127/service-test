@@ -26,7 +26,7 @@ const (
 //	@Param		channelID		path		string	true	"id of channel"
 //
 //	@Success	200				{object}	any		"JSON of configMap"
-//	@Router		/general/v1/channels/{channelID}/app-channels/{appID}/configs [get]
+//	@Router		/general/v1/channels/{channelID}/installed-apps/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 
 	appID, channelID := ctx.Param("appID"), ctx.Param("channelID")

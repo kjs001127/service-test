@@ -9,8 +9,8 @@ import (
 )
 
 type AppInstallSvc struct {
-	appChRepo       AppChannelRepository
-	appRepo         AppRepository
+	appChRepo      AppChannelRepository
+	appRepo        AppRepository
 	installHandler InstallHandler
 }
 
@@ -22,7 +22,7 @@ func NewAppInstallSvc(
 	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installHandler: installHandler}
 }
 
-func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, *model.Installation, error) {
+func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, *model.AppInstallation, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return nil, nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
@@ -31,13 +31,12 @@ func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.Installati
 	return s.InstallApp(ctx, req.ChannelID, app)
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *App) (InstalledApp, error) {
-
-	if err = s.installHandler.OnInstall(ctx, app, req.ChannelID); err != nil {
+func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, *model.AppInstallation, error) {
+	if err := s.installHandler.OnInstall(ctx, app, channelID); err != nil {
 		return nil, nil, errors.Wrap(err, "error while handling onInstall")
 	}
 
-	appCh, err := s.appChRepo.Save(ctx, &model.Installation{
+	appCh, err := s.appChRepo.Save(ctx, &model.AppInstallation{
 		AppID:     app.ID,
 		ChannelID: channelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
@@ -62,7 +61,7 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.Installation
 		return errors.WithStack(err)
 	}
 
-	if err = s.installLHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
+	if err = s.installHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
 		return errors.Wrap(err, "error while uninstalling app")
 	}
 

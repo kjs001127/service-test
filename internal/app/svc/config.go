@@ -22,7 +22,7 @@ func NewConfigSvc(
 	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo, validator: validator}
 }
 
-func (s *ConfigSvc) SetConfig(ctx context.Context, install model.InstallationID, input model.ConfigMap) (*model.Installation, error) {
+func (s *ConfigSvc) SetConfig(ctx context.Context, install model.InstallationID, input model.ConfigMap) (*model.AppInstallation, error) {
 	appCh, err := s.appChRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)

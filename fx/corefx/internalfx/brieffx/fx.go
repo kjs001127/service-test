@@ -3,6 +3,7 @@ package brieffx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/brief/domain"
 	"github.com/channel-io/ch-app-store/internal/brief/repo"

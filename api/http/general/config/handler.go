@@ -16,6 +16,6 @@ func NewHandler(querySvc *app.QuerySvc) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/general/v1/channels/:channelID/app-channels")
+	group := router.Group("/general/v1/channels/:channelID/installed-apps")
 	group.GET("/:appID/configs", h.getConfig)
 }
