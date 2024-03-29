@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 // install godoc
@@ -19,13 +21,13 @@ import (
 //	@Param		channelID	path		string	true	"id of Channel"
 //	@Param		appID		path		string	true	"id of App to install"
 //
-//	@Success	200			{object}	app.InstalledApp
-//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [put]
+//	@Success	200			{object}	dto.InstalledApp
+//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	installed, err := h.installer.InstallAppById(ctx, app.Install{
+	appFound, appCh, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -35,7 +37,10 @@ func (h *Handler) install(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, installed)
+	ctx.JSON(http.StatusOK, dto.InstalledApp{
+		App:        appFound,
+		AppChannel: appCh,
+	})
 }
 
 // uninstall godoc
@@ -48,10 +53,10 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Param		appID		path	string	true	"id of App to uninstall"
 //
 //	@Success	200
-//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID} [delete]
+//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	if err := h.installer.UnInstallApp(ctx, app.Install{
+	if err := h.installer.UnInstallApp(ctx, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -72,8 +77,8 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 //	@Param		appID		path		string	true	"id of App"
 //	@Param		object		body		object	true	"key-value of Config to set"
 //
-//	@Success	200			{object}	app.ConfigMap
-//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID}/configs [put]
+//	@Success	200			{object}	model.ConfigMap
+//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID}/configs [put]
 func (h *Handler) setConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
@@ -83,7 +88,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	ret, err := h.configSvc.SetConfig(ctx, app.Install{
+	ret, err := h.configSvc.SetConfig(ctx, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}, configMap)
@@ -92,12 +97,12 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, ret)
+	ctx.JSON(http.StatusOK, ret.Configs)
 }
 
 // getConfig godoc
 //
-//	@Summary	get App config of a AppChannel
+//	@Summary	get App config of a Installation
 //	@Tags		Desk
 //
 //	@Param		x-account	header		string	true	"access token"
@@ -105,11 +110,11 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 //	@Param		channelID	path		string	true	"id of channel"
 //
 //	@Success	200			{object}	any		"JSON of configMap"
-//	@Router		/desk/v1/channels/{channelID}/app-channels/{appID}/configs [get]
+//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	res, err := h.querySvc.Query(ctx, app.Install{
+	cfgs, err := h.configSvc.GetConfig(ctx, appmodel.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -118,25 +123,25 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, res.AppChannel.Configs)
+	ctx.JSON(http.StatusOK, cfgs)
 }
 
 // query godoc
 //
-//	@Summary		get App and AppChannel
+//	@Summary		get App and Installation
 //	@Tags			Desk
-//	@Description	get App and AppChannel installed to channel.
+//	@Description	get App and Installation installed to channel.
 //
 //	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
 //	@Param			appID		path		string	false	"id of App"
 //
-//	@Success		200			{object}	app.InstalledApp
-//	@Router			/desk/v1/channels/{channelID}/app-channels/{appID} [get]
+//	@Success		200			{object}	dto.InstalledAppWithCommands
+//	@Router			/desk/v1/channels/{channelID}/installed-apps/{appID} [get]
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	res, err := h.querySvc.Query(ctx, app.Install{
+	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -152,8 +157,9 @@ func (h *Handler) query(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppWithCommands{
-		Commands:     dto.NewCommandDTOs(cmds),
-		InstalledApp: res,
+		Commands:   dto.NewCommandDTOs(cmds),
+		App:        appFound,
+		AppChannel: appCh,
 	})
 }
 
@@ -166,25 +172,26 @@ func (h *Handler) query(ctx *gin.Context) {
 //	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
 //
-//	@Success		200			{object}	app.InstalledApps
-//	@Router			/desk/v1/channels/{channelID}/app-channels [get]
+//	@Success		200			{object}	dto.InstalledAppsWithCommands
+//	@Router			/desk/v1/channels/{channelID}/installed-apps [get]
 func (h *Handler) queryAll(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	res, err := h.querySvc.QueryAll(ctx, channelID)
+	apps, appChs, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(res.AppChannels))
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppsWithCommands{
-		Commands:      dto.NewCommandDTOs(cmds),
-		InstalledApps: res,
+		Commands:    dto.NewCommandDTOs(cmds),
+		Apps:        apps,
+		AppChannels: appChs,
 	})
 }

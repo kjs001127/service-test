@@ -17,11 +17,6 @@ type BriefDao struct {
 	db db.DB
 }
 
-func (b BriefDao) DeleteAllByAppID(ctx context.Context, appID string) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewBriefDao(db db.DB) *BriefDao {
 	return &BriefDao{db: db}
 }

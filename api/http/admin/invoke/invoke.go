@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/api/http/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	"github.com/channel-io/ch-app-store/api/http/shared/dto"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
 )
@@ -22,7 +22,7 @@ import (
 //
 //	@Param		domain.NativeFunctionRequest	body		domain.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200							{object}	domain.NativeFunctionResponse
+//	@Success	200								{object}	domain.NativeFunctionResponse
 //	@Router		/admin/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req domain.NativeFunctionRequest

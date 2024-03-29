@@ -9,7 +9,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	remoteapp "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
 )
 
 var RoleClientOnly = fx.Options(
@@ -17,7 +17,7 @@ var RoleClientOnly = fx.Options(
 		fx.Annotate(
 			general.NewRoleClientImpl,
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
-			fx.As(new(remoteapp.RoleClient)),
+			fx.As(new(svc.RoleClient)),
 		),
 	),
 )

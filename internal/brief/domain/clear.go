@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 type BriefClearHook struct {
@@ -19,7 +19,7 @@ func (c BriefClearHook) OnAppCreate(ctx context.Context, app *app.App) error {
 }
 
 func (c BriefClearHook) OnAppDelete(ctx context.Context, app *app.App) error {
-	return c.repo.DeleteAllByAppID(ctx, app.ID)
+	return c.repo.DeleteByAppID(ctx, app.ID)
 }
 
 func (c BriefClearHook) OnAppModify(ctx context.Context, before *app.App, after *app.App) error {

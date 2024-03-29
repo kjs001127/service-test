@@ -1,12 +1,12 @@
 package e2e
 
 import (
-	"github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 func successfulAppServerFunctionInvoke() mockServer {
-	res := &domain.Action{
-		Type:       domain.ActionType("button"),
+	res := &svc.Action{
+		Type:       svc.ActionType("button"),
 		Attributes: map[string]any{"fakeAttribute": "fakeValue"},
 	}
 	return mockServer{

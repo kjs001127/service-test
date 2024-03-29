@@ -2,7 +2,7 @@ package invoke
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
 	wysiwyg "github.com/channel-io/ch-app-store/internal/wysiwyg/svc"
 )
 

@@ -26,7 +26,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
@@ -42,12 +42,11 @@ var httpModule = fx.Options(
 	gintoolfx.ApiServer,
 )
 
-var fullAppModule = fx.Module(
-	"appTest",
+var fullAppModule = fx.Options(
 	dbfx.Postgres,
 	configfx.Values,
 	httpModule,
-	remoteappfx.RemoteAppDev,
+	developmentfx.RemoteAppDevelopment,
 	datadogfx.Datadog,
 	brieffx.Brief,
 	wysiwygfx.WysiwygQuery,

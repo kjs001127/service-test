@@ -12,6 +12,10 @@ type SpanCorrelatingLogger struct {
 	delegate log.ContextAwareLogger
 }
 
+func DecorateLogger(delegate log.ContextAwareLogger) log.ContextAwareLogger {
+	return &SpanCorrelatingLogger{delegate: delegate}
+}
+
 func (s *SpanCorrelatingLogger) Debug(ctx context.Context, logs ...interface{}) {
 	s.delegate.Debug(ctx, logs...)
 }
@@ -24,10 +28,6 @@ func (s *SpanCorrelatingLogger) Debugw(ctx context.Context, msg string, kvs ...i
 		kvs = append(kvs, span.Context().TraceID())
 	}
 	s.delegate.Debugw(ctx, msg, kvs...)
-}
-
-func DecorateLogger(delegate log.ContextAwareLogger) log.ContextAwareLogger {
-	return &SpanCorrelatingLogger{delegate: delegate}
 }
 
 func (s *SpanCorrelatingLogger) Info(ctx context.Context, logs ...interface{}) {

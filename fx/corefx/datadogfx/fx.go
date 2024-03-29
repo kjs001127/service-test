@@ -8,7 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/datadog"
 )
 

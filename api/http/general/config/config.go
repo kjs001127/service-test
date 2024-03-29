@@ -8,7 +8,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general"
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
@@ -26,7 +26,7 @@ const (
 //	@Param		channelID		path		string	true	"id of channel"
 //
 //	@Success	200				{object}	any		"JSON of configMap"
-//	@Router		/general/v1/channels/{channelID}/app-channels/{appID}/configs [get]
+//	@Router		/general/v1/channels/{channelID}/installed-apps/{appID}/configs [get]
 func (h *Handler) getConfig(ctx *gin.Context) {
 
 	appID, channelID := ctx.Param("appID"), ctx.Param("channelID")
@@ -36,14 +36,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	installedApp, err := h.querySvc.Query(ctx, app.Install{AppID: appID, ChannelID: channelID})
+	_, appCh, err := h.querySvc.Query(ctx, app.InstallationID{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, installedApp.AppChannel.Configs)
+	ctx.JSON(http.StatusOK, appCh.Configs)
 }
 
 func authorize(rbac authgen.ParsedRBACToken, channelID, appID string) error {

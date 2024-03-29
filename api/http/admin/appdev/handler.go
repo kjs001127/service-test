@@ -2,16 +2,16 @@ package appdev
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/remoteapp/domain"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appDevSvc app.AppDevSvc
+	appDevSvc svc.AppDevSvc
 }
 
-func NewHandler(appDevSvc app.AppDevSvc) *Handler {
+func NewHandler(appDevSvc svc.AppDevSvc) *Handler {
 	return &Handler{appDevSvc: appDevSvc}
 }
 

@@ -9,7 +9,8 @@ import (
 
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
+	command "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 const callerTypeUser = "user"
@@ -38,16 +39,16 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
-		CommandKey: command.CommandKey{
+		CommandKey: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeFront,
+			Scope: model.ScopeFront,
 		},
-		CommandBody: body,
 		Caller: command.Caller{
 			Type: callerTypeUser,
 			ID:   user.ID,
 		},
+		CommandBody: body,
 	})
 	if err != nil {
 		_ = ctx.Error(err)
@@ -62,12 +63,12 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 //	@Summary	execute selected AutoComplete of Command
 //	@Tags		Front
 //
-//	@Param		x-session						header	string							true	"access token"
-//	@Param		appID							path	string							true	"id of App"
-//	@Param		name							path	string							true	"name of Command to execute autoComplete"
-//	@Param		channelID						path	string							true	"channelID"
-//	@Param		command.AutoCompleteBody		body	command.AutoCompleteBody	true	"context and params to execute autoComplete"
-//	@Success	200								{array}	command.Choice
+//	@Param		x-session					header		string						true	"access token"
+//	@Param		appID						path		string						true	"id of App"
+//	@Param		name						path		string						true	"name of Command to execute autoComplete"
+//	@Param		channelID					path		string						true	"channelID"
+//	@Param		command.AutoCompleteBody	body		command.AutoCompleteBody	true	"context and params to execute autoComplete"
+//	@Success	200							{object}	command.AutoCompleteResponse
 //	@Router		/front/v1/channels/{channelID}/apps/{appID}/commands/{name}/auto-complete [put]
 func (h *Handler) autoComplete(ctx *gin.Context) {
 	var body command.AutoCompleteBody
@@ -82,16 +83,16 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
-		Command: command.CommandKey{
+		Command: model.CommandKey{
 			AppID: appID,
 			Name:  name,
-			Scope: command.ScopeFront,
+			Scope: model.ScopeFront,
 		},
-		Body: body,
 		Caller: command.Caller{
 			ID:   user.ID,
 			Type: callerTypeUser,
 		},
+		Body: body,
 	})
 	if err != nil {
 		_ = ctx.Error(err)
@@ -114,7 +115,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, cmds, err := h.querySvc.Query(ctx, channelID, command.ScopeFront)
+	apps, cmds, err := h.querySvc.Query(ctx, channelID, model.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

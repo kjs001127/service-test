@@ -14,7 +14,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -32,7 +32,7 @@ var Admin = fx.Options(
 
 	appfx.App,
 	commandfx.Command,
-	remoteappfx.RemoteAppDev,
+	developmentfx.RemoteAppDevelopment,
 	nativefx.Native,
 	brieffx.Brief,
 
