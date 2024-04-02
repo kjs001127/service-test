@@ -44,8 +44,7 @@
       const wamData = (() => {
         try {
           const searchParams = new URLSearchParams(window.location.search)
-          const wamDataFromQueryParam = searchParams.get('wam_data')
-          const decodedWamData = decodeURIComponent(wamDataFromQueryParam)
+          const decodedWamData = searchParams.get('wam_data')
           const parsedWamData = JSON.parse(decodedWamData)
           const flattenedWamData = flattenObject(parsedWamData)
           return flattenedWamData
