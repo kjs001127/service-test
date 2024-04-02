@@ -9,13 +9,12 @@ import (
 )
 
 type QuerySvc struct {
-	appChRepo  AppChannelRepository
-	appRepo    AppRepository
-	installSvc *AppInstallSvc
+	appChRepo AppChannelRepository
+	appRepo   AppRepository
 }
 
-func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository, installSvc *AppInstallSvc) *QuerySvc {
-	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo, installSvc: installSvc}
+func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository) *QuerySvc {
+	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo}
 }
 
 func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, []*model.AppInstallation, error) {
@@ -43,7 +42,7 @@ func (s *QuerySvc) Query(ctx context.Context, install model.InstallationID) (*mo
 	}
 
 	if app.IsBuiltIn {
-		return s.installSvc.InstallApp(ctx, install.ChannelID, app)
+		return s.installBuiltInApp(ctx, install.ChannelID, app)
 	}
 
 	appCh, err := s.appChRepo.Fetch(ctx, install)
@@ -68,17 +67,19 @@ func (s *QuerySvc) installBuiltInApps(ctx context.Context, channelID string) err
 		return errors.Wrap(err, "query builtIn fail")
 	}
 
-	if err := s.installApps(ctx, channelID, builtInApps); err != nil {
-		return errors.Wrap(err, "install builtIn app fail")
-	}
-	return nil
-}
-
-func (s *QuerySvc) installApps(ctx context.Context, channelID string, builtIns []*model.App) error {
-	for _, builtIn := range builtIns {
-		if _, _, err := s.installSvc.InstallApp(ctx, channelID, builtIn); err != nil {
+	for _, builtIn := range builtInApps {
+		if _, _, err := s.installBuiltInApp(ctx, channelID, builtIn); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (s *QuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) (*model.App, *model.AppInstallation, error) {
+	appCh, err := s.appChRepo.Save(ctx, &model.AppInstallation{
+		AppID:     builtIn.ID,
+		ChannelID: channelID,
+		Configs:   builtIn.ConfigSchemas.DefaultConfig(),
+	})
+	return builtIn, appCh, err
 }

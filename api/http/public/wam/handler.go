@@ -2,16 +2,16 @@ package wam
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/remoteapp/interaction/svc"
+	"github.com/channel-io/ch-app-store/internal/function/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	wamDownloader *svc.FileStreamer
+	wamDownloader *svc.AppHttpProxy
 }
 
-func NewHandler(wamDownloader *svc.FileStreamer) *Handler {
+func NewHandler(wamDownloader *svc.AppHttpProxy) *Handler {
 	return &Handler{wamDownloader: wamDownloader}
 }
 

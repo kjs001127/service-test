@@ -7,13 +7,16 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/functionfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -31,7 +34,10 @@ var Admin = fx.Options(
 
 	appfx.App,
 	commandfx.Command,
-	developmentfx.RemoteAppDevelopment,
+	approlefx.AppRole,
+	appdevfx.AppDev,
+	installhookfx.InstallHooks,
+	functionfx.Function,
 	nativefx.Native,
 	brieffx.Brief,
 

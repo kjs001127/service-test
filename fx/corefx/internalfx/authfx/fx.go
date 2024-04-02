@@ -9,7 +9,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
+	"github.com/channel-io/ch-app-store/internal/remoteapp/approle/svc"
 )
 
 var RoleClientOnly = fx.Options(

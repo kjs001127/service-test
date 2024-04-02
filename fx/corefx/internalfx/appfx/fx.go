@@ -40,7 +40,7 @@ var AppSvcs = fx.Options(
 var AppDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			repo.NewAppChannelDao,
+			repo.NewAppInstallationDao,
 			fx.As(new(app.AppChannelRepository)),
 		),
 		fx.Annotate(

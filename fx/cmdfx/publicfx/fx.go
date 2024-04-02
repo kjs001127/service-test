@@ -11,13 +11,14 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/functionfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/interactionfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -33,8 +34,9 @@ var Public = fx.Options(
 	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
-	wysiwygfx.WysiwygQuery,
-	interactionfx.RemoteAppInteraction,
+	approlefx.AppRole,
+	functionfx.Function,
+	installhookfx.InstallHooks,
 
 	invokelogfx.Loggers,
 

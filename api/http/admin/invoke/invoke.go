@@ -11,7 +11,7 @@ import (
 	localdto "github.com/channel-io/ch-app-store/api/http/admin/dto"
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
+	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
 	"github.com/channel-io/ch-app-store/internal/native/domain"
 )
 
