@@ -20,7 +20,6 @@ import (
 	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
@@ -43,11 +42,10 @@ var httpModule = fx.Options(
 )
 
 var fullAppModule = fx.Options(
-	dbfx.Postgres,
+	datadogfx.Datadog,
 	configfx.Values,
 	httpModule,
 	developmentfx.RemoteAppDevelopment,
-	datadogfx.Datadog,
 	brieffx.Brief,
 	wysiwygfx.WysiwygQuery,
 	appfx.App,

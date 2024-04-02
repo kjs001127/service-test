@@ -10,7 +10,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
@@ -41,7 +40,6 @@ var Public = fx.Options(
 
 	configfx.Values,
 	restyfx.Clients,
-	dbfx.Postgres,
 	datadogfx.Datadog,
 	logfx.Logger,
 )
