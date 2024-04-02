@@ -5,11 +5,11 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
+	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	"github.com/channel-io/ch-app-store/internal/remoteapp/approle/svc"
 )
 
 var RoleClientOnly = fx.Options(
