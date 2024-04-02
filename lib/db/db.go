@@ -6,8 +6,6 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-
-	"github.com/channel-io/ch-app-store/config"
 )
 
 type DB interface {
@@ -20,18 +18,29 @@ type DB interface {
 	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 }
 
-func BuildDataSource() (*sql.DB, error) {
-	cfg := config.Get()
-	psql := cfg.Psql
-	name := fmt.Sprintf(
-		"host=%s dbname=%s search_path=%s user=%s password=%s sslmode=%s",
-		psql.Host, psql.DBName, psql.Schema, psql.User, psql.Password, psql.SSLMode,
-	)
+type Config struct {
+	Schema      string `required:"true"`
+	DBName      string `required:"true"`
+	Host        string `required:"true"`
+	Port        string `required:"true"`
+	User        string `required:"true"`
+	Password    string `required:"true"`
+	SSLMode     string `required:"true"`
+	MaxOpenConn int    `required:"true"`
+}
 
-	opened, err := sql.Open("postgres", name)
+func BuildDataSource(driverName string, cfg Config) (*sql.DB, error) {
+	opened, err := sql.Open(driverName, DataSourceName(cfg))
 	if err != nil {
 		return nil, errors.Wrap(err, "error while opening psql")
 	}
-	opened.SetMaxOpenConns(50)
+	opened.SetMaxOpenConns(cfg.MaxOpenConn)
 	return opened, nil
+}
+
+func DataSourceName(cfg Config) string {
+	return fmt.Sprintf(
+		"host=%s dbname=%s search_path=%s user=%s password=%s sslmode=%s",
+		cfg.Host, cfg.DBName, cfg.Schema, cfg.User, cfg.Password, cfg.SSLMode,
+	)
 }

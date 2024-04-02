@@ -9,10 +9,21 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
-var Postgres = fx.Options(
-	fx.Provide(
-		db.BuildDataSource,
+const (
+	postgres   = "postgres"
+	driverName = `name:"postgres"`
+)
+
+var Postgres = fx.Module(
+	"postgres",
+
+	fx.Supply(
+		fx.Annotate(
+			postgres,
+			fx.ResultTags(driverName),
+		),
 	),
+
 	fx.Invoke(func(db *sql.DB) {
 		tx.EnableDatabase(db)
 	}),

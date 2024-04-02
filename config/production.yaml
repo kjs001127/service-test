@@ -11,6 +11,7 @@ psql:
   password: ${PSQL_PASSWORD}
   user: app_store
   sslmode: disable
+  maxOpenConn: 50
 log:
   console:
     level: debug

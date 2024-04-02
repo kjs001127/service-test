@@ -11,6 +11,7 @@ import (
 
 	"github.com/spf13/viper"
 
+	"github.com/channel-io/ch-app-store/lib/db"
 	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
@@ -31,16 +32,8 @@ type Config struct {
 		AuthAdminURL  string `required:"true"`
 		JWTServiceKey string `required:"true"`
 	}
-	Psql struct {
-		Schema   string `required:"true"`
-		DBName   string `required:"true"`
-		Host     string `required:"true"`
-		Port     string `required:"true"`
-		User     string `required:"true"`
-		Password string `required:"true"`
-		SSLMode  string `required:"true"`
-	}
-	Log chlog.Config
+	Log  chlog.Config
+	Psql db.Config
 }
 
 func init() {
