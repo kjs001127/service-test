@@ -12,6 +12,7 @@ psql:
   user: app_store
   password: abc
   sslmode: disable
+  maxOpenConn: 50
 log:
   console:
     level: debug

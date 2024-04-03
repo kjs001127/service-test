@@ -53,6 +53,11 @@ func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brie
 	return unmarshalAll(all), nil
 }
 
+func (b *BriefDao) DeleteByAppID(ctx context.Context, appID string) error {
+	_, err := models.Briefs(qm.Where("app_id = $1", appID)).DeleteAll(ctx, b.db)
+	return errors.WithStack(err)
+}
+
 func unmarshal(model *models.Brief) *domain.Brief {
 	return &domain.Brief{
 		AppID:             model.AppID,

@@ -2,8 +2,8 @@ package appstore
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	command "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
@@ -11,11 +11,12 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 type Handler struct {
 	appRepo app.AppRepository
 	cmdRepo command.CommandRepository
-
-	querySvc app.QuerySvc
 }
 
-func NewHandler(appRepo app.AppRepository, cmdRepo command.CommandRepository) *Handler {
+func NewHandler(
+	appRepo app.AppRepository,
+	cmdRepo command.CommandRepository,
+) *Handler {
 	return &Handler{appRepo: appRepo, cmdRepo: cmdRepo}
 }
 

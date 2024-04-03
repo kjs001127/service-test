@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	command "github.com/channel-io/ch-app-store/internal/command/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 const srvPort = 3020
@@ -59,7 +59,7 @@ func Test(t *testing.T) {
 			req: request{
 				method: "POST",
 				path:   "/admin/apps/{appId}/commands",
-				body: toJSONMap(dto.RegisterRequest{Commands: []*command.Command{
+				body: toJSONMap(dto.RegisterRequest{Commands: []*model.Command{
 					{
 						Name:               "testCommand",
 						Scope:              "desk",
@@ -113,7 +113,7 @@ func Test(t *testing.T) {
 			name: "install app in desk",
 			req: request{
 				method: "PUT",
-				path:   "/desk/v1/channels/{channelId}/app-channels/{appId}",
+				path:   "/desk/v1/channels/{channelId}/installed-apps/{appId}",
 				header: map[string]string{
 					"x-account": "1",
 				},
@@ -160,7 +160,7 @@ func Test(t *testing.T) {
 			req: request{
 				method: "POST",
 				path:   "/admin/apps/{appId}/commands",
-				body: toJSONMap(command.Command{
+				body: toJSONMap(model.Command{
 					ActionFunctionName: "newActionFunctionName",
 				}),
 			},

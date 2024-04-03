@@ -3,9 +3,10 @@ package commandfx
 import (
 	"go.uber.org/fx"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	"github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/repo"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 const (
@@ -18,17 +19,21 @@ var Command = fx.Options(
 )
 var CommandSvcs = fx.Options(
 	fx.Provide(
-		domain.NewParamValidator,
-		domain.NewRegisterService,
-		domain.NewAutoCompleteInvoker,
-		app.NewTypedInvoker[domain.CommandBody, domain.Action],
-		app.NewTypedInvoker[domain.AutoCompleteBody, domain.AutoCompleteResponse],
+		fx.Annotate(
+			svc.NewCommandClearHook,
+			fx.As(new(app.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
+		),
+		svc.NewRegisterService,
+		svc.NewAutoCompleteInvoker,
+		app.NewTypedInvoker[svc.CommandBody, svc.Action],
+		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
 	),
 
 	fx.Provide(
 		fx.Annotate(
-			domain.NewInvoker,
-			fx.ParamTags(``, ``, ``, CommandListenersGroup),
+			svc.NewInvoker,
+			fx.ParamTags(``, ``, CommandListenersGroup),
 		),
 	),
 )
@@ -37,7 +42,7 @@ var CommandDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewCommandDao,
-			fx.As(new(domain.CommandRepository)),
+			fx.As(new(svc.CommandRepository)),
 		),
 	),
 )

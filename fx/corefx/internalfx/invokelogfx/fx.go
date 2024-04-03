@@ -5,8 +5,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	"github.com/channel-io/ch-app-store/internal/command/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/invokelog"
 )
 
@@ -29,7 +29,7 @@ var commandLogger = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			invokelog.NewCommandDBLogger,
-			fx.As(new(domain.CommandRequestListener)),
+			fx.As(new(svc.CommandRequestListener)),
 			fx.ResultTags(commandfx.CommandListenersGroup),
 		),
 	),

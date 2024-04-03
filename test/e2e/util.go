@@ -20,13 +20,12 @@ import (
 	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
@@ -42,13 +41,11 @@ var httpModule = fx.Options(
 	gintoolfx.ApiServer,
 )
 
-var fullAppModule = fx.Module(
-	"appTest",
-	dbfx.Postgres,
+var fullAppModule = fx.Options(
+	datadogfx.Datadog,
 	configfx.Values,
 	httpModule,
-	remoteappfx.RemoteAppDev,
-	datadogfx.Datadog,
+	developmentfx.RemoteAppDevelopment,
 	brieffx.Brief,
 	wysiwygfx.WysiwygQuery,
 	appfx.App,

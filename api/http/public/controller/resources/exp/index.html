@@ -3,7 +3,7 @@
   <head>
     <title></title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <style>
       body {
         margin: 0;
@@ -44,8 +44,7 @@
       const wamData = (() => {
         try {
           const searchParams = new URLSearchParams(window.location.search)
-          const wamDataFromQueryParam = searchParams.get('wam_data')
-          const decodedWamData = decodeURIComponent(wamDataFromQueryParam)
+          const decodedWamData = searchParams.get('wam_data')
           const parsedWamData = JSON.parse(decodedWamData)
           const flattenedWamData = flattenObject(parsedWamData)
           return flattenedWamData
@@ -89,7 +88,7 @@
         }
       }
 
-      function close({ appId, name, params = null } = {}) {
+      function close({ appId, name, params = {} } = {}) {
         const wamEvent = appId && name ? {
           type: 'command',
           wamId,
@@ -109,7 +108,7 @@
         })
       }
 
-      function callCommand({ appId, name, params = null } = {}) {
+      function callCommand({ appId, name, params = {} } = {}) {
         sendToClient({
           type: 'command',
           wamId,
@@ -132,7 +131,7 @@
         })
       }
 
-      function callFunction({ appId, name, params = null } = {}) {
+      function callFunction({ appId, name, params = {} } = {}) {
         return fetch(`https://app-store-api.exp.channel.io/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
           body: JSON.stringify({

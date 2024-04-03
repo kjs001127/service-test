@@ -3,12 +3,12 @@ package dto
 import (
 	"time"
 
-	"github.com/channel-io/ch-app-store/internal/app/domain"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/app/model"
+	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 type AppsAndCommands struct {
-	Apps     []*domain.App `json:"apps"`
+	Apps     []*model.App  `json:"apps"`
 	Commands []*CommandDTO `json:"commands"`
 }
 

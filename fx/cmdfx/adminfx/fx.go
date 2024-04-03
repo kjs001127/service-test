@@ -7,14 +7,13 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/dbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -32,7 +31,7 @@ var Admin = fx.Options(
 
 	appfx.App,
 	commandfx.Command,
-	remoteappfx.RemoteAppDev,
+	developmentfx.RemoteAppDevelopment,
 	nativefx.Native,
 	brieffx.Brief,
 
@@ -40,7 +39,6 @@ var Admin = fx.Options(
 
 	restyfx.Clients,
 	configfx.Values,
-	dbfx.Postgres,
 	logfx.Logger,
 	datadogfx.Datadog,
 )

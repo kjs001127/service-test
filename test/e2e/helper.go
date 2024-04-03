@@ -7,7 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/internal/command/domain"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 var cli = resty.New()
@@ -39,8 +39,8 @@ func createRemoteApp() string {
 	return resMap["id"].(string)
 }
 
-func registerCommand(appID, functionName, name string, scope domain.Scope) {
-	req := dto.RegisterRequest{Commands: []*domain.Command{
+func registerCommand(appID, functionName, name string, scope model.Scope) {
+	req := dto.RegisterRequest{Commands: []*model.Command{
 		{
 			AppID:              appID,
 			Name:               name,
@@ -64,7 +64,7 @@ func registerCommand(appID, functionName, name string, scope domain.Scope) {
 func installApp(appID, channelID string) {
 	requester := cli.R()
 	requester.SetHeader("x-account", "1")
-	res, err := requester.Put(baseUrl + "/desk/v1/channels/" + channelID + "/app-channels/" + appID)
+	res, err := requester.Put(baseUrl + "/desk/v1/channels/" + channelID + "/installed-apps/" + appID)
 	if err != nil {
 		panic(err)
 	}

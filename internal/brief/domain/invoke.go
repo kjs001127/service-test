@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -48,19 +48,19 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
-	installedApps, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
+	_, appChs, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
-	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(installedApps.AppChannels))
+	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(appChs))
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
 	i.logger.Infow(ctx, "invoking brief",
 		"channelID", req.Channel,
-		"appIds", app.AppIDsOf(installedApps.AppChannels),
+		"appIds", app.AppIDsOf(appChs),
 	)
 
 	ch := make(chan *AppBrief, len(briefs))

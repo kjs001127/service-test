@@ -1,13 +1,19 @@
 package dto
 
 import (
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
+type InstalledApp struct {
+	App        *appmodel.App             `json:"app"`
+	AppChannel *appmodel.AppInstallation `json:"appChannel"`
+}
+
 type AppsAndFullCommands struct {
-	Apps     []*app.App     `json:"apps,omitempty"`
-	Commands []*cmd.Command `json:"commands,omitempty"`
+	Apps     []*appmodel.App `json:"apps"`
+	Commands []*cmd.Command  `json:"commands"`
 }
 
 type RegisterRequest struct {

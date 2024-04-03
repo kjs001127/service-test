@@ -2,8 +2,8 @@ package install
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/domain"
-	cmd "github.com/channel-io/ch-app-store/internal/command/domain"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
@@ -11,23 +11,28 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 type Handler struct {
 	installer *app.AppInstallSvc
 	configSvc *app.ConfigSvc
-	querySvc  *app.QuerySvc
-	cmdRepo   cmd.CommandRepository
+
+	querySvc *app.QuerySvc
+	cmdRepo  cmd.CommandRepository
 }
 
 func NewHandler(
 	installer *app.AppInstallSvc,
 	configSvc *app.ConfigSvc,
-	querySvc *app.QuerySvc,
 	cmdRepo cmd.CommandRepository,
+	querySvc *app.QuerySvc,
 ) *Handler {
-	return &Handler{installer: installer, configSvc: configSvc, querySvc: querySvc, cmdRepo: cmdRepo}
+	return &Handler{
+		installer: installer,
+		configSvc: configSvc,
+		cmdRepo:   cmdRepo,
+		querySvc:  querySvc,
+	}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/desk/v1/channels/:channelID/app-channels")
+	group := router.Group("/desk/v1/channels/:channelID/installed-apps")
 
-	// CORS 이슈가 있어 / 제거
 	group.GET("", h.queryAll)
 	group.GET("/:appID", h.query)
 	group.PUT("/:appID", h.install)
@@ -35,4 +40,15 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.PUT("/:appID/configs", h.setConfig)
 	group.GET("/:appID/configs", h.getConfig)
+
+	//legacy routes
+	legacyGroup := router.Group("/desk/v1/channels/:channelID/app-channels")
+
+	legacyGroup.GET("", h.queryAllLegacy)
+	legacyGroup.GET("/:appID", h.queryLegacy)
+	legacyGroup.PUT("/:appID", h.installLegacy)
+	legacyGroup.DELETE("/:appID", h.uninstallLegacy)
+
+	legacyGroup.PUT("/:appID/configs", h.setConfigLegacy)
+	legacyGroup.GET("/:appID/configs", h.getConfigLegacy)
 }
