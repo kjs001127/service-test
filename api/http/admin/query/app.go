@@ -7,6 +7,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
 // query godoc
@@ -23,7 +24,7 @@ func (h *Handler) query(ctx *gin.Context) {
 
 	appsInstalled, appChs, err := h.querySvc.QueryAll(ctx, channelID)
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
+	cmds, err := h.cmdRepo.FetchByAppIDsAndScope(ctx, app.AppIDsOf(appChs), cmd.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
