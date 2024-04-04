@@ -14,7 +14,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/functionfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
@@ -36,7 +35,6 @@ var Admin = fx.Options(
 	commandfx.Command,
 	approlefx.AppRole,
 	appdevfx.AppDev,
-	installhookfx.InstallHooks,
 	functionfx.Function,
 	nativefx.Native,
 	brieffx.Brief,

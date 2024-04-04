@@ -27,7 +27,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/functionfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
@@ -50,7 +49,6 @@ var fullAppModule = fx.Options(
 	httpModule,
 	approlefx.AppRole,
 	functionfx.Function,
-	installhookfx.InstallHooks,
 	brieffx.Brief,
 	appfx.App,
 	appdevfx.AppDev,
