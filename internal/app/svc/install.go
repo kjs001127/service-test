@@ -32,11 +32,6 @@ func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.Installati
 }
 
 func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, *model.AppInstallation, error) {
-	_, err := s.appChRepo.Fetch(ctx, model.InstallationID{
-		AppID:     app.ID,
-		ChannelID: channelID,
-	})
-
 	if err := s.installHandler.OnInstall(ctx, app, channelID); err != nil {
 		return nil, nil, errors.Wrap(err, "error while handling onInstall")
 	}
