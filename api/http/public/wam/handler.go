@@ -2,7 +2,7 @@ package wam
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/function/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)

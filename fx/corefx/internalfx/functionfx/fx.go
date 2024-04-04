@@ -5,9 +5,9 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/function/infra"
-	"github.com/channel-io/ch-app-store/internal/function/repo"
-	"github.com/channel-io/ch-app-store/internal/function/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/infra"
+	"github.com/channel-io/ch-app-store/internal/apphttp/repo"
+	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
 
 var Function = fx.Options(

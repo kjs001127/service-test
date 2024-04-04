@@ -8,7 +8,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/internal/function/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
 
 type HttpRequester struct {

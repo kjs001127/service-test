@@ -7,9 +7,9 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	functionmodel "github.com/channel-io/ch-app-store/internal/apphttp/model"
+	function "github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	role "github.com/channel-io/ch-app-store/internal/approle/svc"
-	functionmodel "github.com/channel-io/ch-app-store/internal/function/model"
-	function "github.com/channel-io/ch-app-store/internal/function/svc"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 

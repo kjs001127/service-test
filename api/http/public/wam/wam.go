@@ -3,7 +3,7 @@ package wam
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/internal/function/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
 
 // downloadWAM godoc

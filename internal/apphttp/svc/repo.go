@@ -3,7 +3,7 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/ch-app-store/internal/function/model"
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 )
 
 type AppUrlRepository interface {

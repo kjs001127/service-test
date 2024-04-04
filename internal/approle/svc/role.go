@@ -8,8 +8,8 @@ import (
 	"github.com/pkg/errors"
 
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
-	"github.com/channel-io/ch-app-store/internal/function/svc"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
