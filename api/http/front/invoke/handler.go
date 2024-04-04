@@ -3,7 +3,6 @@ package invoke
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
-	wysiwyg "github.com/channel-io/ch-app-store/internal/wysiwyg/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
@@ -12,10 +11,10 @@ type Handler struct {
 	invoker             *cmd.Invoker
 	autoCompleteInvoker *cmd.AutoCompleteInvoker
 
-	querySvc *wysiwyg.AppCommandQuerySvc
+	querySvc *cmd.AppCommandQuerySvc
 }
 
-func NewHandler(invoker *cmd.Invoker, autoCompleteInvoker *cmd.AutoCompleteInvoker, querySvc *wysiwyg.AppCommandQuerySvc) *Handler {
+func NewHandler(invoker *cmd.Invoker, autoCompleteInvoker *cmd.AutoCompleteInvoker, querySvc *cmd.AppCommandQuerySvc) *Handler {
 	return &Handler{invoker: invoker, autoCompleteInvoker: autoCompleteInvoker, querySvc: querySvc}
 }
 

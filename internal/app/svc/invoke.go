@@ -51,7 +51,7 @@ type InvokeHandler interface {
 
 type JsonFunctionRequest struct {
 	Method  string          `json:"method"`
-	Params  json.RawMessage `json:"params"`
+	Params  json.RawMessage `json:"params,omitempty"`
 	Context ChannelContext  `json:"context"`
 }
 
@@ -66,7 +66,7 @@ type Channel struct {
 
 type Caller struct {
 	Type string `json:"type"`
-	ID   string `json:"id"`
+	ID   string `json:"id,omitempty"`
 }
 
 type JsonFunctionResponse struct {

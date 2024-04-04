@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
+	"github.com/channel-io/ch-app-store/internal/appdev/svc"
 )
 
 // create godoc
@@ -67,7 +67,7 @@ func (h *Handler) delete(ctx *gin.Context) {
 func (h *Handler) query(ctx *gin.Context) {
 	ID := ctx.Query("roleId")
 
-	appFound, err := h.appDevSvc.FetchAppByRoleID(ctx, ID)
+	appFound, err := h.appRoleSvc.FetchRoles(ctx, ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

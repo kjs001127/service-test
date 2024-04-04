@@ -16,15 +16,15 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
-type AppChannelDao struct {
+type AppInstallationDao struct {
 	db db.DB
 }
 
-func NewAppChannelDao(db db.DB) *AppChannelDao {
-	return &AppChannelDao{db: db}
+func NewAppInstallationDao(db db.DB) *AppInstallationDao {
+	return &AppInstallationDao{db: db}
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
+func (a *AppInstallationDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
 	appCh, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -40,7 +40,7 @@ func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.Installation
 	return unmarshal(appCh)
 }
 
-func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
+func (a *AppInstallationDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
 	appCh, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
@@ -53,7 +53,7 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	return unmarshalAll(appCh)
 }
 
-func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallation) (*model.AppInstallation, error) {
+func (a *AppInstallationDao) Save(ctx context.Context, appChannel *model.AppInstallation) (*model.AppInstallation, error) {
 	model, err := marshal(appChannel)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling appChannel")
@@ -73,12 +73,12 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallat
 	return unmarshal(model)
 }
 
-func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
+func (a *AppInstallationDao) DeleteByAppID(ctx context.Context, appID string) error {
 	_, err := models.AppInstallations(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	return errors.WithStack(err)
 }
 
-func (a *AppChannelDao) Delete(ctx context.Context, identifier model.InstallationID) error {
+func (a *AppInstallationDao) Delete(ctx context.Context, identifier model.InstallationID) error {
 	appCh, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),

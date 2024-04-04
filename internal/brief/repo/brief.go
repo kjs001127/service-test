@@ -9,7 +9,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	"github.com/channel-io/ch-app-store/internal/brief/domain"
+	"github.com/channel-io/ch-app-store/internal/brief/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -21,7 +21,7 @@ func NewBriefDao(db db.DB) *BriefDao {
 	return &BriefDao{db: db}
 }
 
-func (b BriefDao) Fetch(ctx context.Context, appID string) (*domain.Brief, error) {
+func (b BriefDao) Fetch(ctx context.Context, appID string) (*model.Brief, error) {
 	one, err := models.Briefs(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
@@ -35,7 +35,7 @@ func (b BriefDao) Fetch(ctx context.Context, appID string) (*domain.Brief, error
 	return unmarshal(one), nil
 }
 
-func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*domain.Brief, error) {
+func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*model.Brief, error) {
 	slice := make([]interface{}, len(appIDs))
 	for i, v := range appIDs {
 		slice[i] = v
@@ -58,16 +58,16 @@ func (b *BriefDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.WithStack(err)
 }
 
-func unmarshal(model *models.Brief) *domain.Brief {
-	return &domain.Brief{
-		AppID:             model.AppID,
-		ID:                model.ID,
-		BriefFunctionName: model.BriefFunctionName,
+func unmarshal(briefModel *models.Brief) *model.Brief {
+	return &model.Brief{
+		AppID:             briefModel.AppID,
+		ID:                briefModel.ID,
+		BriefFunctionName: briefModel.BriefFunctionName,
 	}
 }
 
-func unmarshalAll(models models.BriefSlice) []*domain.Brief {
-	ret := make([]*domain.Brief, 0, len(models))
+func unmarshalAll(models models.BriefSlice) []*model.Brief {
+	ret := make([]*model.Brief, 0, len(models))
 	for _, m := range models {
 		ret = append(ret, unmarshal(m))
 	}

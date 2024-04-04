@@ -5,7 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	brief "github.com/channel-io/ch-app-store/internal/brief/domain"
+	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
 	native "github.com/channel-io/ch-app-store/internal/native/domain"
 )
 
