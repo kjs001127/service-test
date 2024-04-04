@@ -13,6 +13,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
@@ -58,6 +59,7 @@ var fullAppModule = fx.Options(
 	commandfx.Command,
 	restyfx.Clients,
 	nativefx.Native,
+	installhookfx.InstallHooks,
 
 	fx.Supply(log.New("Test")),
 )
