@@ -72,7 +72,7 @@ func (a *AppInstallationDao) Save(ctx context.Context, appChannel *model.AppInst
 	return nil
 }
 
-func (a *AppChannelDao) SaveIfNotExists(ctx context.Context, appChannel *model.AppInstallation) error {
+func (a *AppInstallationDao) SaveIfNotExists(ctx context.Context, appChannel *model.AppInstallation) error {
 	model, err := marshal(appChannel)
 	if err != nil {
 		return errors.Wrap(err, "error while marshaling appChannel")
