@@ -53,10 +53,10 @@ func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) 
 	return unmarshalAll(appCh)
 }
 
-func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallation) (*model.AppInstallation, error) {
+func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallation) error {
 	model, err := marshal(appChannel)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling appChannel")
+		return errors.Wrap(err, "error while marshaling appChannel")
 	}
 
 	if err = model.Upsert(
@@ -67,10 +67,29 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallat
 		boil.Blacklist("app_id", "channel_id"),
 		boil.Infer(),
 	); err != nil {
-		return nil, errors.Wrap(err, "error while upserting appChannel")
+		return errors.Wrap(err, "error while upserting appChannel")
+	}
+	return nil
+}
+
+func (a *AppChannelDao) SaveIfNotExists(ctx context.Context, appChannel *model.AppInstallation) error {
+	model, err := marshal(appChannel)
+	if err != nil {
+		return errors.Wrap(err, "error while marshaling appChannel")
 	}
 
-	return unmarshal(model)
+	if err = model.Upsert(
+		ctx,
+		a.db,
+		false,
+		[]string{"app_id", "channel_id"},
+		boil.None(),
+		boil.Infer(),
+	); err != nil {
+		return errors.Wrap(err, "error while upserting appChannel")
+	}
+
+	return nil
 }
 
 func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {

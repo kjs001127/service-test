@@ -36,16 +36,17 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *m
 		return nil, nil, errors.Wrap(err, "error while handling onInstall")
 	}
 
-	appCh, err := s.appChRepo.Save(ctx, &model.AppInstallation{
+	installation := &model.AppInstallation{
 		AppID:     app.ID,
 		ChannelID: channelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
-	})
+	}
+	err := s.appChRepo.Save(ctx, installation)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
 	}
 
-	return app, appCh, nil
+	return app, installation, nil
 }
 
 func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.InstallationID) error {

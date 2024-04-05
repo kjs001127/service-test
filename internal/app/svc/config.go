@@ -39,12 +39,11 @@ func (s *ConfigSvc) SetConfig(ctx context.Context, install model.InstallationID,
 
 	appCh.Configs = input
 
-	saved, err := s.appChRepo.Save(ctx, appCh)
-	if err != nil {
+	if err := s.appChRepo.Save(ctx, appCh); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return saved, nil
+	return appCh, nil
 }
 
 func (s *ConfigSvc) GetConfig(ctx context.Context, install model.InstallationID) (model.ConfigMap, error) {
