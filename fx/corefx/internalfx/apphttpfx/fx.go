@@ -1,8 +1,9 @@
-package functionfx
+package apphttpfx
 
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/apphttp/infra"
@@ -25,6 +26,11 @@ var FunctionSvcs = fx.Options(
 		fx.Annotate(
 			svc.NewAppHttpProxy,
 			fx.ParamTags(``, restyfx.App),
+		),
+		fx.Annotate(
+			svc.NewAppHookClearHook,
+			fx.As(new(app.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
 	),
 )

@@ -9,11 +9,11 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/functionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
@@ -36,7 +36,7 @@ var Admin = fx.Options(
 	commandfx.Command,
 	approlefx.AppRole,
 	appdevfx.AppDev,
-	functionfx.Function,
+	apphttpfx.Function,
 	nativefx.Native,
 	brieffx.Brief,
 	installhookfx.InstallHooks,

@@ -1,4 +1,4 @@
-package invoke
+package command
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"

@@ -10,6 +10,10 @@ type AppHookClearHook struct {
 	urlRepo AppUrlRepository
 }
 
+func NewAppHookClearHook(urlRepo AppUrlRepository) *AppHookClearHook {
+	return &AppHookClearHook{urlRepo: urlRepo}
+}
+
 func (a AppHookClearHook) OnAppCreate(ctx context.Context, app *model.App) error {
 	return nil
 }

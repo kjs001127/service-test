@@ -61,22 +61,28 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 }
 
 func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppResponse, error) {
+	created, err := tx.DoReturn(ctx, func(ctx context.Context) (*RemoteApp, error) {
+		created, err := s.manager.Create(ctx, req.App)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		if err = s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
+			return nil, errors.WithStack(err)
+		}
+		return &RemoteApp{App: created, Urls: req.Urls}, nil
+	})
+	if err != nil {
+		return AppResponse{}, err
+	}
+
 	roles, err := s.roleSvc.CreateRoles(ctx, req.ID, req.Roles)
 	if err != nil {
 		return AppResponse{}, err
 	}
 
-	return tx.DoReturn(ctx, func(ctx context.Context) (AppResponse, error) {
-		created, err := s.manager.Create(ctx, req.App)
-		if err != nil {
-			return AppResponse{}, errors.WithStack(err)
-		}
+	return AppResponse{Roles: roles, RemoteApp: created}, nil
 
-		if err = s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
-			return AppResponse{}, errors.WithStack(err)
-		}
-		return AppResponse{Roles: roles, RemoteApp: &RemoteApp{App: created, Urls: req.Urls}}, nil
-	})
 }
 
 func (s *AppDevSvcImpl) DeleteApp(ctx context.Context, appID string) error {
