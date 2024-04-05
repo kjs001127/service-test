@@ -26,6 +26,7 @@ var CommandSvcs = fx.Options(
 		),
 		svc.NewRegisterService,
 		svc.NewAutoCompleteInvoker,
+		svc.NewAppCommandQuerySvc,
 		app.NewTypedInvoker[svc.CommandBody, svc.Action],
 		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
 	),

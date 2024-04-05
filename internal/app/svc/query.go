@@ -9,13 +9,12 @@ import (
 )
 
 type QuerySvc struct {
-	appChRepo  AppChannelRepository
-	appRepo    AppRepository
-	installSvc *AppInstallSvc
+	appChRepo AppChannelRepository
+	appRepo   AppRepository
 }
 
-func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository, installSvc *AppInstallSvc) *QuerySvc {
-	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo, installSvc: installSvc}
+func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository) *QuerySvc {
+	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo}
 }
 
 func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, []*model.AppInstallation, error) {

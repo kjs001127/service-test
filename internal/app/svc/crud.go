@@ -38,27 +38,31 @@ func NewAppCrudSvcImpl(
 }
 
 func (a *AppCrudSvcImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
-	app.ID = uid.New().Hex()
-	app.State = model.AppStateEnabled
+	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
+		app.ID = uid.New().Hex()
+		app.State = model.AppStateEnabled
 
-	if err := a.callCreateHooks(ctx, app); err != nil {
-		return nil, err
-	}
+		if err := a.callCreateHooks(ctx, app); err != nil {
+			return nil, err
+		}
 
-	return a.appRepo.Save(ctx, app)
+		return a.appRepo.Save(ctx, app)
+	})
 }
 
 func (a *AppCrudSvcImpl) Update(ctx context.Context, app *model.App) (*model.App, error) {
-	appBefore, err := a.appRepo.FindApp(ctx, app.ID)
-	if err != nil {
-		return nil, err
-	}
+	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
+		appBefore, err := a.appRepo.FindApp(ctx, app.ID)
+		if err != nil {
+			return nil, err
+		}
 
-	if err := a.callModifyHooks(ctx, appBefore, app); err != nil {
-		return nil, err
-	}
+		if err := a.callModifyHooks(ctx, appBefore, app); err != nil {
+			return nil, err
+		}
 
-	return a.appRepo.Save(ctx, app)
+		return a.appRepo.Save(ctx, app)
+	})
 }
 
 func (a *AppCrudSvcImpl) Delete(ctx context.Context, appID string) error {
