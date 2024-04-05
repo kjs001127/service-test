@@ -42,7 +42,9 @@ func (s *QuerySvc) Query(ctx context.Context, install model.InstallationID) (*mo
 	}
 
 	if app.IsBuiltIn {
-		return s.installBuiltInApp(ctx, install.ChannelID, app)
+		if err := s.installBuiltInApp(ctx, install.ChannelID, app); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	appCh, err := s.appChRepo.Fetch(ctx, install)
@@ -68,18 +70,18 @@ func (s *QuerySvc) installBuiltInApps(ctx context.Context, channelID string) err
 	}
 
 	for _, builtIn := range builtInApps {
-		if _, _, err := s.installBuiltInApp(ctx, channelID, builtIn); err != nil {
-			return err
+		if err := s.installBuiltInApp(ctx, channelID, builtIn); err != nil {
+			return errors.Wrap(err, "install builtIn app fail")
 		}
 	}
+
 	return nil
 }
 
-func (s *QuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) (*model.App, *model.AppInstallation, error) {
-	appCh, err := s.appChRepo.Save(ctx, &model.AppInstallation{
+func (s *QuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) error {
+	return s.appChRepo.SaveIfNotExists(ctx, &model.AppInstallation{
 		AppID:     builtIn.ID,
 		ChannelID: channelID,
 		Configs:   builtIn.ConfigSchemas.DefaultConfig(),
 	})
-	return builtIn, appCh, err
 }
