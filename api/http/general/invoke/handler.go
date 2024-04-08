@@ -21,5 +21,5 @@ func NewHandler(invoker *app.TypedInvoker[json.RawMessage, json.RawMessage], nat
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	router.PUT("/general/v1/apps/:appID/functions", h.invoke)
-	//router.PUT("/general/v1/native/functions", h.invokeNative)
+	router.PUT("/general/v1/native/functions", h.invokeNative)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
+	"github.com/channel-io/ch-app-store/internal/native/domain"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
@@ -18,7 +19,6 @@ import (
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
-/*
 // invokeNative godoc
 //
 //	@Summary	invoke Function
@@ -38,19 +38,20 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 
 	rbacToken := middleware.RBAC(ctx)
 
-	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
-		Token: domain.Token{
+	resp := h.nativeInvoker.Invoke(ctx,
+		domain.Token{
 			Type:  rbacToken.Token.Header(),
 			Value: rbacToken.Token.Value(),
 		},
-		Method: req.Method,
-		Params: req.Params,
-	})
+		domain.NativeFunctionRequest{
+			Method: req.Method,
+			Params: req.Params,
+		},
+	)
 
 	ctx.JSON(http.StatusOK, resp)
 }
 
-*/
 // invoke godoc
 //
 //	@Summary	invoke Function
