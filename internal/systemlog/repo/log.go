@@ -31,7 +31,7 @@ func (s *SystemLogRepository) Save(ctx context.Context, input *model.SystemLog) 
 	return nil
 }
 
-func (s *SystemLogRepository) Query(ctx context.Context, req svc.QueryRequest) ([]*model.SystemLog, error) {
+func (s *SystemLogRepository) Query(ctx context.Context, req *svc.QueryRequest) ([]*model.SystemLog, error) {
 	ddbInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(ddbTableName),
 		AttributesToGet:           allAttributes(),
@@ -61,7 +61,7 @@ func allAttributes() []*string {
 	}
 }
 
-func keyValueExpression(req svc.QueryRequest) map[string]*dynamodb.AttributeValue {
+func keyValueExpression(req *svc.QueryRequest) map[string]*dynamodb.AttributeValue {
 	return map[string]*dynamodb.AttributeValue{
 		":pk": {S: aws.String(toChatKey(req.ChatType, req.ChatId))},
 		":sk": {S: aws.String(req.CursorID)},
@@ -75,7 +75,7 @@ func keyNameExpression() map[string]*string {
 	}
 }
 
-func rangeQueryExpression(req svc.QueryRequest) *string {
+func rangeQueryExpression(req *svc.QueryRequest) *string {
 	switch req.Order {
 	case svc.OrderAsc:
 		return aws.String("#pk = :pk AND #sk > :sk")
