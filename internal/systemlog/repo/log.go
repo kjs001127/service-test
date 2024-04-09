@@ -63,12 +63,8 @@ func allAttributes() []*string {
 
 func keyValueExpression(req svc.QueryRequest) map[string]*dynamodb.AttributeValue {
 	return map[string]*dynamodb.AttributeValue{
-		":pk": {
-			S: aws.String(toChatKey(req.ChatType, req.ChatId)),
-		},
-		":sk": {
-			S: aws.String(req.CursorID),
-		},
+		":pk": {S: aws.String(toChatKey(req.ChatType, req.ChatId))},
+		":sk": {S: aws.String(req.CursorID)},
 	}
 }
 
@@ -129,27 +125,13 @@ func unmarshalToModel(ddbModel map[string]*dynamodb.AttributeValue) (*model.Syst
 
 func marshalToDDBItem(input *model.SystemLog) map[string]*dynamodb.AttributeValue {
 	return map[string]*dynamodb.AttributeValue{
-		"id": {
-			S: aws.String(input.Id),
-		},
-		"chatKey": {
-			S: aws.String(toChatKey(input.ChatId, input.ChatId)),
-		},
-		"channelId": {
-			S: aws.String(input.ChannelID),
-		},
-		"message": {
-			S: aws.String(input.Message),
-		},
-		"appId": {
-			S: aws.String(input.AppID),
-		},
-		"createdAt": {
-			N: aws.String(strconv.FormatInt(input.CreatedAt, 10)),
-		},
-		"expiresAt": {
-			N: aws.String(strconv.FormatInt(input.ExpiresAt, 10)),
-		},
+		"id":        {S: aws.String(input.Id)},
+		"chatKey":   {S: aws.String(toChatKey(input.ChatId, input.ChatId))},
+		"channelId": {S: aws.String(input.ChannelID)},
+		"message":   {S: aws.String(input.Message)},
+		"appId":     {S: aws.String(input.AppID)},
+		"createdAt": {N: aws.String(strconv.FormatInt(input.CreatedAt, 10))},
+		"expiresAt": {N: aws.String(strconv.FormatInt(input.ExpiresAt, 10))},
 	}
 }
 
