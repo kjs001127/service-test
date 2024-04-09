@@ -1,4 +1,4 @@
-package handler
+package native
 
 import (
 	"context"
@@ -13,56 +13,62 @@ type Token struct {
 	Value string
 }
 
-type NativeFunctionRequest struct {
+type FunctionRequest struct {
 	Method string          `json:"method"`
 	Params json.RawMessage `json:"params"`
 }
 
-type NativeFunctionResponse struct {
-	Error  NativeErr       `json:"error,omitempty"`
+type FunctionResponse struct {
+	Error  Err             `json:"error,omitempty"`
 	Result json.RawMessage `json:"result,omitempty"`
 }
 
-type NativeErr struct {
+type Err struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
-func WrapCommonErr(err error) NativeFunctionResponse {
-	return NativeFunctionResponse{
-		Error: NativeErr{
+func WrapCommonErr(err error) FunctionResponse {
+	return FunctionResponse{
+		Error: Err{
 			Type:    "common",
 			Message: err.Error(),
 		},
 	}
 }
 
-type NativeFunctionInvoker struct {
-	router map[string]NativeFunctionHandler
+func ResultSuccess(resp json.RawMessage) FunctionResponse {
+	return FunctionResponse{
+		Result: resp,
+	}
+}
+
+type FunctionInvoker struct {
+	router map[string]FunctionHandler
 	logger log.ContextAwareLogger
 }
 
-func NewNativeFunctionInvoker(handlers []NativeFunctionRegistrant, logger log.ContextAwareLogger) *NativeFunctionInvoker {
-	ret := &NativeFunctionInvoker{router: make(map[string]NativeFunctionHandler), logger: logger}
+func NewNativeFunctionInvoker(handlers []FunctionRegistrant, logger log.ContextAwareLogger) *FunctionInvoker {
+	ret := &FunctionInvoker{router: make(map[string]FunctionHandler), logger: logger}
 	for _, r := range handlers {
 		r.RegisterTo(ret)
 	}
 	return ret
 }
 
-func (i *NativeFunctionInvoker) Register(method string, handler NativeFunctionHandler) {
+func (i *FunctionInvoker) Register(method string, handler FunctionHandler) {
 	i.router[method] = handler
 }
 
-func (i *NativeFunctionInvoker) Invoke(
+func (i *FunctionInvoker) Invoke(
 	ctx context.Context,
 	token Token,
-	req NativeFunctionRequest,
-) NativeFunctionResponse {
+	req FunctionRequest,
+) FunctionResponse {
 	handler, ok := i.router[req.Method]
 	if !ok {
 		i.logger.Warnw(ctx, "handler not found", "request", req)
-		return NativeFunctionResponse{Error: NativeErr{
+		return FunctionResponse{Error: Err{
 			Type:    "common",
 			Message: fmt.Sprintf("method not found: %s", req.Method),
 		}}
