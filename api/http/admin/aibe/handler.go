@@ -2,30 +2,26 @@ package aibe
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
-	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
+	systemlog "github.com/channel-io/ch-app-store/internal/systemlog/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	querySvc     *app.QuerySvc
-	briefRepo    brief.BriefRepository
 	briefInvoker *brief.Invoker
-	cmdRepo      cmd.CommandRepository
+	systemLogSvc *systemlog.SystemLogSvc
 }
 
 func NewHandler(
-	querySvc *app.QuerySvc,
-	briefRepo brief.BriefRepository,
 	briefInvoker *brief.Invoker,
-	cmdRepo cmd.CommandRepository,
+	systemLogSvc *systemlog.SystemLogSvc,
 ) *Handler {
-	return &Handler{querySvc: querySvc, briefRepo: briefRepo, briefInvoker: briefInvoker, cmdRepo: cmdRepo}
+	return &Handler{briefInvoker: briefInvoker, systemLogSvc: systemLogSvc}
 }
 
+// RegisterRoutes @TODO refactor api spec @Camel
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.GET("/admin/channels/:channelID/apps", h.query)
-	router.PUT("/admin/brief", h.brief)
+	router.PUT("/admin/brief", h.invokeBrief)
+	router.POST("/admin/logs", h.queryLog)
 }
