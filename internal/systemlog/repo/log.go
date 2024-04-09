@@ -18,6 +18,10 @@ type SystemLogRepository struct {
 	ddbCli *dynamodb.DynamoDB
 }
 
+func NewSystemLogRepository(ddbCli *dynamodb.DynamoDB) *SystemLogRepository {
+	return &SystemLogRepository{ddbCli: ddbCli}
+}
+
 func (s *SystemLogRepository) Save(ctx context.Context, input *model.SystemLog) error {
 	ddbInput := &dynamodb.PutItemInput{
 		Item:      marshalToDDBItem(input),
