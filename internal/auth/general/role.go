@@ -20,6 +20,8 @@ const (
 
 type RoleFetcher interface {
 	GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error)
+	CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error)
+	DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error)
 }
 
 type RoleClientImpl struct {

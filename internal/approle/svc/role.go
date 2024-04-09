@@ -10,12 +10,13 @@ import (
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
+	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
 
 type AppRoleSvc struct {
-	roleCli   RoleClient
+	roleCli   authgen.RoleFetcher
 	roleRepo  AppRoleRepository
 	urlRepo   svc.AppUrlRepository
 	manager   appsvc.AppCrudSvc
@@ -23,7 +24,7 @@ type AppRoleSvc struct {
 }
 
 func NewAppRoleSvc(
-	roleCli RoleClient,
+	roleCli authgen.RoleFetcher,
 	roleRepo AppRoleRepository,
 	typeRules map[model.RoleType]TypeRule,
 ) *AppRoleSvc {
