@@ -55,14 +55,6 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 	return api
 }
 
-func (a *CoreApi) ListMethods() []string {
-	var methods []string
-	for method, _ := range a.urlRouter {
-		methods = append(methods, method)
-	}
-	return methods
-}
-
 func (a *CoreApi) Handle(ctx context.Context, token native.Token, fnReq native.FunctionRequest) native.FunctionResponse {
 
 	uri, ok := a.urlRouter[fnReq.Method]
