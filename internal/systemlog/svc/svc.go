@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/channel-io/go-lib/pkg/uid"
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/systemlog/model"
@@ -26,6 +27,7 @@ func NewSystemLogSvc(repo SystemLogRepository) *SystemLogSvc {
 }
 
 func (s *SystemLogSvc) SaveLog(ctx context.Context, log *model.SystemLog) (*model.SystemLog, error) {
+	log.Id = uid.New().Hex()
 	log.CreatedAt = time.Now().Unix()
 	log.ExpiresAt = time.Now().Add(TTL).Unix()
 
@@ -52,4 +54,3 @@ type QueryRequest struct {
 	Order    Order  `json:"order"`
 	Limit    int    `json:"limit"`
 }
-
