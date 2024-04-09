@@ -12,7 +12,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
-	"github.com/channel-io/ch-app-store/internal/native/domain"
+	"github.com/channel-io/ch-app-store/internal/native/handler"
 )
 
 // invokeNative godoc
@@ -20,19 +20,19 @@ import (
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		domain.NativeFunctionRequest	body		domain.NativeFunctionRequest	true	"body of Function to invoke"
+//	@Param		handler.NativeFunctionRequest	body		handler.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200								{object}	domain.NativeFunctionResponse
+//	@Success	200								{object}	handler.NativeFunctionResponse
 //	@Router		/admin/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req domain.NativeFunctionRequest
+	var req handler.NativeFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	token := ctx.GetHeader("x-access-token")
-	resp := h.nativeInvoker.Invoke(ctx, domain.Token{Type: "x-access-token", Value: token}, domain.NativeFunctionRequest{
+	resp := h.nativeInvoker.Invoke(ctx, handler.Token{Type: "x-access-token", Value: token}, handler.NativeFunctionRequest{
 		Method: req.Method,
 		Params: req.Params,
 	})

@@ -1,4 +1,4 @@
-package domain
+package handler
 
 import (
 	"context"
@@ -37,31 +37,21 @@ func WrapCommonErr(err error) NativeFunctionResponse {
 	}
 }
 
-type NativeFunctionHandler interface {
-	Handle(ctx context.Context, token Token, request NativeFunctionRequest) NativeFunctionResponse
-	ListMethods() []string
-}
-
 type NativeFunctionInvoker struct {
 	router map[string]NativeFunctionHandler
 	logger log.ContextAwareLogger
 }
 
-func NewNativeFunctionInvoker(handlers []NativeFunctionHandler, logger log.ContextAwareLogger) *NativeFunctionInvoker {
+func NewNativeFunctionInvoker(handlers []NativeFunctionRegistrant, logger log.ContextAwareLogger) *NativeFunctionInvoker {
 	ret := &NativeFunctionInvoker{router: make(map[string]NativeFunctionHandler), logger: logger}
 	for _, r := range handlers {
-		ret.registerHandler(r)
+		r.RegisterTo(ret)
 	}
 	return ret
 }
 
-func (i *NativeFunctionInvoker) registerHandler(r NativeFunctionHandler) {
-	for _, m := range r.ListMethods() {
-		if _, alreadyExists := i.router[m]; alreadyExists {
-			panic(fmt.Errorf("method %s already has handler registered", m))
-		}
-		i.router[m] = r
-	}
+func (i *NativeFunctionInvoker) Register(method string, handler NativeFunctionHandler) {
+	i.router[method] = handler
 }
 
 func (i *NativeFunctionInvoker) Invoke(
@@ -79,7 +69,7 @@ func (i *NativeFunctionInvoker) Invoke(
 	}
 
 	i.logger.Debugw(ctx, "native function request", "request", req)
-	resp := handler.Handle(ctx, token, req)
+	resp := handler(ctx, token, req)
 	i.logger.Debugw(ctx, "native function response", "response", resp)
 
 	if len(resp.Error.Type) >= 0 {

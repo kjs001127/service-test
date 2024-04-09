@@ -5,17 +5,17 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/native/domain"
+	"github.com/channel-io/ch-app-store/internal/native/handler"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	invoker       *app.TypedInvoker[json.RawMessage, json.RawMessage]
-	nativeInvoker *domain.NativeFunctionInvoker
+	nativeInvoker *handler.NativeFunctionInvoker
 }
 
-func NewHandler(invoker *app.TypedInvoker[json.RawMessage, json.RawMessage], nativeInvoker *domain.NativeFunctionInvoker) *Handler {
+func NewHandler(invoker *app.TypedInvoker[json.RawMessage, json.RawMessage], nativeInvoker *handler.NativeFunctionInvoker) *Handler {
 	return &Handler{invoker: invoker, nativeInvoker: nativeInvoker}
 }
 
