@@ -27,7 +27,7 @@ func NewSystemLogSvc(repo SystemLogRepository) *SystemLogSvc {
 }
 
 func (s *SystemLogSvc) SaveLog(ctx context.Context, log *model.SystemLog) (*model.SystemLog, error) {
-	log.Id = uid.New().Hex()
+	log.ID = uid.New().Hex()
 	log.CreatedAt = time.Now().Unix()
 	log.ExpiresAt = time.Now().Add(TTL).Unix()
 

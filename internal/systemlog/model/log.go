@@ -1,7 +1,7 @@
 package model
 
 type SystemLog struct {
-	Id        string `json:"id"`
+	ID        string `json:"id"`
 	ChatType  string `json:"chatType"`
 	ChatId    string `json:"chatId"`
 	AppID     string `json:"appId"`

@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -45,7 +46,6 @@ func (s *SystemLogRepository) Query(ctx context.Context, req *svc.QueryRequest) 
 	}
 	ddbInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(ddbTableName),
-		AttributesToGet:           allAttributes(),
 		ExpressionAttributeNames:  exp.Names(),
 		ExpressionAttributeValues: exp.Values(),
 		KeyConditionExpression:    exp.KeyCondition(),
@@ -60,18 +60,6 @@ func (s *SystemLogRepository) Query(ctx context.Context, req *svc.QueryRequest) 
 	}
 
 	return unmarshalToModels(output.Items)
-}
-
-func allAttributes() []string {
-	return []string{
-		"id",
-		"chatKey",
-		"channelId",
-		"message",
-		"appId",
-		"createdAt",
-		"expiresAt",
-	}
 }
 
 func scanIdxForward(req *svc.QueryRequest) *bool {
@@ -117,9 +105,16 @@ func unmarshalToModels(ddbModels []map[string]types.AttributeValue) ([]*model.Sy
 	return ret, nil
 }
 
-func unmarshalToModel(ddbModel map[string]types.AttributeValue) (*model.SystemLog, error) {
+func unmarshalToModel(ddbModel map[string]types.AttributeValue) (log *model.SystemLog, err error) {
+	defer func() {
+		if panicErr := recover(); panicErr != nil {
+			err = fmt.Errorf("type validation failed, cause: %v", panicErr)
+		}
+	}()
+
 	var ret model.SystemLog
-	ret.AppID = ddbModel["id"].(*types.AttributeValueMemberS).Value
+	ret.ID = ddbModel["id"].(*types.AttributeValueMemberS).Value
+	ret.AppID = ddbModel["appId"].(*types.AttributeValueMemberS).Value
 	ret.ChannelID = ddbModel["channelId"].(*types.AttributeValueMemberS).Value
 	ret.Message = ddbModel["message"].(*types.AttributeValueMemberS).Value
 
@@ -144,7 +139,7 @@ func unmarshalToModel(ddbModel map[string]types.AttributeValue) (*model.SystemLo
 
 func marshalToDDBItem(input *model.SystemLog) map[string]types.AttributeValue {
 	return map[string]types.AttributeValue{
-		"id":        &types.AttributeValueMemberS{Value: input.Id},
+		"id":        &types.AttributeValueMemberS{Value: input.ID},
 		"chatKey":   &types.AttributeValueMemberS{Value: toChatKey(input.ChatId, input.ChatId)},
 		"channelId": &types.AttributeValueMemberS{Value: input.ChannelID},
 		"message":   &types.AttributeValueMemberS{Value: input.Message},
