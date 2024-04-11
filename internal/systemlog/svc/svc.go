@@ -16,11 +16,11 @@ type ChatType string
 const (
 	OrderAsc  = Order("asc")
 	OrderDesc = Order("desc")
-
-	ChatTypeUserChat = ChatType("userChat")
-
-	TTL = 24 * time.Hour * 7
 )
+
+const ChatTypeUserChat = ChatType("userChat")
+const TTL = 24 * time.Hour * 7
+const maxMessageSize = 500
 
 type SystemLogSvc struct {
 	repo SystemLogRepository
@@ -34,6 +34,10 @@ func (s *SystemLogSvc) SaveLog(ctx context.Context, log *model.SystemLog) (*mode
 	log.ID = uid.New().Hex()
 	log.CreatedAt = time.Now().UnixMilli()
 	log.ExpiresAt = time.Now().Add(TTL).Unix()
+
+	if len(log.Message) >= maxMessageSize {
+		log.Message = log.Message[:maxMessageSize]
+	}
 
 	if err := s.repo.Save(ctx, log); err != nil {
 		return nil, errors.Wrap(err, "ddb save log")
