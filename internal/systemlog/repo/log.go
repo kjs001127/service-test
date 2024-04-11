@@ -86,7 +86,7 @@ func rangeQueryExpression(req *svc.QueryRequest) *string {
 		return aws.String("#pk = :pk AND #sk > :sk")
 	case svc.OrderDesc:
 		return aws.String("#pk = :pk AND #sk < :sk")
-	default:
+	default: // default is asc
 		return aws.String("#pk = :pk AND #sk > :sk")
 	}
 }
