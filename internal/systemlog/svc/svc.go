@@ -11,11 +11,15 @@ import (
 )
 
 type Order string
+type ChatType string
 
 const (
 	OrderAsc  = Order("asc")
 	OrderDesc = Order("desc")
-	TTL       = 24 * time.Hour * 7
+
+	ChatTypeUserChat = ChatType("userChat")
+
+	TTL = 24 * time.Hour * 7
 )
 
 type SystemLogSvc struct {
@@ -48,9 +52,9 @@ func (s *SystemLogSvc) QueryLog(ctx context.Context, request *QueryRequest) ([]*
 }
 
 type QueryRequest struct {
-	ChatId   string `json:"chatId"`
-	ChatType string `json:"chatType"`
-	CursorID string `json:"cursorId"`
-	Order    Order  `json:"order"`
-	Limit    int32  `json:"limit"`
+	ChatId   string   `json:"chatId"`
+	ChatType ChatType `json:"chatType"`
+	CursorID string   `json:"cursorId"`
+	Order    Order    `json:"order"`
+	Limit    int32    `json:"limit"`
 }

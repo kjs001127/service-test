@@ -21,5 +21,5 @@ log:
     dsn:
     tracesSampleRate: 0
 ddb:
-  endpoint: http://localhost:8001
+  endpoint: http://localhost:8000
   region: ap-northeast-2

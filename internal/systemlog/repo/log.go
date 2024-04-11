@@ -140,7 +140,7 @@ func unmarshalToModel(ddbModel map[string]types.AttributeValue) (log *model.Syst
 func marshalToDDBItem(input *model.SystemLog) map[string]types.AttributeValue {
 	return map[string]types.AttributeValue{
 		"id":        &types.AttributeValueMemberS{Value: input.ID},
-		"chatKey":   &types.AttributeValueMemberS{Value: toChatKey(input.ChatId, input.ChatId)},
+		"chatKey":   &types.AttributeValueMemberS{Value: toChatKey(svc.ChatType(input.ChatType), input.ChatId)},
 		"channelId": &types.AttributeValueMemberS{Value: input.ChannelID},
 		"message":   &types.AttributeValueMemberS{Value: input.Message},
 		"appId":     &types.AttributeValueMemberS{Value: input.AppID},
@@ -149,8 +149,8 @@ func marshalToDDBItem(input *model.SystemLog) map[string]types.AttributeValue {
 	}
 }
 
-func toChatKey(chatType string, chatId string) string {
-	return chatType + "-" + chatId
+func toChatKey(chatType svc.ChatType, chatId string) string {
+	return string(chatType) + "-" + chatId
 }
 
 func fromChatKey(chatKey string) (string, string) {

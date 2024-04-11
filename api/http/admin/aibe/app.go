@@ -2,6 +2,7 @@ package aibe
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -43,22 +44,40 @@ func (h *Handler) invokeBrief(ctx *gin.Context) {
 //	@Summary	query log
 //	@Tags		Admin
 
-// @Param		svc.QueryRequest	body	svc.QueryRequest	true	"body of Brief"
+// @Param		userChatID	path	string	true	"userChatID"
+// @Param		sortOrder	query	string	true	"sortOrder"
+// @Param		since		query	string	true	"since"
+// @Param		limit		query	int		true	"limit"
 //
-// @Success	200					{array}	model.SystemLog
-// @Router		/admin/logs [post]
+// @Success	200			{array}	object
+// @Router		/admin/ai-be/user-chats/{userChatID}/logs [get]
 func (h *Handler) queryLog(ctx *gin.Context) {
-	var req svc.QueryRequest
-	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		ctx.JSON(http.StatusOK, app.WrapCommonErr(err))
-		return
-	}
+	userChatId, sortOrder, since, limit :=
+		ctx.Param("userChatID"),
+		ctx.Query("sortOrder"),
+		ctx.Query("since"),
+		ctx.Query("limit")
 
-	logs, err := h.systemLogSvc.QueryLog(ctx, &req)
+	logs, err := h.systemLogSvc.QueryLog(ctx, &svc.QueryRequest{
+		CursorID: since,
+		Limit:    limitFrom(limit),
+		Order:    svc.Order(sortOrder),
+		ChatType: svc.ChatTypeUserChat,
+		ChatId:   userChatId,
+	})
+
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, logs)
+}
+
+func limitFrom(limitStr string) int32 {
+	val, err := strconv.Atoi(limitStr)
+	if err != nil {
+		return 0
+	}
+	return int32(val)
 }

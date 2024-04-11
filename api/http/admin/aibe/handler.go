@@ -23,5 +23,5 @@ func NewHandler(
 // RegisterRoutes @TODO refactor api spec @Camel
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	router.PUT("/admin/brief", h.invokeBrief)
-	router.POST("/admin/logs", h.queryLog)
+	router.GET("/admin/ai-be/user-chats/:userChatID/logs", h.queryLog)
 }
