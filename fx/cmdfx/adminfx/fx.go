@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
@@ -17,6 +18,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -30,7 +32,7 @@ var Admin = fx.Options(
 
 	AdminHttp,
 
-	authfx.RoleClientOnly,
+	authfx.GeneralAuth,
 
 	appfx.App,
 	commandfx.Command,
@@ -42,7 +44,9 @@ var Admin = fx.Options(
 	installhookfx.InstallHooks,
 
 	invokelogfx.Loggers,
+	systemlogfx.SystemLog,
 
+	ddbfx.DynamoDB,
 	restyfx.Clients,
 	configfx.Values,
 	logfx.Logger,

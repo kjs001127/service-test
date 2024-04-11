@@ -50,6 +50,9 @@ func (s *SystemLog) WriteLog(ctx context.Context, token native.Token, req native
 }
 
 const (
+	appStoreService      = "api.app-store.channel.io"
+	writeSystemLogAction = "writeSystemLog"
+
 	channelScope = "channel"
 	appScope     = "app"
 )
@@ -58,6 +61,10 @@ func (s *SystemLog) authorize(ctx context.Context, token native.Token, log *mode
 	parsedRbac, err := s.rbacParser.Parse(ctx, token.Value)
 	if err != nil {
 		return err
+	}
+
+	if !parsedRbac.CheckAction(appStoreService, writeSystemLogAction) {
+		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
 	if !parsedRbac.CheckScopes(authgen.Scopes{

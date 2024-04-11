@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/internal/native"
 	"github.com/channel-io/ch-app-store/internal/native/coreapi"
+	"github.com/channel-io/ch-app-store/internal/native/systemlog"
 )
 
 var Native = fx.Options(
@@ -20,6 +21,11 @@ var Native = fx.Options(
 		fx.Annotate(
 			native.NewNativeFunctionInvoker,
 			fx.ParamTags(`group:"handler"`),
+		),
+		fx.Annotate(
+			systemlog.NewSystemLog,
+			fx.As(new(native.FunctionRegistrant)),
+			fx.ResultTags(`group:"handler"`),
 		),
 	),
 )
