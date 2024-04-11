@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/channel-io/ch-app-store/lib/db"
+	"github.com/channel-io/ch-app-store/lib/dynamodb"
 	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
@@ -34,6 +35,7 @@ type Config struct {
 	}
 	Log  chlog.Config
 	Psql db.Config
+	DDB  dynamodb.DDBConfig
 }
 
 func init() {

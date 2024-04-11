@@ -17,10 +17,10 @@ import (
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-//	@Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
 //
-//	@Success	200					{object}	brief.BriefResponses
-//	@Router		/admin/brief  [put]
+// @Success	200					{object}	brief.BriefResponses
+// @Router		/admin/brief  [put]
 func (h *Handler) invokeBrief(ctx *gin.Context) {
 	var req dto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -43,10 +43,10 @@ func (h *Handler) invokeBrief(ctx *gin.Context) {
 //	@Summary	query log
 //	@Tags		Admin
 
-//	@Param		svc.QueryRequest	body	svc.QueryRequest	true	"body of Brief"
+// @Param		svc.QueryRequest	body	svc.QueryRequest	true	"body of Brief"
 //
-//	@Success	200					{array}	model.SystemLog
-//	@Router		/admin/logs [post]
+// @Success	200					{array}	model.SystemLog
+// @Router		/admin/logs [post]
 func (h *Handler) queryLog(ctx *gin.Context) {
 	var req svc.QueryRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -57,6 +57,7 @@ func (h *Handler) queryLog(ctx *gin.Context) {
 	logs, err := h.systemLogSvc.QueryLog(ctx, &req)
 	if err != nil {
 		_ = ctx.Error(err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, logs)

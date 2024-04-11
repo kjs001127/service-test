@@ -27,6 +27,7 @@ var Values = fx.Options(
 			fx.ResultTags(Stage),
 		),
 		config.Get().Log,
+		config.Get().DDB,
 		config.Get().Psql,
 	),
 )

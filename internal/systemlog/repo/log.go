@@ -5,9 +5,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/systemlog/model"
 	"github.com/channel-io/ch-app-store/internal/systemlog/svc"
@@ -37,13 +39,19 @@ func (s *SystemLogRepository) Save(ctx context.Context, input *model.SystemLog) 
 }
 
 func (s *SystemLogRepository) Query(ctx context.Context, req *svc.QueryRequest) ([]*model.SystemLog, error) {
+	exp, err := keyExpression(req)
+	if err != nil {
+		return nil, errors.Wrap(err, "build expression for query")
+	}
 	ddbInput := &dynamodb.QueryInput{
 		TableName:                 aws.String(ddbTableName),
 		AttributesToGet:           allAttributes(),
-		ExpressionAttributeNames:  keyNameExpression(),
-		ExpressionAttributeValues: keyValueExpression(req),
-		KeyConditionExpression:    rangeQueryExpression(req),
+		ExpressionAttributeNames:  exp.Names(),
+		ExpressionAttributeValues: exp.Values(),
+		KeyConditionExpression:    exp.KeyCondition(),
+		ScanIndexForward:          scanIdxForward(req),
 		Limit:                     &req.Limit,
+		Select:                    types.SelectAllAttributes,
 	}
 
 	output, err := s.ddbCli.Query(ctx, ddbInput)
@@ -66,28 +74,34 @@ func allAttributes() []string {
 	}
 }
 
-func keyValueExpression(req *svc.QueryRequest) map[string]types.AttributeValue {
-	return map[string]types.AttributeValue{
-		":pk": &types.AttributeValueMemberS{Value: toChatKey(req.ChatType, req.ChatId)},
-		":sk": &types.AttributeValueMemberS{Value: req.CursorID},
-	}
+func scanIdxForward(req *svc.QueryRequest) *bool {
+	ret := req.Order == svc.OrderAsc
+	return &ret
 }
 
-func keyNameExpression() map[string]string {
-	return map[string]string{
-		"#pk": "chatKey",
-		"#sk": "id",
+func keyExpression(req *svc.QueryRequest) (expression.Expression, error) {
+	keyExp := partitionKeyExp(req)
+	if sortExp, exists := sortKeyExp(req); exists {
+		keyExp = expression.KeyAnd(keyExp, sortExp)
 	}
+	return expression.NewBuilder().WithKeyCondition(keyExp).Build()
 }
 
-func rangeQueryExpression(req *svc.QueryRequest) *string {
+func partitionKeyExp(req *svc.QueryRequest) expression.KeyConditionBuilder {
+	return expression.Key("chatKey").Equal(expression.Value(toChatKey(req.ChatType, req.ChatId)))
+}
+
+func sortKeyExp(req *svc.QueryRequest) (expression.KeyConditionBuilder, bool) {
+	if len(req.CursorID) <= 0 {
+		return expression.KeyConditionBuilder{}, false
+	}
 	switch req.Order {
-	case svc.OrderAsc:
-		return aws.String("#pk = :pk AND #sk > :sk")
 	case svc.OrderDesc:
-		return aws.String("#pk = :pk AND #sk < :sk")
-	default: // default is asc
-		return aws.String("#pk = :pk AND #sk > :sk")
+		return expression.Key("id").LessThan(expression.Value(req.CursorID)), true
+	case svc.OrderAsc:
+		fallthrough
+	default:
+		return expression.Key("id").GreaterThan(expression.Value(req.CursorID)), true
 	}
 }
 
