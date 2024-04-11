@@ -3,8 +3,6 @@ package adminfx
 import (
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/api/http/admin/register"
-
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/admin/aibe"
 	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
@@ -17,7 +15,6 @@ import (
 var AdminHandlers = fx.Options(
 	fx.Provide(
 		gintoolfx.AddTag(appdev.NewHandler),
-		gintoolfx.AddTag(register.NewHandler),
 		gintoolfx.AddTag(appserver.NewHandler),
 		gintoolfx.AddTag(aibe.NewHandler),
 		gintoolfx.AddTag(install.NewHandler),

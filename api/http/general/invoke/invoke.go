@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
-	"github.com/channel-io/ch-app-store/internal/native/handler"
+	"github.com/channel-io/ch-app-store/internal/native"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
@@ -39,11 +39,11 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 	rbacToken := middleware.RBAC(ctx)
 
 	resp := h.nativeInvoker.Invoke(ctx,
-		handler.Token{
+		native.Token{
 			Type:  rbacToken.Token.Header(),
 			Value: rbacToken.Token.Value(),
 		},
-		handler.NativeFunctionRequest{
+		native.FunctionRequest{
 			Method: req.Method,
 			Params: req.Params,
 		},
