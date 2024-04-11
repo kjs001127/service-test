@@ -52,5 +52,5 @@ type QueryRequest struct {
 	ChatType string `json:"chatType"`
 	CursorID string `json:"cursorId"`
 	Order    Order  `json:"order"`
-	Limit    int    `json:"limit"`
+	Limit    int32  `json:"limit"`
 }

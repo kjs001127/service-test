@@ -1,11 +1,16 @@
 package dynamodb
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"context"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-func NewDynamoDB() *dynamodb.DynamoDB {
-	sess := session.Must(session.NewSession())
-	return dynamodb.New(sess)
+func NewDynamoDB() *dynamodb.Client {
+	cfg, err := config.LoadDefaultConfig(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	return dynamodb.NewFromConfig(cfg)
 }
