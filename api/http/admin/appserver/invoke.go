@@ -18,9 +18,9 @@ import (
 //	@Summary	invoke Function
 //	@Tags		Admin
 //
-//	@Param		handler.NativeFunctionRequest	body		handler.NativeFunctionRequest	true	"body of Function to invoke"
+//	@Param		native.FunctionRequest	body		native.FunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200								{object}	handler.NativeFunctionResponse
+//	@Success	200						{object}	native.FunctionResponse
 //	@Router		/admin/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req native.FunctionRequest

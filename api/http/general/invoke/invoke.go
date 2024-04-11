@@ -27,7 +27,7 @@ import (
 //	@Param		x-access-token				header		string						true	"access token"
 //	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200							{object}	handler.NativeFunctionResponse
+//	@Success	200							{object}	native.FunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req dto.NativeFunctionRequest
