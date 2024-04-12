@@ -1,4 +1,4 @@
-package register
+package appdev
 
 import (
 	"net/http"
@@ -27,7 +27,7 @@ func (h *Handler) registerCommand(ctx *gin.Context) {
 	}
 	appID := ctx.Param("appID")
 
-	if err := h.registerSaga.Register(ctx, appID, request.Commands); err != nil {
+	if err := h.registerSvc.Register(ctx, appID, request.Commands); err != nil {
 		_ = ctx.Error(err)
 		return
 	}

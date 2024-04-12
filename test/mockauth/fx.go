@@ -6,13 +6,11 @@ import (
 	"github.com/stretchr/testify/mock"
 	"go.uber.org/fx"
 
-	mocksvc "github.com/channel-io/ch-app-store/generated/mock/approle/svc"
 	mockgeneral "github.com/channel-io/ch-app-store/generated/mock/auth/general"
 	mockprincipal "github.com/channel-io/ch-app-store/generated/mock/auth/principal"
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	mocksession "github.com/channel-io/ch-app-store/generated/mock/auth/principal/session"
 
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
@@ -29,9 +27,6 @@ var mockedManager = account.Manager{
 
 var Module = fx.Options(
 	fx.Provide(
-		func(t *testing.T) svc.RoleClient {
-			return mocksvc.NewRoleClient(t)
-		},
 		func(t *testing.T) account.ManagerFetcher {
 			mocked := mockaccount.NewManagerFetcher(t)
 			mocked.On("FetchManager", mock.Anything, mock.Anything, mock.Anything).

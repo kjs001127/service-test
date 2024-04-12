@@ -11,9 +11,11 @@ import (
 	"github.com/jarcoal/httpmock"
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
@@ -46,6 +48,8 @@ var httpModule = fx.Options(
 
 var fullAppModule = fx.Options(
 	datadogfx.Datadog,
+	systemlogfx.SystemLog,
+	ddbfx.DynamoDB,
 	configfx.Values,
 	httpModule,
 	approlefx.AppRole,

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
-	"github.com/channel-io/ch-app-store/internal/native/domain"
+	"github.com/channel-io/ch-app-store/internal/native"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
@@ -27,7 +27,7 @@ import (
 //	@Param		x-access-token				header		string						true	"access token"
 //	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200							{object}	domain.NativeFunctionResponse
+//	@Success	200							{object}	native.FunctionResponse
 //	@Router		/general/v1/native/functions [put]
 func (h *Handler) invokeNative(ctx *gin.Context) {
 	var req dto.NativeFunctionRequest
@@ -39,11 +39,11 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 	rbacToken := middleware.RBAC(ctx)
 
 	resp := h.nativeInvoker.Invoke(ctx,
-		domain.Token{
+		native.Token{
 			Type:  rbacToken.Token.Header(),
 			Value: rbacToken.Token.Value(),
 		},
-		domain.NativeFunctionRequest{
+		native.FunctionRequest{
 			Method: req.Method,
 			Params: req.Params,
 		},

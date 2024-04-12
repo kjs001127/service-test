@@ -5,10 +5,14 @@ go 1.19
 replace github.com/channel-io/ch-proto v0.0.0 => ./ch-proto
 
 require (
+	github.com/aws/aws-sdk-go v1.44.327
+	github.com/aws/aws-sdk-go-v2 v1.26.1
+	github.com/aws/aws-sdk-go-v2/config v1.18.37
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.13
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.31.1
 	github.com/channel-io/ch-proto v0.0.0
 	github.com/channel-io/go-lib v0.7.0
 	github.com/friendsofgo/errors v0.9.2
-	github.com/getsentry/sentry-go v0.17.0
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-resty/resty/v2 v2.11.0
@@ -17,7 +21,6 @@ require (
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.9.1
-	github.com/samber/lo v1.37.0
 	github.com/spf13/viper v1.18.0
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/files v1.0.1
@@ -31,8 +34,6 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.23.3 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/DataDog/appsec-internal-go v1.4.1 // indirect
 	github.com/DataDog/datadog-agent/pkg/obfuscate v0.48.0 // indirect
 	github.com/DataDog/datadog-agent/pkg/remoteconfig/state v0.48.1 // indirect
@@ -45,6 +46,20 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/TheZeroSlave/zapsentry v1.14.0 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.35 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.13.13 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.11 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.5 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.5 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.42 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.20.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.35 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.13.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5 // indirect
+	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
@@ -55,6 +70,7 @@ require (
 	github.com/ericlagergren/decimal v0.0.0-20211103172832-aca2edc11f73 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/getsentry/sentry-go v0.17.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
@@ -69,6 +85,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault-5 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
@@ -85,6 +102,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/samber/lo v1.37.0 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.7.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
@@ -106,13 +124,11 @@ require (
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/oauth2 v0.15.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

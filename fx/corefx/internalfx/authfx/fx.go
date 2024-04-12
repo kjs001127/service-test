@@ -5,7 +5,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
@@ -17,7 +16,7 @@ var RoleClientOnly = fx.Options(
 		fx.Annotate(
 			general.NewRoleClientImpl,
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
-			fx.As(new(svc.RoleClient)),
+			fx.As(new(general.RoleFetcher)),
 		),
 	),
 )

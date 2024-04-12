@@ -1,4 +1,4 @@
-package handler
+package coreapi
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/channel-io/ch-app-store/internal/native/domain"
+	"github.com/channel-io/ch-app-store/internal/native"
 )
 
 const (
@@ -25,6 +25,12 @@ type CoreApi struct {
 	adminUrl  string
 	resty     *resty.Client
 	urlRouter map[string]string
+}
+
+func (a *CoreApi) RegisterTo(registry native.FunctionRegistry) {
+	for method, _ := range a.urlRouter {
+		registry.Register(method, a.Handle)
+	}
 }
 
 func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
@@ -49,19 +55,11 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 	return api
 }
 
-func (a *CoreApi) ListMethods() []string {
-	var methods []string
-	for method, _ := range a.urlRouter {
-		methods = append(methods, method)
-	}
-	return methods
-}
-
-func (a *CoreApi) Handle(ctx context.Context, token domain.Token, fnReq domain.NativeFunctionRequest) domain.NativeFunctionResponse {
+func (a *CoreApi) Handle(ctx context.Context, token native.Token, fnReq native.FunctionRequest) native.FunctionResponse {
 
 	uri, ok := a.urlRouter[fnReq.Method]
 	if !ok {
-		return domain.WrapCommonErr(errors.New("mapping not found on core api handler"))
+		return native.WrapCommonErr(errors.New("mapping not found on core api handler"))
 	}
 
 	r := a.resty.R()
@@ -76,14 +74,14 @@ func (a *CoreApi) Handle(ctx context.Context, token domain.Token, fnReq domain.N
 
 	resp, err := r.Post(a.adminUrl + uri)
 	if err != nil {
-		return domain.WrapCommonErr(err)
+		return native.WrapCommonErr(err)
 	}
 
 	if resp.IsError() {
-		return domain.WrapCommonErr(fmt.Errorf("request failed, body: %s", resp.Body()))
+		return native.WrapCommonErr(fmt.Errorf("request failed, body: %s", resp.Body()))
 	}
 
-	return domain.NativeFunctionResponse{
+	return native.FunctionResponse{
 		Result: resp.Body(),
 	}
 }
