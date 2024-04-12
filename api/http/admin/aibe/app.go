@@ -11,6 +11,7 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
+	"github.com/channel-io/ch-app-store/internal/systemlog/model"
 	"github.com/channel-io/ch-app-store/internal/systemlog/svc"
 )
 
@@ -105,4 +106,29 @@ func limitFrom(limitStr string) int32 {
 		return 0
 	}
 	return int32(val)
+}
+
+// writeLog godoc
+//
+//	@Summary	write log
+//	@Tags		Admin
+
+// @Param		model.SystemLog		body	model.SystemLog	true	"body"
+//
+// @Success	200			{object}	model.SystemLog
+// @Router		/admin/ai-be/user-chats/{userChatID}/logs [post]
+func (h *Handler) writeLog(ctx *gin.Context) {
+	var req model.SystemLog
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	written, err := h.systemLogSvc.SaveLog(ctx, &req)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, written)
 }
