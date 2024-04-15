@@ -9,12 +9,12 @@ import (
 )
 
 type QuerySvc struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
+	appInstallationRepo AppInstallationRepository
+	appRepo             AppRepository
 }
 
-func NewQuerySvc(appChRepo AppChannelRepository, appRepo AppRepository) *QuerySvc {
-	return &QuerySvc{appChRepo: appChRepo, appRepo: appRepo}
+func NewQuerySvc(appInstallationRepo AppInstallationRepository, appRepo AppRepository) *QuerySvc {
+	return &QuerySvc{appInstallationRepo: appInstallationRepo, appRepo: appRepo}
 }
 
 func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, []*model.AppInstallation, error) {
@@ -22,17 +22,17 @@ func (s *QuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App
 		return nil, nil, err
 	}
 
-	appChs, err := s.appChRepo.FindAllByChannel(ctx, channelID)
+	appInstallations, err := s.appInstallationRepo.FindAllByChannel(ctx, channelID)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
 	}
 
-	apps, err := s.appRepo.FindApps(ctx, AppIDsOf(appChs))
+	apps, err := s.appRepo.FindApps(ctx, AppIDsOf(appInstallations))
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
 	}
 
-	return apps, appChs, nil
+	return apps, appInstallations, nil
 }
 
 func (s *QuerySvc) Query(ctx context.Context, install model.InstallationID) (*model.App, *model.AppInstallation, error) {
@@ -47,18 +47,18 @@ func (s *QuerySvc) Query(ctx context.Context, install model.InstallationID) (*mo
 		}
 	}
 
-	appCh, err := s.appChRepo.Fetch(ctx, install)
+	appInstallation, err := s.appInstallationRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return app, appCh, nil
+	return app, appInstallation, nil
 }
 
-func AppIDsOf(appChannels []*model.AppInstallation) []string {
+func AppIDsOf(appInstallations []*model.AppInstallation) []string {
 	var appIDs []string
-	for _, appChannelTarget := range appChannels {
-		appIDs = append(appIDs, appChannelTarget.AppID)
+	for _, appInstallationTarget := range appInstallations {
+		appIDs = append(appIDs, appInstallationTarget.AppID)
 	}
 	return appIDs
 }
@@ -79,7 +79,7 @@ func (s *QuerySvc) installBuiltInApps(ctx context.Context, channelID string) err
 }
 
 func (s *QuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) error {
-	return s.appChRepo.SaveIfNotExists(ctx, &model.AppInstallation{
+	return s.appInstallationRepo.SaveIfNotExists(ctx, &model.AppInstallation{
 		AppID:     builtIn.ID,
 		ChannelID: channelID,
 		Configs:   builtIn.ConfigSchemas.DefaultConfig(),

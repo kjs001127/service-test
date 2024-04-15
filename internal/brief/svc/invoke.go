@@ -48,19 +48,19 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
-	_, appChs, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
+	_, appInstallations, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
-	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(appChs))
+	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(appInstallations))
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
 	i.logger.Infow(ctx, "invoking brief",
 		"channelID", req.Channel,
-		"appIds", app.AppIDsOf(appChs),
+		"appIds", app.AppIDsOf(appInstallations),
 	)
 
 	ch := make(chan *AppBrief, len(briefs))

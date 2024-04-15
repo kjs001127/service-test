@@ -15,10 +15,10 @@ type AppRepository interface {
 	Delete(ctx context.Context, appID string) error
 }
 
-type AppChannelRepository interface {
+type AppInstallationRepository interface {
 	Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error)
 	FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error)
-	Save(ctx context.Context, appChannel *model.AppInstallation) error
+	Save(ctx context.Context, appInstallation *model.AppInstallation) error
 	SaveIfNotExists(ctx context.Context, install *model.AppInstallation) error
 	Delete(ctx context.Context, identifier model.InstallationID) error
 	DeleteByAppID(ctx context.Context, appID string) error

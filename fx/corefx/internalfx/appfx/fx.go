@@ -41,7 +41,7 @@ var AppDAOs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppInstallationDao,
-			fx.As(new(app.AppChannelRepository)),
+			fx.As(new(app.AppInstallationRepository)),
 		),
 		fx.Annotate(
 			repo.NewAppDAO,

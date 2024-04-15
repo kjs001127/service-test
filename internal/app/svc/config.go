@@ -9,39 +9,39 @@ import (
 )
 
 type ConfigSvc struct {
-	appChRepo AppChannelRepository
-	appRepo   AppRepository
+	appInstallationRepo AppInstallationRepository
+	appRepo             AppRepository
 }
 
 func NewConfigSvc(
-	appChRepo AppChannelRepository,
+	appInstallationRepo AppInstallationRepository,
 	appRepo AppRepository,
 ) *ConfigSvc {
-	return &ConfigSvc{appChRepo: appChRepo, appRepo: appRepo}
+	return &ConfigSvc{appInstallationRepo: appInstallationRepo, appRepo: appRepo}
 }
 
 func (s *ConfigSvc) SetConfig(ctx context.Context, install model.InstallationID, input model.ConfigMap) (*model.AppInstallation, error) {
-	appCh, err := s.appChRepo.Fetch(ctx, install)
+	appInstallation, err := s.appInstallationRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	appCh.Configs = input
+	appInstallation.Configs = input
 
-	if err := s.appChRepo.Save(ctx, appCh); err != nil {
+	if err := s.appInstallationRepo.Save(ctx, appInstallation); err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return appCh, nil
+	return appInstallation, nil
 }
 
 func (s *ConfigSvc) GetConfig(ctx context.Context, install model.InstallationID) (model.ConfigMap, error) {
-	appCh, err := s.appChRepo.Fetch(ctx, install)
+	appInstallation, err := s.appInstallationRepo.Fetch(ctx, install)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return appCh.Configs, nil
+	return appInstallation.Configs, nil
 }
 
 type ConfigValidator interface {

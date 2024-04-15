@@ -9,17 +9,17 @@ import (
 )
 
 type AppInstallSvc struct {
-	appChRepo      AppChannelRepository
-	appRepo        AppRepository
-	installHandler InstallHandler
+	appInstallationRepo AppInstallationRepository
+	appRepo             AppRepository
+	installHandler      InstallHandler
 }
 
 func NewAppInstallSvc(
-	appChRepo AppChannelRepository,
+	appInstallationRepo AppInstallationRepository,
 	appRepo AppRepository,
 	installHandler InstallHandler,
 ) *AppInstallSvc {
-	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installHandler: installHandler}
+	return &AppInstallSvc{appInstallationRepo: appInstallationRepo, appRepo: appRepo, installHandler: installHandler}
 }
 
 func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, *model.AppInstallation, error) {
@@ -41,7 +41,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *m
 		ChannelID: channelID,
 		Configs:   app.ConfigSchemas.DefaultConfig(),
 	}
-	err := s.appChRepo.Save(ctx, installation)
+	err := s.appInstallationRepo.Save(ctx, installation)
 	if err != nil {
 		return nil, nil, errors.WithStack(err)
 	}
@@ -62,7 +62,7 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.Installation
 		return errors.Wrap(err, "error while uninstalling app")
 	}
 
-	if err = s.appChRepo.Delete(ctx, req); err != nil {
+	if err = s.appInstallationRepo.Delete(ctx, req); err != nil {
 		return errors.WithStack(err)
 	}
 

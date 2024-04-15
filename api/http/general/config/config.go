@@ -36,14 +36,14 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		return
 	}
 
-	_, appCh, err := h.querySvc.Query(ctx, app.InstallationID{AppID: appID, ChannelID: channelID})
+	_, appInstallation, err := h.querySvc.Query(ctx, app.InstallationID{AppID: appID, ChannelID: channelID})
 
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, appCh.Configs)
+	ctx.JSON(http.StatusOK, appInstallation.Configs)
 }
 
 func authorize(rbac authgen.ParsedRBACToken, channelID, appID string) error {

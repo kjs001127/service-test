@@ -24,7 +24,7 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	appInstalled, appCh, err := h.installer.InstallAppById(ctx, app.InstallationID{
+	appInstalled, appInstallation, err := h.installer.InstallAppById(ctx, app.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -35,8 +35,8 @@ func (h *Handler) install(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledApp{
-		App:        appInstalled,
-		AppChannel: appCh,
+		App:             appInstalled,
+		AppInstallation: appInstallation,
 	})
 }
 

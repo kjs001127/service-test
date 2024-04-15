@@ -26,7 +26,7 @@ func (h *Handler) installLegacy(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	appFound, appCh, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
+	appFound, appInstallation, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -37,8 +37,8 @@ func (h *Handler) installLegacy(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledApp{
-		App:        appFound,
-		AppChannel: appCh,
+		App:             appFound,
+		AppInstallation: appInstallation,
 	})
 }
 
@@ -140,7 +140,7 @@ func (h *Handler) getConfigLegacy(ctx *gin.Context) {
 func (h *Handler) queryLegacy(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.InstallationID{
+	appFound, appInstallation, err := h.querySvc.Query(ctx, appmodel.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -156,17 +156,17 @@ func (h *Handler) queryLegacy(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppWithCommands{
-		Commands:   dto.NewCommandDTOs(cmds),
-		App:        appFound,
-		AppChannel: appCh,
+		Commands:        dto.NewCommandDTOs(cmds),
+		App:             appFound,
+		AppInstallation: appInstallation,
 	})
 }
 
 // queryAllLegacy godoc
 //
-//	@Summary		get Apps and AppChannels
+//	@Summary		get Apps and AppInstallations
 //	@Tags			Desk
-//	@Description	get All Apps and AppChannels installed to channel.
+//	@Description	get All Apps and AppInstallations installed to channel.
 //
 //	@Param			x-account	header		string	true	"access token"
 //	@Param			channelID	path		string	true	"id of Channel"
@@ -176,21 +176,21 @@ func (h *Handler) queryLegacy(ctx *gin.Context) {
 func (h *Handler) queryAllLegacy(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, appChs, err := h.querySvc.QueryAll(ctx, channelID)
+	apps, appInstallations, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
+	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appInstallations))
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppsWithCommands{
-		Commands:    dto.NewCommandDTOs(cmds),
-		Apps:        apps,
-		AppChannels: appChs,
+		Commands:         dto.NewCommandDTOs(cmds),
+		Apps:             apps,
+		AppInstallations: appInstallations,
 	})
 }
