@@ -16,20 +16,19 @@ import (
 	"github.com/channel-io/ch-app-store/internal/systemlog/svc"
 )
 
-const ddbTableName = "app_system_log"
-
 type SystemLogRepository struct {
-	ddbCli *dynamodb.Client
+	ddbTableName string
+	ddbCli       *dynamodb.Client
 }
 
-func NewSystemLogRepository(ddbCli *dynamodb.Client) *SystemLogRepository {
-	return &SystemLogRepository{ddbCli: ddbCli}
+func NewSystemLogRepository(ddbCli *dynamodb.Client, ddbTableName string) *SystemLogRepository {
+	return &SystemLogRepository{ddbCli: ddbCli, ddbTableName: ddbTableName}
 }
 
 func (s *SystemLogRepository) Save(ctx context.Context, input *model.SystemLog) error {
 	ddbInput := &dynamodb.PutItemInput{
 		Item:      marshalToDDBItem(input),
-		TableName: aws.String(ddbTableName),
+		TableName: aws.String(s.ddbTableName),
 	}
 
 	if _, err := s.ddbCli.PutItem(ctx, ddbInput); err != nil {
@@ -45,7 +44,7 @@ func (s *SystemLogRepository) Query(ctx context.Context, req *svc.QueryRequest) 
 		return nil, errors.Wrap(err, "build expression for query")
 	}
 	ddbInput := &dynamodb.QueryInput{
-		TableName:                 aws.String(ddbTableName),
+		TableName:                 aws.String(s.ddbTableName),
 		ExpressionAttributeNames:  exp.Names(),
 		ExpressionAttributeValues: exp.Values(),
 		KeyConditionExpression:    exp.KeyCondition(),

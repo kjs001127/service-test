@@ -3,8 +3,16 @@ package systemlogfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/internal/systemlog/repo"
 	systemlog "github.com/channel-io/ch-app-store/internal/systemlog/svc"
+)
+
+const (
+	ddbTableNameTag = `name:"systemLogTableName"`
+
+	tableNameSeperator = "_"
+	systemLogTableName = "app_system_logs"
 )
 
 var SystemLog = fx.Options(
@@ -19,10 +27,17 @@ var SystemLogSvc = fx.Options(
 )
 
 var SystemLogRepo = fx.Options(
+	fx.Supply(
+		fx.Annotate(
+			config.Get().Stage+tableNameSeperator+systemLogTableName,
+			fx.ResultTags(ddbTableNameTag),
+		),
+	),
 	fx.Provide(
 		fx.Annotate(
 			repo.NewSystemLogRepository,
 			fx.As(new(systemlog.SystemLogRepository)),
+			fx.ParamTags(``, ddbTableNameTag),
 		),
 	),
 )
