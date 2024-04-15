@@ -16,6 +16,7 @@ const (
 	messageBaseUri  = v1BaseUri + "/messages"
 	managerBaseUri  = v1BaseUri + "/managers"
 	userChatBaseUri = v1BaseUri + "/user-chats"
+	userBaseUri     = v1BaseUri + "/users"
 
 	contentTypeHeader = "Content-Type"
 	mimeTypeJson      = "application/json"
@@ -51,6 +52,8 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		"searchManagers":   managerBaseUri + "/searchManagers",
 
 		"getUserChat": userChatBaseUri + "/getUserChat",
+
+		"getUser": userBaseUri + "/getUser",
 	}
 	return api
 }
