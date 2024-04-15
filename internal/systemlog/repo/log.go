@@ -119,7 +119,7 @@ func unmarshalToModel(ddbModel map[string]types.AttributeValue) (log *model.Syst
 	ret.Message = ddbModel["message"].(*types.AttributeValueMemberS).Value
 
 	chatType, chatId := fromChatKey(ddbModel["chatKey"].(*types.AttributeValueMemberS).Value)
-	ret.ChatType = chatType
+	ret.ChatType = model.ChatType(chatType)
 	ret.ChatId = chatId
 
 	createdAt, err := strconv.ParseInt(ddbModel["createdAt"].(*types.AttributeValueMemberN).Value, 10, 64)
@@ -140,7 +140,7 @@ func unmarshalToModel(ddbModel map[string]types.AttributeValue) (log *model.Syst
 func marshalToDDBItem(input *model.SystemLog) map[string]types.AttributeValue {
 	return map[string]types.AttributeValue{
 		"id":        &types.AttributeValueMemberS{Value: input.ID},
-		"chatKey":   &types.AttributeValueMemberS{Value: toChatKey(svc.ChatType(input.ChatType), input.ChatId)},
+		"chatKey":   &types.AttributeValueMemberS{Value: toChatKey(input.ChatType, input.ChatId)},
 		"channelId": &types.AttributeValueMemberS{Value: input.ChannelID},
 		"message":   &types.AttributeValueMemberS{Value: input.Message},
 		"appId":     &types.AttributeValueMemberS{Value: input.AppID},
@@ -149,7 +149,7 @@ func marshalToDDBItem(input *model.SystemLog) map[string]types.AttributeValue {
 	}
 }
 
-func toChatKey(chatType svc.ChatType, chatId string) string {
+func toChatKey(chatType model.ChatType, chatId string) string {
 	return string(chatType) + "-" + chatId
 }
 

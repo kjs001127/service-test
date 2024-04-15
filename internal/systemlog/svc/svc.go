@@ -11,14 +11,12 @@ import (
 )
 
 type Order string
-type ChatType string
 
 const (
 	OrderAsc  = Order("asc")
 	OrderDesc = Order("desc")
 )
 
-const ChatTypeUserChat = ChatType("userChat")
 const TTL = 24 * time.Hour * 7
 const maxMessageSize = 500
 
@@ -56,9 +54,9 @@ func (s *SystemLogSvc) QueryLog(ctx context.Context, request *QueryRequest) ([]*
 }
 
 type QueryRequest struct {
-	ChatId   string   `json:"chatId"`
-	ChatType ChatType `json:"chatType"`
-	CursorID string   `json:"cursorId"`
-	Order    Order    `json:"order"`
-	Limit    int32    `json:"limit"`
+	ChatId   string         `json:"chatId"`
+	ChatType model.ChatType `json:"chatType"`
+	CursorID string         `json:"cursorId"`
+	Order    Order          `json:"order"`
+	Limit    int32          `json:"limit"`
 }

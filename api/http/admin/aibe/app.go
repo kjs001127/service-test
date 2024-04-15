@@ -88,7 +88,7 @@ func (h *Handler) queryLog(ctx *gin.Context) {
 		CursorID: since,
 		Limit:    limitFrom(limit),
 		Order:    svc.Order(sortOrder),
-		ChatType: svc.ChatTypeUserChat,
+		ChatType: model.ChatTypeUserChat,
 		ChatId:   userChatId,
 	})
 
@@ -114,6 +114,7 @@ func limitFrom(limitStr string) int32 {
 //	@Tags		Admin
 
 // @Param		model.SystemLog		body	model.SystemLog	true	"body"
+// @Param		userChatID	path	string	true	"userChatID"
 //
 // @Success	200			{object}	model.SystemLog
 // @Router		/admin/ai-be/user-chats/{userChatID}/logs [post]
@@ -123,6 +124,9 @@ func (h *Handler) writeLog(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
+
+	req.ChatType = model.ChatTypeUserChat
+	req.ChatId = ctx.Param("userChatID")
 
 	written, err := h.systemLogSvc.SaveLog(ctx, &req)
 	if err != nil {

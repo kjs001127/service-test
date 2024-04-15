@@ -20,7 +20,7 @@ func (c *DDBConfig) awsOpts() []func(*config.LoadOptions) error {
 
 	optFns = append(optFns, config.WithRegion(c.region()))
 
-	if len(c.Endpoint) >= 0 {
+	if len(c.Endpoint) > 0 {
 		optFns = append(optFns, config.WithEndpointResolverWithOptions(c.endpointWithOptions()))
 	}
 
