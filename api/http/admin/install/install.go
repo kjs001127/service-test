@@ -10,6 +10,33 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
+// checkInstall godoc
+//
+//	@Summary	checkInstall an App to Channel
+//	@Tags		Admin
+//
+//	@Param		channelID	path		string	true	"id of Channel"
+//	@Param		appID		path		string	true	"id of App to install"
+//
+//	@Success	200
+//	@Router		/admin/channels/{channelID}/installed-apps/{appID} [get]
+func (h *Handler) checkInstall(ctx *gin.Context) {
+	channelID := ctx.Param("channelID")
+	appID := ctx.Param("appID")
+
+	_, _, err := h.querySvc.Query(ctx, app.InstallationID{
+		AppID:     appID,
+		ChannelID: channelID,
+	})
+
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
 // install godoc
 //
 //	@Summary	install an App to Channel
