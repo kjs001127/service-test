@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
@@ -10,7 +11,7 @@ import (
 
 type AppInstallQuerySvc struct {
 	appInstallationRepo AppInstallationRepository
-	appRepo   AppRepository
+	appRepo             AppRepository
 }
 
 func NewQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *AppInstallQuerySvc {
@@ -61,6 +62,17 @@ func (s *AppInstallQuerySvc) Query(ctx context.Context, install model.Installati
 	}
 
 	return app, nil
+}
+
+func (s *AppInstallQuerySvc) CheckInstall(ctx context.Context, install model.InstallationID) (bool, error) {
+	_, err := s.Query(ctx, install)
+	if apierr.IsNotFound(err) {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func AppIDsOf(apps []*model.App) []string {
