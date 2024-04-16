@@ -18,6 +18,7 @@ const (
 	userChatBaseUri   = v1BaseUri + "/user-chats"
 	directChatBaseUri = v1BaseUri + "/direct-chats"
 	userBaseUri       = v1BaseUri + "/users"
+	channelBaseUri    = v1BaseUri + "/channels"
 
 	contentTypeHeader = "Content-Type"
 	mimeTypeJson      = "application/json"
@@ -54,7 +55,8 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 
 		"getUserChat": userChatBaseUri + "/getUserChat",
 
-		"getUser": userBaseUri + "/getUser",
+		"getUser":    userBaseUri + "/getUser",
+		"getChannel": channelBaseUri + "/getChannel",
 	}
 	return api
 }

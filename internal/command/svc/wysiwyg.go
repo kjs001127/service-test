@@ -8,17 +8,17 @@ import (
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
-type UsableCommandQuerySvc struct {
+type WysiwygQuerySvc struct {
 	querySvc       *app.AppInstallQuerySvc
 	cmdRepo        CommandRepository
 	activationRepo ActivationRepository
 }
 
-func NewWysiwygQuerySvc(querySvc *app.AppInstallQuerySvc, cmdRepo CommandRepository) *UsableCommandQuerySvc {
-	return &UsableCommandQuerySvc{querySvc: querySvc, cmdRepo: cmdRepo}
+func NewWysiwygQuerySvc(querySvc *app.AppInstallQuerySvc, cmdRepo CommandRepository) *WysiwygQuerySvc {
+	return &WysiwygQuerySvc{querySvc: querySvc, cmdRepo: cmdRepo}
 }
 
-func (s *UsableCommandQuerySvc) Query(ctx context.Context, channelID string, scope cmdmodel.Scope) ([]*appmodel.App, []*cmdmodel.Command, error) {
+func (s *WysiwygQuerySvc) Query(ctx context.Context, channelID string, scope cmdmodel.Scope) ([]*appmodel.App, []*cmdmodel.Command, error) {
 	apps, err := s.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		return nil, nil, err
@@ -46,7 +46,7 @@ func idsOf(apps []*appmodel.App) []string {
 	return appIDs
 }
 
-func (s *UsableCommandQuerySvc) filterAppWithCmds(installedApps []*appmodel.App, cmds []*cmdmodel.Command) []*appmodel.App {
+func (s *WysiwygQuerySvc) filterAppWithCmds(installedApps []*appmodel.App, cmds []*cmdmodel.Command) []*appmodel.App {
 	appMap := make(map[string]*appmodel.App)
 	for _, a := range installedApps {
 		appMap[a.ID] = a
@@ -64,7 +64,7 @@ func (s *UsableCommandQuerySvc) filterAppWithCmds(installedApps []*appmodel.App,
 	return ret
 }
 
-func (s *UsableCommandQuerySvc) filterOnlyActiveApps(ctx context.Context, channelID string, installedApps []*appmodel.App) ([]*appmodel.App, error) {
+func (s *WysiwygQuerySvc) filterOnlyActiveApps(ctx context.Context, channelID string, installedApps []*appmodel.App) ([]*appmodel.App, error) {
 	activations, err := s.activationRepo.FetchAllByAppIDs(ctx, channelID, app.AppIDsOf(installedApps))
 	if err != nil {
 		return nil, err
