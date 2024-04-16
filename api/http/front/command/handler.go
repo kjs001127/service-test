@@ -11,10 +11,10 @@ type Handler struct {
 	invoker             *cmd.Invoker
 	autoCompleteInvoker *cmd.AutoCompleteInvoker
 
-	querySvc *cmd.AppCommandQuerySvc
+	querySvc *cmd.UsableCommandQuerySvc
 }
 
-func NewHandler(invoker *cmd.Invoker, autoCompleteInvoker *cmd.AutoCompleteInvoker, querySvc *cmd.AppCommandQuerySvc) *Handler {
+func NewHandler(invoker *cmd.Invoker, autoCompleteInvoker *cmd.AutoCompleteInvoker, querySvc *cmd.UsableCommandQuerySvc) *Handler {
 	return &Handler{invoker: invoker, autoCompleteInvoker: autoCompleteInvoker, querySvc: querySvc}
 }
 

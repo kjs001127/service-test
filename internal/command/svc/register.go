@@ -15,24 +15,42 @@ import (
 )
 
 type RegisterSvc struct {
-	repo CommandRepository
+	repo        CommandRepository
+	settingRepo ActivationSettingRepository
 }
 
-func NewRegisterService(repo CommandRepository) *RegisterSvc {
-	return &RegisterSvc{repo: repo}
+func NewRegisterSvc(repo CommandRepository, activationRepo ActivationSettingRepository) *RegisterSvc {
+	return &RegisterSvc{repo: repo, settingRepo: activationRepo}
 }
 
 func (s *RegisterSvc) UnregisterAll(ctx context.Context, appID string) error {
-	return s.Register(ctx, appID, nil)
+	return tx.Do(ctx, func(ctx context.Context) error {
+		if err := s.repo.DeleteAllByAppID(ctx, appID); err != nil {
+			return err
+		}
+
+		if err := s.settingRepo.Delete(ctx, appID); err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
-func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*model.Command) error {
+func (s *RegisterSvc) Register(ctx context.Context, req *CommandRegisterRequest) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
-		if err := s.validateRequest(appID, cmds); err != nil {
+		if err := s.validateRequest(req.AppID, req.Commands); err != nil {
 			return errors.WithStack(err)
 		}
 
-		oldbies, err := s.repo.FetchAllByAppID(ctx, appID)
+		if err := s.settingRepo.Save(ctx, &model.ActivationSetting{
+			AppID:              req.AppID,
+			EnableByDefault:    req.EnableByDefault,
+			ToggleFunctionName: req.ToggleFunctionName,
+		}); err != nil {
+			return err
+		}
+
+		oldbies, err := s.repo.FetchAllByAppID(ctx, req.AppID)
 		if err != nil {
 			return errors.WithStack(err)
 		}
@@ -44,7 +62,7 @@ func (s *RegisterSvc) Register(ctx context.Context, appID string, cmds []*model.
 			DoDelete: s.deleteResource,
 		}
 
-		return updater.Update(ctx, oldbies, cmds)
+		return updater.Update(ctx, oldbies, req.Commands)
 	}, tx.Isolation(sql.LevelSerializable))
 }
 
@@ -61,6 +79,13 @@ func (s *RegisterSvc) validateRequest(appID string, cmds []*model.Command) error
 	}
 
 	return nil
+}
+
+type CommandRegisterRequest struct {
+	AppID              string           `json:"appId"`
+	EnableByDefault    bool             `json:"enableByDefault"`
+	ToggleFunctionName *string          `json:"toggleFunctionName,omitempty"`
+	Commands           []*model.Command `json:"commands"`
 }
 
 type UpdateKey struct {

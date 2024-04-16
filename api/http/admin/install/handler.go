@@ -10,18 +10,14 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	installer *app.AppInstallSvc
-	querySvc  *app.QuerySvc
-	configSvc *app.ConfigSvc
 	cmdRepo   cmd.CommandRepository
 }
 
 func NewHandler(
 	installer *app.AppInstallSvc,
-	configSvc *app.ConfigSvc,
-	querySvc *app.QuerySvc,
 	cmdRepo cmd.CommandRepository,
 ) *Handler {
-	return &Handler{installer: installer, querySvc: querySvc, configSvc: configSvc, cmdRepo: cmdRepo}
+	return &Handler{installer: installer, cmdRepo: cmdRepo}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
@@ -31,7 +27,4 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group.PUT("/:appID", h.install)
 	group.DELETE("/:appID", h.uninstall)
 	group.GET("/:appID", h.checkInstall)
-
-	group.PUT("/:appID/configs", h.setConfig)
-	group.GET("/:appID/configs", h.getConfig)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	admindto "github.com/channel-io/ch-app-store/api/http/admin/dto"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 // registerCommand godoc
@@ -25,9 +26,15 @@ func (h *Handler) registerCommand(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
+
 	appID := ctx.Param("appID")
 
-	if err := h.registerSvc.Register(ctx, appID, request.Commands); err != nil {
+	if err := h.registerSvc.Register(ctx, &svc.CommandRegisterRequest{
+		Commands:           request.Commands,
+		EnableByDefault:    request.EnableByDefault,
+		ToggleFunctionName: request.ToggleFunctionName,
+		AppID:              appID,
+	}); err != nil {
 		_ = ctx.Error(err)
 		return
 	}

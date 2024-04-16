@@ -108,7 +108,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		x-account	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	dto.AppsAndCommands
+//	@Success	200			{object}	dto.AppView
 //	@Router		/desk/v1/channels/{channelID}/apps [get]
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
@@ -119,8 +119,8 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, deskdto.AppsAndCommands{
-		Apps:     apps,
-		Commands: deskdto.NewCommandDTOs(cmds),
+	ctx.JSON(http.StatusOK, deskdto.WysiwygView{
+		Apps:     deskdto.NewAppViews(apps),
+		Commands: deskdto.NewCommandViews(cmds),
 	})
 }
