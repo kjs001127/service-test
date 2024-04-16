@@ -11,12 +11,13 @@ import (
 )
 
 const (
-	version         = "v1"
-	v1BaseUri       = "/api/admin/core/" + version
-	messageBaseUri  = v1BaseUri + "/messages"
-	managerBaseUri  = v1BaseUri + "/managers"
-	userChatBaseUri = v1BaseUri + "/user-chats"
-	userBaseUri     = v1BaseUri + "/users"
+	version           = "v1"
+	v1BaseUri         = "/api/admin/core/" + version
+	messageBaseUri    = v1BaseUri + "/messages"
+	managerBaseUri    = v1BaseUri + "/managers"
+	userChatBaseUri   = v1BaseUri + "/user-chats"
+	directChatBaseUri = v1BaseUri + "/direct-chats"
+	userBaseUri       = v1BaseUri + "/users"
 
 	contentTypeHeader = "Content-Type"
 	mimeTypeJson      = "application/json"
@@ -44,8 +45,8 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		"writeUserChatMessageAsManager": messageBaseUri + "/writeUserChatMessageAsManager",
 		"writeUserChatMessageAsUser":    messageBaseUri + "/writeUserChatMessageAsUser",
 
-		"writeDirectChatMessageAsManager": messageBaseUri + "/writeDirectChatMessageAsManager",
-		"createDirectChat":                messageBaseUri + "/createDirectChat",
+		"writeDirectChatMessageAsManager": directChatBaseUri + "/writeDirectChatMessageAsManager",
+		"createDirectChat":                directChatBaseUri + "/createDirectChat",
 
 		"getManager":       managerBaseUri + "/getManager",
 		"batchGetManagers": managerBaseUri + "/batchGetManagers",
