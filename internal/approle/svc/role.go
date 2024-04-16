@@ -113,6 +113,10 @@ func checkScopes(role *RoleWithType, rule TypeRule) error {
 	return nil
 }
 
+func (s *AppRoleSvc) FetchRole(ctx context.Context, roleID string) (*model.AppRole, error) {
+	return s.roleRepo.FetchByRoleID(ctx, roleID)
+}
+
 func (s *AppRoleSvc) FetchRoles(ctx context.Context, appID string) ([]*RoleWithCredential, error) {
 	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
 	if err != nil {

@@ -55,27 +55,6 @@ func (h *Handler) delete(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-// query godoc
-//
-//	@Summary	query App from app-store
-//	@Tags		Admin
-//
-//	@Param		roleId	query	string	true "roleId of App to query"
-//
-//	@Success	200  	{object} model.App
-//	@Router		/admin/apps [get]
-func (h *Handler) query(ctx *gin.Context) {
-	ID := ctx.Query("roleId")
-
-	appFound, err := h.appRoleSvc.FetchRoles(ctx, ID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, appFound)
-}
-
 // queryDetail godoc
 //
 //	@Summary	query App from app-store
