@@ -96,6 +96,13 @@ func (c *CommandDao) Delete(ctx context.Context, key model.CommandKey) error {
 	return nil
 }
 
+func (c *CommandDao) DeleteAllByAppID(ctx context.Context, appID string) error {
+	_, err := models.Commands(
+		qm.Where("app_id = $1", appID),
+	).DeleteAll(ctx, c.db)
+	return err
+}
+
 func (c *CommandDao) Save(ctx context.Context, resource *model.Command) (*model.Command, error) {
 	cmd, err := unmarshal(resource)
 	if err != nil {

@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	FunctionListenersGroup = `group:"functionListeners"`
-	LifecycleHookGroup     = `group:"lifecycle"`
+	FunctionListenersGroup  = `group:"functionListeners"`
+	LifecycleHookGroup      = `group:"lifecycle"`
+	PreInstallHandlerGroup  = `group:"preInstallHandlers"`
+	PostInstallHandlerGroup = `group:"postInstallHandlers"`
 )
 
 var App = fx.Options(
@@ -21,9 +23,11 @@ var App = fx.Options(
 
 var AppSvcs = fx.Options(
 	fx.Provide(
-		app.NewAppInstallSvc,
+		fx.Annotate(
+			app.NewAppInstallSvc,
+			fx.ParamTags(``, ``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+		),
 		app.NewQuerySvc,
-		app.NewConfigSvc,
 		fx.Annotate(
 			app.NewAppCrudSvcImpl,
 			fx.As(new(app.AppCrudSvc)),

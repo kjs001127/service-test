@@ -7,29 +7,83 @@ import (
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 )
 
-type InstalledApp struct {
-	App             *model.App             `json:"app"`
-	AppInstallation *model.AppInstallation `json:"appChannel"`
+type InstalledAppDetailView struct {
+	App            *AppDetailView `json:"app"`
+	Commands       []*CommandView `json:"commands"`
+	CommandEnabled bool           `json:"commandEnabled"`
 }
 
-type InstalledAppsWithCommands struct {
-	Apps             []*model.App             `json:"apps"`
-	AppInstallations []*model.AppInstallation `json:"appChannels"`
-	Commands         []*CommandDTO            `json:"commands"`
+type AppStoreDetailView struct {
+	App      *AppDetailView `json:"app"`
+	Commands []*CommandView `json:"commands"`
 }
 
-type InstalledAppWithCommands struct {
-	App             *model.App             `json:"app"`
-	AppInstallation *model.AppInstallation `json:"appChannel"`
-	Commands        []*CommandDTO          `json:"commands"`
+type AppView struct {
+	ID          string  `json:"id"`
+	Title       string  `json:"title"`
+	AvatarURL   *string `json:"avatarUrl,omitempty"`
+	Description *string `json:"description,omitempty"`
+	State       string  `json:"state"`
+	IsBuiltIn   bool    `json:"isBuiltIn"`
 }
 
-type AppsAndCommands struct {
-	Apps     []*model.App  `json:"apps"`
-	Commands []*CommandDTO `json:"commands"`
+func NewAppView(origin *model.App) *AppView {
+	return &AppView{
+		ID:          origin.ID,
+		Title:       origin.Title,
+		AvatarURL:   origin.AvatarURL,
+		Description: origin.Description,
+		IsBuiltIn:   origin.IsBuiltIn,
+		State:       "",
+	}
 }
 
-type CommandDTO struct {
+func NewAppViews(origins []*model.App) []*AppView {
+	ret := make([]*AppView, 0, len(origins))
+	for _, origin := range origins {
+		ret = append(ret, NewAppView(origin))
+	}
+	return ret
+}
+
+type WysiwygView struct {
+	Apps     []*AppView     `json:"apps"`
+	Commands []*CommandView `json:"commands"`
+}
+
+type AppDetailView struct {
+	ID                 string           `json:"id"`
+	Title              string           `json:"title"`
+	AvatarURL          *string          `json:"avatarUrl,omitempty"`
+	Description        *string          `json:"description,omitempty"`
+	ManualURL          *string          `json:"manualUrl,omitempty"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	IsBuiltIn          bool             `json:"isBuiltIn"`
+}
+
+func NewAppDetailView(origin *model.App) *AppDetailView {
+	return &AppDetailView{
+		ID:                 origin.ID,
+		Title:              origin.Title,
+		AvatarURL:          origin.AvatarURL,
+		Description:        origin.Description,
+		IsBuiltIn:          origin.IsBuiltIn,
+		ManualURL:          origin.ManualURL,
+		DetailDescriptions: origin.DetailDescriptions,
+		DetailImageURLs:    origin.DetailImageURLs,
+	}
+}
+
+func NewAppDetailViews(origins []*model.App) []*AppDetailView {
+	ret := make([]*AppDetailView, 0, len(origins))
+	for _, origin := range origins {
+		ret = append(ret, NewAppDetailView(origin))
+	}
+	return ret
+}
+
+type CommandView struct {
 	AppID string    `json:"appId,o"`
 	Name  string    `json:"name"`
 	Scope cmd.Scope `json:"scope"`
@@ -43,8 +97,8 @@ type CommandDTO struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func NewCommandDTO(origin *cmd.Command) *CommandDTO {
-	return &CommandDTO{
+func NewCommandView(origin *cmd.Command) *CommandView {
+	return &CommandView{
 		AppID:            origin.AppID,
 		Name:             origin.Name,
 		NameDescI18nMap:  origin.NameDescI18NMap,
@@ -56,10 +110,14 @@ func NewCommandDTO(origin *cmd.Command) *CommandDTO {
 	}
 }
 
-func NewCommandDTOs(origins []*cmd.Command) []*CommandDTO {
-	ret := make([]*CommandDTO, 0, len(origins))
+func NewCommandViews(origins []*cmd.Command) []*CommandView {
+	ret := make([]*CommandView, 0, len(origins))
 	for _, origin := range origins {
-		ret = append(ret, NewCommandDTO(origin))
+		ret = append(ret, NewCommandView(origin))
 	}
 	return ret
+}
+
+type CommandToggleRequest struct {
+	CommandEnabled bool `json:"commandEnabled"`
 }

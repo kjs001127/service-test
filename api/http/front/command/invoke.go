@@ -110,7 +110,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		x-session	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	dto.AppsAndCommands
+//	@Success	200			{object}	frontdto.AppsAndCommands
 //	@Router		/front/v1/channels/{channelID}/apps [get]
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")

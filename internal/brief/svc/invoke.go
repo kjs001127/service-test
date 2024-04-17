@@ -33,14 +33,14 @@ type EmptyRequest struct {
 
 type Invoker struct {
 	repo     BriefRepository
-	querySvc *app.QuerySvc
+	querySvc *app.AppInstallQuerySvc
 	invoker  *app.TypedInvoker[EmptyRequest, BriefResponse]
 	logger   log.ContextAwareLogger
 }
 
 func NewInvoker(
 	repo BriefRepository,
-	querySvc *app.QuerySvc,
+	querySvc *app.AppInstallQuerySvc,
 	invoker *app.TypedInvoker[EmptyRequest, BriefResponse],
 	logger log.ContextAwareLogger,
 ) *Invoker {
@@ -48,19 +48,19 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
-	_, appInstallations, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
+	apps, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
-	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(appInstallations))
+	briefs, err := i.repo.FetchAll(ctx, app.AppIDsOf(apps))
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
 
 	i.logger.Infow(ctx, "invoking brief",
 		"channelID", req.Channel,
-		"appIds", app.AppIDsOf(appInstallations),
+		"appIds", app.AppIDsOf(apps),
 	)
 
 	ch := make(chan *AppBrief, len(briefs))

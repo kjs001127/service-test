@@ -17,7 +17,9 @@ type AppsAndFullCommands struct {
 }
 
 type RegisterRequest struct {
-	Commands []*cmd.Command `json:"commands"`
+	EnableByDefault    bool           `json:"enableByDefault"`
+	ToggleFunctionName *string        `json:"toggleFunctionName,omitempty"`
+	Commands           []*cmd.Command `json:"commands"`
 }
 
 type BriefRequest struct {

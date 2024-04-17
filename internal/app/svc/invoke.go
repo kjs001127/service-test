@@ -8,7 +8,7 @@ import (
 )
 
 type Invoker struct {
-	querySvc *QuerySvc
+	querySvc *AppInstallQuerySvc
 	appRepo  AppRepository
 	handler  InvokeHandler
 
@@ -16,7 +16,7 @@ type Invoker struct {
 }
 
 func NewInvoker(
-	querySvc *QuerySvc,
+	querySvc *AppInstallQuerySvc,
 	appRepo AppRepository,
 	handler InvokeHandler,
 	listeners []FunctionRequestListener,
@@ -25,7 +25,7 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	app, _, err := i.querySvc.Query(ctx, model.InstallationID{
+	app, err := i.querySvc.Query(ctx, model.InstallationID{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
 	})
@@ -64,9 +64,19 @@ type Channel struct {
 	ID string `json:"id"`
 }
 
+type CallerType string
+
+const (
+	CallerTypeSystem  = CallerType("system")
+	CallerTypeUser    = CallerType("user")
+	CallerTypeManager = CallerType("manager")
+)
+
+const CallerIDOmitted = "-"
+
 type Caller struct {
-	Type string `json:"type"`
-	ID   string `json:"id,omitempty"`
+	Type CallerType `json:"type"`
+	ID   string     `json:"id,omitempty"`
 }
 
 type JsonFunctionResponse struct {

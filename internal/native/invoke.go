@@ -43,6 +43,10 @@ func ResultSuccess(resp json.RawMessage) FunctionResponse {
 	}
 }
 
+func Empty() FunctionResponse {
+	return FunctionResponse{}
+}
+
 type FunctionInvoker struct {
 	router map[string]FunctionHandler
 	logger log.ContextAwareLogger

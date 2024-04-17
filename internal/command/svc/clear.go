@@ -7,7 +7,8 @@ import (
 )
 
 type CommandClearHook struct {
-	registerSvc *RegisterSvc
+	registerSvc        *RegisterSvc
+	activationSettings ActivationSettingRepository
 }
 
 func NewCommandClearHook(registerSvc *RegisterSvc) *CommandClearHook {
@@ -19,7 +20,11 @@ func (c CommandClearHook) OnAppCreate(ctx context.Context, app *model.App) error
 }
 
 func (c CommandClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
-	return c.registerSvc.UnregisterAll(ctx, app.ID)
+	if err := c.registerSvc.UnregisterAll(ctx, app.ID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c CommandClearHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {

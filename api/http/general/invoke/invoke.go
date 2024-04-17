@@ -103,7 +103,7 @@ func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn
 }
 
 func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.ChannelContext {
-	chCtx.Caller.Type = rbac.Caller.Type
+	chCtx.Caller.Type = app.CallerType(rbac.Caller.Type)
 	chCtx.Caller.ID = rbac.Caller.ID
 	return chCtx
 }

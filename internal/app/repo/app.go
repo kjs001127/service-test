@@ -122,10 +122,6 @@ func (a *AppDAO) Delete(ctx context.Context, appID string) error {
 }
 
 func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
-	cfgSchema, err := json.Marshal(appTarget.ConfigSchemas)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling cfgSchema")
-	}
 	detailDescriptions, err := json.Marshal(appTarget.DetailDescriptions)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
@@ -134,24 +130,17 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	return &models.App{
 		ID:                 appTarget.ID,
 		Title:              appTarget.Title,
-		Type:               string(appTarget.Type),
 		Description:        null.StringFromPtr(appTarget.Description),
 		DetailDescriptions: null.JSONFrom(detailDescriptions),
 		DetailImageUrls:    appTarget.DetailImageURLs,
 		AvatarURL:          null.StringFromPtr(appTarget.AvatarURL),
 		State:              string(appTarget.State),
 		IsPrivate:          appTarget.IsPrivate,
-		ConfigSchema:       null.JSONFrom(cfgSchema),
 		IsBuiltIn:          null.BoolFrom(appTarget.IsBuiltIn),
 	}, nil
 }
 
 func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
-	var cfgSchemas app.ConfigSchemas
-	if err := rawApp.ConfigSchema.Unmarshal(&cfgSchemas); err != nil {
-		return nil, errors.Wrap(err, "error while marshaling cfgSchema")
-	}
-
 	var detailDescriptions []map[string]any
 	if err := rawApp.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
 		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
@@ -160,14 +149,12 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	return &app.App{
 		ID:                 rawApp.ID,
 		State:              app.AppState(rawApp.State),
-		Type:               app.AppType(rawApp.Type),
 		AvatarURL:          rawApp.AvatarURL.Ptr(),
 		Title:              rawApp.Title,
 		Description:        rawApp.Description.Ptr(),
 		ManualURL:          rawApp.ManualURL.Ptr(),
 		DetailDescriptions: detailDescriptions,
 		DetailImageURLs:    rawApp.DetailImageUrls,
-		ConfigSchemas:      cfgSchemas,
 		IsPrivate:          rawApp.IsPrivate,
 		IsBuiltIn:          rawApp.IsBuiltIn.Bool,
 	}, nil

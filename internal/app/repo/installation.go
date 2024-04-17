@@ -3,11 +3,9 @@ package repo
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -118,28 +116,16 @@ func (a *AppInstallationDao) Delete(ctx context.Context, identifier model.Instal
 }
 
 func unmarshal(channel *models.AppInstallation) (*model.AppInstallation, error) {
-	cfgMap := make(model.ConfigMap)
-	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
-		return nil, errors.Wrap(err, "error while unmarshaling appInstallation")
-	}
-
 	return &model.AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Configs:   cfgMap,
 	}, nil
 }
 
 func marshal(channel *model.AppInstallation) (*models.AppInstallation, error) {
-	cfg, err := json.Marshal(channel.Configs)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling appInstallation")
-	}
-
 	return &models.AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Configs:   null.JSONFrom(cfg),
 	}, nil
 }
 
@@ -148,7 +134,7 @@ func unmarshalAll(channels models.AppInstallationSlice) ([]*model.AppInstallatio
 	for _, ch := range channels {
 		unmarshalled, err := unmarshal(ch)
 		if err != nil {
-			return nil, errors.Wrap(err, "error while unmarshaling appInstallation")
+			return nil, errors.Wrap(err, "error while unmarshaling appChannel")
 		}
 		ret = append(ret, unmarshalled)
 	}

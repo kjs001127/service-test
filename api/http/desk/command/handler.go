@@ -10,13 +10,13 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 type Handler struct {
 	invoker             *command.Invoker
 	autoCompleteInvoker *command.AutoCompleteInvoker
-	querySvc            *command.AppCommandQuerySvc
+	querySvc            *command.WysiwygQuerySvc
 }
 
 func NewHandler(
 	invoker *command.Invoker,
 	autoCompleteInvoker *command.AutoCompleteInvoker,
-	querySvc *command.AppCommandQuerySvc,
+	querySvc *command.WysiwygQuerySvc,
 ) *Handler {
 	return &Handler{invoker: invoker, autoCompleteInvoker: autoCompleteInvoker, querySvc: querySvc}
 }

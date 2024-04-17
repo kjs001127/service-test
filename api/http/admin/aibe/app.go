@@ -44,10 +44,10 @@ func (h *Handler) query(ctx *gin.Context) {
 //	@Summaryc	call brief
 //	@Tags		Admin
 
-// @Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
+//	@Param		dto.BriefRequest	body		dto.BriefRequest	true	"body of Brief"
 //
-// @Success	200					{object}	brief.BriefResponses
-// @Router		/admin/brief  [put]
+//	@Success	200					{object}	brief.BriefResponses
+//	@Router		/admin/brief  [put]
 func (h *Handler) invokeBrief(ctx *gin.Context) {
 	var req dto.BriefRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -70,13 +70,13 @@ func (h *Handler) invokeBrief(ctx *gin.Context) {
 //	@Summary	query log
 //	@Tags		Admin
 
-// @Param		userChatID	path	string	true	"userChatID"
-// @Param		sortOrder	query	string	true	"sortOrder"
-// @Param		since		query	string	true	"since"
-// @Param		limit		query	int		true	"limit"
+//	@Param		userChatID	path	string	true	"userChatID"
+//	@Param		sortOrder	query	string	true	"sortOrder"
+//	@Param		since		query	string	true	"since"
+//	@Param		limit		query	int		true	"limit"
 //
-// @Success	200			{array}	object
-// @Router		/admin/ai-be/user-chats/{userChatID}/logs [get]
+//	@Success	200			{array}	object
+//	@Router		/admin/ai-be/user-chats/{userChatID}/logs [get]
 func (h *Handler) queryLog(ctx *gin.Context) {
 	userChatId, sortOrder, since, limit :=
 		ctx.Param("userChatID"),
@@ -113,11 +113,11 @@ func limitFrom(limitStr string) int32 {
 //	@Summary	write log
 //	@Tags		Admin
 
-// @Param		model.SystemLog		body	model.SystemLog	true	"body"
-// @Param		userChatID	path	string	true	"userChatID"
+//	@Param		model.SystemLog	body		model.SystemLog	true	"body"
+//	@Param		userChatID		path		string			true	"userChatID"
 //
-// @Success	200			{object}	model.SystemLog
-// @Router		/admin/ai-be/user-chats/{userChatID}/logs [post]
+//	@Success	200				{object}	model.SystemLog
+//	@Router		/admin/ai-be/user-chats/{userChatID}/logs [post]
 func (h *Handler) writeLog(ctx *gin.Context) {
 	var req model.SystemLog
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
