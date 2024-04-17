@@ -2,7 +2,6 @@ package role
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	rolesvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 )
 
@@ -10,11 +9,10 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	roleRepo rolesvc.AppRoleRepository
-	querySvc *app.QuerySvc
 }
 
-func NewHandler(roleRepo rolesvc.AppRoleRepository, querySvc *app.QuerySvc) *Handler {
-	return &Handler{roleRepo: roleRepo, querySvc: querySvc}
+func NewHandler(roleRepo rolesvc.AppRoleRepository) *Handler {
+	return &Handler{roleRepo: roleRepo}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
