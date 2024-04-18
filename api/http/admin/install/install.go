@@ -13,8 +13,8 @@ import (
 //	@Summary	checkInstall an App to Channel
 //	@Tags		Admin
 //
-//	@Param		channelID	path		string	true	"id of Channel"
-//	@Param		appID		path		string	true	"id of App to install"
+//	@Param		channelID	path	string	true	"id of Channel"
+//	@Param		appID		path	string	true	"id of App to install"
 //
 //	@Success	200
 //	@Router		/admin/channels/{channelID}/installed-apps/{appID} [get]

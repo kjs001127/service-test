@@ -10,6 +10,10 @@ type RoleClearHook struct {
 	svc *AppRoleSvc
 }
 
+func NewRoleClearHook(svc *AppRoleSvc) *RoleClearHook {
+	return &RoleClearHook{svc: svc}
+}
+
 func (r RoleClearHook) OnAppCreate(ctx context.Context, app *model.App) error {
 	return nil
 }
@@ -21,4 +25,3 @@ func (r RoleClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
 func (r RoleClearHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {
 	return nil
 }
-

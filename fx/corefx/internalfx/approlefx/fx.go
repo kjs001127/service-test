@@ -3,6 +3,8 @@ package approlefx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 	devrepo "github.com/channel-io/ch-app-store/internal/approle/repo"
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
@@ -61,6 +63,11 @@ var RemoteAppDevSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			devsvc.NewAppRoleSvc,
+		),
+		fx.Annotate(
+			devsvc.NewRoleClearHook,
+			fx.As(new(app.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
 	),
 )

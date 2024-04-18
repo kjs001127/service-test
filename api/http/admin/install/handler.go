@@ -3,23 +3,20 @@ package install
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	installer *app.AppInstallSvc
-	cmdRepo   cmd.CommandRepository
 	querySvc  *app.AppInstallQuerySvc
 }
 
 func NewHandler(
 	installer *app.AppInstallSvc,
-	cmdRepo cmd.CommandRepository,
 	querySvc *app.AppInstallQuerySvc,
 ) *Handler {
-	return &Handler{installer: installer, cmdRepo: cmdRepo}
+	return &Handler{installer: installer, querySvc: querySvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

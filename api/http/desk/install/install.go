@@ -137,9 +137,10 @@ func (h *Handler) queryAll(ctx *gin.Context) {
 //	@Tags			Desk
 //	@Description	get All Apps and AppChannels installed to channel.
 //
-//	@Param			x-account	header	string	true	"access token"
-//	@Param			channelID	path	string	true	"id of Channel"
-//	@Param			appID		path	string	true	"id of App"
+//	@Param			x-account					header	string						true	"access token"
+//	@Param			channelID					path	string						true	"id of Channel"
+//	@Param			appID						path	string						true	"id of App"
+//	@Param			dto.CommandToggleRequest	body	dto.CommandToggleRequest	true	"toggleCmd body"
 //
 //	@Success		200
 //	@Router			/desk/v1/channels/{channelID}/installed-apps/{appId}/commands [put]
