@@ -50,7 +50,7 @@ func (h *Handler) getApps(ctx *gin.Context) {
 //	@Success	200			{object}	dto.AppDetailView
 //	@Router		/desk/v1/channels/{channelID}/app-store/apps/{appID}  [get]
 func (h *Handler) getAppDetail(ctx *gin.Context) {
-	appID := ctx.Query("appID")
+	appID := ctx.Param("appID")
 
 	app, err := h.appRepo.FindApp(ctx, appID)
 	if err != nil {
