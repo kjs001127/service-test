@@ -11,8 +11,8 @@ type CommandClearHook struct {
 	activationSettings ActivationSettingRepository
 }
 
-func NewCommandClearHook(registerSvc *RegisterSvc) *CommandClearHook {
-	return &CommandClearHook{registerSvc: registerSvc}
+func NewCommandClearHook(registerSvc *RegisterSvc, settings ActivationSettingRepository) *CommandClearHook {
+	return &CommandClearHook{registerSvc: registerSvc, activationSettings: settings}
 }
 
 func (c CommandClearHook) OnAppCreate(ctx context.Context, app *model.App) error {

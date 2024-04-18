@@ -14,8 +14,8 @@ type WysiwygQuerySvc struct {
 	activationRepo ActivationRepository
 }
 
-func NewWysiwygQuerySvc(querySvc *app.AppInstallQuerySvc, cmdRepo CommandRepository) *WysiwygQuerySvc {
-	return &WysiwygQuerySvc{querySvc: querySvc, cmdRepo: cmdRepo}
+func NewWysiwygQuerySvc(querySvc *app.AppInstallQuerySvc, cmdRepo CommandRepository, activationRepo ActivationRepository) *WysiwygQuerySvc {
+	return &WysiwygQuerySvc{querySvc: querySvc, cmdRepo: cmdRepo, activationRepo: activationRepo}
 }
 
 func (s *WysiwygQuerySvc) Query(ctx context.Context, channelID string, scope cmdmodel.Scope) ([]*appmodel.App, []*cmdmodel.Command, error) {
