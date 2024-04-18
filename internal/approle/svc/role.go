@@ -142,6 +142,9 @@ func (s *AppRoleSvc) DeleteRoles(ctx context.Context, appID string) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	if err = s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
+		return errors.WithStack(err)
+	}
 	for _, c := range appRoles {
 		if _, err = s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
 			return errors.Wrap(err, "error while deleting roles")
