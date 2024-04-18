@@ -37,6 +37,14 @@ func WrapCommonErr(err error) FunctionResponse {
 	}
 }
 
+func (r *FunctionResponse) IsError() bool {
+	if len(r.Error.Type) <= 0 && len(r.Error.Message) <= 0 {
+		return false
+	}
+
+	return true
+}
+
 func ResultSuccess(resp json.RawMessage) FunctionResponse {
 	return FunctionResponse{
 		Result: resp,
@@ -82,7 +90,7 @@ func (i *FunctionInvoker) Invoke(
 	resp := handler(ctx, token, req)
 	i.logger.Debugw(ctx, "native function response", "response", resp)
 
-	if len(resp.Error.Type) >= 0 {
+	if resp.IsError() {
 		i.logger.Warnw(ctx, "native function response errored", "request", req, "err", resp.Error)
 	}
 	return resp

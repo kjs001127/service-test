@@ -14,12 +14,17 @@ import (
 )
 
 type Checker struct {
-	svc        *svc.AppInstallQuerySvc
-	rbacParser authgen.Parser
+	serviceName string
+	svc         *svc.AppInstallQuerySvc
+	rbacParser  authgen.Parser
 }
 
-func NewChecker(svc *svc.AppInstallQuerySvc, rbacParser authgen.Parser) *Checker {
-	return &Checker{svc: svc, rbacParser: rbacParser}
+func NewChecker(serviceName string, svc *svc.AppInstallQuerySvc, rbacParser authgen.Parser) *Checker {
+	return &Checker{
+		serviceName: serviceName,
+		svc:         svc,
+		rbacParser:  rbacParser,
+	}
 }
 
 func (c *Checker) RegisterTo(registry native.FunctionRegistry) {
@@ -53,7 +58,6 @@ func (c *Checker) CheckInstall(ctx context.Context, token native.Token, request 
 }
 
 const (
-	appStoreService    = "api.app-store.channel.io"
 	checkInstallAction = "checkInstall"
 
 	channelScope = "channel"
@@ -65,7 +69,7 @@ func (c *Checker) authorize(ctx context.Context, token native.Token, req CheckRe
 		return err
 	}
 
-	if !parsedRbac.CheckAction(appStoreService, checkInstallAction) {
+	if !parsedRbac.CheckAction(authgen.Service(c.serviceName), checkInstallAction) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

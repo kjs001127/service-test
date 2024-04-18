@@ -14,12 +14,17 @@ import (
 )
 
 type SystemLog struct {
-	svc        *svc.SystemLogSvc
-	rbacParser authgen.Parser
+	serviceName string
+	svc         *svc.SystemLogSvc
+	rbacParser  authgen.Parser
 }
 
-func NewSystemLog(svc *svc.SystemLogSvc, rbacParser authgen.Parser) *SystemLog {
-	return &SystemLog{svc: svc, rbacParser: rbacParser}
+func NewSystemLog(serviceName string, svc *svc.SystemLogSvc, rbacParser authgen.Parser) *SystemLog {
+	return &SystemLog{
+		serviceName: serviceName,
+		svc:         svc,
+		rbacParser:  rbacParser,
+	}
 }
 
 func (s *SystemLog) RegisterTo(registry native.FunctionRegistry) {
@@ -50,7 +55,6 @@ func (s *SystemLog) WriteLog(ctx context.Context, token native.Token, req native
 }
 
 const (
-	appStoreService      = "api.app-store.channel.io"
 	writeSystemLogAction = "writeSystemLog"
 
 	channelScope = "channel"
@@ -63,7 +67,7 @@ func (s *SystemLog) authorize(ctx context.Context, token native.Token, log *mode
 		return err
 	}
 
-	if !parsedRbac.CheckAction(appStoreService, writeSystemLogAction) {
+	if !parsedRbac.CheckAction(authgen.Service(s.serviceName), writeSystemLogAction) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

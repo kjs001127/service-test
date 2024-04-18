@@ -1,4 +1,5 @@
 stage: production
+serviceName: api.app-store.channel.io
 auth:
   authAdminURL: https://admin-api.in.channel.io
   jwtServiceKey: ${JWT_SERVICE_KEY}

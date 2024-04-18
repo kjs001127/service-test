@@ -13,12 +13,18 @@ import (
 )
 
 type RegisterHandler struct {
+	serviceName string
 	rbacParser  authgen.Parser
 	registerSvc *command.RegisterSvc
 }
 
-func NewRegisterHandler(rbacParser authgen.Parser, registerSvc *command.RegisterSvc) *RegisterHandler {
-	return &RegisterHandler{rbacParser: rbacParser, registerSvc: registerSvc}
+// TODO: fx 주입시, serviceName ParamTag 추가
+func NewRegisterHandler(serviceName string, rbacParser authgen.Parser, registerSvc *command.RegisterSvc) *RegisterHandler {
+	return &RegisterHandler{
+		serviceName: serviceName,
+		rbacParser:  rbacParser,
+		registerSvc: registerSvc,
+	}
 }
 
 func (r RegisterHandler) RegisterTo(registry native.FunctionRegistry) {
@@ -47,7 +53,6 @@ func (r *RegisterHandler) RegisterCommand(
 }
 
 const (
-	appStoreService  = "api.app-store.channel.io"
 	registerCommands = "registerCommands"
 
 	appScope = "app"
@@ -59,7 +64,7 @@ func (r *RegisterHandler) authorize(ctx context.Context, token native.Token, req
 		return err
 	}
 
-	if !parsedRbac.CheckAction(appStoreService, registerCommands) {
+	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), registerCommands) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
