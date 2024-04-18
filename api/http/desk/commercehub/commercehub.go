@@ -45,6 +45,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 	)
 	if resp.IsError() {
 		_ = ctx.Error(fmt.Errorf("commercehub get config error, type: %s, err :%s", resp.Error.Type, resp.Error.Message))
+		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)
@@ -82,7 +83,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 					ID: channelID,
 				},
 				Caller: app.Caller{
-					Type: "manager",
+					Type: app.CallerTypeManager,
 					ID:   manager.ID,
 				},
 			},
@@ -91,6 +92,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 	)
 	if resp.IsError() {
 		_ = ctx.Error(fmt.Errorf("commercehub set config error, type: %s, err :%s", resp.Error.Type, resp.Error.Message))
+		return
 	}
 
 	ctx.JSON(http.StatusOK, resp)
