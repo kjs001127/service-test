@@ -77,9 +77,11 @@ func (s *WysiwygQuerySvc) filterOnlyActiveApps(ctx context.Context, channelID st
 
 	var ret []*appmodel.App
 	for _, installedApp := range installedApps {
-		if activationMap[installedApp.ID] {
-			ret = append(ret, installedApp)
+		if activated, exists := activationMap[installedApp.ID]; exists && !activated {
+			continue
 		}
+
+		ret = append(ret, installedApp)
 	}
 
 	return ret, nil
