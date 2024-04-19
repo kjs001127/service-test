@@ -28,7 +28,7 @@ func (a ActivationRepository) Save(ctx context.Context, activation *model.Activa
 		ctx,
 		a.db,
 		true,
-		[]string{"app_id, channel_id"},
+		[]string{"app_id", "channel_id"},
 		boil.Blacklist("app_id", "channel_id"),
 		boil.Infer(),
 	)

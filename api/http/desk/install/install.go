@@ -143,7 +143,7 @@ func (h *Handler) queryAll(ctx *gin.Context) {
 //	@Param			dto.CommandToggleRequest	body	dto.CommandToggleRequest	true	"toggleCmd body"
 //
 //	@Success		200
-//	@Router			/desk/v1/channels/{channelID}/installed-apps/{appId}/commands [put]
+//	@Router			/desk/v1/channels/{channelID}/installed-apps/{appID}/commands [put]
 func (h *Handler) toggleCmd(ctx *gin.Context) {
 	var body dto.CommandToggleRequest
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {

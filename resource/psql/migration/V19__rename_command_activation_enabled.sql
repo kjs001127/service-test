@@ -1,0 +1,1 @@
+ALTER TABLE command_activation ALTER COLUMN enabled DROP DEFAULT
