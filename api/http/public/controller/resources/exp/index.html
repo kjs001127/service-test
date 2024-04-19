@@ -152,6 +152,22 @@
         .then(response => response.json())
       }
 
+      function callNativeFunction({ name, params = {}}) {
+        return fetch('https://app-store-api.exp.channel.io/general/v1/native/functions', {
+          method: 'PUT',
+          body: JSON.stringify({
+            method: name,
+            params,
+          }),
+          headers: {
+            'x-access-token': accessToken,
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => response.json)
+      }
+
       function getWamData(key) {
         return wamData[key]
       }
@@ -166,6 +182,7 @@
         wamIframe.contentWindow.callCommand = callCommand
         wamIframe.contentWindow.setSize = setSize
         wamIframe.contentWindow.callFunction = callFunction
+        wamIframe.contentWindow.callNativeFunction = callNativeFunction
         wamIframe.contentWindow.getWamData = getWamData
       }
 
