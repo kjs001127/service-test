@@ -24,8 +24,8 @@ type FunctionResponse struct {
 }
 
 type Err struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
+	Type    string `json:"type,omitempty"`
+	Message string `json:"message,omitempty"`
 }
 
 func WrapCommonErr(err error) FunctionResponse {
