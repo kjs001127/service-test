@@ -56,7 +56,7 @@ func (h *Hook) RegisterHook(ctx context.Context, token native.Token, req native.
 }
 
 const (
-	installHookAction = "installHook"
+	registerHookAction = "registerHook"
 
 	appScope = "app"
 )
@@ -67,7 +67,7 @@ func (h *Hook) authorize(ctx context.Context, token native.Token, installHook *m
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), installHookAction) {
+	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), registerHookAction) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
