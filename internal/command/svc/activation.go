@@ -41,7 +41,9 @@ func (s *ActivationSvc) Toggle(ctx context.Context, key appmodel.InstallationID,
 
 func (s *ActivationSvc) callHookIfExists(ctx context.Context, key appmodel.InstallationID, enabled bool) error {
 	setting, err := s.activationSettings.Fetch(ctx, key.AppID)
-	if err != nil {
+	if apierr.IsNotFound(err) {
+		return nil
+	} else if err != nil {
 		return err
 	}
 
