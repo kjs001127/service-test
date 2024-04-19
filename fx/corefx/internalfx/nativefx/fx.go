@@ -4,6 +4,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/command"
 	"github.com/channel-io/ch-app-store/internal/native/coreapi"
 	"github.com/channel-io/ch-app-store/internal/native/hook"
 	"github.com/channel-io/ch-app-store/internal/native/install"
@@ -32,6 +33,12 @@ var Native = fx.Options(
 		),
 		fx.Annotate(
 			hook.NewHook,
+			fx.As(new(native.FunctionRegistrant)),
+			fx.ResultTags(`group:"handler"`),
+			fx.ParamTags(configfx.ServiceName),
+		),
+		fx.Annotate(
+			command.NewHandler,
 			fx.As(new(native.FunctionRegistrant)),
 			fx.ResultTags(`group:"handler"`),
 			fx.ParamTags(configfx.ServiceName),

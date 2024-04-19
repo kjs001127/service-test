@@ -20,6 +20,7 @@ const (
 
 	scopeChannel = "channel-{id}"
 	scopeUser    = "user-{id}"
+	scopeApp     = "app-{id}"
 	scopeManager = "manager-{id}"
 )
 
@@ -37,7 +38,7 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
 				GrantedScopes: []string{
-					scopeChannel,
+					scopeChannel, scopeApp,
 				},
 			},
 
