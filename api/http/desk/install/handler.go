@@ -36,4 +36,5 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group.GET("/:appID", h.query)
 	group.PUT("/:appID", h.install)
 	group.DELETE("/:appID", h.uninstall)
+	group.PUT("/:appID/commands", h.toggleCmd)
 }
