@@ -1,7 +1,7 @@
 package model
 
 type AppInstallHooks struct {
-	AppID                 string
-	InstallFunctionName   *string
-	UninstallFunctionName *string
+	AppID                 string  `json:"appId"`
+	InstallFunctionName   *string `json:"installFunctionName"`
+	UninstallFunctionName *string `json:"uninstallFunctionName"`
 }
