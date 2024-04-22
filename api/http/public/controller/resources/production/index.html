@@ -167,6 +167,7 @@
 
                     sendToClient({
                       type: 'onAuthTokenUpdated',
+                      wamId: wamData.wamId,
                       attributes: result,
                     })
                     return callFunction({ appId, name, params })
@@ -203,6 +204,7 @@
 
                     sendToClient({
                       type: 'onAuthTokenUpdated',
+                      wamId: wamData.wamId,
                       attributes: result,
                     })
                     return callNativeFunction({ name, params })
