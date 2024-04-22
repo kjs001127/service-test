@@ -14,11 +14,17 @@ type Handler struct {
 }
 
 // TODO: fx 주입시, serviceName ParamTag 추가
-func NewHandler(serviceName string, rbacParser authgen.Parser, registerSvc *command.RegisterSvc) *Handler {
+func NewHandler(
+	serviceName string,
+	rbacParser authgen.Parser,
+	registerSvc *command.RegisterSvc,
+	activationSvc *command.ActivationSvc,
+) *Handler {
 	return &Handler{
-		serviceName: serviceName,
-		rbacParser:  rbacParser,
-		registerSvc: registerSvc,
+		serviceName:   serviceName,
+		rbacParser:    rbacParser,
+		registerSvc:   registerSvc,
+		activationSvc: activationSvc,
 	}
 }
 

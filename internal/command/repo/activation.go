@@ -23,7 +23,7 @@ func NewActivationRepository(db db.DB) *ActivationRepository {
 	return &ActivationRepository{db: db}
 }
 
-func (a ActivationRepository) Save(ctx context.Context, activation *model.Activation) error {
+func (a *ActivationRepository) Save(ctx context.Context, activation *model.Activation) error {
 	return marshalActivation(activation).Upsert(
 		ctx,
 		a.db,
@@ -34,7 +34,7 @@ func (a ActivationRepository) Save(ctx context.Context, activation *model.Activa
 	)
 }
 
-func (a ActivationRepository) Fetch(ctx context.Context, key appmodel.InstallationID) (*model.Activation, error) {
+func (a *ActivationRepository) Fetch(ctx context.Context, key appmodel.InstallationID) (*model.Activation, error) {
 	res, err := models.CommandActivations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", key.AppID),
@@ -50,7 +50,7 @@ func (a ActivationRepository) Fetch(ctx context.Context, key appmodel.Installati
 	return unmarshalActivation(res), nil
 }
 
-func (a ActivationRepository) FetchAllByAppIDs(ctx context.Context, channelID string, appIDs []string) ([]*model.Activation, error) {
+func (a *ActivationRepository) FetchAllByAppIDs(ctx context.Context, channelID string, appIDs []string) ([]*model.Activation, error) {
 	slice := make([]interface{}, len(appIDs))
 	for i, v := range appIDs {
 		slice[i] = v
@@ -68,7 +68,7 @@ func (a ActivationRepository) FetchAllByAppIDs(ctx context.Context, channelID st
 	return unmarshalAllActivations(mods), nil
 }
 
-func (a ActivationRepository) Delete(ctx context.Context, key appmodel.InstallationID) error {
+func (a *ActivationRepository) Delete(ctx context.Context, key appmodel.InstallationID) error {
 	_, err := models.Commands(
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("channel_id = $2", key.ChannelID),
