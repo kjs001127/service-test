@@ -53,12 +53,8 @@
         }
       })()
 
-      const channelId = wamData.channelId
-      const appId = wamData.appId
-      const wamName = wamData.wamName
-      const wamId = wamData.wamId
-      const accessToken = wamData.accessToken
-      const refreshToken = wamData.refreshToken
+      const baseDropWizardUrl = 'https://api.channel.io'
+      const baseAppStoreUrl = 'https://app-store-api.channel.io'
 
       function sendToClient(wamEvent) {
         if (
@@ -91,7 +87,7 @@
       function close({ appId, name, params = {} } = {}) {
         const wamEvent = appId && name ? {
           type: 'command',
-          wamId,
+          wamId: wamData.wamId,
           attributes: {
             appId,
             name,
@@ -101,7 +97,7 @@
 
         sendToClient({
           type: 'close',
-          wamId,
+          wamId: wamData.wamId,
           attributes: {
             wamEvent,
           }
@@ -111,7 +107,7 @@
       function callCommand({ appId, name, params = {} } = {}) {
         sendToClient({
           type: 'command',
-          wamId,
+          wamId: wamData.wamId,
           attributes: {
             appId,
             name,
@@ -123,7 +119,7 @@
       function setSize({ width, height }) {
         sendToClient({
           type: 'setSize',
-          wamId,
+          wamId: wamData.wamId,
           attributes: {
             width,
             height,
@@ -131,41 +127,92 @@
         })
       }
 
+      function refreshAuthToken() {
+        return fetch(`${baseDropWizardUrl}/general/auth/v1/token?grant_type=refresh_token&refresh_token=${wamData.refreshToken}`, {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+        .then(response => response.json())
+      }
+
       function callFunction({ appId, name, params = {} } = {}) {
-        return fetch(`https://app-store-api.channel.io/general/v1/apps/${appId}/functions`, {
+        return fetch(`${baseAppStoreUrl}/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
           body: JSON.stringify({
             method: name,
             params,
             context: {
               channel: {
-                id: channelId,
+                id: wamData.channelId,
               }
             }
           }),
           headers: {
-            'x-access-token': accessToken,
+            'x-access-token': wamData.accessToken,
             'accept': 'application/json',
             'Content-Type': 'application/json',
           }
         })
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then((error) => {
+              return refreshAuthToken()
+                .then((result) => {
+                  if (result && result.access_token && result.refresh_token) {
+                    wamData.accessToken = result.access_token
+                    wamData.refreshToken = result.refresh_token
+
+                    sendToClient({
+                      type: 'onAuthTokenUpdated',
+                      attributes: result,
+                    })
+                    return callFunction({ appId, name, params })
+                  }
+                })
+            })
+          }
+
+          return response.json()
+        })
       }
 
       function callNativeFunction({ name, params = {}}) {
-        return fetch('https://app-store-api.channel.io/general/v1/native/functions', {
+        return fetch(`${baseAppStoreUrl}/general/v1/native/functions`, {
           method: 'PUT',
           body: JSON.stringify({
             method: name,
             params,
           }),
           headers: {
-            'x-access-token': accessToken,
+            'x-access-token': wamData.accessToken,
             'accept': 'application/json',
             'Content-Type': 'application/json',
           }
         })
-        .then(response => response.json)
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then((error) => {
+              return refreshAuthToken()
+                .then((result) => {
+                  if (result && result.access_token && result.refresh_token) {
+                    wamData.accessToken = result.access_token
+                    wamData.refreshToken = result.refresh_token
+
+                    sendToClient({
+                      type: 'onAuthTokenUpdated',
+                      attributes: result,
+                    })
+                    return callNativeFunction({ name, params })
+                  }
+                })
+            })
+          }
+
+          return response.json()
+        })
       }
 
       function getWamData(key) {
@@ -175,7 +222,7 @@
       function loadWam() {
         const wamIframe = document.createElement('iframe')
         wamIframe.id = 'wam'
-        wamIframe.src = `https://app-store-api.channel.io/public/v1/apps/${appId}/wams/${wamName}/`
+        wamIframe.src = `${baseAppStoreUrl}/public/v1/apps/${wamData.appId}/wams/${wamData.wamName}/`
         document.body.appendChild(wamIframe)
 
         wamIframe.contentWindow.close = close
