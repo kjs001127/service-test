@@ -48,7 +48,7 @@ func registerCommand(appID, functionName, name string, scope model.Scope) {
 			AlfMode:            "NOT_IMPORTANT",
 			ActionFunctionName: functionName,
 		},
-	}}
+	}, EnableByDefault: true}
 
 	requester := cli.R()
 	requester.SetBody(req)
