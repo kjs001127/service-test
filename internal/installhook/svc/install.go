@@ -115,7 +115,8 @@ func (i *PostInstallHandler) OnInstall(ctx context.Context, app *app.App, channe
 				ID: channelID,
 			},
 			Caller: svc.Caller{
-				Type: "system",
+				Type: svc.CallerTypeSystem,
+				ID:   svc.CallerIDOmitted,
 			},
 		},
 		Params: rawMessage,

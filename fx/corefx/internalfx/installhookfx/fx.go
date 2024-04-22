@@ -48,6 +48,7 @@ var PostInstallHandler = fx.Options(
 		fx.Annotate(
 			svc.NewPostInstallHandler,
 			fx.As(new(appsvc.InstallHandler)),
+			fx.ResultTags(appfx.PostInstallHandlerGroup),
 		),
 	),
 )
