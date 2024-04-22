@@ -23,8 +23,11 @@ type AppView struct {
 	Title       string  `json:"title"`
 	AvatarURL   *string `json:"avatarUrl,omitempty"`
 	Description *string `json:"description,omitempty"`
-	State       string  `json:"state"`
 	IsBuiltIn   bool    `json:"isBuiltIn"`
+
+	// legacy fields
+	State     string `json:"state"`
+	IsPrivate bool   `json:"isPrivate"`
 }
 
 func NewAppView(origin *model.App) *AppView {
@@ -34,7 +37,9 @@ func NewAppView(origin *model.App) *AppView {
 		AvatarURL:   origin.AvatarURL,
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
-		State:       "",
+
+		State:     "",
+		IsPrivate: false,
 	}
 }
 
