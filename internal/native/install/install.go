@@ -28,7 +28,7 @@ func NewChecker(serviceName string, svc *svc.AppInstallQuerySvc, rbacParser auth
 }
 
 func (c *Checker) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register("writeSystemLog", c.CheckInstall)
+	registry.Register("checkInstall", c.CheckInstall)
 }
 
 func (c *Checker) CheckInstall(ctx context.Context, token native.Token, request native.FunctionRequest) native.FunctionResponse {
