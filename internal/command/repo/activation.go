@@ -69,7 +69,7 @@ func (a *ActivationRepository) FetchAllByAppIDs(ctx context.Context, channelID s
 }
 
 func (a *ActivationRepository) Delete(ctx context.Context, key appmodel.InstallationID) error {
-	_, err := models.Commands(
+	_, err := models.CommandActivations(
 		qm.Where("app_id = $1", key.AppID),
 		qm.Where("channel_id = $2", key.ChannelID),
 	).DeleteAll(ctx, a.db)
