@@ -6,6 +6,6 @@ type AppInstallation struct {
 }
 
 type InstallationID struct {
-	AppID     string
-	ChannelID string
+	AppID     string `json:"appId"`
+	ChannelID string `json:"channelId"`
 }
