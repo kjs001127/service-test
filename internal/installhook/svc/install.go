@@ -60,7 +60,7 @@ func (i PostInstallHandler) OnUnInstall(ctx context.Context, app *app.App, chann
 		AppID:     app.ID,
 		ChannelID: channelID,
 	}
-	go i.trySendHook(ctx, installID, *hooks.UninstallFunctionName)
+	go i.trySendHook(context.Background(), installID, *hooks.UninstallFunctionName)
 
 	return nil
 }
