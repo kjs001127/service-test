@@ -39,7 +39,7 @@ func (i *PostInstallHandler) OnInstall(ctx context.Context, app *app.App, channe
 		AppID:     app.ID,
 		ChannelID: channelID,
 	}
-	go i.trySendHook(ctx, installID, *installHook.InstallFunctionName)
+	go i.trySendHook(context.Background(), installID, *installHook.InstallFunctionName)
 
 	return nil
 }
