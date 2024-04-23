@@ -2,8 +2,9 @@ package commercehub
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
@@ -44,7 +45,7 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 		},
 	)
 	if resp.IsError() {
-		_ = ctx.Error(fmt.Errorf("commercehub get config error, type: %s, err :%s", resp.Error.Type, resp.Error.Message))
+		_ = ctx.Error(errors.New(resp.Error.Message))
 		return
 	}
 
@@ -91,7 +92,7 @@ func (h *Handler) setConfig(ctx *gin.Context) {
 		},
 	)
 	if resp.IsError() {
-		_ = ctx.Error(fmt.Errorf("commercehub set config error, type: %s, err :%s", resp.Error.Type, resp.Error.Message))
+		_ = ctx.Error(errors.New(resp.Error.Message))
 		return
 	}
 
