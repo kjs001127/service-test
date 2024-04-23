@@ -14,7 +14,7 @@ type HttpTestClient struct {
 	baseURL string
 }
 
-func NewMockMvc(baseURL string) *HttpTestClient {
+func NewHttpTestClient(baseURL string) *HttpTestClient {
 	return &HttpTestClient{client: resty.New(), baseURL: baseURL}
 }
 

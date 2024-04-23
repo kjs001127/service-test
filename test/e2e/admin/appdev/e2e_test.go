@@ -51,7 +51,7 @@ func (e *E2ETest) TearDownSuite() {
 }
 
 func (e *E2ETest) TestPing() {
-	m := NewMockMvc(baseURL)
+	m := NewHttpTestClient(baseURL)
 	response, _ := m.Get("/ping").Do()
 
 	assert.Equal(e.T(), http.StatusOK, response.StatusCode())
@@ -62,7 +62,7 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 	fakeFunctionUrl := "http://www.function.com"
 	fakeWamUrl := "http://www.wam.com"
 
-	m := NewMockMvc(baseURL)
+	m := NewHttpTestClient(baseURL)
 
 	appCreateRequest := appmodel.App{
 		Title:     "TestApp",
@@ -98,7 +98,7 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 
 func (e *E2ETest) TestRegisterCommand() {
 
-	m := NewMockMvc(baseURL)
+	m := NewHttpTestClient(baseURL)
 	createdApp := e.TestCreateRemoteApp()
 
 	commandBody := dto.RegisterRequest{
@@ -119,7 +119,7 @@ func (e *E2ETest) TestRegisterCommand() {
 }
 
 func (e *E2ETest) TestInstallApp() {
-	m := NewMockMvc(baseURL)
+	m := NewHttpTestClient(baseURL)
 	createdApp := e.TestCreateRemoteApp()
 
 	managerPrincipal := account.ManagerPrincipal{
