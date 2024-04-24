@@ -160,7 +160,7 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfDescription:           null.StringFromPtr(cmd.AlfDescription),
-		AlfMode:                  cmd.AlfMode,
+		AlfMode:                  string(cmd.AlfMode),
 		ParamDefinitions:         paramDef,
 	}, nil
 }
@@ -189,7 +189,7 @@ func marshal(c *models.Command) (*model.Command, error) {
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,
-		AlfMode:                  c.AlfMode,
+		AlfMode:                  model.AlfMode(c.AlfMode),
 	}, nil
 }
 

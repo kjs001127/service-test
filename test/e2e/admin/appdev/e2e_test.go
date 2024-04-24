@@ -108,6 +108,7 @@ func (e *E2ETest) TestRegisterCommand() {
 				Scope:              "desk",
 				ActionFunctionName: "testActionFunction",
 				AppID:              createdApp.ID,
+				AlfMode:            model.AlfModeDisable,
 			},
 		},
 		EnableByDefault: true,

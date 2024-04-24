@@ -5,6 +5,15 @@ import (
 	"time"
 )
 
+type AlfMode string
+
+const (
+	AlfModeDisable   = AlfMode("disable")
+	AlfModeRecommend = AlfMode("recommend")
+)
+
+var validAlfModes = []AlfMode{AlfModeRecommend, AlfModeDisable}
+
 type Scope string
 
 const (
@@ -34,7 +43,7 @@ type Command struct {
 	NameDescI18NMap map[string]any `json:"nameDescI18nMap"`
 
 	AlfDescription *string `json:"alfDescription"`
-	AlfMode        string  `json:"alfMode"`
+	AlfMode        AlfMode `json:"alfMode"`
 
 	ActionFunctionName       string  `json:"actionFunctionName"`
 	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
@@ -54,7 +63,24 @@ func (c *Command) Validate() error {
 		return fmt.Errorf("scope %s is not defined", c.Scope)
 	}
 
+	if err := c.ParamDefinitions.validate(); err != nil {
+		return err
+	}
+
+	if err := c.validateAlf(); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (c *Command) validateAlf() error {
+	for _, mode := range validAlfModes {
+		if mode == c.AlfMode {
+			return nil
+		}
+	}
+	return fmt.Errorf("alfMode %s is not valid mode", c.AlfMode)
 }
 
 type Query struct {
