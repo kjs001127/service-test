@@ -1,5 +1,5 @@
 stage: development
-serviceName: api.exp.app-store.channel.io
+serviceName: app-store-api.exp.channel.io
 auth:
   authGeneralUrl: https://api.exp.channel.io
   authAdminURL: https://admin.api.exp.channel.io
