@@ -58,6 +58,10 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 
 	a.logger.Debugw(ctx, "function response", "appID", target.ID, "response", json.RawMessage(ret))
 
+	if len(ret) <= 0 {
+		return app.JsonFunctionResponse{}
+	}
+
 	var jsonResp app.JsonFunctionResponse
 	if err = json.Unmarshal(ret, &jsonResp); err != nil {
 		a.logger.Warnw(ctx, "function response cannot be unmarshalled", "appID", target.ID, "error", err)
