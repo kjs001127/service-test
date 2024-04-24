@@ -37,7 +37,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 	manager := middleware.Manager(ctx)
 
-	if lang, exists := locale(ctx); exists {
+	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
 		body.Language = lang
 	}
 
