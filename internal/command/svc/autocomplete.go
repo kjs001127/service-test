@@ -18,8 +18,9 @@ type AutoCompleteRequest struct {
 }
 
 type AutoCompleteBody struct {
-	Chat  Chat             `json:"chat"`
-	Input AutoCompleteArgs `json:"input"`
+	Chat     Chat             `json:"chat"`
+	Input    AutoCompleteArgs `json:"input"`
+	Language string           `json:"language"`
 }
 
 type AutoCompleteArgs []*AutoCompleteArg

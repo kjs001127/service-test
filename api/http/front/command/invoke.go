@@ -101,6 +101,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	user := middleware.User(ctx)
 
+	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
+		body.Language = lang
+	}
+
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
 		Command: model.CommandKey{

@@ -99,6 +99,10 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 	manager := middleware.Manager(ctx)
 
+	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
+		body.Language = lang
+	}
+
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
 		Command: model.CommandKey{
