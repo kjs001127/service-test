@@ -138,6 +138,17 @@
         .then(response => response.json())
       }
 
+      /**
+       * @author: daniel
+       * @description: token이 invalid 할 경우, token refresh후 다시 function을 호출해 줌.
+       * 하지만 function이 token invalid가 아닌 다른 요인으로 에러가 발생했을 경우 재호출된 function은
+       * 다시 실패할 가능성이 높으며 무한루프가 돌게 됨.
+       * 명확하게 token invalid에러가 발생했을 경우만 token refresh를 해줘야 하지만 현재는 서버에서 구분할
+       * 수 있는 값을 내려주지 않고 있기 때문에 임시로 클라이언트에서 request retry 횟수를 제한함.
+       */
+      let functionRetry = 0
+      let nativeFunctionRetry = 0
+
       function callFunction({ appId, name, params = {} } = {}) {
         return fetch(`${baseAppStoreUrl}/general/v1/apps/${appId}/functions`, {
           method: 'PUT',
@@ -157,7 +168,9 @@
           }
         })
         .then(response => {
-          if (!response.ok) {
+          if (!response.ok && functionRetry < 3) {
+            functionRetry += 1
+
             return response.json().then((error) => {
               return refreshAuthToken()
                 .then((result) => {
@@ -175,6 +188,7 @@
                 })
             })
           }
+          functionRetry = 0
 
           return response.json()
         })
@@ -194,7 +208,9 @@
           }
         })
         .then(response => {
-          if (!response.ok) {
+          if (!response.ok && nativeFunctionRetry < 3) {
+            nativeFunctionRetry += 1
+
             return response.json().then((error) => {
               return refreshAuthToken()
                 .then((result) => {
@@ -212,6 +228,7 @@
                 })
             })
           }
+          nativeFunctionRetry = 0
 
           return response.json()
         })
