@@ -115,9 +115,10 @@ type CommandRequest struct {
 type ParamInput map[model.ParamName]any
 
 type CommandBody struct {
-	Chat    Chat       `json:"chat"`
-	Trigger Trigger    `json:"trigger"`
-	Input   ParamInput `json:"input"`
+	Chat     Chat       `json:"chat"`
+	Trigger  Trigger    `json:"trigger"`
+	Input    ParamInput `json:"input"`
+	Language string     `json:"language"`
 }
 
 type Chat struct {
