@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/text/language"
 
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
@@ -37,6 +38,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 	user := middleware.User(ctx)
 
+	if lang, exists := locale(ctx); exists {
+		body.Language = lang
+	}
+
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
 		CommandKey: model.CommandKey{
@@ -56,6 +61,21 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func locale(ctx *gin.Context) (string, bool) {
+	tags, _, err := language.ParseAcceptLanguage(ctx.GetHeader("Accept-Language"))
+	if err != nil {
+		return "", false
+	}
+	for _, tag := range tags {
+		lang, conf := tag.Base()
+		if conf >= language.High {
+			return lang.String(), true
+		}
+	}
+
+	return "", false
 }
 
 // autoComplete godoc
