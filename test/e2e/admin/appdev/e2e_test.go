@@ -14,8 +14,8 @@ import (
 	functionmodel "github.com/channel-io/ch-app-store/internal/apphttp/model"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/command/model"
+	. "github.com/channel-io/ch-app-store/test"
 	. "github.com/channel-io/ch-app-store/test/e2e"
-	. "github.com/channel-io/ch-app-store/test/e2e/admin"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -23,11 +23,10 @@ import (
 )
 
 const (
-	baseURL          = "http://localhost:3020"
-	fetchManagerPath = "http://localhost:8080/api/admin/manager"
-	channelID        = "1"
-	fakeXAccount     = "x-account"
-	managerID        = "1253"
+	baseURL      = "http://localhost:3020"
+	channelID    = "1"
+	fakeXAccount = "x-account"
+	managerID    = "1253"
 )
 
 type E2ETest struct {
