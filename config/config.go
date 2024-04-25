@@ -34,9 +34,10 @@ type Config struct {
 		AuthAdminURL  string `required:"true"`
 		JWTServiceKey string `required:"true"`
 	}
-	Log  chlog.Config
-	Psql db.Config
-	DDB  dynamodb.DDBConfig
+	Log                chlog.Config
+	Psql               db.Config
+	DDB                dynamodb.DDBConfig
+	SystemLogTableName string `required:"true"`
 }
 
 func init() {

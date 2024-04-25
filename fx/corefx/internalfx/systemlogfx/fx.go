@@ -10,9 +10,6 @@ import (
 
 const (
 	ddbTableNameTag = `name:"systemLogTableName"`
-
-	tableNameSeperator = "_"
-	systemLogTableName = "app_system_logs"
 )
 
 var SystemLog = fx.Options(
@@ -29,7 +26,7 @@ var SystemLogSvc = fx.Options(
 var SystemLogRepo = fx.Options(
 	fx.Supply(
 		fx.Annotate(
-			config.Get().Stage+tableNameSeperator+systemLogTableName,
+			config.Get().SystemLogTableName,
 			fx.ResultTags(ddbTableNameTag),
 		),
 	),

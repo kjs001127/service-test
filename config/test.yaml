@@ -1,5 +1,6 @@
 stage: development
 serviceName: app-store-api.exp.channel.io
+systemLogTableName: exp_app_system_logs
 auth:
   authGeneralUrl: https://api.exp.channel.io
   authAdminURL: https://admin.api.exp.channel.io
