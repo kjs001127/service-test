@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"testing"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
@@ -137,8 +136,4 @@ func (e *E2ETest) TestInstallApp() {
 
 	assert.Equal(e.T(), http.StatusOK, res.StatusCode())
 	assert.Nil(e.T(), err)
-}
-
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(E2ETest))
 }
