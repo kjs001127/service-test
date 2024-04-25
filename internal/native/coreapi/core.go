@@ -42,12 +42,12 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		"writeGroupMessage":          messageBaseUri + "/writeGroupMessage",
 		"writeGroupMessageAsManager": messageBaseUri + "/writeGroupMessageAsManager",
 
-		"writeUserChatMessage":          messageBaseUri + "/writeUserChatMessage",
-		"writeUserChatMessageAsManager": messageBaseUri + "/writeUserChatMessageAsManager",
-		"writeUserChatMessageAsUser":    messageBaseUri + "/writeUserChatMessageAsUser",
+		"writeUserChatMessage":            messageBaseUri + "/writeUserChatMessage",
+		"writeUserChatMessageAsManager":   messageBaseUri + "/writeUserChatMessageAsManager",
+		"writeUserChatMessageAsUser":      messageBaseUri + "/writeUserChatMessageAsUser",
+		"writeDirectChatMessageAsManager": messageBaseUri + "/writeDirectChatMessageAsManager",
 
-		"writeDirectChatMessageAsManager": directChatBaseUri + "/writeDirectChatMessageAsManager",
-		"createDirectChat":                directChatBaseUri + "/createDirectChat",
+		"createDirectChat": directChatBaseUri + "/createDirectChat",
 
 		"getManager":       managerBaseUri + "/getManager",
 		"batchGetManagers": managerBaseUri + "/batchGetManagers",
