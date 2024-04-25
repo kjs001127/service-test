@@ -39,9 +39,12 @@ func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string, req []*RoleW
 			return nil, apierr.NotFound(fmt.Errorf("no role type found %s", r.Type))
 		}
 
-		if err := checkScopes(r, rules); err != nil {
-			return nil, err
-		}
+		/*
+			if err := checkScopes(r, rules); err != nil {
+				return nil, err
+			}
+
+		*/
 
 		r.Claims = append(r.Claims, defaultClaimsOf(appID, rules)...)
 
