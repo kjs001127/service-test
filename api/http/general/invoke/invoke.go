@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
+	"github.com/channel-io/ch-app-store/internal/native"
+
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
@@ -27,28 +29,28 @@ import (
 //
 //	@Success	200							{object}	native.FunctionResponse
 //	@Router		/general/v1/native/functions [put]
-//func (h *Handler) invokeNative(ctx *gin.Context) {
-//	var req dto.NativeFunctionRequest
-//	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-//		_ = ctx.Error(err)
-//		return
-//	}
-//
-//	rbacToken := middleware.RBAC(ctx)
-//
-//	resp := h.nativeInvoker.Invoke(ctx,
-//		native.Token{
-//			Type:  rbacToken.Token.Header(),
-//			Value: rbacToken.Token.Value(),
-//		},
-//		native.FunctionRequest{
-//			Method: req.Method,
-//			Params: req.Params,
-//		},
-//	)
-//
-//	ctx.JSON(http.StatusOK, resp)
-//}
+func (h *Handler) invokeNative(ctx *gin.Context) {
+	var req dto.NativeFunctionRequest
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	rbacToken := middleware.RBAC(ctx)
+
+	resp := h.nativeInvoker.Invoke(ctx,
+		native.Token{
+			Type:  rbacToken.Token.Header(),
+			Value: rbacToken.Token.Value(),
+		},
+		native.FunctionRequest{
+			Method: req.Method,
+			Params: req.Params,
+		},
+	)
+
+	ctx.JSON(http.StatusOK, resp)
+}
 
 // invoke godoc
 //
