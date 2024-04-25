@@ -28,7 +28,7 @@ func (c *DDBConfig) awsOpts() []func(*config.LoadOptions) error {
 }
 
 func (c *DDBConfig) region() string {
-	if len(c.Region) >= 0 {
+	if len(c.Region) > 0 {
 		return c.Region
 	}
 	return defaultRegion
