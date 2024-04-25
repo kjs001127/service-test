@@ -24,41 +24,45 @@ type AppCrudSvc interface {
 }
 
 type AppCrudSvcImpl struct {
-	appRepo        AppRepository
-	appChRepo      AppChannelRepository
-	lifecycleHooks []AppLifeCycleHook
+	appRepo             AppRepository
+	appInstallationRepo AppInstallationRepository
+	lifecycleHooks      []AppLifeCycleHook
 }
 
 func NewAppCrudSvcImpl(
 	appRepo AppRepository,
-	repo AppChannelRepository,
+	repo AppInstallationRepository,
 	lifecycleHooks []AppLifeCycleHook,
 ) *AppCrudSvcImpl {
-	return &AppCrudSvcImpl{appRepo: appRepo, appChRepo: repo, lifecycleHooks: lifecycleHooks}
+	return &AppCrudSvcImpl{appRepo: appRepo, appInstallationRepo: repo, lifecycleHooks: lifecycleHooks}
 }
 
 func (a *AppCrudSvcImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
-	app.ID = uid.New().Hex()
-	app.State = model.AppStateEnabled
+	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
+		app.ID = uid.New().Hex()
+		app.State = model.AppStateEnabled
 
-	if err := a.callCreateHooks(ctx, app); err != nil {
-		return nil, err
-	}
+		if err := a.callCreateHooks(ctx, app); err != nil {
+			return nil, err
+		}
 
-	return a.appRepo.Save(ctx, app)
+		return a.appRepo.Save(ctx, app)
+	})
 }
 
 func (a *AppCrudSvcImpl) Update(ctx context.Context, app *model.App) (*model.App, error) {
-	appBefore, err := a.appRepo.FindApp(ctx, app.ID)
-	if err != nil {
-		return nil, err
-	}
+	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
+		appBefore, err := a.appRepo.FindApp(ctx, app.ID)
+		if err != nil {
+			return nil, err
+		}
 
-	if err := a.callModifyHooks(ctx, appBefore, app); err != nil {
-		return nil, err
-	}
+		if err := a.callModifyHooks(ctx, appBefore, app); err != nil {
+			return nil, err
+		}
 
-	return a.appRepo.Save(ctx, app)
+		return a.appRepo.Save(ctx, app)
+	})
 }
 
 func (a *AppCrudSvcImpl) Delete(ctx context.Context, appID string) error {
@@ -72,7 +76,7 @@ func (a *AppCrudSvcImpl) Delete(ctx context.Context, appID string) error {
 		if err := a.callDeleteHooks(ctx, app); err != nil {
 			return err
 		}
-		if err := a.appChRepo.DeleteByAppID(ctx, appID); err != nil {
+		if err := a.appInstallationRepo.DeleteByAppID(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}
 		if err := a.appRepo.Delete(ctx, appID); err != nil {

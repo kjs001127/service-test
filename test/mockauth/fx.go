@@ -10,13 +10,11 @@ import (
 	mockprincipal "github.com/channel-io/ch-app-store/generated/mock/auth/principal"
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	mocksession "github.com/channel-io/ch-app-store/generated/mock/auth/principal/session"
-	mocksvc "github.com/channel-io/ch-app-store/generated/mock/remoteapp/development/svc"
 
 	"github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
 )
 
 var mockedManager = account.Manager{
@@ -29,9 +27,6 @@ var mockedManager = account.Manager{
 
 var Module = fx.Options(
 	fx.Provide(
-		func(t *testing.T) svc.RoleClient {
-			return mocksvc.NewRoleClient(t)
-		},
 		func(t *testing.T) account.ManagerFetcher {
 			mocked := mockaccount.NewManagerFetcher(t)
 			mocked.On("FetchManager", mock.Anything, mock.Anything, mock.Anything).

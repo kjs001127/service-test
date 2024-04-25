@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/internal/remoteapp/development/svc"
+	"github.com/channel-io/ch-app-store/internal/appdev/svc"
 )
 
 // create godoc
@@ -55,27 +55,6 @@ func (h *Handler) delete(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
-// query godoc
-//
-//	@Summary	query App from app-store
-//	@Tags		Admin
-//
-//	@Param		roleId	query	string	true "roleId of App to query"
-//
-//	@Success	200  	{object} model.App
-//	@Router		/admin/apps [get]
-func (h *Handler) query(ctx *gin.Context) {
-	ID := ctx.Query("roleId")
-
-	appFound, err := h.appDevSvc.FetchAppByRoleID(ctx, ID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, appFound)
-}
-
 // queryDetail godoc
 //
 //	@Summary	query App from app-store
@@ -94,4 +73,52 @@ func (h *Handler) queryDetail(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, appFound)
+}
+
+// queryLegacy godoc
+//
+//	@Summary	query App from app-store
+//	@Tags		Admin
+//
+//	@Param		roleId	query	string	true "roleId of App to query"
+//
+//	@Success	200  	{object} model.App
+//	@Router		/admin/apps [get]
+func (h *Handler) queryLegacy(ctx *gin.Context) {
+	ID := ctx.Query("roleId")
+
+	role, err := h.appRoleSvc.FetchRole(ctx, ID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	appFound, err := h.appManager.Read(ctx, role.AppID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, AppLegacy{
+		ID:                 appFound.ID,
+		State:              string(appFound.State),
+		Title:              appFound.Title,
+		DetailDescriptions: appFound.DetailDescriptions,
+		AppType:            "",
+		DetailImageURLs:    appFound.DetailImageURLs,
+		ConfigSchemas:      make([]map[string]any, 0),
+	})
+}
+
+type AppLegacy struct {
+	ID                 string           `json:"id"`
+	State              string           `json:"state"`
+	Title              string           `json:"title"`
+	Description        string           `json:"description"`
+	IsPrivate          bool             `json:"isPrivate"`
+	ManualURL          string           `json:"manualUrl"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions"`
+	DetailImageURLs    []string         `json:"detailImageUrls"`
+	ConfigSchemas      []map[string]any `json:"configSchemas"`
+	AppType            string           `json:"appType"`
 }

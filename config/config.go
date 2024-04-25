@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/channel-io/ch-app-store/lib/db"
+	"github.com/channel-io/ch-app-store/lib/dynamodb"
 	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
@@ -26,14 +27,17 @@ var (
 var configFiles embed.FS
 
 type Config struct {
-	Stage string `required:"true" name:"config.stage"`
-	Port  string `required:"true"`
-	Auth  struct {
+	Stage       string `required:"true" name:"config.stage"`
+	ServiceName string `required:"true" name:"config.serviceName"`
+	Port        string `required:"true"`
+	Auth        struct {
 		AuthAdminURL  string `required:"true"`
 		JWTServiceKey string `required:"true"`
 	}
-	Log  chlog.Config
-	Psql db.Config
+	Log                chlog.Config
+	Psql               db.Config
+	DDB                dynamodb.DDBConfig
+	SystemLogTableName string `required:"true"`
 }
 
 func init() {

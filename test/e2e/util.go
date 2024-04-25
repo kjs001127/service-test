@@ -11,6 +11,12 @@ import (
 	"github.com/jarcoal/httpmock"
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
+
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	adminhandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
@@ -21,12 +27,11 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/remoteappfx/developmentfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/wysiwygfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
@@ -43,18 +48,22 @@ var httpModule = fx.Options(
 
 var fullAppModule = fx.Options(
 	datadogfx.Datadog,
+	systemlogfx.SystemLog,
+	ddbfx.DynamoDB,
 	configfx.Values,
 	httpModule,
-	developmentfx.RemoteAppDevelopment,
+	approlefx.AppRole,
+	apphttpfx.Function,
 	brieffx.Brief,
-	wysiwygfx.WysiwygQuery,
 	appfx.App,
+	appdevfx.AppDev,
 	invokelogfx.Loggers,
 	logfx.Logger,
 	mockauth.Module,
 	commandfx.Command,
 	restyfx.Clients,
 	nativefx.Native,
+	installhookfx.InstallHooks,
 
 	fx.Supply(log.New("Test")),
 )

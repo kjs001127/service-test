@@ -1,4 +1,6 @@
 stage: development
+serviceName: app-store-api.exp.channel.io
+systemLogTableName: exp_app_system_logs
 auth:
   authGeneralUrl: https://api.exp.channel.io
   authAdminURL: https://admin.api.exp.channel.io
@@ -20,3 +22,6 @@ log:
     level: error
     dsn:
     tracesSampleRate: 0
+ddb:
+  endpoint: http://localhost:8000
+  region: ap-northeast-2

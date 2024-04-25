@@ -6,47 +6,65 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type AppInstallSvc struct {
-	appChRepo      AppChannelRepository
-	appRepo        AppRepository
-	installHandler InstallHandler
+	appInstallationRepo           AppInstallationRepository
+	appRepo             AppRepository
+	preInstallHandlers  []InstallHandler
+	postInstallHandlers []InstallHandler
 }
 
 func NewAppInstallSvc(
-	appChRepo AppChannelRepository,
+	appInstallationRepo AppInstallationRepository,
 	appRepo AppRepository,
-	installHandler InstallHandler,
+	preInstallHandlers []InstallHandler,
+	postInstallHandlers []InstallHandler,
 ) *AppInstallSvc {
-	return &AppInstallSvc{appChRepo: appChRepo, appRepo: appRepo, installHandler: installHandler}
+	return &AppInstallSvc{
+		appInstallationRepo:           appInstallationRepo,
+		appRepo:             appRepo,
+		preInstallHandlers:  preInstallHandlers,
+		postInstallHandlers: postInstallHandlers,
+	}
 }
 
-func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, *model.AppInstallation, error) {
+func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
-		return nil, nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
+		return nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
 	}
 
 	return s.InstallApp(ctx, req.ChannelID, app)
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, *model.AppInstallation, error) {
-	if err := s.installHandler.OnInstall(ctx, app, channelID); err != nil {
-		return nil, nil, errors.Wrap(err, "error while handling onInstall")
-	}
+func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
 
-	installation := &model.AppInstallation{
-		AppID:     app.ID,
-		ChannelID: channelID,
-		Configs:   app.ConfigSchemas.DefaultConfig(),
-	}
-	err := s.appChRepo.Save(ctx, installation)
+	err := tx.Do(ctx, func(ctx context.Context) error {
+		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+			return errors.Wrap(err, "error while handling onInstall")
+		}
+
+		installation := &model.AppInstallation{
+			AppID:     app.ID,
+			ChannelID: channelID,
+		}
+		err := s.appInstallationRepo.Save(ctx, installation)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	})
 	if err != nil {
-		return nil, nil, errors.WithStack(err)
+		return nil, err
 	}
 
-	return app, installation, nil
+	if err := callOnInstall(ctx, s.postInstallHandlers, app, channelID); err != nil {
+		return nil, errors.Wrap(err, "error while handling post install")
+	}
+
+	return app, nil
 }
 
 func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.InstallationID) error {
@@ -58,14 +76,42 @@ func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.Installation
 		return errors.New("cannot uninstall builtin app")
 	}
 
-	if err = s.installHandler.OnUnInstall(ctx, app, req.ChannelID); err != nil {
-		return errors.Wrap(err, "error while uninstalling app")
+	if err := tx.Do(ctx, func(ctx context.Context) error {
+		if err := callOnUnInstall(ctx, s.preInstallHandlers, app, req.ChannelID); err != nil {
+			return errors.Wrap(err, "error while uninstalling app")
+		}
+
+		if err = s.appInstallationRepo.Delete(ctx, req); err != nil {
+			return errors.WithStack(err)
+		}
+
+		return nil
+	}); err != nil {
+		return err
 	}
 
-	if err = s.appChRepo.Delete(ctx, req); err != nil {
-		return errors.WithStack(err)
+	if err := callOnUnInstall(ctx, s.postInstallHandlers, app, req.ChannelID); err != nil {
+		return err
 	}
 
+	return nil
+}
+
+func callOnInstall(ctx context.Context, handlers []InstallHandler, app *model.App, channelID string) error {
+	for _, handler := range handlers {
+		if err := handler.OnInstall(ctx, app, channelID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func callOnUnInstall(ctx context.Context, handlers []InstallHandler, app *model.App, channelID string) error {
+	for _, handler := range handlers {
+		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

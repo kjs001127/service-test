@@ -36,7 +36,7 @@ func (c *CommandDBLogger) OnInvoke(ctx context.Context, event command.CommandInv
 			CommandID:        null.StringFrom(event.ID),
 			ChatType:         null.StringFrom(event.Request.Chat.Type),
 			ChatID:           null.StringFrom(event.Request.Chat.ID),
-			CallerType:       null.StringFrom(event.Request.Caller.Type),
+			CallerType:       null.StringFrom(string(event.Request.Caller.Type)),
 			CallerID:         null.StringFrom(event.Request.Caller.ID),
 			TriggerType:      null.StringFrom(event.Request.Trigger.Type),
 			TriggerMessageID: null.NewString(messageID, messageID != ""),

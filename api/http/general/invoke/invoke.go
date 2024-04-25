@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/general"
-
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
 	"github.com/channel-io/ch-app-store/api/http/general/middleware"
@@ -18,7 +17,6 @@ import (
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
-/*
 // invokeNative godoc
 //
 //	@Summary	invoke Function
@@ -27,30 +25,31 @@ import (
 //	@Param		x-access-token				header		string						true	"access token"
 //	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
-//	@Success	200							{object}	domain.NativeFunctionResponse
+//	@Success	200							{object}	native.FunctionResponse
 //	@Router		/general/v1/native/functions [put]
-func (h *Handler) invokeNative(ctx *gin.Context) {
-	var req dto.NativeFunctionRequest
-	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
-		_ = ctx.Error(err)
-		return
-	}
+//func (h *Handler) invokeNative(ctx *gin.Context) {
+//	var req dto.NativeFunctionRequest
+//	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+//		_ = ctx.Error(err)
+//		return
+//	}
+//
+//	rbacToken := middleware.RBAC(ctx)
+//
+//	resp := h.nativeInvoker.Invoke(ctx,
+//		native.Token{
+//			Type:  rbacToken.Token.Header(),
+//			Value: rbacToken.Token.Value(),
+//		},
+//		native.FunctionRequest{
+//			Method: req.Method,
+//			Params: req.Params,
+//		},
+//	)
+//
+//	ctx.JSON(http.StatusOK, resp)
+//}
 
-	rbacToken := middleware.RBAC(ctx)
-
-	resp := h.nativeInvoker.Invoke(ctx, domain.NativeFunctionRequest{
-		Token: domain.Token{
-			Type:  rbacToken.Token.Header(),
-			Value: rbacToken.Token.Value(),
-		},
-		Method: req.Method,
-		Params: req.Params,
-	})
-
-	ctx.JSON(http.StatusOK, resp)
-}
-
-*/
 // invoke godoc
 //
 //	@Summary	invoke Function
@@ -102,7 +101,7 @@ func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn
 }
 
 func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.ChannelContext {
-	chCtx.Caller.Type = rbac.Caller.Type
+	chCtx.Caller.Type = app.CallerType(rbac.Caller.Type)
 	chCtx.Caller.ID = rbac.Caller.ID
 	return chCtx
 }

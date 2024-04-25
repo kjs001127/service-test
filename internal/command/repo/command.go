@@ -96,6 +96,13 @@ func (c *CommandDao) Delete(ctx context.Context, key model.CommandKey) error {
 	return nil
 }
 
+func (c *CommandDao) DeleteAllByAppID(ctx context.Context, appID string) error {
+	_, err := models.Commands(
+		qm.Where("app_id = $1", appID),
+	).DeleteAll(ctx, c.db)
+	return err
+}
+
 func (c *CommandDao) Save(ctx context.Context, resource *model.Command) (*model.Command, error) {
 	cmd, err := unmarshal(resource)
 	if err != nil {
@@ -153,7 +160,7 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 		AutocompleteFunctionName: null.StringFromPtr(cmd.AutoCompleteFunctionName),
 		Description:              null.StringFromPtr(cmd.Description),
 		AlfDescription:           null.StringFromPtr(cmd.AlfDescription),
-		AlfMode:                  cmd.AlfMode,
+		AlfMode:                  string(cmd.AlfMode),
 		ParamDefinitions:         paramDef,
 	}, nil
 }
@@ -182,7 +189,7 @@ func marshal(c *models.Command) (*model.Command, error) {
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,
-		AlfMode:                  c.AlfMode,
+		AlfMode:                  model.AlfMode(c.AlfMode),
 	}, nil
 }
 

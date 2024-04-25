@@ -9,24 +9,23 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	installer *app.AppInstallSvc
-	configSvc *app.ConfigSvc
-
-	querySvc *app.QuerySvc
-	cmdRepo  cmd.CommandRepository
+	installer   *app.AppInstallSvc
+	querySvc    *app.AppInstallQuerySvc
+	cmdQuerySvc cmd.CommandRepository
+	activateSvc *cmd.ActivationSvc
 }
 
 func NewHandler(
 	installer *app.AppInstallSvc,
-	configSvc *app.ConfigSvc,
-	cmdRepo cmd.CommandRepository,
-	querySvc *app.QuerySvc,
+	channelCmdQuerySvc cmd.CommandRepository,
+	querySvc *app.AppInstallQuerySvc,
+	activateSvc *cmd.ActivationSvc,
 ) *Handler {
 	return &Handler{
-		installer: installer,
-		configSvc: configSvc,
-		cmdRepo:   cmdRepo,
-		querySvc:  querySvc,
+		installer:   installer,
+		cmdQuerySvc: channelCmdQuerySvc,
+		querySvc:    querySvc,
+		activateSvc: activateSvc,
 	}
 }
 
@@ -37,18 +36,5 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group.GET("/:appID", h.query)
 	group.PUT("/:appID", h.install)
 	group.DELETE("/:appID", h.uninstall)
-
-	group.PUT("/:appID/configs", h.setConfig)
-	group.GET("/:appID/configs", h.getConfig)
-
-	//legacy routes
-	legacyGroup := router.Group("/desk/v1/channels/:channelID/app-channels")
-
-	legacyGroup.GET("", h.queryAllLegacy)
-	legacyGroup.GET("/:appID", h.queryLegacy)
-	legacyGroup.PUT("/:appID", h.installLegacy)
-	legacyGroup.DELETE("/:appID", h.uninstallLegacy)
-
-	legacyGroup.PUT("/:appID/configs", h.setConfigLegacy)
-	legacyGroup.GET("/:appID/configs", h.getConfigLegacy)
+	group.PUT("/:appID/commands", h.toggleCmd)
 }

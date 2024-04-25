@@ -52,4 +52,4 @@ GO_ENV={environment} make run
 make docs
 ```
 - Run local server via `make dev`
-- Then you can access swaggo on http://localhost:3000/swagger/index.html
+- Then you can access swaggo on http://localhost:3020/swagger/general/index.html

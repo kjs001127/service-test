@@ -32,7 +32,7 @@ func (f *FunctionDBLogger) OnInvoke(
 		functionLog := &models.FunctionLog{
 			AppID:      null.StringFrom(event.AppID),
 			Name:       null.StringFrom(event.Request.Method),
-			CallerType: null.StringFrom(event.Request.Context.Caller.Type),
+			CallerType: null.StringFrom(string(event.Request.Context.Caller.Type)),
 			CallerID:   null.StringFrom(event.Request.Context.Caller.ID),
 			IsSuccess:  null.BoolFrom(event.Response.Error == nil),
 		}

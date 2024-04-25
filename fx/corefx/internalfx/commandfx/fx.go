@@ -24,16 +24,24 @@ var CommandSvcs = fx.Options(
 			fx.As(new(app.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
-		svc.NewRegisterService,
+		svc.NewRegisterSvc,
 		svc.NewAutoCompleteInvoker,
+		svc.NewWysiwygQuerySvc,
 		app.NewTypedInvoker[svc.CommandBody, svc.Action],
 		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
+		app.NewTypedInvoker[svc.ToggleHookRequest, svc.ToggleHookResponse],
+		fx.Annotate(
+			svc.NewActivationSvc,
+			fx.As(new(app.InstallHandler)),
+			fx.ResultTags(appfx.PreInstallHandlerGroup),
+		),
+		svc.NewActivationSvc,
 	),
 
 	fx.Provide(
 		fx.Annotate(
 			svc.NewInvoker,
-			fx.ParamTags(``, ``, CommandListenersGroup),
+			fx.ParamTags(``, ``, ``, CommandListenersGroup),
 		),
 	),
 )
@@ -43,6 +51,14 @@ var CommandDAOs = fx.Options(
 		fx.Annotate(
 			repo.NewCommandDao,
 			fx.As(new(svc.CommandRepository)),
+		),
+		fx.Annotate(
+			repo.NewActivationRepository,
+			fx.As(new(svc.ActivationRepository)),
+		),
+		fx.Annotate(
+			repo.NewActivationSettingRepository,
+			fx.As(new(svc.ActivationSettingRepository)),
 		),
 	),
 )

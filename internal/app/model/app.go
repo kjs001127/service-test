@@ -13,9 +13,7 @@ type App struct {
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
-	ConfigSchemas ConfigSchemas `json:"configSchemas,omitempty"`
-	IsBuiltIn     bool          `json:"isBuiltIn"`
-	Type          AppType       `json:"-"`
+	IsBuiltIn bool `json:"isBuiltIn"`
 }
 
 type AppState string
@@ -24,26 +22,5 @@ const (
 	AppStateEnabled  = AppState("enabled")
 	AppStateDisabled = AppState("disabled")
 )
-
-type ConfigSchemas []ConfigSchema
-type ConfigSchema struct {
-	Name       string         `json:"name"`
-	Type       string         `json:"type"`
-	Key        string         `json:"key"`
-	Default    *string        `json:"default,omitempty"`
-	Help       *string        `json:"help,omitempty"`
-	Attributes map[string]any `json:"attributes"`
-}
-
-func (s ConfigSchemas) DefaultConfig() ConfigMap {
-	ret := make(ConfigMap)
-	for _, schema := range s {
-		if schema.Default != nil {
-			continue
-		}
-		ret[schema.Name] = *schema.Default
-	}
-	return ret
-}
 
 type AppType string

@@ -8,8 +8,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-
-	app "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 // install godoc
@@ -17,17 +15,17 @@ import (
 //	@Summary	install an App to Channel
 //	@Tags		Desk
 //
-//	@Param		x-account	header		string	true	"access token"
-//	@Param		channelID	path		string	true	"id of Channel"
-//	@Param		appID		path		string	true	"id of App to install"
+//	@Param		x-account	header	string	true	"access token"
+//	@Param		channelID	path	string	true	"id of Channel"
+//	@Param		appID		path	string	true	"id of App to install"
 //
-//	@Success	200			{object}	dto.InstalledApp
+//	@Success	200
 //	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	appFound, appCh, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
+	_, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -37,10 +35,7 @@ func (h *Handler) install(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.InstalledApp{
-		App:        appFound,
-		AppChannel: appCh,
-	})
+	ctx.Status(http.StatusOK)
 }
 
 // uninstall godoc
@@ -67,65 +62,6 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-// setConfig godoc
-//
-//	@Summary	set config of a Channel
-//	@Tags		Desk
-//
-//	@Param		x-account	header		string	true	"access token"
-//	@Param		channelID	path		string	true	"id of Channel"
-//	@Param		appID		path		string	true	"id of App"
-//	@Param		object		body		object	true	"key-value of Config to set"
-//
-//	@Success	200			{object}	model.ConfigMap
-//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID}/configs [put]
-func (h *Handler) setConfig(ctx *gin.Context) {
-	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-
-	var configMap map[string]string
-	if err := ctx.ShouldBindBodyWith(&configMap, binding.JSON); err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ret, err := h.configSvc.SetConfig(ctx, appmodel.InstallationID{
-		AppID:     appID,
-		ChannelID: channelID,
-	}, configMap)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, ret.Configs)
-}
-
-// getConfig godoc
-//
-//	@Summary	get App config of a Installation
-//	@Tags		Desk
-//
-//	@Param		x-account	header		string	true	"access token"
-//	@Param		appID		path		string	true	"id of app"
-//	@Param		channelID	path		string	true	"id of channel"
-//
-//	@Success	200			{object}	any		"JSON of configMap"
-//	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID}/configs [get]
-func (h *Handler) getConfig(ctx *gin.Context) {
-	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-
-	cfgs, err := h.configSvc.GetConfig(ctx, appmodel.InstallationID{
-		ChannelID: channelID,
-		AppID:     appID,
-	})
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, cfgs)
-}
-
 // query godoc
 //
 //	@Summary		get App and Installation
@@ -136,12 +72,12 @@ func (h *Handler) getConfig(ctx *gin.Context) {
 //	@Param			channelID	path		string	true	"id of Channel"
 //	@Param			appID		path		string	false	"id of App"
 //
-//	@Success		200			{object}	dto.InstalledAppWithCommands
+//	@Success		200			{object}	dto.InstalledAppDetailView
 //	@Router			/desk/v1/channels/{channelID}/installed-apps/{appID} [get]
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	appFound, appCh, err := h.querySvc.Query(ctx, appmodel.InstallationID{
+	appFound, err := h.querySvc.Query(ctx, appmodel.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
 	})
@@ -150,16 +86,25 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
-	cmds, err := h.cmdRepo.FetchAllByAppID(ctx, appID)
+	cmds, err := h.cmdQuerySvc.FetchAllByAppID(ctx, appFound.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.InstalledAppWithCommands{
-		Commands:   dto.NewCommandDTOs(cmds),
-		App:        appFound,
-		AppChannel: appCh,
+	cmdEnabled, err := h.activateSvc.Check(ctx, appmodel.InstallationID{
+		AppID:     appID,
+		ChannelID: channelID,
+	})
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.InstalledAppDetailView{
+		Commands:       dto.NewCommandViews(cmds),
+		CommandEnabled: cmdEnabled,
+		App:            dto.NewAppDetailView(appFound),
 	})
 }
 
@@ -169,29 +114,51 @@ func (h *Handler) query(ctx *gin.Context) {
 //	@Tags			Desk
 //	@Description	get All Apps and AppChannels installed to channel.
 //
-//	@Param			x-account	header		string	true	"access token"
-//	@Param			channelID	path		string	true	"id of Channel"
+//	@Param			x-account	header	string	true	"access token"
+//	@Param			channelID	path	string	true	"id of Channel"
 //
-//	@Success		200			{object}	dto.InstalledAppsWithCommands
+//	@Success		200			{array}	dto.AppView
 //	@Router			/desk/v1/channels/{channelID}/installed-apps [get]
 func (h *Handler) queryAll(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, appChs, err := h.querySvc.QueryAll(ctx, channelID)
+	apps, err := h.querySvc.QueryAll(ctx, channelID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	cmds, err := h.cmdRepo.FetchAllByAppIDs(ctx, app.AppIDsOf(appChs))
-	if err != nil {
+	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
+}
+
+// toggleCmd godoc
+//
+//	@Summary		toggleCommand
+//	@Tags			Desk
+//	@Description	get All Apps and AppChannels installed to channel.
+//
+//	@Param			x-account					header	string						true	"access token"
+//	@Param			channelID					path	string						true	"id of Channel"
+//	@Param			appID						path	string						true	"id of App"
+//	@Param			dto.CommandToggleRequest	body	dto.CommandToggleRequest	true	"toggleCmd body"
+//
+//	@Success		200
+//	@Router			/desk/v1/channels/{channelID}/installed-apps/{appID}/commands [put]
+func (h *Handler) toggleCmd(ctx *gin.Context) {
+	var body dto.CommandToggleRequest
+	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
+
+	if err := h.activateSvc.Toggle(ctx, appmodel.InstallationID{
+		AppID:     appID,
+		ChannelID: channelID,
+	}, body.CommandEnabled); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.InstalledAppsWithCommands{
-		Commands:    dto.NewCommandDTOs(cmds),
-		Apps:        apps,
-		AppChannels: appChs,
-	})
+	ctx.Status(http.StatusOK)
 }

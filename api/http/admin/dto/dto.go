@@ -7,8 +7,8 @@ import (
 )
 
 type InstalledApp struct {
-	App        *appmodel.App             `json:"app"`
-	AppChannel *appmodel.AppInstallation `json:"appChannel"`
+	App             *appmodel.App             `json:"app"`
+	AppInstallation *appmodel.AppInstallation `json:"appChannel"`
 }
 
 type AppsAndFullCommands struct {
@@ -17,7 +17,9 @@ type AppsAndFullCommands struct {
 }
 
 type RegisterRequest struct {
-	Commands []*cmd.Command `json:"commands"`
+	EnableByDefault    bool           `json:"enableByDefault"`
+	ToggleFunctionName *string        `json:"toggleFunctionName,omitempty"`
+	Commands           []*cmd.Command `json:"commands"`
 }
 
 type BriefRequest struct {

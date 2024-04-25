@@ -3,11 +3,9 @@ package repo
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -16,16 +14,16 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
-type AppChannelDao struct {
+type AppInstallationDao struct {
 	db db.DB
 }
 
-func NewAppChannelDao(db db.DB) *AppChannelDao {
-	return &AppChannelDao{db: db}
+func NewAppInstallationDao(db db.DB) *AppInstallationDao {
+	return &AppInstallationDao{db: db}
 }
 
-func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
-	appCh, err := models.AppInstallations(
+func (a *AppInstallationDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
+	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
 		qm.Where("channel_id = $2", identifier.ChannelID),
@@ -34,29 +32,29 @@ func (a *AppChannelDao) Fetch(ctx context.Context, identifier model.Installation
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(err)
 	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying appChannel")
+		return nil, errors.Wrap(err, "error while querying appInstallation")
 	}
 
-	return unmarshal(appCh)
+	return unmarshal(appInstallation)
 }
 
-func (a *AppChannelDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
-	appCh, err := models.AppInstallations(
+func (a *AppInstallationDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
+	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),
 	).All(ctx, a.db)
 
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying appChannel")
+		return nil, errors.Wrap(err, "error while querying appInstallation")
 	}
 
-	return unmarshalAll(appCh)
+	return unmarshalAll(appInstallation)
 }
 
-func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallation) error {
-	model, err := marshal(appChannel)
+func (a *AppInstallationDao) Save(ctx context.Context, appInstallation *model.AppInstallation) error {
+	model, err := marshal(appInstallation)
 	if err != nil {
-		return errors.Wrap(err, "error while marshaling appChannel")
+		return errors.Wrap(err, "error while marshaling appInstallation")
 	}
 
 	if err = model.Upsert(
@@ -67,15 +65,15 @@ func (a *AppChannelDao) Save(ctx context.Context, appChannel *model.AppInstallat
 		boil.Blacklist("app_id", "channel_id"),
 		boil.Infer(),
 	); err != nil {
-		return errors.Wrap(err, "error while upserting appChannel")
+		return errors.Wrap(err, "error while upserting appInstallation")
 	}
 	return nil
 }
 
-func (a *AppChannelDao) SaveIfNotExists(ctx context.Context, appChannel *model.AppInstallation) error {
-	model, err := marshal(appChannel)
+func (a *AppInstallationDao) SaveIfNotExists(ctx context.Context, appInstallation *model.AppInstallation) error {
+	model, err := marshal(appInstallation)
 	if err != nil {
-		return errors.Wrap(err, "error while marshaling appChannel")
+		return errors.Wrap(err, "error while marshaling appInstallation")
 	}
 
 	if err = model.Upsert(
@@ -86,19 +84,19 @@ func (a *AppChannelDao) SaveIfNotExists(ctx context.Context, appChannel *model.A
 		boil.None(),
 		boil.Infer(),
 	); err != nil {
-		return errors.Wrap(err, "error while upserting appChannel")
+		return errors.Wrap(err, "error while upserting appInstallation")
 	}
 
 	return nil
 }
 
-func (a *AppChannelDao) DeleteByAppID(ctx context.Context, appID string) error {
+func (a *AppInstallationDao) DeleteByAppID(ctx context.Context, appID string) error {
 	_, err := models.AppInstallations(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	return errors.WithStack(err)
 }
 
-func (a *AppChannelDao) Delete(ctx context.Context, identifier model.InstallationID) error {
-	appCh, err := models.AppInstallations(
+func (a *AppInstallationDao) Delete(ctx context.Context, identifier model.InstallationID) error {
+	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
 		qm.Where("channel_id = $2", identifier.ChannelID),
@@ -107,39 +105,27 @@ func (a *AppChannelDao) Delete(ctx context.Context, identifier model.Installatio
 	if errors.Is(err, sql.ErrNoRows) {
 		return apierr.NotFound(err)
 	} else if err != nil {
-		return errors.Wrap(err, "error while querying appChannel")
+		return errors.Wrap(err, "error while querying appInstallation")
 	}
 
-	if _, err = appCh.Delete(ctx, a.db); err != nil {
-		return errors.Wrap(err, "error while deleting appChannel")
+	if _, err = appInstallation.Delete(ctx, a.db); err != nil {
+		return errors.Wrap(err, "error while deleting appInstallation")
 	}
 
 	return nil
 }
 
 func unmarshal(channel *models.AppInstallation) (*model.AppInstallation, error) {
-	cfgMap := make(model.ConfigMap)
-	if err := json.Unmarshal(channel.Configs.JSON, &cfgMap); err != nil {
-		return nil, errors.Wrap(err, "error while unmarshaling appChannel")
-	}
-
 	return &model.AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Configs:   cfgMap,
 	}, nil
 }
 
 func marshal(channel *model.AppInstallation) (*models.AppInstallation, error) {
-	cfg, err := json.Marshal(channel.Configs)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling appChannel")
-	}
-
 	return &models.AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-		Configs:   null.JSONFrom(cfg),
 	}, nil
 }
 

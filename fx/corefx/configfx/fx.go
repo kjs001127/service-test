@@ -10,6 +10,7 @@ const (
 	JwtServiceKey = `name:"jwtServiceKey"`
 	DwAdmin       = `name:"dwAdmin"`
 	Stage         = `name:"stage"`
+	ServiceName   = `name:"serviceName"`
 )
 
 var Values = fx.Options(
@@ -26,7 +27,12 @@ var Values = fx.Options(
 			config.Get().Stage,
 			fx.ResultTags(Stage),
 		),
+		fx.Annotate(
+			config.Get().ServiceName,
+			fx.ResultTags(ServiceName),
+		),
 		config.Get().Log,
+		config.Get().DDB,
 		config.Get().Psql,
 	),
 )

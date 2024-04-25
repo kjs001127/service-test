@@ -1,4 +1,6 @@
 stage: production
+serviceName: app-store-api.channel.io
+systemLogTableName: app_system_logs
 auth:
   authAdminURL: https://admin-api.in.channel.io
   jwtServiceKey: ${JWT_SERVICE_KEY}

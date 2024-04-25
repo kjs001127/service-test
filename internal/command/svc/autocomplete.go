@@ -18,8 +18,9 @@ type AutoCompleteRequest struct {
 }
 
 type AutoCompleteBody struct {
-	Chat  Chat             `json:"chat"`
-	Input AutoCompleteArgs `json:"input"`
+	Chat     Chat             `json:"chat"`
+	Input    AutoCompleteArgs `json:"input"`
+	Language string           `json:"language"`
 }
 
 type AutoCompleteArgs []*AutoCompleteArg
@@ -39,22 +40,7 @@ func (args AutoCompleteArgs) validate() error {
 }
 
 type AutoCompleteResponse struct {
-	Choices Choices `json:"choices"`
-}
-
-type Choices []Choice
-type Choice struct {
-	Name  string `json:"name"`
-	Value any    `json:"value"`
-}
-
-func (choices Choices) validate() error {
-	for _, c := range choices {
-		if c.Value == nil || len(c.Name) == 0 {
-			return errors.New("name and value of choice must not be empty")
-		}
-	}
-	return nil
+	Choices model.Choices `json:"choices"`
 }
 
 type AutoCompleteInvoker struct {
