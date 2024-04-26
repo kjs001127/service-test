@@ -9,8 +9,6 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"testing"
 )
 
 const (
@@ -104,8 +102,3 @@ var _ = Describe("AppInstallation Save", func() {
 		})
 	})
 })
-
-func TestAppIntegrationSuite(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "AppIntegration Suite")
-}
