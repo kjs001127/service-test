@@ -19,10 +19,7 @@ type AppBrief struct {
 	Brief string `json:"brief"`
 }
 
-type BriefResponse struct {
-	Result string `json:"result"`
-}
-
+type BriefResponse string
 type BriefRequest struct {
 	Context   app.ChannelContext
 	ChannelID string
@@ -77,7 +74,7 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 				Context:      req,
 			})
 			if res.Error == nil {
-				ch <- &AppBrief{AppId: brief.AppID, Brief: res.Result.Result}
+				ch <- &AppBrief{AppId: brief.AppID, Brief: string(res.Result)}
 			} else {
 				i.logger.Warnw(childCtx, "brief request returned err", "error", res.Error)
 			}
