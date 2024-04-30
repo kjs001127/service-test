@@ -57,7 +57,7 @@ func (a *CommandToggleHookDao) Save(ctx context.Context, hooks *model.CommandTog
 func (a *CommandToggleHookDao) Delete(ctx context.Context, appID string) error {
 	_, err := models.CommandToggleHooks(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(errors.Wrap(err, "installHook not found"))
+		return apierr.NotFound(errors.Wrap(err, "commandToggle not found"))
 	} else if err != nil {
 		return errors.Wrap(err, "error while querying Url")
 	}
