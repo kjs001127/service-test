@@ -59,7 +59,7 @@ func (a *CommandToggleHookDao) Delete(ctx context.Context, appID string) error {
 	if errors.Is(err, sql.ErrNoRows) {
 		return apierr.NotFound(errors.Wrap(err, "commandToggle not found"))
 	} else if err != nil {
-		return errors.Wrap(err, "error while querying Url")
+		return errors.Wrap(err, "error while querying commandToggle")
 	}
 	return nil
 }
