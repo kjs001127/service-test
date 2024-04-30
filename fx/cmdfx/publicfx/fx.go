@@ -21,6 +21,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 )
@@ -39,6 +40,7 @@ var Public = fx.Options(
 	approlefx.AppRole,
 	apphttpfx.Function,
 	installhookfx.InstallHooks,
+	togglehookfx.ToggleHook,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,

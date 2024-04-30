@@ -4,6 +4,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
+	toggle "github.com/channel-io/ch-app-store/internal/togglehook/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
@@ -12,14 +13,14 @@ type Handler struct {
 	installer   *app.AppInstallSvc
 	querySvc    *app.AppInstallQuerySvc
 	cmdQuerySvc cmd.CommandRepository
-	activateSvc *cmd.ActivationSvc
+	activateSvc *toggle.HookSendingActivationSvc
 }
 
 func NewHandler(
 	installer *app.AppInstallSvc,
 	channelCmdQuerySvc cmd.CommandRepository,
 	querySvc *app.AppInstallQuerySvc,
-	activateSvc *cmd.ActivationSvc,
+	activateSvc *toggle.HookSendingActivationSvc,
 ) *Handler {
 	return &Handler{
 		installer:   installer,

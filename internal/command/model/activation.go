@@ -10,7 +10,6 @@ type Activation struct {
 }
 
 type ActivationSetting struct {
-	AppID              string
-	EnableByDefault    bool
-	ToggleFunctionName *string
+	AppID           string
+	EnableByDefault bool
 }
