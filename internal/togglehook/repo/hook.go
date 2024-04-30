@@ -49,7 +49,7 @@ func (a *CommandToggleHookDao) Save(ctx context.Context, hooks *model.CommandTog
 		boil.Blacklist("app_id"),
 		boil.Infer(),
 	); err != nil {
-		return errors.Wrap(err, "error while upserting command")
+		return errors.Wrap(err, "error while upserting command hook")
 	}
 	return nil
 }
