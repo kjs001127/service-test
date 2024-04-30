@@ -6,7 +6,6 @@ import (
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -58,16 +57,14 @@ func (a *ActivationSettingRepository) Save(ctx context.Context, activation *mode
 
 func marshalSetting(setting *model.ActivationSetting) *models.CommandActivationSetting {
 	return &models.CommandActivationSetting{
-		AppID:              setting.AppID,
-		EnabledByDefault:   setting.EnableByDefault,
-		ToggleFunctionName: null.StringFromPtr(setting.ToggleFunctionName),
+		AppID:            setting.AppID,
+		EnabledByDefault: setting.EnableByDefault,
 	}
 }
 
 func unmarshalSetting(setting *models.CommandActivationSetting) *model.ActivationSetting {
 	return &model.ActivationSetting{
-		AppID:              setting.AppID,
-		EnableByDefault:    setting.EnabledByDefault,
-		ToggleFunctionName: setting.ToggleFunctionName.Ptr(),
+		AppID:           setting.AppID,
+		EnableByDefault: setting.EnabledByDefault,
 	}
 }
