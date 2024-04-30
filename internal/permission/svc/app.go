@@ -19,6 +19,26 @@ type AccountAppPermissionSvcImpl struct {
 	appAccountRepo repo.AppAccountRepo
 }
 
+type AppModifyRequest struct {
+	Title              string           `json:"title"`
+	Description        *string          `json:"description,omitempty"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	I18nMap            map[string]any   `json:"i18nMap,omitempty"`
+	AvatarURL          *string          `json:"avatarUrl,omitempty"`
+}
+
+func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
+	return &appmodel.App{
+		ID:                 appID,
+		Title:              r.Title,
+		Description:        r.Description,
+		DetailImageURLs:    r.DetailImageURLs,
+		DetailDescriptions: r.DetailDescriptions,
+		AvatarURL:          r.AvatarURL,
+	}
+}
+
 func NewAccountAppPermissionSvc(
 	appCrudSvc app.AppCrudSvc,
 	appAccountRepo repo.AppAccountRepo,
@@ -45,6 +65,24 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 			return nil, err
 		}
 		return app, nil
+	})
+}
+
+func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
+		_, err := a.appAccountRepo.Fetch(ctx, appID, accountID)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = a.appCrudSvc.Read(ctx, appID)
+		if err != nil {
+			return nil, err
+		}
+
+		converted := modifyRequest.ConvertToApp(appID)
+
+		return a.appCrudSvc.Update(ctx, converted)
 	})
 }
 
