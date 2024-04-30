@@ -20,9 +20,12 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
+
 	"go.uber.org/fx"
 )
 
@@ -33,6 +36,7 @@ var Test = fx.Options(
 	authfx.PrincipalAuth,
 
 	appfx.App,
+	permissionfx.Permission,
 	brieffx.Brief,
 	appdevfx.AppDev,
 	commandfx.Command,
@@ -40,6 +44,7 @@ var Test = fx.Options(
 	approlefx.AppRole,
 	apphttpfx.Function,
 	installhookfx.InstallHooks,
+	togglehookfx.ToggleHook,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,

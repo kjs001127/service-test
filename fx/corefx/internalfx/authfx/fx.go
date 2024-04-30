@@ -38,6 +38,11 @@ var PrincipalAuth = fx.Options(
 			fx.As(new(principal.ChatValidator)),
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
 		),
+		fx.Annotate(
+			account.NewManagerRoleFetcher,
+			fx.As(new(account.ManagerRoleFetcher)),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
+		),
 	),
 )
 

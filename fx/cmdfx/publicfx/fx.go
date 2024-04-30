@@ -1,8 +1,6 @@
 package publicfx
 
 import (
-	"go.uber.org/fx"
-
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
@@ -20,10 +18,13 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
+
+	"go.uber.org/fx"
 )
 
 var Public = fx.Options(
@@ -34,6 +35,7 @@ var Public = fx.Options(
 	authfx.PrincipalAuth,
 
 	appfx.App,
+	permissionfx.Permission,
 	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
