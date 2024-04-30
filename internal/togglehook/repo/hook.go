@@ -28,7 +28,7 @@ func (a *CommandToggleHookDao) Fetch(ctx context.Context, appID string) (*model.
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(errors.Wrap(err, "installHook not found"))
 	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying Url")
+		return nil, errors.Wrap(err, "error while querying commandToggle")
 	}
 
 	return &model.CommandToggleHooks{
