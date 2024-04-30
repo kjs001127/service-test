@@ -43,9 +43,8 @@ func (s *RegisterSvc) Register(ctx context.Context, req *CommandRegisterRequest)
 		}
 
 		if err := s.settingRepo.Save(ctx, &model.ActivationSetting{
-			AppID:              req.AppID,
-			EnableByDefault:    req.EnableByDefault,
-			ToggleFunctionName: req.ToggleFunctionName,
+			AppID:           req.AppID,
+			EnableByDefault: req.EnableByDefault,
 		}); err != nil {
 			return err
 		}
