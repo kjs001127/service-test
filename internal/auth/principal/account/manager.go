@@ -33,6 +33,7 @@ type Manager struct {
 	AccountID string `json:"accountId"`
 	Name      string `json:"name"`
 	Email     string `json:"email"`
+	RoleID    string `json:"roleId"`
 }
 
 type ManagerPrincipal struct {

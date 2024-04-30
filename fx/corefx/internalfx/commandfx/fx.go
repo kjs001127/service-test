@@ -29,7 +29,6 @@ var CommandSvcs = fx.Options(
 		svc.NewWysiwygQuerySvc,
 		app.NewTypedInvoker[svc.CommandBody, svc.Action],
 		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
-		app.NewTypedInvoker[svc.ToggleHookRequest, svc.ToggleHookResponse],
 		fx.Annotate(
 			svc.NewActivationSvc,
 			fx.As(new(app.InstallHandler)),

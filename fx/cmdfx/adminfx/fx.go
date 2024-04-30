@@ -1,13 +1,12 @@
 package adminfx
 
 import (
-	"go.uber.org/fx"
-
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/accountfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
@@ -18,9 +17,12 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
+
+	"go.uber.org/fx"
 )
 
 var AdminHttp = fx.Options(
@@ -34,7 +36,9 @@ var Admin = fx.Options(
 
 	authfx.GeneralAuth,
 
+	accountfx.AppAccount,
 	appfx.App,
+	permissionfx.Permission,
 	commandfx.Command,
 	approlefx.AppRole,
 	appdevfx.AppDev,

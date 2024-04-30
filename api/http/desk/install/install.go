@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
+	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	toggle "github.com/channel-io/ch-app-store/internal/togglehook/svc"
 )
 
 // install godoc
@@ -150,12 +152,18 @@ func (h *Handler) toggleCmd(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
+	manager := middleware.Manager(ctx)
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	if err := h.activateSvc.Toggle(ctx, appmodel.InstallationID{
-		AppID:     appID,
-		ChannelID: channelID,
-	}, body.CommandEnabled); err != nil {
+	if err := h.activateSvc.Toggle(ctx, toggle.ManagerToggleRequest{
+		ManagerID: manager.ID,
+		Language:  body.Language,
+		InstallID: appmodel.InstallationID{
+			AppID:     appID,
+			ChannelID: channelID,
+		},
+		Enabled: body.CommandEnabled,
+	}); err != nil {
 		_ = ctx.Error(err)
 		return
 	}

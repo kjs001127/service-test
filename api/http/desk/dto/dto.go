@@ -124,5 +124,6 @@ func NewCommandViews(origins []*cmd.Command) []*CommandView {
 }
 
 type CommandToggleRequest struct {
-	CommandEnabled bool `json:"commandEnabled"`
+	Language       string `json:"language"`
+	CommandEnabled bool   `json:"commandEnabled"`
 }
