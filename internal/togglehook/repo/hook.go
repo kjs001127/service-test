@@ -26,9 +26,9 @@ func NewCommandToggleHookDao(db db.DB) *CommandToggleHookDao {
 func (a *CommandToggleHookDao) Fetch(ctx context.Context, appID string) (*model.CommandToggleHooks, error) {
 	res, err := models.CommandToggleHooks(qm.Where("app_id = $1", appID)).One(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(errors.Wrap(err, "installHook not found"))
+		return nil, apierr.NotFound(errors.Wrap(err, "commandToggle not found"))
 	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying Url")
+		return nil, errors.Wrap(err, "error while querying commandToggle")
 	}
 
 	return &model.CommandToggleHooks{
@@ -57,7 +57,7 @@ func (a *CommandToggleHookDao) Save(ctx context.Context, hooks *model.CommandTog
 func (a *CommandToggleHookDao) Delete(ctx context.Context, appID string) error {
 	_, err := models.CommandToggleHooks(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(errors.Wrap(err, "installHook not found"))
+		return apierr.NotFound(errors.Wrap(err, "commandToggle not found"))
 	} else if err != nil {
 		return errors.Wrap(err, "error while querying Url")
 	}
