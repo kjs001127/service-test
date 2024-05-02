@@ -88,6 +88,9 @@ func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyReque
 
 func (a *AccountAppPermissionSvcImpl) DeleteApp(ctx context.Context, appID string, accountID string) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
+		if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
+			return err
+		}
 		err := a.appCrudSvc.Delete(ctx, appID)
 		if err != nil {
 			return err
