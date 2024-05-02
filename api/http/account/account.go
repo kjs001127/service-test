@@ -17,7 +17,7 @@ import (
 //	@Param		appID		path		string	true	"appID"
 //
 //	@Success	200			{object}	dto.ChannelResponse
-//	@Router		/desk/accounts/{accountID}/apps/{appID}/channels [get]
+//	@Router		/desk/accounts/apps/{appID}/channels [get]
 func (h *Handler) getChannels(ctx *gin.Context) {
 	accountID := ctx.Param("accountID")
 	_ = ctx.Param("appID") // 추가 검사 로직을 위한 예비 param

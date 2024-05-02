@@ -9,7 +9,6 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	toggle "github.com/channel-io/ch-app-store/internal/togglehook/svc"
 )
 
 // install godoc
@@ -27,7 +26,9 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	_, err := h.installer.InstallAppById(ctx, appmodel.InstallationID{
+	manager := middleware.Manager(ctx)
+
+	_, err := h.installer.Install(ctx, manager.Manager, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -53,7 +54,9 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	if err := h.installer.UnInstallApp(ctx, appmodel.InstallationID{
+	manager := middleware.Manager(ctx)
+
+	if err := h.installer.UnInstall(ctx, manager.Manager, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -79,6 +82,8 @@ func (h *Handler) uninstall(ctx *gin.Context) {
 func (h *Handler) query(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
+	manager := middleware.Manager(ctx)
+
 	appFound, err := h.querySvc.Query(ctx, appmodel.InstallationID{
 		ChannelID: channelID,
 		AppID:     appID,
@@ -94,7 +99,7 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
-	cmdEnabled, err := h.activateSvc.Check(ctx, appmodel.InstallationID{
+	cmdEnabled, err := h.activateSvc.Check(ctx, manager.Manager, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -153,17 +158,14 @@ func (h *Handler) toggleCmd(ctx *gin.Context) {
 		return
 	}
 	manager := middleware.Manager(ctx)
+	manager.Manager.Language = body.Language
+
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	if err := h.activateSvc.Toggle(ctx, toggle.ManagerToggleRequest{
-		ManagerID: manager.ID,
-		Language:  body.Language,
-		InstallID: appmodel.InstallationID{
-			AppID:     appID,
-			ChannelID: channelID,
-		},
-		Enabled: body.CommandEnabled,
-	}); err != nil {
+	if err := h.activateSvc.Toggle(ctx, manager.Manager, appmodel.InstallationID{
+		AppID:     appID,
+		ChannelID: channelID,
+	}, body.CommandEnabled); err != nil {
 		_ = ctx.Error(err)
 		return
 	}

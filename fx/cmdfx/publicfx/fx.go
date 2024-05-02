@@ -16,12 +16,12 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 
@@ -43,8 +43,8 @@ var Public = fx.Options(
 	nativefx.Native,
 	approlefx.AppRole,
 	apphttpfx.Function,
-	installhookfx.InstallHooks,
-	togglehookfx.ToggleHook,
+	managerfx.Manager,
+	hookfx.Hook,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,

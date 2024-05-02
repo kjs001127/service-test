@@ -9,7 +9,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/command/model"
 )
 
-type ActivationSvc struct {
+type ToggleSvc struct {
 	activationRepo     ActivationRepository
 	activationSettings ActivationSettingRepository
 }
@@ -17,21 +17,21 @@ type ActivationSvc struct {
 func NewActivationSvc(
 	repo ActivationRepository,
 	defaultSettings ActivationSettingRepository,
-) *ActivationSvc {
-	return &ActivationSvc{
+) *ToggleSvc {
+	return &ToggleSvc{
 		activationRepo:     repo,
 		activationSettings: defaultSettings,
 	}
 }
 
-func (s *ActivationSvc) Toggle(ctx context.Context, key appmodel.InstallationID, enabled bool) error {
+func (s *ToggleSvc) Toggle(ctx context.Context, key appmodel.InstallationID, enabled bool) error {
 	return s.activationRepo.Save(ctx, &model.Activation{
 		Enabled:        enabled,
 		InstallationID: key,
 	})
 }
 
-func (s *ActivationSvc) Check(ctx context.Context, key appmodel.InstallationID) (bool, error) {
+func (s *ToggleSvc) Check(ctx context.Context, key appmodel.InstallationID) (bool, error) {
 	activation, err := s.activationRepo.Fetch(ctx, key)
 	if apierr.IsNotFound(err) {
 		return true, nil
@@ -42,7 +42,7 @@ func (s *ActivationSvc) Check(ctx context.Context, key appmodel.InstallationID) 
 	return activation.Enabled, nil
 }
 
-func (s *ActivationSvc) OnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
+func (s *ToggleSvc) OnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
 	shouldEnable, err := s.shouldEnableDefault(ctx, app.ID)
 	if err != nil {
 		return err
@@ -57,11 +57,11 @@ func (s *ActivationSvc) OnInstall(ctx context.Context, app *appmodel.App, channe
 	})
 }
 
-func (s *ActivationSvc) OnUnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
+func (s *ToggleSvc) OnUnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
 	return s.activationRepo.Delete(ctx, appmodel.InstallationID{AppID: app.ID, ChannelID: channelID})
 }
 
-func (s *ActivationSvc) shouldEnableDefault(ctx context.Context, appId string) (bool, error) {
+func (s *ToggleSvc) shouldEnableDefault(ctx context.Context, appId string) (bool, error) {
 	setting, err := s.activationSettings.Fetch(ctx, appId)
 	if apierr.IsNotFound(err) {
 		return true, nil

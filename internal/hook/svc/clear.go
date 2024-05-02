@@ -7,11 +7,12 @@ import (
 )
 
 type AppHookClearHook struct {
-	hookRepo HookRepository
+	hookRepo       InstallHookRepository
+	toggleHookRepo ToggleHookRepository
 }
 
-func NewAppHookClearHook(hookRepo HookRepository) *AppHookClearHook {
-	return &AppHookClearHook{hookRepo: hookRepo}
+func NewAppHookClearHook(hookRepo InstallHookRepository, toggleRepo ToggleHookRepository) *AppHookClearHook {
+	return &AppHookClearHook{hookRepo: hookRepo, toggleHookRepo: toggleRepo}
 }
 
 func (a AppHookClearHook) OnAppCreate(ctx context.Context, app *model.App) error {
@@ -19,7 +20,13 @@ func (a AppHookClearHook) OnAppCreate(ctx context.Context, app *model.App) error
 }
 
 func (a AppHookClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
-	return a.hookRepo.Delete(ctx, app.ID)
+	if err := a.hookRepo.Delete(ctx, app.ID); err != nil {
+		return err
+	}
+	if err := a.toggleHookRepo.Delete(ctx, app.ID); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a AppHookClearHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {

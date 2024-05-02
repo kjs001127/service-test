@@ -1,6 +1,8 @@
 package testfx
 
 import (
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
+
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
@@ -18,12 +20,11 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 
@@ -45,7 +46,7 @@ var Test = fx.Options(
 	nativefx.Native,
 	approlefx.AppRole,
 	apphttpfx.Function,
-	installhookfx.InstallHooks,
+	hookfx.Hook,
 	togglehookfx.ToggleHook,
 
 	invokelogfx.Loggers,

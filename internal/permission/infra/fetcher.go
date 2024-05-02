@@ -1,20 +1,16 @@
-package svc
+package infra
 
 import (
 	"context"
 	"encoding/json"
 
-	"github.com/channel-io/ch-app-store/internal/account/model"
-
 	"github.com/go-resty/resty/v2"
 	"github.com/pkg/errors"
+
+	"github.com/channel-io/ch-app-store/internal/permission/model"
 )
 
 const fetchChannelURL = "admin/channels/accounts/{account_id}"
-
-type ChannelFetcher interface {
-	GetChannels(ctx context.Context, accountID string) ([]*model.Channel, error)
-}
 
 type ChannelFetcherImpl struct {
 	cli     *resty.Client
