@@ -7,21 +7,19 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/command/svc"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 )
 
-type HookSendingActivationSvc struct {
-	delegate *svc.ActivationSvc
-	repo     HookRepository
-	invoker  *app.TypedInvoker[ToggleHookRequest, ToggleHookResponse]
+type HookSendingToggleSvc struct {
+	repo    ToggleHookRepository
+	invoker *app.TypedInvoker[ToggleHookRequest, ToggleHookResponse]
 }
 
-func NewHookSendingActivationSvc(
-	delegate *svc.ActivationSvc,
-	repo HookRepository,
+func NewToggleHookSvc(
+	repo ToggleHookRepository,
 	invoker *app.TypedInvoker[ToggleHookRequest, ToggleHookResponse],
-) *HookSendingActivationSvc {
-	return &HookSendingActivationSvc{delegate: delegate, repo: repo, invoker: invoker}
+) *HookSendingToggleSvc {
+	return &HookSendingToggleSvc{repo: repo, invoker: invoker}
 }
 
 type ManagerToggleRequest struct {
@@ -31,19 +29,41 @@ type ManagerToggleRequest struct {
 	Enabled   bool
 }
 
-func (s *HookSendingActivationSvc) Toggle(ctx context.Context, req ManagerToggleRequest) error {
-	if err := s.callHookIfExists(ctx, req); err != nil {
+func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Manager, installID appmodel.InstallationID, enable bool) error {
+	hooks, err := s.repo.Fetch(ctx, installID.AppID)
+	if apierr.IsNotFound(err) {
+		return nil
+	} else if err != nil {
 		return err
 	}
 
-	return s.delegate.Toggle(ctx, req.InstallID, req.Enabled)
+	resp := s.invoker.Invoke(ctx, installID.AppID, app.TypedRequest[ToggleHookRequest]{
+		FunctionName: hooks.ToggleFunctionName,
+		Context: app.ChannelContext{
+			Channel: app.Channel{
+				ID: installID.ChannelID,
+			},
+			Caller: app.Caller{
+				Type: app.CallerTypeManager,
+				ID:   manager.ID,
+			},
+		},
+		Params: ToggleHookRequest{
+			AppID:     installID.AppID,
+			ChannelID: installID.ChannelID,
+			Enable:    enable,
+			Language:  manager.Language,
+		},
+	})
+
+	if resp.IsError() || !resp.Result.Enable {
+		return resp.Error
+	}
+
+	return nil
 }
 
-func (s *HookSendingActivationSvc) Check(ctx context.Context, installID appmodel.InstallationID) (bool, error) {
-	return s.delegate.Check(ctx, installID)
-}
-
-func (s *HookSendingActivationSvc) callHookIfExists(ctx context.Context, req ManagerToggleRequest) error {
+func (s *HookSendingToggleSvc) callHookIfExists(ctx context.Context, req ManagerToggleRequest) error {
 	hooks, err := s.repo.Fetch(ctx, req.InstallID.AppID)
 	if apierr.IsNotFound(err) {
 		return nil

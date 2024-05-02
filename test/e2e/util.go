@@ -14,7 +14,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -63,7 +63,7 @@ var fullAppModule = fx.Options(
 	commandfx.Command,
 	restyfx.Clients,
 	nativefx.Native,
-	installhookfx.InstallHooks,
+	hookfx.Hook,
 
 	fx.Supply(log.New("Test")),
 )

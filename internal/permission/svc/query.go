@@ -3,7 +3,7 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/ch-app-store/internal/account/model"
+	"github.com/channel-io/ch-app-store/internal/permission/model"
 )
 
 type AccountChannelSvc interface {
@@ -20,4 +20,8 @@ func NewAccountChannelSvc(channelFetcher ChannelFetcher) *AccountChannelSvcImpl 
 
 func (a *AccountChannelSvcImpl) GetChannels(ctx context.Context, accountID string) ([]*model.Channel, error) {
 	return a.channelFetcher.GetChannels(ctx, accountID)
+}
+
+type ChannelFetcher interface {
+	GetChannels(ctx context.Context, accountID string) ([]*model.Channel, error)
 }
