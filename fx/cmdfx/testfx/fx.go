@@ -1,8 +1,6 @@
 package testfx
 
 import (
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
-
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
@@ -22,6 +20,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
@@ -47,7 +46,7 @@ var Test = fx.Options(
 	approlefx.AppRole,
 	apphttpfx.Function,
 	hookfx.Hook,
-	togglehookfx.ToggleHook,
+	managerfx.Manager,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,
