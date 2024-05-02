@@ -1,4 +1,4 @@
-package account
+package channel
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
@@ -20,7 +20,7 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	group := router.Group("/desk/account/:accountID")
+	group := router.Group("/desk/account")
 
 	group.GET("/apps/:appID/channels", h.getChannels)
 }

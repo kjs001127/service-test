@@ -1,4 +1,4 @@
-package account
+package channel
 
 import (
 	"net/http"
