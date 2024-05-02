@@ -8,6 +8,7 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	crudSvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
 	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
@@ -15,6 +16,7 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -36,7 +38,7 @@ type PermissionTestSuite struct {
 	testApp *TestApp
 
 	permission.AccountAppPermissionSvc
-	permission.ManagerInstallPermissionSvc
+	*managersvc.ManagerAwareInstallSvc
 	repo.AppAccountRepo
 	crudSvc.AppCrudSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
@@ -47,7 +49,7 @@ var suite PermissionTestSuite
 var _ = BeforeSuite(func() {
 	suite.testApp = NewTestApp(
 		Populate(&suite.AccountAppPermissionSvc),
-		Populate(&suite.ManagerInstallPermissionSvc),
+		Populate(&suite.ManagerAwareInstallSvc),
 		Populate(&suite.AppAccountRepo),
 		Populate(&suite.AppCrudSvc),
 		Mock[account.ManagerRoleFetcher](&suite.managerRoleFetcher),
@@ -117,7 +119,7 @@ var _ = Describe("InstallApp", func() {
 				AppID: app.ID,
 			}
 
-			installedApp, err := suite.InstallApp(ctx, installationID, manager)
+			installedApp, err := suite.Install(ctx, manager, installationID)
 			Expect(err).To(BeNil())
 			Expect(installedApp).ToNot(BeNil())
 			Expect(installedApp.ID).To(Equal(app.ID))
@@ -147,7 +149,7 @@ var _ = Describe("InstallApp", func() {
 				AppID:     app.ID,
 				ChannelID: channelID,
 			}
-			app, err := suite.InstallApp(ctx, installationID, manager)
+			app, err := suite.Install(ctx, manager, installationID)
 
 			Expect(err).To(Not(BeNil()))
 			Expect(app).To(BeNil())
@@ -178,7 +180,7 @@ var _ = Describe("InstallApp", func() {
 				ChannelID: channelID,
 			}
 
-			installedApp, err := suite.InstallApp(ctx, installationID, manager)
+			installedApp, err := suite.Install(ctx, manager, installationID)
 			Expect(err).To(BeNil())
 			Expect(installedApp).ToNot(BeNil())
 			Expect(installedApp.ID).To(Equal(app.ID))
@@ -209,7 +211,7 @@ var _ = Describe("InstallApp", func() {
 				ChannelID: channelID,
 			}
 
-			installedApp, err := suite.InstallApp(ctx, installationID, manager)
+			installedApp, err := suite.Install(ctx, manager, installationID)
 			Expect(err).To(Not(BeNil()))
 			Expect(apierr.IsUnauthorized(err)).To(BeTrue())
 			Expect(installedApp).To(BeNil())
