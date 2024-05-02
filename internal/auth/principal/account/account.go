@@ -2,8 +2,8 @@ package account
 
 import (
 	"context"
+	"errors"
 
-	"github.com/friendsofgo/errors"
 	"github.com/golang-jwt/jwt"
 )
 
