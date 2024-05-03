@@ -11,6 +11,7 @@ import (
 
 type AccountAppPermissionSvc interface {
 	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
+	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 }
 
@@ -25,7 +26,6 @@ type AppModifyRequest struct {
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	I18nMap            map[string]any   `json:"i18nMap,omitempty"`
-	AvatarURL          *string          `json:"avatarUrl,omitempty"`
 }
 
 func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
@@ -35,7 +35,6 @@ func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
 		Description:        r.Description,
 		DetailImageURLs:    r.DetailImageURLs,
 		DetailDescriptions: r.DetailDescriptions,
-		AvatarURL:          r.AvatarURL,
 	}
 }
 

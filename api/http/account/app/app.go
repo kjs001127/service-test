@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
+	"github.com/channel-io/ch-app-store/internal/permission/svc"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -35,4 +36,31 @@ func (h *Handler) createApp(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, created)
+}
+
+func (h *Handler) modifyApp(ctx *gin.Context) {
+	//var accountID string
+
+	var request dto.AppModifyRequest
+	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	app, err := h.appPermissionSvc.ModifyApp(ctx, svc.AppModifyRequest{
+		Title:           request.Title,
+		Description:     request.Description,
+		DetailImageURLs: request.DetailImageURLs,
+		I18nMap:         request.I18nMap,
+	},
+		request.AppID,
+		request.AccountID,
+	)
+
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, app)
 }
