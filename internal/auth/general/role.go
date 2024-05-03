@@ -21,6 +21,7 @@ const (
 type RoleFetcher interface {
 	GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error)
 	CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error)
+	UpdateRole(ctx context.Context, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error)
 	DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error)
 }
 
@@ -29,8 +30,7 @@ type RoleClientImpl struct {
 	authUrl string
 }
 
-func (f *RoleClientImpl) UpdateRole(ctx context.Context, roleID string, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
-	//TODO implement me
+func (f *RoleClientImpl) UpdateRole(ctx context.Context, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
 	panic("implement me")
 }
 

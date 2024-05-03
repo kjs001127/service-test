@@ -10,5 +10,6 @@ type AppRoleRepository interface {
 	Save(ctx context.Context, role *model.AppRole) error
 	FetchByAppID(ctx context.Context, appID string) ([]*model.AppRole, error)
 	FetchByRoleID(ctx context.Context, roleID string) (*model.AppRole, error)
+	FetchRoleByAppIDAndType(ctx context.Context, appID string, roleType model.RoleType) (*model.AppRole, error)
 	DeleteByAppID(ctx context.Context, appID string) error
 }

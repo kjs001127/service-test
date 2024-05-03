@@ -6,22 +6,22 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
-type RoleClearHook struct {
+type RoleAppLifeCycleHook struct {
 	svc *AppRoleSvc
 }
 
-func NewRoleClearHook(svc *AppRoleSvc) *RoleClearHook {
-	return &RoleClearHook{svc: svc}
+func NewRoleClearHook(svc *AppRoleSvc) *RoleAppLifeCycleHook {
+	return &RoleAppLifeCycleHook{svc: svc}
 }
 
-func (r RoleClearHook) OnAppCreate(ctx context.Context, app *model.App) error {
-	return nil
+func (r RoleAppLifeCycleHook) OnAppCreate(ctx context.Context, app *model.App) error {
+	return r.svc.CreateRoles(ctx, app.ID)
 }
 
-func (r RoleClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
+func (r RoleAppLifeCycleHook) OnAppDelete(ctx context.Context, app *model.App) error {
 	return r.svc.DeleteRoles(ctx, app.ID)
 }
 
-func (r RoleClearHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {
+func (r RoleAppLifeCycleHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {
 	return nil
 }
