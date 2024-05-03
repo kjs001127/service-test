@@ -1,0 +1,1 @@
+ALTER TABLE apps ADD COLUMN i18n_map JSONB;
