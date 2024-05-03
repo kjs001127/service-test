@@ -24,6 +24,10 @@ var FunctionSvcs = fx.Options(
 			fx.As(new(app.InvokeHandler)),
 		),
 		fx.Annotate(
+			svc.NewServerSettingSvcImpl,
+			fx.As(new(svc.ServerSettingSvc)),
+		),
+		fx.Annotate(
 			svc.NewAppHttpProxy,
 			fx.ParamTags(``, restyfx.App),
 		),
@@ -48,8 +52,8 @@ var FunctionHttps = fx.Options(
 var FunctionDaos = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			repo.NewAppUrlDao,
-			fx.As(new(svc.AppUrlRepository)),
+			repo.NewAppServerSettingDao,
+			fx.As(new(svc.AppServerSettingRepository)),
 		),
 	),
 )

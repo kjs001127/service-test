@@ -20,22 +20,22 @@ type AppDevSvc interface {
 }
 
 type AppDevSvcImpl struct {
-	urlRepo function.AppUrlRepository
-	roleSvc *role.AppRoleSvc
-	manager app.AppCrudSvc
+	serverSettingRepo function.AppServerSettingRepository
+	roleSvc           *role.AppRoleSvc
+	manager           app.AppCrudSvc
 }
 
 func NewAppDevSvcImpl(
-	urlRepo function.AppUrlRepository,
+	serverSettingRepo function.AppServerSettingRepository,
 	roleSvc *role.AppRoleSvc,
 	manager app.AppCrudSvc,
 ) *AppDevSvcImpl {
-	return &AppDevSvcImpl{urlRepo: urlRepo, roleSvc: roleSvc, manager: manager}
+	return &AppDevSvcImpl{serverSettingRepo: serverSettingRepo, roleSvc: roleSvc, manager: manager}
 }
 
 func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) (AppResponse, error) {
-		urls, err := s.urlRepo.Fetch(ctx, appID)
+		serverSetting, err := s.serverSettingRepo.Fetch(ctx, appID)
 		if err != nil {
 			return AppResponse{}, errors.WithStack(err)
 		}
@@ -53,8 +53,8 @@ func (s *AppDevSvcImpl) FetchApp(ctx context.Context, appID string) (AppResponse
 		return AppResponse{
 			Roles: roles,
 			RemoteApp: &RemoteApp{
-				App:  found,
-				Urls: urls,
+				App:           found,
+				ServerSetting: serverSetting,
 			},
 		}, nil
 	}, tx.ReadOnly())
@@ -67,10 +67,10 @@ func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppRespo
 			return nil, errors.WithStack(err)
 		}
 
-		if err = s.urlRepo.Save(ctx, req.App.ID, req.Urls); err != nil {
+		if err = s.serverSettingRepo.Save(ctx, req.App.ID, req.ServerSetting); err != nil {
 			return nil, errors.WithStack(err)
 		}
-		return &RemoteApp{App: created, Urls: req.Urls}, nil
+		return &RemoteApp{App: created, ServerSetting: req.ServerSetting}, nil
 	})
 	if err != nil {
 		return AppResponse{}, err
@@ -101,5 +101,5 @@ type AppResponse struct {
 
 type RemoteApp struct {
 	*appmodel.App
-	functionmodel.Urls
+	functionmodel.ServerSetting
 }

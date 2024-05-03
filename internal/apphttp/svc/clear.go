@@ -7,11 +7,11 @@ import (
 )
 
 type AppHookClearHook struct {
-	urlRepo AppUrlRepository
+	serverSettingRepo AppServerSettingRepository
 }
 
-func NewAppHookClearHook(urlRepo AppUrlRepository) *AppHookClearHook {
-	return &AppHookClearHook{urlRepo: urlRepo}
+func NewAppHookClearHook(serverSettingRepo AppServerSettingRepository) *AppHookClearHook {
+	return &AppHookClearHook{serverSettingRepo: serverSettingRepo}
 }
 
 func (a AppHookClearHook) OnAppCreate(ctx context.Context, app *model.App) error {
@@ -19,7 +19,7 @@ func (a AppHookClearHook) OnAppCreate(ctx context.Context, app *model.App) error
 }
 
 func (a AppHookClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
-	return a.urlRepo.Delete(ctx, app.ID)
+	return a.serverSettingRepo.Delete(ctx, app.ID)
 }
 
 func (a AppHookClearHook) OnAppModify(ctx context.Context, before *model.App, after *model.App) error {

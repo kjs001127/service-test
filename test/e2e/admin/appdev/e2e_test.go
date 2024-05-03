@@ -67,7 +67,7 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 		IsPrivate: false,
 	}
 
-	urlCreateRequest := functionmodel.Urls{
+	serverSettingCreateRequest := functionmodel.ServerSetting{
 		FunctionURL: &fakeFunctionUrl,
 		WamURL:      &fakeWamUrl,
 	}
@@ -75,8 +75,8 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 	body := svc.AppRequest{
 		Roles: nil,
 		RemoteApp: &svc.RemoteApp{
-			App:  &appCreateRequest,
-			Urls: urlCreateRequest,
+			App:           &appCreateRequest,
+			ServerSetting: serverSettingCreateRequest,
 		},
 	}
 

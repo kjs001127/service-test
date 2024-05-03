@@ -4,22 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/pkg/errors"
-
-	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/pkg/errors"
 )
 
 type AppRoleSvc struct {
 	roleCli   authgen.RoleFetcher
 	roleRepo  AppRoleRepository
-	urlRepo   svc.AppUrlRepository
-	manager   appsvc.AppCrudSvc
 	typeRules map[model.RoleType]TypeRule
 }
 

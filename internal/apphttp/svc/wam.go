@@ -12,11 +12,11 @@ import (
 )
 
 type AppHttpProxy struct {
-	repo      AppUrlRepository
+	repo      AppServerSettingRepository
 	requester http.RoundTripper
 }
 
-func NewAppHttpProxy(repo AppUrlRepository, tripper http.RoundTripper) *AppHttpProxy {
+func NewAppHttpProxy(repo AppServerSettingRepository, tripper http.RoundTripper) *AppHttpProxy {
 	return &AppHttpProxy{repo: repo, requester: tripper}
 }
 
@@ -27,16 +27,16 @@ type WamProxyRequest struct {
 }
 
 func (a *AppHttpProxy) Proxy(ctx context.Context, req WamProxyRequest) error {
-	urls, err := a.repo.Fetch(ctx, req.AppID)
+	serverSetting, err := a.repo.Fetch(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	if urls.WamURL == nil {
+	if serverSetting.WamURL == nil {
 		return apierr.BadRequest(fmt.Errorf("wam url invalid for appID: %s", req.AppID))
 	}
 
-	wamUrl, err := url.Parse(*urls.WamURL)
+	wamUrl, err := url.Parse(*serverSetting.WamURL)
 	if err != nil {
 		return errors.Wrap(err, "error while parsing wamURL")
 	}
