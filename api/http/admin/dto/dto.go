@@ -28,5 +28,5 @@ type BriefRequest struct {
 }
 
 type ChannelResponse struct {
-	Channels []*accountmodel.Channel
+	Channels []*accountmodel.Channel `json:"channels"`
 }
