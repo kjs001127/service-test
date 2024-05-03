@@ -13,7 +13,16 @@ type App struct {
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 
+	I18nMap map[string]I18nFields `json:"i18NMap"`
+
 	IsBuiltIn bool `json:"isBuiltIn"`
+}
+
+type I18nFields struct {
+	Title             string   `json:"title"`
+	DetailImageURLs   []string `json:"detailImageUrls,omitempty"`
+	DetailDescription string   `json:"detailDescription,omitempty"`
+	Description       string   `json:"description,omitempty"`
 }
 
 type AppState string
