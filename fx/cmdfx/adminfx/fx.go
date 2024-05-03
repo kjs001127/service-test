@@ -14,7 +14,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
@@ -45,7 +45,7 @@ var Admin = fx.Options(
 	apphttpfx.Function,
 	nativefx.Native,
 	brieffx.Brief,
-	installhookfx.InstallHooks,
+	hookfx.Hook,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,

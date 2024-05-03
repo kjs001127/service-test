@@ -80,7 +80,7 @@ references:
 executors:
   test_executor:
     docker:
-      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
+      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.21-bullseye-flyway-tools
       - image: cimg/postgres:14.10
         environment:
           POSTGRES_USER: ci
@@ -94,7 +94,7 @@ executors:
 
   compile_executor:
     docker:
-      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.20-bullseye-flyway-tools
+      - image: public.ecr.aws/i8a4b9p4/circleci-base/go:1.21-bullseye-flyway-tools
       - image: cimg/postgres:14.10
         environment:
           POSTGRES_USER: ci

@@ -1,6 +1,6 @@
 module github.com/channel-io/ch-app-store
 
-go 1.19
+go 1.21
 
 replace github.com/channel-io/ch-proto v0.0.0 => ./ch-proto
 

@@ -1,5 +1,5 @@
 # This Dockerfile is only used by CI/CD Pipeline system
-FROM debian:bookworm-slim AS runtime
+FROM public.ecr.aws/i8a4b9p4/circleci-base/debian:bookworm-slim-curl AS runtime
 
 RUN apt-get update \
   && apt-get install -y ca-certificates \

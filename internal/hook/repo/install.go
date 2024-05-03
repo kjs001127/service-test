@@ -5,7 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	"github.com/channel-io/ch-app-store/internal/installhook/model"
+	"github.com/channel-io/ch-app-store/internal/hook/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
