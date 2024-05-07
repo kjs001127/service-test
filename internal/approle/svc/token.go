@@ -56,3 +56,13 @@ func (s *TokenIssueSvc) IssueChannelToken(ctx context.Context, installID appmode
 	scopes := general.Scopes{"channel": {installID.ChannelID}, "app": {installID.AppID}}
 	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
 }
+
+func (s *TokenIssueSvc) IssueAppToken(ctx context.Context, appID string) (general.IssueResponse, error) {
+	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, model.RoleTypeApp)
+	if err != nil {
+		return general.IssueResponse{}, err
+	}
+	scopes := general.Scopes{"app": {appID}}
+	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
+
+}
