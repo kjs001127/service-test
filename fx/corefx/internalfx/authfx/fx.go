@@ -63,5 +63,9 @@ var GeneralAuth = fx.Options(
 			fx.As(new(general.Parser)),
 			fx.ParamTags(``, configfx.JwtServiceKey),
 		),
+		fx.Annotate(
+			general.NewRBACExchanger,
+			fx.ParamTags(restyfx.Dw, ``, configfx.DwAdmin),
+		),
 	),
 )

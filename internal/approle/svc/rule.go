@@ -10,5 +10,5 @@ type TypeRule struct {
 	AvailableClaims []*protomodel.Claim
 	GrantTypes      []protomodel.GrantType
 	PrincipalTypes  []string
-	defaultClaimsOf ClaimsFactory
+	DefaultClaimsOf ClaimsFactory
 }

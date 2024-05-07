@@ -34,16 +34,11 @@ func NewAppRoleSvc(
 	}
 }
 
-type RoleDTO struct {
-	Credentials *model.Credentials
-	Claims      []*model.Claim
-}
-
 func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string) error {
 	for _, roleType := range model.AvailableRoleTypes {
 		typeRule := s.typeRule[roleType]
 		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
-			Claims:                typeRule.defaultClaimsOf(appID),
+			Claims:                typeRule.DefaultClaimsOf(appID),
 			AllowedPrincipalTypes: typeRule.PrincipalTypes,
 			AllowedGrantTypes:     typeRule.GrantTypes,
 		})
@@ -66,7 +61,7 @@ func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string) error {
 	return nil
 }
 
-func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, claims []*model.Claim) (*RoleDTO, error) {
+func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, claims []*model.Claim) ([]*model.Claim, error) {
 
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
 	if err != nil {
@@ -83,13 +78,11 @@ func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType mode
 		Claims: protoClaims,
 	})
 
-	return &RoleDTO{
-		Claims:      s.fromProtoClaims(res.Role.Claims),
-		Credentials: appRole.Credentials,
-	}, nil
+	return s.fromProtoClaims(res.Role.Claims), nil
+
 }
 
-func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model.RoleType) (*RoleDTO, error) {
+func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model.RoleType) ([]*model.Claim, error) {
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
@@ -100,10 +93,7 @@ func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model
 		return nil, err
 	}
 
-	return &RoleDTO{
-		Claims:      s.fromProtoClaims(role.Role.Claims),
-		Credentials: appRole.Credentials,
-	}, nil
+	return s.fromProtoClaims(role.Role.Claims), nil
 }
 
 func (s *AppRoleSvc) DeleteRoles(ctx context.Context, appID string) error {

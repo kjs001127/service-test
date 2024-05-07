@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	issueToken = "/general/auth/" + version + "/v1/token"
+	generalVersion = "v1"
+	issueToken     = "/general/auth/" + generalVersion + "/token"
 )
 
 type RBACExchanger struct {

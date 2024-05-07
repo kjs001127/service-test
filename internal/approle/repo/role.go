@@ -23,7 +23,7 @@ func NewAppRoleDao(db db.DB) *AppRoleDao {
 }
 
 func (a *AppRoleDao) Save(ctx context.Context, role *model.AppRole) error {
-	return marshal(role).Insert(ctx, a.db, boil.Infer())
+	return a.marshal(role).Insert(ctx, a.db, boil.Infer())
 }
 
 func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*model.AppRole, error) {
@@ -34,7 +34,7 @@ func (a *AppRoleDao) FetchByAppID(ctx context.Context, appID string) ([]*model.A
 	if err != nil {
 		return nil, errors.Wrap(err, "error while querying appRole")
 	}
-	return unmarshalAll(appRoles), nil
+	return a.unmarshalAll(appRoles), nil
 }
 
 func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*model.AppRole, error) {
@@ -49,7 +49,7 @@ func (a *AppRoleDao) FetchByRoleID(ctx context.Context, roleID string) (*model.A
 		return nil, errors.Wrap(err, "error while querying appRole")
 	}
 
-	return unmarshal(appRole), nil
+	return a.unmarshal(appRole), nil
 }
 
 func (a *AppRoleDao) DeleteByAppID(ctx context.Context, appID string) error {
@@ -57,7 +57,7 @@ func (a *AppRoleDao) DeleteByAppID(ctx context.Context, appID string) error {
 	return errors.Wrap(err, "error while deleting appRole")
 }
 
-func marshal(role *model.AppRole) *models.AppRole {
+func (a *AppRoleDao) marshal(role *model.AppRole) *models.AppRole {
 	return &models.AppRole{
 		AppID:    role.AppID,
 		RoleID:   role.RoleID,
@@ -80,10 +80,10 @@ func (a *AppRoleDao) FetchRoleByAppIDAndType(ctx context.Context, appID string, 
 		return nil, errors.Wrap(err, "error while querying appRole")
 	}
 
-	return unmarshal(appRole), nil
+	return a.unmarshal(appRole), nil
 }
 
-func unmarshal(role *models.AppRole) *model.AppRole {
+func (a *AppRoleDao) unmarshal(role *models.AppRole) *model.AppRole {
 	return &model.AppRole{
 		AppID:  role.AppID,
 		RoleID: role.RoleID,
@@ -95,10 +95,10 @@ func unmarshal(role *models.AppRole) *model.AppRole {
 	}
 }
 
-func unmarshalAll(roles models.AppRoleSlice) []*model.AppRole {
+func (a *AppRoleDao) unmarshalAll(roles models.AppRoleSlice) []*model.AppRole {
 	ret := make([]*model.AppRole, 0, len(roles))
 	for _, r := range roles {
-		ret = append(ret, unmarshal(r))
+		ret = append(ret, a.unmarshal(r))
 	}
 	return ret
 }
