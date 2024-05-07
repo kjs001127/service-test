@@ -15,7 +15,7 @@ import (
 //	@Param		appID		path	string	true	"id of App to install"
 //
 //	@Success	200
-//	@Router		/admin/accounts/{accountId}/apps/{appID} [get]
+//	@Router		/admin/accounts/{accountID}/apps/{appID} [get]
 func (h *Handler) checkOwner(ctx *gin.Context) {
 	accountID := ctx.Param("accountID")
 	appID := ctx.Param("appID")
