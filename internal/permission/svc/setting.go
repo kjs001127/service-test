@@ -3,8 +3,6 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	serverSettingSvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	"github.com/channel-io/ch-app-store/internal/permission/repo"
@@ -15,7 +13,7 @@ type AccountServerSettingPermissionSvc interface {
 	FetchURLs(ctx context.Context, appID string, accountID string) (serverSettingSvc.Urls, error)
 	UpsertURLs(ctx context.Context, appID string, req serverSettingSvc.Urls, accountID string) error
 	RefreshSigningKey(ctx context.Context, appID string, accountID string) (string, error)
-	HasIssuedBefore(ctx context.Context, appID string) (bool, error)
+	HasIssuedBefore(ctx context.Context, appID string, accountID string) (bool, error)
 }
 
 type AccountServerSettingPermissionSvcImpl struct {
@@ -63,15 +61,11 @@ func (a *AccountServerSettingPermissionSvcImpl) UpsertURLs(ctx context.Context, 
 	})
 }
 
-func (a *AccountServerSettingPermissionSvcImpl) HasIssuedBefore(ctx context.Context, appID string) (bool, error) {
-	_, err := a.serverSettingSvc.FetchSigningKey(ctx, appID)
-	if apierr.IsNotFound(err) {
-		return false, nil
-	} else if err != nil {
+func (a *AccountServerSettingPermissionSvcImpl) HasIssuedBefore(ctx context.Context, appID string, accountID string) (bool, error) {
+	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return false, err
 	}
-
-	return true, nil
+	return a.serverSettingSvc.HasIssuedBefore(ctx, appID)
 }
 
 func (a *AccountServerSettingPermissionSvcImpl) RefreshSigningKey(ctx context.Context, appID string, accountID string) (string, error) {

@@ -99,9 +99,10 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Success	200
 //	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
 func (h *Handler) checkSigningKey(ctx *gin.Context) {
+	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
 
-	issued, err := h.settingPermissionSvc.HasIssuedBefore(ctx, appID)
+	issued, err := h.settingPermissionSvc.HasIssuedBefore(ctx, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

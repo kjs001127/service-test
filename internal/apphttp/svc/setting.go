@@ -15,7 +15,7 @@ type ServerSettingSvc interface {
 	UpsertUrls(ctx context.Context, appID string, urls Urls) error
 	FetchUrls(ctx context.Context, appID string) (Urls, error)
 	RefreshSigningKey(ctx context.Context, appID string) (string, error)
-	FetchSigningKey(ctx context.Context, appID string) (string, error)
+	HasIssuedBefore(ctx context.Context, appID string) (bool, error)
 }
 
 type Urls struct {
@@ -60,17 +60,19 @@ func (a *ServerSettingSvcImpl) FetchUrls(ctx context.Context, appID string) (Url
 	}, err
 }
 
-func (a *ServerSettingSvcImpl) FetchSigningKey(ctx context.Context, appID string) (string, error) {
+func (a *ServerSettingSvcImpl) HasIssuedBefore(ctx context.Context, appID string) (bool, error) {
 	settings, err := a.serverSettingRepo.Fetch(ctx, appID)
-	if err != nil {
-		return "", err
+	if apierr.IsNotFound(err) {
+		return false, nil
+	} else if err != nil {
+		return false, err
 	}
 
 	if settings.SigningKey == nil {
-		return "", apierr.NotFound(errors.New("no signing key found"))
+		return false, nil
 	}
 
-	return *settings.SigningKey, nil
+	return true, nil
 }
 
 func (a *ServerSettingSvcImpl) RefreshSigningKey(ctx context.Context, appID string) (string, error) {
