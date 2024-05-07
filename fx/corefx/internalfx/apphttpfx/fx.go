@@ -32,7 +32,7 @@ var FunctionSvcs = fx.Options(
 			fx.ParamTags(``, restyfx.App),
 		),
 		fx.Annotate(
-			svc.NewAppHookClearHook,
+			svc.NewLifeCycleHook,
 			fx.As(new(app.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
