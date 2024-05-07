@@ -10,6 +10,7 @@ import (
 )
 
 type AccountAppPermissionSvc interface {
+	ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error)
 	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
 	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
@@ -67,6 +68,14 @@ func NewAccountAppPermissionSvc(
 		appCrudSvc:     appCrudSvc,
 		appAccountRepo: appAccountRepo,
 	}
+}
+
+func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
+	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
+		return nil, err
+	}
+
+	return a.appCrudSvc.Read(ctx, appID)
 }
 
 func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
