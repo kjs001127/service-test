@@ -24,6 +24,11 @@ var RoleClientOnly = fx.Options(
 var PrincipalAuth = fx.Options(
 	fx.Provide(
 		fx.Annotate(
+			account.NewParserImpl,
+			fx.As(new(account.Parser)),
+			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),
+		),
+		fx.Annotate(
 			account.NewManagerFetcherImpl,
 			fx.As(new(account.ManagerFetcher)),
 			fx.ParamTags(restyfx.Dw, configfx.DwAdmin),

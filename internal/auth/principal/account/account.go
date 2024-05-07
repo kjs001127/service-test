@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
+	"github.com/go-resty/resty/v2"
 )
 
 const (
@@ -24,13 +26,15 @@ type Parser interface {
 }
 
 type ParserImpl struct {
+	cli     *resty.Client
+	authUrl string
 }
 
-func NewAccountParser() *ParserImpl {
-	return &ParserImpl{}
+func NewParserImpl(cli *resty.Client, authUrl string) *ParserImpl {
+	return &ParserImpl{cli: cli, authUrl: authUrl}
 }
 
-func (c *ManagerFetcherImpl) ParseAccount(ctx context.Context, token string) (Principal, error) {
+func (c *ParserImpl) ParseAccount(ctx context.Context, token string) (Principal, error) {
 	req := c.cli.R()
 	req.SetContext(ctx)
 	req.Header.Set(XAccountHeader, token)
