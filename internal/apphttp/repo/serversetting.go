@@ -4,15 +4,16 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/channel-io/ch-app-store/generated/models"
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
+	"github.com/channel-io/ch-app-store/lib/db"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
 	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
-
-	"github.com/channel-io/ch-app-store/generated/models"
-	"github.com/channel-io/ch-app-store/internal/apphttp/model"
-	"github.com/channel-io/ch-app-store/lib/db"
 )
 
 type AppServerSettingDao struct {
@@ -38,14 +39,25 @@ func (a *AppServerSettingDao) Fetch(ctx context.Context, appID string) (model.Se
 	}, nil
 }
 
-func (a *AppServerSettingDao) Save(ctx context.Context, appID string, urls model.ServerSetting) error {
-	url := models.AppServerSetting{
+func (a *AppServerSettingDao) Save(ctx context.Context, appID string, serverSetting model.ServerSetting) (model.ServerSetting, error) {
+	setting := models.AppServerSetting{
 		AppID:       appID,
-		WamURL:      null.StringFromPtr(urls.WamURL),
-		FunctionURL: null.StringFromPtr(urls.FunctionURL),
-		SigningKey:  null.StringFromPtr(urls.SigningKey),
+		WamURL:      null.StringFromPtr(serverSetting.WamURL),
+		FunctionURL: null.StringFromPtr(serverSetting.FunctionURL),
+		SigningKey:  null.StringFromPtr(serverSetting.SigningKey),
 	}
-	return url.Insert(ctx, a.db, boil.Infer())
+	err := setting.Upsert(
+		ctx,
+		a.db,
+		true,
+		[]string{"app_id"},
+		boil.Blacklist("app_id"),
+		boil.Infer(),
+	)
+	if err != nil {
+		return model.ServerSetting{}, errors.Wrap(err, "error while saving app server setting")
+	}
+	return serverSetting, nil
 }
 
 func (a *AppServerSettingDao) Delete(ctx context.Context, appID string) error {

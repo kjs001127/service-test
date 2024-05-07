@@ -67,7 +67,7 @@ func (s *AppDevSvcImpl) CreateApp(ctx context.Context, req AppRequest) (AppRespo
 			return nil, errors.WithStack(err)
 		}
 
-		if err = s.serverSettingRepo.Save(ctx, req.App.ID, req.ServerSetting); err != nil {
+		if _, err = s.serverSettingRepo.Save(ctx, req.App.ID, req.ServerSetting); err != nil {
 			return nil, errors.WithStack(err)
 		}
 		return &RemoteApp{App: created, ServerSetting: req.ServerSetting}, nil
