@@ -20,6 +20,20 @@ type AppRoleSvc struct {
 	appSvc   app.AppCrudSvc
 }
 
+func NewAppRoleSvc(
+	roleCli authgen.RoleFetcher,
+	roleRepo AppRoleRepository,
+	typeRule map[model.RoleType]TypeRule,
+	appSvc app.AppCrudSvc,
+) *AppRoleSvc {
+	return &AppRoleSvc{
+		roleCli:  roleCli,
+		roleRepo: roleRepo,
+		typeRule: typeRule,
+		appSvc:   appSvc,
+	}
+}
+
 type RoleDTO struct {
 	Credentials *model.Credentials
 	Claims      []*model.Claim
@@ -30,8 +44,8 @@ func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string) error {
 		typeRule := s.typeRule[roleType]
 		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
 			Claims:                typeRule.defaultClaimsOf(appID),
-			AllowedPrincipalTypes: typeRule.principalTypes,
-			AllowedGrantTypes:     typeRule.grantTypes,
+			AllowedPrincipalTypes: typeRule.PrincipalTypes,
+			AllowedGrantTypes:     typeRule.GrantTypes,
 		})
 		if err != nil {
 			return err
@@ -159,7 +173,7 @@ func (s *AppRoleSvc) toProtoClaim(ctx context.Context, roleType model.RoleType, 
 }
 
 func (s *AppRoleSvc) findMatchingClaim(t model.RoleType, claim *model.Claim) (*protomodel.Claim, bool) {
-	claims := s.typeRule[t].availableClaims
+	claims := s.typeRule[t].AvailableClaims
 	for _, protoClaim := range claims {
 		if protoClaim.Service == claim.Service && protoClaim.Action == claim.Action {
 			return protoClaim, true
@@ -169,7 +183,7 @@ func (s *AppRoleSvc) findMatchingClaim(t model.RoleType, claim *model.Claim) (*p
 }
 
 func (s *AppRoleSvc) GetAvailableClaims(ctx context.Context, roleType model.RoleType) ([]*model.Claim, error) {
-	claims := s.typeRule[roleType].availableClaims
+	claims := s.typeRule[roleType].AvailableClaims
 	ret := make([]*model.Claim, 0, len(claims))
 	for _, claim := range claims {
 		ret = append(ret, &model.Claim{
