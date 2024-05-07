@@ -20,7 +20,6 @@ import (
 // @Success	201				{object}	model.App
 // @Router		/desk/account/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
-	//accountID := account.AccountID(ctx)
 	var accountID string
 	var request dto.AppCreateRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
@@ -41,21 +40,15 @@ func (h *Handler) createApp(ctx *gin.Context) {
 func (h *Handler) modifyApp(ctx *gin.Context) {
 	//var accountID string
 
-	var request dto.AppModifyRequest
+	var accountID string
+	appID := ctx.Param("appId")
+	var request svc.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	app, err := h.appPermissionSvc.ModifyApp(ctx, svc.AppModifyRequest{
-		Title:           request.Title,
-		Description:     request.Description,
-		DetailImageURLs: request.DetailImageURLs,
-		I18nMap:         request.I18nMap,
-	},
-		request.AppID,
-		request.AccountID,
-	)
+	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, accountID)
 
 	if err != nil {
 		_ = ctx.Error(err)

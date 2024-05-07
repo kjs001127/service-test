@@ -130,6 +130,10 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
 	}
+	i18nMap, err := json.Marshal(appTarget.I18nMap)
+	if err != nil {
+		return nil, errors.Wrap(err, "while marshaling i18nMap")
+	}
 
 	return &models.App{
 		ID:                 appTarget.ID,
@@ -141,6 +145,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		State:              string(appTarget.State),
 		IsPrivate:          appTarget.IsPrivate,
 		IsBuiltIn:          null.BoolFrom(appTarget.IsBuiltIn),
+		I18nMap:            null.JSONFrom(i18nMap),
 	}, nil
 }
 
@@ -148,6 +153,11 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 	var detailDescriptions []map[string]any
 	if err := rawApp.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
 		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
+	}
+
+	var i18nMap map[string]app.I18nFields
+	if err := rawApp.I18nMap.Unmarshal(&i18nMap); err != nil {
+		return nil, errors.Wrap(err, "error while marshaling i18nMap")
 	}
 
 	return &app.App{
@@ -161,6 +171,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 		DetailImageURLs:    rawApp.DetailImageUrls,
 		IsPrivate:          rawApp.IsPrivate,
 		IsBuiltIn:          rawApp.IsBuiltIn.Bool,
+		I18nMap:            i18nMap,
 	}, nil
 }
 

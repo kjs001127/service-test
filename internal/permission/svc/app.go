@@ -21,11 +21,31 @@ type AccountAppPermissionSvcImpl struct {
 }
 
 type AppModifyRequest struct {
-	Title              string           `json:"title"`
-	Description        *string          `json:"description,omitempty"`
-	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
-	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
-	I18nMap            map[string]any   `json:"i18nMap,omitempty"`
+	Title              string                `json:"title"`
+	Description        *string               `json:"description,omitempty"`
+	DetailImageURLs    []string              `json:"detailImageUrls,omitempty"`
+	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
+	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
+}
+
+type I18nFields struct {
+	Title             string   `json:"title"`
+	DetailImageURLs   []string `json:"detailImageUrls,omitempty"`
+	DetailDescription string   `json:"detailDescription,omitempty"`
+	Description       string   `json:"description,omitempty"`
+}
+
+func (r *AppModifyRequest) convertI18nMap() map[string]appmodel.I18nFields {
+	ret := make(map[string]appmodel.I18nFields)
+	for lang, i18n := range r.I18nMap {
+		ret[lang] = appmodel.I18nFields{
+			Title:             i18n.Title,
+			DetailImageURLs:   i18n.DetailImageURLs,
+			DetailDescription: i18n.DetailDescription,
+			Description:       i18n.Description,
+		}
+	}
+	return ret
 }
 
 func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
@@ -35,6 +55,7 @@ func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
 		Description:        r.Description,
 		DetailImageURLs:    r.DetailImageURLs,
 		DetailDescriptions: r.DetailDescriptions,
+		I18nMap:            r.convertI18nMap(),
 	}
 }
 
