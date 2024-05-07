@@ -5,6 +5,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 	signutil "github.com/channel-io/ch-app-store/internal/apphttp/util"
+
+	"github.com/pkg/errors"
 )
 
 type ServerSettingSvc interface {
@@ -41,7 +43,7 @@ func (a *ServerSettingSvcImpl) FetchUrls(ctx context.Context, appID string) (mod
 func (a *ServerSettingSvcImpl) RefreshSigningKey(ctx context.Context, appID string) (*string, error) {
 	signingKey, err := signutil.CreateSigningKey()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error while creating signing key")
 	}
 	serverSetting := model.ServerSetting{
 		SigningKey: &signingKey,
