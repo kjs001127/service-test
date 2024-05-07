@@ -59,10 +59,8 @@ func (a *AppInstallHookDao) Save(ctx context.Context, appID string, urls *model.
 
 func (a *AppInstallHookDao) Delete(ctx context.Context, appID string) error {
 	_, err := models.AppInstallHooks(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(errors.Wrap(err, "installHook not found"))
-	} else if err != nil {
-		return errors.Wrap(err, "error while querying Url")
+	if err != nil {
+		return errors.WithStack(err)
 	}
 	return nil
 }
