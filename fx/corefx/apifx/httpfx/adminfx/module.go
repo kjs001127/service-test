@@ -4,6 +4,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
+	"github.com/channel-io/ch-app-store/api/http/admin/account"
 	"github.com/channel-io/ch-app-store/api/http/admin/aibe"
 	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
 	"github.com/channel-io/ch-app-store/api/http/admin/appserver"
@@ -21,6 +22,7 @@ var AdminHandlers = fx.Options(
 		gintoolfx.AddTag(aibe.NewHandler),
 		gintoolfx.AddTag(install.NewHandler),
 		gintoolfx.AddTag(role.NewHandler),
+		gintoolfx.AddTag(account.NewHandler),
 	),
 
 	fx.Supply(
