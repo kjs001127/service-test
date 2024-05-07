@@ -30,6 +30,10 @@ var PermissionSvc = fx.Options(
 			fx.As(new(managersvc.ToggleListener)),
 			fx.ResultTags(managerfx.PreToggleHandlerGroup),
 		),
+		fx.Annotate(
+			svc.NewAccountURLPermissionSvc,
+			fx.As(new(svc.AccountURLPermissionSvc)),
+		),
 		svc.NewPermissionUtil,
 	),
 )

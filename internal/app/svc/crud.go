@@ -3,11 +3,11 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/uid"
-	"github.com/pkg/errors"
-
 	"github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
+
+	"github.com/channel-io/go-lib/pkg/uid"
+	"github.com/pkg/errors"
 )
 
 type AppLifeCycleHook interface {
