@@ -3,6 +3,7 @@ package channel
 import (
 	"net/http"
 
+	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 
 	"github.com/gin-gonic/gin"
@@ -19,10 +20,10 @@ import (
 //	@Success	200			{object}	dto.ChannelResponse
 //	@Router		/desk/accounts/apps/{appID}/channels [get]
 func (h *Handler) getChannels(ctx *gin.Context) {
-	accountID := ctx.Param("accountID")
+	account := middleware.Account(ctx)
 	_ = ctx.Param("appID") // 추가 검사 로직을 위한 예비 param
 
-	channels, err := h.appAccountSvc.GetChannels(ctx, accountID)
+	channels, err := h.appAccountSvc.GetChannels(ctx, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

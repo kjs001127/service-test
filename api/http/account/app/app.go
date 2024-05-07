@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
+	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/internal/permission/svc"
 
 	"github.com/gin-gonic/gin"
@@ -20,14 +21,14 @@ import (
 // @Success	201				{object}	model.App
 // @Router		/desk/account/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
-	var accountID string
+	account := middleware.Account(ctx)
 	var request dto.AppCreateRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	created, err := h.appPermissionSvc.CreateApp(ctx, request.Title, accountID)
+	created, err := h.appPermissionSvc.CreateApp(ctx, request.Title, account.ID)
 
 	if err != nil {
 		_ = ctx.Error(err)
@@ -38,8 +39,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 }
 
 func (h *Handler) modifyApp(ctx *gin.Context) {
-
-	var accountID string
+	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
 	var request svc.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
@@ -47,7 +47,7 @@ func (h *Handler) modifyApp(ctx *gin.Context) {
 		return
 	}
 
-	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, accountID)
+	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, account.ID)
 
 	if err != nil {
 		_ = ctx.Error(err)
@@ -58,10 +58,10 @@ func (h *Handler) modifyApp(ctx *gin.Context) {
 }
 
 func (h *Handler) deleteApp(ctx *gin.Context) {
-	var accountID string
+	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 
-	err := h.appPermissionSvc.DeleteApp(ctx, accountID, appID)
+	err := h.appPermissionSvc.DeleteApp(ctx, account.ID, appID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

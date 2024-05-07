@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"strings"
+	"regexp"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	deskScopePrefix    = "/desk"
 	channelIDPathParam = "channelID"
 	ManagerKey         = "Manager"
 )
+
+var regex = regexp.MustCompile(`^/desk/v(\d+)/channels/.*`)
 
 type Auth struct {
 	managerSvc account.ManagerFetcher
@@ -31,7 +32,7 @@ func (a *Auth) Priority() int {
 }
 
 func (a *Auth) Handle(ctx *gin.Context) {
-	if !strings.HasPrefix(ctx.Request.RequestURI, deskScopePrefix) {
+	if !regex.MatchString(ctx.Request.RequestURI) {
 		return
 	}
 
