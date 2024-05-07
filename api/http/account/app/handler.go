@@ -27,4 +27,10 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.PUT("/apps/:appID/general", h.modifyGeneral)
 	group.GET("/apps/:appID/general", h.readGeneral)
+
+	group.PUT("/apps/:appID/server-settings/endpoints", h.modifyEndpoints)
+	group.GET("/apps/:appID/server-settings/endpoints", h.fetchEndpoints)
+
+	group.PUT("/apps/:appID/server-settings/signing-key", h.refreshSigningKey)
+	group.GET("/apps/:appID/server-settings/signing-key", h.checkSigningKey)
 }

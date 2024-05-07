@@ -3,6 +3,8 @@ package svc
 import (
 	"context"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
 	signutil "github.com/channel-io/ch-app-store/internal/apphttp/util"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 
@@ -13,6 +15,7 @@ type ServerSettingSvc interface {
 	UpsertUrls(ctx context.Context, appID string, urls Urls) error
 	FetchUrls(ctx context.Context, appID string) (Urls, error)
 	RefreshSigningKey(ctx context.Context, appID string) (string, error)
+	FetchSigningKey(ctx context.Context, appID string) (string, error)
 }
 
 type Urls struct {
@@ -55,6 +58,19 @@ func (a *ServerSettingSvcImpl) FetchUrls(ctx context.Context, appID string) (Url
 		WamURL:      urls.WamURL,
 		FunctionURL: urls.FunctionURL,
 	}, err
+}
+
+func (a *ServerSettingSvcImpl) FetchSigningKey(ctx context.Context, appID string) (string, error) {
+	settings, err := a.serverSettingRepo.Fetch(ctx, appID)
+	if err != nil {
+		return "", err
+	}
+
+	if settings.SigningKey == nil {
+		return "", apierr.NotFound(errors.New("no signing key found"))
+	}
+
+	return *settings.SigningKey, nil
 }
 
 func (a *ServerSettingSvcImpl) RefreshSigningKey(ctx context.Context, appID string) (string, error) {

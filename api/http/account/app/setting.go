@@ -11,7 +11,7 @@ import (
 	settingsvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
 
-// readSettings godoc
+// fetchEndpoints godoc
 //
 //	@Summary	fetch App
 //	@Tags		Public
@@ -19,8 +19,8 @@ import (
 //	@Param		appId	path		string	true	"appId"
 //
 //	@Success	200		{object}	settingsvc.Urls
-//	@Router		/desk/account/apps/{appId}/server-settings  [get]
-func (h *Handler) readSettings(ctx *gin.Context) {
+//	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [get]
+func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
 
@@ -33,7 +33,7 @@ func (h *Handler) readSettings(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, settings)
 }
 
-// modifySettings godoc
+// modifyEndpoints godoc
 //
 //	@Summary	create App to app-store
 //	@Tags		Public
@@ -42,8 +42,8 @@ func (h *Handler) readSettings(ctx *gin.Context) {
 //	@Param		settingsvc.Urls	body	settingsvc.Urls	true	"dto"
 //
 //	@Success	200
-//	@Router		/desk/account/apps/{appId}/server-settings  [put]
-func (h *Handler) modifySettings(ctx *gin.Context) {
+//	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [put]
+func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
 	var request settingsvc.Urls
@@ -68,7 +68,7 @@ func (h *Handler) modifySettings(ctx *gin.Context) {
 //	@Param		appId	path	string	true	"appId"
 //
 //	@Success	200
-//	@Router		/desk/account/apps/{appId}/signing-key  [put]
+//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
@@ -86,5 +86,28 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, dto.SigningKey{
 		SigningKey: key,
+	})
+}
+
+// checkSigningKey godoc
+//
+//	@Summary	check signing key has issued before
+//	@Tags		Public
+//
+//	@Param		appId	path	string	true	"appId"
+//
+//	@Success	200
+//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
+func (h *Handler) checkSigningKey(ctx *gin.Context) {
+	appID := ctx.Param("appId")
+
+	issued, err := h.settingPermissionSvc.HasIssuedBefore(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.IssuedBefore{
+		IssuedBefore: issued,
 	})
 }
