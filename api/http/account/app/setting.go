@@ -1,52 +1,90 @@
 package app
 
-// readGeneral godoc
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+
+	"github.com/channel-io/ch-app-store/api/http/account/dto"
+	"github.com/channel-io/ch-app-store/api/http/account/middleware"
+	settingsvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
+)
+
+// readSettings godoc
 //
-// @Summary	fetch App
-// @Tags		Public
+//	@Summary	fetch App
+//	@Tags		Public
 //
-// @Param		appId					path		string					true	"appId"
+//	@Param		appId	path		string	true	"appId"
 //
-// @Success	201						{object}	model.App
-// @Router		/desk/account/apps/{appId}/server-settings  [get]
+//	@Success	200		{object}	settingsvc.Urls
+//	@Router		/desk/account/apps/{appId}/server-settings  [get]
 func (h *Handler) readSettings(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
 
-	app, err := h.appPermissionSvc.ReadApp(ctx, appID, account.ID)
+	settings, err := h.settingPermissionSvc.FetchURLs(ctx, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, app)
+	ctx.JSON(http.StatusOK, settings)
 }
 
-// modifyGeneral godoc
+// modifySettings godoc
 //
-// @Summary	create App to app-store
-// @Tags		Public
+//	@Summary	create App to app-store
+//	@Tags		Public
 //
-// @Param		appId					path		string					true	"appId"
-// @Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
+//	@Param		appId			path	string			true	"appId"
+//	@Param		settingsvc.Urls	body	settingsvc.Urls	true	"dto"
 //
-// @Success	201						{object}	model.App
-// @Router		/desk/account/apps/{appId}/server-settings  [put]
+//	@Success	200
+//	@Router		/desk/account/apps/{appId}/server-settings  [put]
 func (h *Handler) modifySettings(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
-	var request svc.AppModifyRequest
+	var request settingsvc.Urls
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, account.ID)
+	if err := h.settingPermissionSvc.UpsertURLs(ctx, appID, request, account.ID); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
 
+	ctx.Status(http.StatusOK)
+}
+
+// refreshSigningKey godoc
+//
+//	@Summary	refresh signing key
+//	@Tags		Public
+//
+//	@Param		appId	path	string	true	"appId"
+//
+//	@Success	200
+//	@Router		/desk/account/apps/{appId}/signing-key  [put]
+func (h *Handler) refreshSigningKey(ctx *gin.Context) {
+	account := middleware.Account(ctx)
+	appID := ctx.Param("appId")
+	var request settingsvc.Urls
+	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	key, err := h.settingPermissionSvc.RefreshSigningKey(ctx, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, app)
+	ctx.JSON(http.StatusOK, dto.SigningKey{
+		SigningKey: key,
+	})
 }

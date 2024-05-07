@@ -8,15 +8,15 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appPermissionSvc permission.AccountAppPermissionSvc
+	appPermissionSvc     permission.AccountAppPermissionSvc
+	settingPermissionSvc permission.AccountServerSettingPermissionSvc
 }
 
 func NewHandler(
 	appPermissionSvc permission.AccountAppPermissionSvc,
+	settingPermissionSvc permission.AccountServerSettingPermissionSvc,
 ) *Handler {
-	return &Handler{
-		appPermissionSvc: appPermissionSvc,
-	}
+	return &Handler{appPermissionSvc: appPermissionSvc, settingPermissionSvc: settingPermissionSvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

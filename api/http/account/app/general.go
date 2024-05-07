@@ -12,13 +12,13 @@ import (
 
 // readGeneral godoc
 //
-// @Summary	fetch App
-// @Tags		Public
+//	@Summary	fetch App
+//	@Tags		Public
 //
-// @Param		appId					path		string					true	"appId"
+//	@Param		appId	path		string	true	"appId"
 //
-// @Success	201						{object}	model.App
-// @Router		/desk/account/apps/{appId}/general  [get]
+//	@Success	201		{object}	model.App
+//	@Router		/desk/account/apps/{appId}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
@@ -34,14 +34,14 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 
 // modifyGeneral godoc
 //
-// @Summary	create App to app-store
-// @Tags		Public
+//	@Summary	create App to app-store
+//	@Tags		Public
 //
-// @Param		appId					path		string					true	"appId"
-// @Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
+//	@Param		appId					path		string					true	"appId"
+//	@Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
 //
-// @Success	201						{object}	model.App
-// @Router		/desk/account/apps/{appId}/general  [put]
+//	@Success	201						{object}	model.App
+//	@Router		/desk/account/apps/{appId}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")
