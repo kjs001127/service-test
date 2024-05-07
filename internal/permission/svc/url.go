@@ -12,6 +12,7 @@ import (
 
 type AccountURLPermissionSvc interface {
 	UpsertURLs(ctx context.Context, appID string, req serverSetting.ServerSetting, accountID string) error
+	FetchURLS(ctx context.Context, appID string, accountID string) (serverSetting.ServerSetting, error)
 	RefreshSigningKey(ctx context.Context, appID string, accountID string) (*string, error)
 }
 
@@ -50,6 +51,26 @@ func (a *AccountURLPermissionSvcImpl) UpsertURLs(ctx context.Context, appID stri
 		}
 
 		return nil
+	})
+}
+
+func (a *AccountURLPermissionSvcImpl) FetchURLS(ctx context.Context, appID string, accountID string) (serverSetting.ServerSetting, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (serverSetting.ServerSetting, error) {
+		_, err := a.appCrudSvc.Read(ctx, appID)
+		if err != nil {
+			return serverSetting.ServerSetting{}, err
+		}
+
+		if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
+			return serverSetting.ServerSetting{}, err
+		}
+
+		urls, err := a.serverSettingSvc.FetchUrls(ctx, appID)
+		if err != nil {
+			return serverSetting.ServerSetting{}, err
+		}
+
+		return urls, nil
 	})
 }
 
