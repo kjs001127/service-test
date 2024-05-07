@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-
-	"github.com/golang-jwt/jwt"
 )
 
 const (
@@ -21,21 +19,15 @@ type Principal struct {
 	Token Token
 }
 
-type Jwt struct {
-	jwt.StandardClaims
-	Key string
-}
-
 type Parser interface {
 	ParseAccount(ctx context.Context, token string) (Principal, error)
 }
 
 type ParserImpl struct {
-	jwtServiceKey string
 }
 
-func NewAccountParser(jwtServiceKey string) *ParserImpl {
-	return &ParserImpl{jwtServiceKey: jwtServiceKey}
+func NewAccountParser() *ParserImpl {
+	return &ParserImpl{}
 }
 
 func (c *ManagerFetcherImpl) ParseAccount(ctx context.Context, token string) (Principal, error) {
