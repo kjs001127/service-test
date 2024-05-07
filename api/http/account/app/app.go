@@ -38,7 +38,6 @@ func (h *Handler) createApp(ctx *gin.Context) {
 }
 
 func (h *Handler) modifyApp(ctx *gin.Context) {
-	//var accountID string
 
 	var accountID string
 	appID := ctx.Param("appId")
@@ -56,4 +55,17 @@ func (h *Handler) modifyApp(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, app)
+}
+
+func (h *Handler) deleteApp(ctx *gin.Context) {
+	var accountID string
+	appID := ctx.Param("appID")
+
+	err := h.appPermissionSvc.DeleteApp(ctx, accountID, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
 }
