@@ -12,7 +12,7 @@ import (
 // getChannels godoc
 //
 //	@Summary	get channels of account
-//	@Tags		Desk
+//	@Tags		Public
 //
 //	@Param		accountID	path		string	true	"accountID"
 //	@Param		appID		path		string	true	"appID"
