@@ -23,6 +23,8 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/desk/account")
 
 	group.POST("/apps", h.createApp)
-	group.PUT("/apps/:appID/general", h.modifyApp)
 	group.DELETE("/apps/:app_id", h.deleteApp)
+
+	group.PUT("/apps/:appID/general", h.modifyGeneral)
+	group.GET("/apps/:appID/general", h.readGeneral)
 }
