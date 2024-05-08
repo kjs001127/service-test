@@ -72,7 +72,7 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 //
 //	@Param		appId	path	string	true	"appId"
 //
-//	@Success	200
+//	@Success	200		dto.AppToken
 //	@Router		/desk/account/apps/{appId}/auth/token [put]
 func (h *Handler) refreshToken(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -96,7 +96,7 @@ func (h *Handler) refreshToken(ctx *gin.Context) {
 //
 //	@Param		appId	path	string	true	"appId"
 //
-//	@Success	200
+//	@Success	200		dto.IssuedBefore
 //	@Router		/desk/account/apps/{appId}/auth/token [get]
 func (h *Handler) checkToken(ctx *gin.Context) {
 	account := middleware.Account(ctx)
