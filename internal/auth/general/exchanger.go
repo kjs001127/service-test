@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	generalVersion = "v1"
-	issueToken     = "/general/auth/" + generalVersion + "/token"
+	issueTokenVersion = "v1"
+	issueToken        = "/admin/auth/" + issueTokenVersion + "/token"
 )
 
 type RBACExchanger struct {
@@ -24,6 +24,32 @@ type RBACExchanger struct {
 
 func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RBACExchanger {
 	return &RBACExchanger{cli: cli, parser: parser, authURL: authURL}
+}
+
+func (e *RBACExchanger) Refresh(
+	ctx context.Context,
+	clientID string,
+	refreshToken string,
+) (IssueResponse, error) {
+	r := e.cli.R()
+	r.SetContext(ctx)
+
+	r.
+		SetQueryParam("grant_type", "refresh_token").
+		SetQueryParam("client_id", clientID).
+		SetQueryParam("refresh_token", refreshToken)
+
+	resp, err := r.Post(e.authURL + issueToken)
+	if err != nil {
+		return IssueResponse{}, err
+	}
+
+	var unmarshalled IssueResponse
+	if err := json.Unmarshal(resp.Body(), &unmarshalled); err != nil {
+		return IssueResponse{}, err
+	}
+
+	return unmarshalled, nil
 }
 
 func (e *RBACExchanger) ExchangeWithClientSecret(
