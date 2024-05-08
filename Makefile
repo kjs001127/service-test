@@ -2,7 +2,7 @@
 MODULE_NAME := $(shell go list -m)
 PROJECT_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = ch-app-store
-APPS := admin public
+APPS := admin general
 DOC_TARGETS := admin desk front general account
 
 export PATH := ${PATH}:${GOPATH}/bin
