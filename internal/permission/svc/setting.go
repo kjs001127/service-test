@@ -5,7 +5,6 @@ import (
 
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	serverSettingSvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
-	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -19,13 +18,13 @@ type AccountServerSettingPermissionSvc interface {
 type AccountServerSettingPermissionSvcImpl struct {
 	serverSettingSvc serverSettingSvc.ServerSettingSvc
 	appCrudSvc       appsvc.AppCrudSvc
-	appAccountRepo   repo.AppAccountRepo
+	appAccountRepo   AppAccountRepo
 }
 
 func NewAccountServerSettingPermissionSvc(
 	urlCrudSvc serverSettingSvc.ServerSettingSvc,
 	appCrudSvc appsvc.AppCrudSvc,
-	appAccountRepo repo.AppAccountRepo,
+	appAccountRepo AppAccountRepo,
 ) *AccountServerSettingPermissionSvcImpl {
 	return &AccountServerSettingPermissionSvcImpl{
 		serverSettingSvc: urlCrudSvc,
