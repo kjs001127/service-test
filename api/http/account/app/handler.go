@@ -8,21 +8,29 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	appPermissionSvc permission.AccountAppPermissionSvc
+	appPermissionSvc     permission.AccountAppPermissionSvc
+	settingPermissionSvc permission.AccountServerSettingPermissionSvc
 }
 
 func NewHandler(
 	appPermissionSvc permission.AccountAppPermissionSvc,
+	settingPermissionSvc permission.AccountServerSettingPermissionSvc,
 ) *Handler {
-	return &Handler{
-		appPermissionSvc: appPermissionSvc,
-	}
+	return &Handler{appPermissionSvc: appPermissionSvc, settingPermissionSvc: settingPermissionSvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group := router.Group("/desk/account")
 
 	group.POST("/apps", h.createApp)
-	group.PUT("/apps/:appID/general", h.modifyApp)
 	group.DELETE("/apps/:app_id", h.deleteApp)
+
+	group.PUT("/apps/:appID/general", h.modifyGeneral)
+	group.GET("/apps/:appID/general", h.readGeneral)
+
+	group.PUT("/apps/:appID/server-settings/endpoints", h.modifyEndpoints)
+	group.GET("/apps/:appID/server-settings/endpoints", h.fetchEndpoints)
+
+	group.PUT("/apps/:appID/server-settings/signing-key", h.refreshSigningKey)
+	group.GET("/apps/:appID/server-settings/signing-key", h.checkSigningKey)
 }

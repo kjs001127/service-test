@@ -2,6 +2,7 @@ package publicfx
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	accountfx2 "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/accountfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/generalfx"
@@ -61,5 +62,6 @@ var PublicHttp = fx.Options(
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,
 	publicfx.PublicHandlers,
+	accountfx2.AccountHandlers,
 	gintoolfx.ApiServer,
 )
