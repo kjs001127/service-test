@@ -22,7 +22,7 @@ import (
 //	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [get]
 func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
+	appID := ctx.Param("appID")
 
 	settings, err := h.settingPermissionSvc.FetchURLs(ctx, appID, account.ID)
 	if err != nil {
@@ -45,7 +45,7 @@ func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 //	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [put]
 func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
+	appID := ctx.Param("appID")
 	var request settingsvc.Urls
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
@@ -71,12 +71,7 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
-	var request settingsvc.Urls
-	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
-		_ = ctx.Error(err)
-		return
-	}
+	appID := ctx.Param("appID")
 
 	key, err := h.settingPermissionSvc.RefreshSigningKey(ctx, appID, account.ID)
 	if err != nil {
@@ -84,7 +79,7 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.SigningKey{
+	ctx.JSON(http.StatusOK, &dto.SigningKey{
 		SigningKey: key,
 	})
 }
@@ -100,7 +95,7 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [get]
 func (h *Handler) checkSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
+	appID := ctx.Param("appID")
 
 	issued, err := h.settingPermissionSvc.HasIssuedBefore(ctx, appID, account.ID)
 	if err != nil {
@@ -108,7 +103,7 @@ func (h *Handler) checkSigningKey(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.IssuedBefore{
+	ctx.JSON(http.StatusOK, &dto.IssuedBefore{
 		IssuedBefore: issued,
 	})
 }

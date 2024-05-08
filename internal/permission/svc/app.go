@@ -73,11 +73,12 @@ type AppResponse struct {
 
 func fromApp(model *appmodel.App) *AppResponse {
 	return &AppResponse{
-		ID:          model.ID,
-		Title:       model.Title,
-		Description: model.Description,
-		I18nMap:     convertI18nMap(model.I18nMap),
-		AvatarURL:   model.AvatarURL,
+		ID:                 model.ID,
+		Title:              model.Title,
+		Description:        model.Description,
+		I18nMap:            convertI18nMap(model.I18nMap),
+		DetailDescriptions: model.DetailDescriptions,
+		AvatarURL:          model.AvatarURL,
 	}
 }
 

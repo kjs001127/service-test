@@ -47,7 +47,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 	if err != nil {
 		ctx.Abort()
 		_ = ctx.Error(
-			apierr.Unauthorized(errors.New("manager fetch failed")),
+			apierr.Unauthorized(errors.New("account fetch failed")),
 		)
 		return
 	}
@@ -57,6 +57,6 @@ func (a *Auth) Handle(ctx *gin.Context) {
 }
 
 func Account(ctx *gin.Context) account.Principal {
-	rawManager, _ := ctx.Get(AccountKey)
-	return rawManager.(account.Principal)
+	rawAccount, _ := ctx.Get(AccountKey)
+	return rawAccount.(account.Principal)
 }

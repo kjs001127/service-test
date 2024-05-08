@@ -21,7 +21,7 @@ import (
 //	@Router		/desk/account/apps/{appId}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
+	appID := ctx.Param("appID")
 
 	app, err := h.appPermissionSvc.ReadApp(ctx, appID, account.ID)
 	if err != nil {
@@ -44,7 +44,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Router		/desk/account/apps/{appId}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appId")
+	appID := ctx.Param("appID")
 	var request svc.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
