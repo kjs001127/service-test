@@ -5,7 +5,6 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -18,7 +17,7 @@ type AccountAppPermissionSvc interface {
 
 type AccountAppPermissionSvcImpl struct {
 	appCrudSvc     app.AppCrudSvc
-	appAccountRepo repo.AppAccountRepo
+	appAccountRepo AppAccountRepo
 }
 
 type AppModifyRequest struct {
@@ -97,7 +96,7 @@ func convertI18nMap(fields map[string]appmodel.I18nFields) map[string]I18nFields
 
 func NewAccountAppPermissionSvc(
 	appCrudSvc app.AppCrudSvc,
-	appAccountRepo repo.AppAccountRepo,
+	appAccountRepo AppAccountRepo,
 ) *AccountAppPermissionSvcImpl {
 	return &AccountAppPermissionSvcImpl{
 		appCrudSvc:     appCrudSvc,

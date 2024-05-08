@@ -5,24 +5,23 @@ import (
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
+	"github.com/pkg/errors"
+
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
-	"github.com/channel-io/ch-app-store/internal/permission/repo"
-
-	"github.com/pkg/errors"
 )
 
 type ManagerCommandTogglePermissionSvcImpl struct {
 	appCrudSvc     app.AppCrudSvc
 	permissionUtil PermissionUtil
-	appAccountRepo repo.AppAccountRepo
+	appAccountRepo AppAccountRepo
 }
 
 func NewManagerCommandTogglePermissionSvc(
 	appCrudSvc app.AppCrudSvc,
 	permissionUtil PermissionUtil,
-	appAccountRepo repo.AppAccountRepo,
+	appAccountRepo AppAccountRepo,
 ) *ManagerCommandTogglePermissionSvcImpl {
 	return &ManagerCommandTogglePermissionSvcImpl{
 		appCrudSvc:     appCrudSvc,
