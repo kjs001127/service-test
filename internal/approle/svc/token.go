@@ -93,8 +93,16 @@ func (s *TokenSvc) IssueUserToken(ctx context.Context, appID string, user sessio
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, user.Token, scopes, appRole.Credentials.ClientID)
 }
 
-func (s *TokenSvc) IssueChannelToken(ctx context.Context, installID appmodel.InstallationID) (general.IssueResponse, error) {
-	installed, err := s.installQuerySvc.CheckInstall(ctx, installID)
+func (s *TokenSvc) IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error) {
+	token, err := s.tokenRepo.FetchByToken(ctx, appToken)
+	if err != nil {
+		return general.IssueResponse{}, err
+	}
+
+	installed, err := s.installQuerySvc.CheckInstall(ctx, appmodel.InstallationID{
+		AppID:     token.AppID,
+		ChannelID: channelID,
+	})
 	if err != nil {
 		return general.IssueResponse{}, err
 	}
@@ -102,12 +110,12 @@ func (s *TokenSvc) IssueChannelToken(ctx context.Context, installID appmodel.Ins
 		return general.IssueResponse{}, apierr.Unauthorized(err)
 	}
 
-	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, installID.AppID, model.RoleTypeChannel)
+	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, token.AppID, model.RoleTypeChannel)
 	if err != nil {
 		return general.IssueResponse{}, err
 	}
 
-	scopes := general.Scopes{"channel": {installID.ChannelID}, "app": {installID.AppID}}
+	scopes := general.Scopes{"channel": {channelID}, "app": {token.AppID}}
 	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
 }
 
@@ -119,4 +127,8 @@ func (s *TokenSvc) IssueAppToken(ctx context.Context, appToken string) (general.
 	}
 	scopes := general.Scopes{"app": {token.AppID}}
 	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
+}
+
+func (s *TokenSvc) RefreshToken(ctx context.Context, refreshToken string) (general.IssueResponse, error) {
+	return s.rbacExchanger.Refresh(ctx, refreshToken)
 }

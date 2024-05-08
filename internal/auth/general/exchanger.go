@@ -28,7 +28,6 @@ func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RB
 
 func (e *RBACExchanger) Refresh(
 	ctx context.Context,
-	clientID string,
 	refreshToken string,
 ) (IssueResponse, error) {
 	r := e.cli.R()
@@ -36,7 +35,6 @@ func (e *RBACExchanger) Refresh(
 
 	r.
 		SetQueryParam("grant_type", "refresh_token").
-		SetQueryParam("client_id", clientID).
 		SetQueryParam("refresh_token", refreshToken)
 
 	resp, err := r.Post(e.authURL + issueToken)
