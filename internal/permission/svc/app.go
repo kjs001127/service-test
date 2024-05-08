@@ -10,9 +10,9 @@ import (
 )
 
 type AccountAppPermissionSvc interface {
-	ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error)
-	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
-	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
+	ReadApp(ctx context.Context, appID string, accountID string) (*AppResponse, error)
+	CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error)
+	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*AppResponse, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 }
 
@@ -26,14 +26,15 @@ type AppModifyRequest struct {
 	Description        *string               `json:"description,omitempty"`
 	DetailImageURLs    []string              `json:"detailImageUrls,omitempty"`
 	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
+	AvatarUrl          *string               `json:"avatarUrl,omitempty"`
 	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
 }
 
 type I18nFields struct {
-	Title             string   `json:"title"`
-	DetailImageURLs   []string `json:"detailImageUrls,omitempty"`
-	DetailDescription string   `json:"detailDescription,omitempty"`
-	Description       string   `json:"description,omitempty"`
+	Title             string           `json:"title"`
+	DetailImageURLs   []string         `json:"detailImageUrls,omitempty"`
+	DetailDescription []map[string]any `json:"detailDescription,omitempty"`
+	Description       string           `json:"description,omitempty"`
 }
 
 func (r *AppModifyRequest) convertI18nMap() map[string]appmodel.I18nFields {
@@ -57,7 +58,40 @@ func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
 		DetailImageURLs:    r.DetailImageURLs,
 		DetailDescriptions: r.DetailDescriptions,
 		I18nMap:            r.convertI18nMap(),
+		AvatarURL:          r.AvatarUrl,
 	}
+}
+
+type AppResponse struct {
+	ID                 string                `json:"id"`
+	Title              string                `json:"title"`
+	Description        *string               `json:"description,omitempty"`
+	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
+	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
+	AvatarURL          *string               `json:"avatarUrl,omitempty"`
+}
+
+func fromApp(model *appmodel.App) *AppResponse {
+	return &AppResponse{
+		ID:          model.ID,
+		Title:       model.Title,
+		Description: model.Description,
+		I18nMap:     convertI18nMap(model.I18nMap),
+		AvatarURL:   model.AvatarURL,
+	}
+}
+
+func convertI18nMap(fields map[string]appmodel.I18nFields) map[string]I18nFields {
+	ret := make(map[string]I18nFields)
+	for lang, i18n := range fields {
+		ret[lang] = I18nFields{
+			Title:             i18n.Title,
+			DetailImageURLs:   i18n.DetailImageURLs,
+			DetailDescription: i18n.DetailDescription,
+			Description:       i18n.Description,
+		}
+	}
+	return ret
 }
 
 func NewAccountAppPermissionSvc(
@@ -70,16 +104,20 @@ func NewAccountAppPermissionSvc(
 	}
 }
 
-func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*AppResponse, error) {
 	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return nil, err
 	}
 
-	return a.appCrudSvc.Read(ctx, appID)
+	ret, err := a.appCrudSvc.Read(ctx, appID)
+	if err != nil {
+		return nil, err
+	}
+	return fromApp(ret), nil
 }
 
-func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*AppResponse, error) {
 		createApp := appmodel.App{
 			Title: title,
 		}
@@ -93,12 +131,12 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 		if err != nil {
 			return nil, err
 		}
-		return app, nil
+		return fromApp(app), nil
 	})
 }
 
-func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*appmodel.App, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*AppResponse, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*AppResponse, error) {
 		_, err := a.appAccountRepo.Fetch(ctx, appID, accountID)
 		if err != nil {
 			return nil, err
@@ -111,7 +149,12 @@ func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyReque
 
 		converted := modifyRequest.ConvertToApp(appID)
 
-		return a.appCrudSvc.Update(ctx, converted)
+		ret, err := a.appCrudSvc.Update(ctx, converted)
+		if err != nil {
+			return nil, err
+		}
+
+		return fromApp(ret), nil
 	})
 }
 

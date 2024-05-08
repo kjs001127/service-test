@@ -19,7 +19,7 @@ import (
 //
 // @Param		app.AppRequest	body		dto.AppCreateRequest	true	"App title to create"
 //
-// @Success	201				{object}	model.App
+// @Success	201				{object}	svc.AppResponse
 // @Router		/desk/account/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	account := middleware.Account(ctx)

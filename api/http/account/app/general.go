@@ -17,7 +17,7 @@ import (
 //
 //	@Param		appId	path		string	true	"appId"
 //
-//	@Success	201		{object}	model.App
+//	@Success	201		{object}	svc.AppResponse
 //	@Router		/desk/account/apps/{appId}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -40,7 +40,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Param		appId					path		string					true	"appId"
 //	@Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
 //
-//	@Success	201						{object}	model.App
+//	@Success	201						{object}	svc.AppResponse
 //	@Router		/desk/account/apps/{appId}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
