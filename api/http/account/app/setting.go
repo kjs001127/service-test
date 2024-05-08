@@ -97,7 +97,7 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Param		appId	path	string	true	"appId"
 //
 //	@Success	200
-//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
+//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [get]
 func (h *Handler) checkSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appId")

@@ -10,6 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 
 	_ "github.com/channel-io/ch-app-store/internal/app/model"
+	_ "github.com/channel-io/ch-app-store/internal/permission/svc"
 )
 
 // createApp godoc
