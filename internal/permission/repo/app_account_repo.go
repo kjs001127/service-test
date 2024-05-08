@@ -15,13 +15,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
-type AppAccountRepo interface {
-	Save(ctx context.Context, appID, accountID string) error
-	Delete(ctx context.Context, appID, accountID string) error
-	Fetch(ctx context.Context, appID, accountID string) (*model.AppAccount, error)
-	FetchAllByAccountID(ctx context.Context, accountID string) ([]*model.AppAccount, error)
-}
-
 type AppAccountRepoImpl struct {
 	db db.DB
 }
