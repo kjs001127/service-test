@@ -4,11 +4,11 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/api/http/admin/account"
 	"github.com/channel-io/ch-app-store/api/http/admin/aibe"
 	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
 	"github.com/channel-io/ch-app-store/api/http/admin/appserver"
 	"github.com/channel-io/ch-app-store/api/http/admin/install"
+	"github.com/channel-io/ch-app-store/api/http/admin/media"
 	"github.com/channel-io/ch-app-store/api/http/admin/role"
 
 	"github.com/channel-io/ch-app-store/api/http/doc"
