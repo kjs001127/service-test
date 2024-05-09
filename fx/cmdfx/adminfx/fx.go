@@ -35,6 +35,7 @@ var Admin = fx.Options(
 	AdminHttp,
 
 	authfx.GeneralAuth,
+	authfx.PrincipalAuth,
 
 	accountfx.AppAccount,
 	appfx.App,
