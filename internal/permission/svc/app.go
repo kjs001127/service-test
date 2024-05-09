@@ -13,6 +13,7 @@ type AccountAppPermissionSvc interface {
 	CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error)
 	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*AppResponse, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
+	GetCallableApps(ctx context.Context, accountID string) ([]*AppResponse, error)
 }
 
 type AccountAppPermissionSvcImpl struct {
@@ -68,6 +69,7 @@ type AppResponse struct {
 	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
 	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
 	AvatarURL          *string               `json:"avatarUrl,omitempty"`
+	IsPrivate          bool                  `json:"isPrivate"`
 }
 
 func fromApp(model *appmodel.App) *AppResponse {
@@ -114,6 +116,44 @@ func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string,
 		return nil, err
 	}
 	return fromApp(ret), nil
+}
+
+func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*AppResponse, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) ([]*AppResponse, error) {
+		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+		if err != nil {
+			return nil, err
+		}
+
+		appIDs := make([]string, 0, len(appAccounts))
+		for _, appAccount := range appAccounts {
+			appIDs = append(appIDs, appAccount.AppID)
+		}
+
+		privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		publicApps, err := a.appCrudSvc.ReadPublicApps(ctx, "0", 500)
+		if err != nil {
+			return nil, err
+		}
+
+		apps := make(map[string]*appmodel.App)
+		for _, app := range publicApps {
+			apps[app.ID] = app
+		}
+		for _, app := range privateApps {
+			apps[app.ID] = app
+		}
+
+		res := make([]*AppResponse, 0, len(apps))
+		for _, app := range apps {
+			res = append(res, fromApp(app))
+		}
+		return res, nil
+	})
 }
 
 func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error) {

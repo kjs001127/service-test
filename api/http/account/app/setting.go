@@ -16,10 +16,10 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId	path		string	true	"appId"
+//	@Param		appID	path		string	true	"appID"
 //
 //	@Success	200		{object}	settingsvc.Urls
-//	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [get]
+//	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [get]
 func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
@@ -35,14 +35,14 @@ func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 
 // modifyEndpoints godoc
 //
-//	@Summary	create App to app-store
+//	@Summary	modify App
 //	@Tags		Public
 //
-//	@Param		appId			path	string			true	"appId"
+//	@Param		appID			path	string			true	"appID"
 //	@Param		settingsvc.Urls	body	settingsvc.Urls	true	"dto"
 //
 //	@Success	200
-//	@Router		/desk/account/apps/{appId}/server-settings/endpoints  [put]
+//	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [put]
 func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
@@ -65,10 +65,10 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //	@Summary	refresh signing key
 //	@Tags		Public
 //
-//	@Param		appId	path	string	true	"appId"
+//	@Param		appID	path		string	true	"appID"
 //
-//	@Success	200
-//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [put]
+//	@Success	200		{object}	dto.SigningKey
+//	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [put]
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
@@ -89,10 +89,10 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Summary	check signing key has issued before
 //	@Tags		Public
 //
-//	@Param		appId	path	string	true	"appId"
+//	@Param		appID	path		string	true	"appID"
 //
-//	@Success	200
-//	@Router		/desk/account/apps/{appId}/server-settings/signing-key  [get]
+//	@Success	200		{object}	dto.IssuedBefore
+//	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [get]
 func (h *Handler) checkSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")

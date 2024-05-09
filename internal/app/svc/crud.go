@@ -21,6 +21,8 @@ type AppCrudSvc interface {
 	Delete(ctx context.Context, appID string) error
 	Update(ctx context.Context, app *model.App) (*model.App, error)
 	Read(ctx context.Context, appID string) (*model.App, error)
+	ReadPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error)
+	ReadAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.App, error)
 }
 
 type AppCrudSvcImpl struct {
@@ -88,6 +90,14 @@ func (a *AppCrudSvcImpl) Delete(ctx context.Context, appID string) error {
 
 func (a *AppCrudSvcImpl) Read(ctx context.Context, appID string) (*model.App, error) {
 	return a.appRepo.FindApp(ctx, appID)
+}
+
+func (a *AppCrudSvcImpl) ReadPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error) {
+	return a.appRepo.FindPublicApps(ctx, since, limit)
+}
+
+func (a *AppCrudSvcImpl) ReadAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.App, error) {
+	return a.appRepo.FindApps(ctx, appIDs)
 }
 
 func (a *AppCrudSvcImpl) callDeleteHooks(ctx context.Context, app *model.App) error {

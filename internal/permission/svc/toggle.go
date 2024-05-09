@@ -3,13 +3,13 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	"github.com/pkg/errors"
-
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/pkg/errors"
 )
 
 type ManagerCommandTogglePermissionSvcImpl struct {
