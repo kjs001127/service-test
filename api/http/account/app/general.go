@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
+	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
-	"github.com/channel-io/ch-app-store/internal/permission/svc"
 )
 
 // readGeneral godoc
@@ -17,7 +17,7 @@ import (
 //
 //	@Param		appID	path		string	true	"appID"
 //
-//	@Success	200		{object}	svc.AppResponse
+//	@Success	200		{object}	dto.AppResponse
 //	@Router		/desk/account/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -29,7 +29,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, app)
+	ctx.JSON(http.StatusOK, dto.FromApp(app))
 }
 
 // modifyGeneral godoc
@@ -38,20 +38,20 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Tags		Public
 //
 //	@Param		appID					path		string					true	"appID"
-//	@Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
+//	@Param		svc.AppModifyRequest	body		dto.AppModifyRequest	true	"dto"
 //
-//	@Success	200						{object}	svc.AppResponse
+//	@Success	200						{object}	dto.AppResponse
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
-	var request svc.AppModifyRequest
+	var request dto.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, account.ID)
+	app, err := h.appPermissionSvc.ModifyApp(ctx, request.ConvertToApp(appID), appID, account.ID)
 
 	if err != nil {
 		_ = ctx.Error(err)

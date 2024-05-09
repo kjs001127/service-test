@@ -38,6 +38,7 @@ func NewAppView(origin *model.App) *AppView {
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
 
+		// legacy fields
 		State:     "",
 		IsPrivate: false,
 	}

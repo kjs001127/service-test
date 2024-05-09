@@ -9,91 +9,16 @@ import (
 )
 
 type AccountAppPermissionSvc interface {
-	ReadApp(ctx context.Context, appID string, accountID string) (*AppResponse, error)
-	CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error)
-	ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*AppResponse, error)
+	ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error)
+	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
+	ModifyApp(ctx context.Context, modifyRequest *appmodel.App, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
-	GetCallableApps(ctx context.Context, accountID string) ([]*AppResponse, error)
+	GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
 }
 
 type AccountAppPermissionSvcImpl struct {
 	appCrudSvc     app.AppCrudSvc
 	appAccountRepo AppAccountRepo
-}
-
-type AppModifyRequest struct {
-	Title              string                `json:"title"`
-	Description        *string               `json:"description,omitempty"`
-	DetailImageURLs    []string              `json:"detailImageUrls,omitempty"`
-	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
-	AvatarUrl          *string               `json:"avatarUrl,omitempty"`
-	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
-}
-
-type I18nFields struct {
-	Title             string           `json:"title"`
-	DetailImageURLs   []string         `json:"detailImageUrls,omitempty"`
-	DetailDescription []map[string]any `json:"detailDescription,omitempty"`
-	Description       string           `json:"description,omitempty"`
-}
-
-func (r *AppModifyRequest) convertI18nMap() map[string]appmodel.I18nFields {
-	ret := make(map[string]appmodel.I18nFields)
-	for lang, i18n := range r.I18nMap {
-		ret[lang] = appmodel.I18nFields{
-			Title:             i18n.Title,
-			DetailImageURLs:   i18n.DetailImageURLs,
-			DetailDescription: i18n.DetailDescription,
-			Description:       i18n.Description,
-		}
-	}
-	return ret
-}
-
-func (r *AppModifyRequest) ConvertToApp(appID string) *appmodel.App {
-	return &appmodel.App{
-		ID:                 appID,
-		Title:              r.Title,
-		Description:        r.Description,
-		DetailImageURLs:    r.DetailImageURLs,
-		DetailDescriptions: r.DetailDescriptions,
-		I18nMap:            r.convertI18nMap(),
-		AvatarURL:          r.AvatarUrl,
-	}
-}
-
-type AppResponse struct {
-	ID                 string                `json:"id"`
-	Title              string                `json:"title"`
-	Description        *string               `json:"description,omitempty"`
-	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
-	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
-	AvatarURL          *string               `json:"avatarUrl,omitempty"`
-	IsPrivate          bool                  `json:"isPrivate"`
-}
-
-func fromApp(model *appmodel.App) *AppResponse {
-	return &AppResponse{
-		ID:                 model.ID,
-		Title:              model.Title,
-		Description:        model.Description,
-		I18nMap:            convertI18nMap(model.I18nMap),
-		DetailDescriptions: model.DetailDescriptions,
-		AvatarURL:          model.AvatarURL,
-	}
-}
-
-func convertI18nMap(fields map[string]appmodel.I18nFields) map[string]I18nFields {
-	ret := make(map[string]I18nFields)
-	for lang, i18n := range fields {
-		ret[lang] = I18nFields{
-			Title:             i18n.Title,
-			DetailImageURLs:   i18n.DetailImageURLs,
-			DetailDescription: i18n.DetailDescription,
-			Description:       i18n.Description,
-		}
-	}
-	return ret
 }
 
 func NewAccountAppPermissionSvc(
@@ -106,7 +31,7 @@ func NewAccountAppPermissionSvc(
 	}
 }
 
-func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*AppResponse, error) {
+func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
 	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return nil, err
 	}
@@ -115,49 +40,64 @@ func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string,
 	if err != nil {
 		return nil, err
 	}
-	return fromApp(ret), nil
+	return ret, nil
 }
 
-func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*AppResponse, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) ([]*AppResponse, error) {
-		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
-		if err != nil {
-			return nil, err
-		}
+func (a *AccountAppPermissionSvcImpl) GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error) {
+	appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+	appIDs := make([]string, 0, len(appAccounts))
+	for _, appAccount := range appAccounts {
+		appIDs = append(appIDs, appAccount.AppID)
+	}
 
-		appIDs := make([]string, 0, len(appAccounts))
-		for _, appAccount := range appAccounts {
-			appIDs = append(appIDs, appAccount.AppID)
-		}
+	privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
+	if err != nil {
+		return nil, err
+	}
 
-		privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
-		if err != nil {
-			return nil, err
-		}
+	return privateApps, nil
+}
+
+func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
+		privateApps, err := a.GetAppsByAccount(ctx, accountID)
 
 		publicApps, err := a.appCrudSvc.ReadPublicApps(ctx, "0", 500)
 		if err != nil {
 			return nil, err
 		}
 
-		apps := make(map[string]*appmodel.App)
-		for _, app := range publicApps {
-			apps[app.ID] = app
-		}
-		for _, app := range privateApps {
-			apps[app.ID] = app
-		}
+		filteredPublicApps := a.removeDuplicate(publicApps, privateApps)
 
-		res := make([]*AppResponse, 0, len(apps))
-		for _, app := range apps {
-			res = append(res, fromApp(app))
-		}
-		return res, nil
+		ret := make([]*appmodel.App, 0, len(privateApps)+len(filteredPublicApps))
+		ret = append(ret, privateApps...)
+		ret = append(ret, filteredPublicApps...)
+
+		return ret, nil
 	})
 }
 
-func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*AppResponse, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) (*AppResponse, error) {
+func (a *AccountAppPermissionSvcImpl) removeDuplicate(targets []*appmodel.App, notToContains []*appmodel.App) []*appmodel.App {
+	notToContainMap := make(map[string]*appmodel.App)
+	for _, notToContain := range notToContains {
+		notToContainMap[notToContain.ID] = notToContain
+	}
+
+	ret := make([]*appmodel.App, 0)
+	for _, target := range targets {
+		if _, exists := notToContainMap[target.ID]; !exists {
+			ret = append(ret, target)
+		}
+	}
+
+	return ret
+}
+
+func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
 		createApp := appmodel.App{
 			Title: title,
 		}
@@ -171,12 +111,12 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 		if err != nil {
 			return nil, err
 		}
-		return fromApp(app), nil
+		return app, nil
 	})
 }
 
-func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest AppModifyRequest, appID string, accountID string) (*AppResponse, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) (*AppResponse, error) {
+func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest *appmodel.App, appID string, accountID string) (*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
 		_, err := a.appAccountRepo.Fetch(ctx, appID, accountID)
 		if err != nil {
 			return nil, err
@@ -187,14 +127,12 @@ func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyReque
 			return nil, err
 		}
 
-		converted := modifyRequest.ConvertToApp(appID)
-
-		ret, err := a.appCrudSvc.Update(ctx, converted)
+		ret, err := a.appCrudSvc.Update(ctx, modifyRequest)
 		if err != nil {
 			return nil, err
 		}
 
-		return fromApp(ret), nil
+		return ret, nil
 	})
 }
 
