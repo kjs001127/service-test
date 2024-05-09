@@ -78,7 +78,7 @@ func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accou
 		ret = append(ret, filteredPublicApps...)
 
 		return ret, nil
-	})
+	}, tx.ReadOnly())
 }
 
 func (a *AccountAppPermissionSvcImpl) removeDuplicate(targets []*appmodel.App, notToContains []*appmodel.App) []*appmodel.App {
