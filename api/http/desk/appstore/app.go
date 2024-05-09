@@ -15,6 +15,8 @@ import (
 //	@Summary	get list of Apps
 //	@Tags		Desk
 //
+//	@Param		x-account	header	string	true	"access token"
+//	@Param		channelID	path	string	true	"channelID"
 //
 //	@Success	200			{array}	dto.AppView
 //	@Router		/desk/v1/channels/{channelID}/app-store/private-apps  [get]
