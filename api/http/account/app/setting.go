@@ -16,7 +16,8 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appID	path		string	true	"appID"
+//	@Param		appID		path		string	true	"appID"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	settingsvc.Urls
 //	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [get]
@@ -40,6 +41,7 @@ func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 //
 //	@Param		appID			path	string			true	"appID"
 //	@Param		settingsvc.Urls	body	settingsvc.Urls	true	"dto"
+//	@Param		x-account		header		string		true	"token"
 //
 //	@Success	200
 //	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [put]
@@ -65,7 +67,8 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //	@Summary	refresh signing key
 //	@Tags		Public
 //
-//	@Param		appID	path		string	true	"appID"
+//	@Param		appID		path		string	true	"appID"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	dto.SigningKey
 //	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [put]
@@ -89,7 +92,8 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Summary	check signing key has issued before
 //	@Tags		Public
 //
-//	@Param		appID	path		string	true	"appID"
+//	@Param		appID		path		string	true	"appID"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	dto.IssuedBefore
 //	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [get]
