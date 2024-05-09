@@ -14,15 +14,15 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
-type AppTokenDao struct {
+type AppSecretDao struct {
 	db db.DB
 }
 
-func NewAppTokenDao(db db.DB) *AppTokenDao {
-	return &AppTokenDao{db: db}
+func NewAppSecretDao(db db.DB) *AppSecretDao {
+	return &AppSecretDao{db: db}
 }
 
-func (a *AppTokenDao) Save(ctx context.Context, token *model.AppToken) error {
+func (a *AppSecretDao) Save(ctx context.Context, token *model.AppSecret) error {
 	return a.marshal(token).Upsert(
 		ctx,
 		a.db,
@@ -33,10 +33,10 @@ func (a *AppTokenDao) Save(ctx context.Context, token *model.AppToken) error {
 	)
 }
 
-func (a *AppTokenDao) FetchByToken(ctx context.Context, token string) (*model.AppToken, error) {
-	res, err := models.AppTokens(
+func (a *AppSecretDao) FetchBySecret(ctx context.Context, token string) (*model.AppSecret, error) {
+	res, err := models.AppSecrets(
 		qm.Select("*"),
-		qm.Where("token = $1", token),
+		qm.Where("secret = $1", token),
 	).One(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(err)
@@ -47,8 +47,8 @@ func (a *AppTokenDao) FetchByToken(ctx context.Context, token string) (*model.Ap
 	return a.unmarshal(res), nil
 }
 
-func (a *AppTokenDao) FetchByAppID(ctx context.Context, appID string) (*model.AppToken, error) {
-	res, err := models.AppTokens(
+func (a *AppSecretDao) FetchByAppID(ctx context.Context, appID string) (*model.AppSecret, error) {
+	res, err := models.AppSecrets(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
 	).One(ctx, a.db)
@@ -61,21 +61,21 @@ func (a *AppTokenDao) FetchByAppID(ctx context.Context, appID string) (*model.Ap
 	return a.unmarshal(res), nil
 }
 
-func (a *AppTokenDao) Delete(ctx context.Context, appID string) error {
-	_, err := models.AppTokens(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
+func (a *AppSecretDao) Delete(ctx context.Context, appID string) error {
+	_, err := models.AppSecrets(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	return errors.Wrap(err, "error while deleting appRole")
 }
 
-func (a *AppTokenDao) marshal(token *model.AppToken) *models.AppToken {
-	return &models.AppToken{
-		AppID: token.AppID,
-		Token: token.Token,
+func (a *AppSecretDao) marshal(token *model.AppSecret) *models.AppSecret {
+	return &models.AppSecret{
+		AppID:  token.AppID,
+		Secret: token.Secret,
 	}
 }
 
-func (a *AppTokenDao) unmarshal(token *models.AppToken) *model.AppToken {
-	return &model.AppToken{
-		AppID: token.AppID,
-		Token: token.Token,
+func (a *AppSecretDao) unmarshal(token *models.AppSecret) *model.AppSecret {
+	return &model.AppSecret{
+		AppID:  token.AppID,
+		Secret: token.Secret,
 	}
 }

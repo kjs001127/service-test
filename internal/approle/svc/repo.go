@@ -14,9 +14,9 @@ type AppRoleRepository interface {
 	DeleteByAppID(ctx context.Context, appID string) error
 }
 
-type AppTokenRepository interface {
-	Save(ctx context.Context, token *model.AppToken) error
+type AppSecretRepository interface {
+	Save(ctx context.Context, secret *model.AppSecret) error
 	Delete(ctx context.Context, appID string) error
-	FetchByToken(ctx context.Context, token string) (*model.AppToken, error)
-	FetchByAppID(ctx context.Context, appID string) (*model.AppToken, error)
+	FetchBySecret(ctx context.Context, secret string) (*model.AppSecret, error)
+	FetchByAppID(ctx context.Context, appID string) (*model.AppSecret, error)
 }

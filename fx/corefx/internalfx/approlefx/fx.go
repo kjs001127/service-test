@@ -95,8 +95,8 @@ var AppRoleDaos = fx.Options(
 			fx.As(new(devsvc.AppRoleRepository)),
 		),
 		fx.Annotate(
-			devrepo.NewAppTokenDao,
-			fx.As(new(devsvc.AppTokenRepository)),
+			devrepo.NewAppSecretDao,
+			fx.As(new(devsvc.AppSecretRepository)),
 		),
 	),
 )

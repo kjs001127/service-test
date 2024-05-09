@@ -18,14 +18,14 @@ import (
 type TokenSvc struct {
 	rbacExchanger   *general.RBACExchanger
 	installQuerySvc *app.AppInstallQuerySvc
-	tokenRepo       AppTokenRepository
+	tokenRepo       AppSecretRepository
 	roleRepo        AppRoleRepository
 }
 
 func NewTokenSvc(
 	rbacExchanger *general.RBACExchanger,
 	installQuerySvc *app.AppInstallQuerySvc,
-	tokenRepo AppTokenRepository,
+	tokenRepo AppSecretRepository,
 	roleRepo AppRoleRepository,
 ) *TokenSvc {
 	return &TokenSvc{
@@ -46,9 +46,9 @@ func (s *TokenSvc) RefreshAppToken(ctx context.Context, appID string) (string, e
 		return "", err
 	}
 
-	if err := s.tokenRepo.Save(ctx, &model.AppToken{
-		AppID: appID,
-		Token: token,
+	if err := s.tokenRepo.Save(ctx, &model.AppSecret{
+		AppID:  appID,
+		Secret: token,
 	}); err != nil {
 		return "", err
 	}
@@ -94,7 +94,7 @@ func (s *TokenSvc) IssueUserToken(ctx context.Context, appID string, user sessio
 }
 
 func (s *TokenSvc) IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error) {
-	token, err := s.tokenRepo.FetchByToken(ctx, appToken)
+	token, err := s.tokenRepo.FetchBySecret(ctx, appToken)
 	if err != nil {
 		return general.IssueResponse{}, err
 	}
@@ -120,7 +120,7 @@ func (s *TokenSvc) IssueChannelToken(ctx context.Context, channelID string, appT
 }
 
 func (s *TokenSvc) IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error) {
-	token, err := s.tokenRepo.FetchByToken(ctx, appToken)
+	token, err := s.tokenRepo.FetchBySecret(ctx, appToken)
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, token.AppID, model.RoleTypeApp)
 	if err != nil {
 		return general.IssueResponse{}, err
