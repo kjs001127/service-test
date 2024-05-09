@@ -16,6 +16,7 @@ import (
 //	@Tags		Public
 //
 //	@Param		appID	path		string	true	"appID"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	dto.AppResponse
 //	@Router		/desk/account/apps/{appID}/general  [get]
@@ -38,6 +39,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Tags		Public
 //
 //	@Param		appID					path		string					true	"appID"
+//	@Param		x-account				header		string					true	"token"
 //	@Param		svc.AppModifyRequest	body		dto.AppModifyRequest	true	"dto"
 //
 //	@Success	200						{object}	dto.AppResponse

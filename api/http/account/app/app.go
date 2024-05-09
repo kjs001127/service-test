@@ -19,6 +19,7 @@ import (
 //	@Tags		Public
 //
 //	@Param		app.AppRequest	body		dto.AppCreateRequest	true	"App title to create"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	201				{object}	dto.AppResponse
 //	@Router		/desk/account/apps [post]
@@ -45,6 +46,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 //	@Summary	delete App to app-store
 //	@Tags		Public
 //
+//	@Param		x-account	header		string	true	"token"
 //	@Param		appId	path	string	true	"appID"
 //
 //	@Success	204
@@ -66,6 +68,8 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 //
 //	@Summary	get callable apps
 //	@Tags		Public
+//
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200	{object}	[]dto.AppResponse
 //	@Router		/desk/account/apps  [get]
