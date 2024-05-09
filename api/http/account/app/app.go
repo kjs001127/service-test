@@ -64,12 +64,12 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 
 // listApps godoc
 //
-//	@Summary	delete App to app-store
+//	@Summary	list apps
 //	@Tags		Public
 //
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	204
+//	@Success	200
 //	@Router		/desk/account/apps  [get]
 func (h *Handler) listApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)

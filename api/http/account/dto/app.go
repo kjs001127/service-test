@@ -8,6 +8,7 @@ type AppView struct {
 	Title       string                 `json:"title"`
 	Description *string                `json:"description"`
 	AvatarUrl   *string                `json:"avatarUrl"`
+	IsPrivate   bool                   `json:"isPrivate"`
 	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 }
 
@@ -17,6 +18,7 @@ func AppViewFrom(app *appmodel.App) *AppView {
 		Description: app.Description,
 		AvatarUrl:   app.AvatarURL,
 		I18nMap:     convertAppViewI18n(app),
+		IsPrivate:   app.IsPrivate,
 	}
 }
 
@@ -40,8 +42,8 @@ func convertAppViewI18n(app *appmodel.App) map[string]AppViewI18n {
 }
 
 type AppViewI18n struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 type AppModifyRequest struct {
