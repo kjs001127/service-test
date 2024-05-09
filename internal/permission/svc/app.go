@@ -45,21 +45,23 @@ func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string,
 }
 
 func (a *AccountAppPermissionSvcImpl) GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error) {
-	appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
-	if err != nil {
-		return nil, err
-	}
-	appIDs := make([]string, 0, len(appAccounts))
-	for _, appAccount := range appAccounts {
-		appIDs = append(appIDs, appAccount.AppID)
-	}
+	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
+		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+		if err != nil {
+			return nil, err
+		}
+		appIDs := make([]string, 0, len(appAccounts))
+		for _, appAccount := range appAccounts {
+			appIDs = append(appIDs, appAccount.AppID)
+		}
 
-	privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
-	if err != nil {
-		return nil, err
-	}
+		privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
+		if err != nil {
+			return nil, err
+		}
 
-	return privateApps, nil
+		return privateApps, nil
+	}, tx.ReadOnly())
 }
 
 func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error) {
