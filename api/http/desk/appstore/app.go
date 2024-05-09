@@ -6,8 +6,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 )
+
+// getPrivateApps godoc
+//
+//	@Summary	get list of Apps
+//	@Tags		Desk
+//
+//
+//	@Success	200			{array}	dto.AppView
+//	@Router		/desk/v1/channels/{channelID}/app-store/private-apps  [get]
+func (h *Handler) getPrivateApps(ctx *gin.Context) {
+	account := middleware.Account(ctx)
+	apps, err := h.privateAppQuerySvc.GetAppsByAccount(ctx, account.ID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
+}
 
 // getApps godoc
 //
