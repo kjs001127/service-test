@@ -1,4 +1,4 @@
-package account
+package media
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"

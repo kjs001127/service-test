@@ -1,4 +1,4 @@
-package account
+package media
 
 import (
 	"net/http"

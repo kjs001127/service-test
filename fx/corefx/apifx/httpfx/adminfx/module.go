@@ -22,7 +22,7 @@ var AdminHandlers = fx.Options(
 		gintoolfx.AddTag(aibe.NewHandler),
 		gintoolfx.AddTag(install.NewHandler),
 		gintoolfx.AddTag(role.NewHandler),
-		gintoolfx.AddTag(account.NewHandler),
+		gintoolfx.AddTag(media.NewHandler),
 	),
 
 	fx.Supply(
