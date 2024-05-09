@@ -40,7 +40,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 
 	resp := h.nativeInvoker.Invoke(ctx,
 		native.Token{
-			Type:  rbacToken.Token.Header(),
+			Type:  "x-access-token",
 			Value: rbacToken.Token.Value(),
 		},
 		native.FunctionRequest{
