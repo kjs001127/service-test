@@ -4,6 +4,46 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
+type AppView struct {
+	Title       string                 `json:"title"`
+	Description *string                `json:"description"`
+	AvatarUrl   *string                `json:"avatarUrl"`
+	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
+}
+
+func AppViewFrom(app *appmodel.App) *AppView {
+	return &AppView{
+		Title:       app.Title,
+		Description: app.Description,
+		AvatarUrl:   app.AvatarURL,
+		I18nMap:     convertAppViewI18n(app),
+	}
+}
+
+func AppViewsFrom(apps []*appmodel.App) []*AppView {
+	ret := make([]*AppView, 0, len(apps))
+	for _, app := range apps {
+		ret = append(ret, AppViewFrom(app))
+	}
+	return ret
+}
+
+func convertAppViewI18n(app *appmodel.App) map[string]AppViewI18n {
+	ret := make(map[string]AppViewI18n)
+	for lang, i18n := range app.I18nMap {
+		ret[lang] = AppViewI18n{
+			Title:       i18n.Title,
+			Description: i18n.Description,
+		}
+	}
+	return ret
+}
+
+type AppViewI18n struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
 type AppModifyRequest struct {
 	Title              string                `json:"title"`
 	Description        *string               `json:"description,omitempty"`

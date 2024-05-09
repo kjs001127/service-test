@@ -62,6 +62,27 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+// listApps godoc
+//
+//	@Summary	delete App to app-store
+//	@Tags		Public
+//
+//	@Param		x-account	header		string	true	"token"
+//
+//	@Success	204
+//	@Router		/desk/account/apps  [get]
+func (h *Handler) listApps(ctx *gin.Context) {
+	account := middleware.Account(ctx)
+
+	apps, err := h.appPermissionSvc.GetAppsByAccount(ctx, account.ID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.AppViewsFrom(apps))
+}
+
 // getCallableApps godoc
 //
 //	@Summary	get callable apps
