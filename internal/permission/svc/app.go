@@ -14,6 +14,7 @@ type AccountAppPermissionSvc interface {
 	ModifyApp(ctx context.Context, modifyRequest *appmodel.App, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 	GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
+	GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
 }
 
 type AccountAppPermissionSvcImpl struct {
