@@ -20,7 +20,7 @@ import (
 //
 //	@Param		app.AppRequest	body		dto.AppCreateRequest	true	"App title to create"
 //
-//	@Success	201				{object}	svc.AppResponse
+//	@Success	201				{object}	dto.AppResponse
 //	@Router		/desk/account/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -37,7 +37,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, created)
+	ctx.JSON(http.StatusCreated, dto.FromApp(created))
 }
 
 // deleteApp godoc
@@ -67,7 +67,7 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 //	@Summary	get callable apps
 //	@Tags		Public
 //
-//	@Success	200	{object}	[]svc.AppResponse
+//	@Success	200	{object}	[]dto.AppResponse
 //	@Router		/desk/account/apps  [get]
 func (h *Handler) getCallableApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -78,5 +78,5 @@ func (h *Handler) getCallableApps(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, apps)
+	ctx.JSON(http.StatusOK, dto.FromApps(apps))
 }
