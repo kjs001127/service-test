@@ -62,6 +62,7 @@ func FromApp(model *appmodel.App) *AppResponse {
 		Description:        model.Description,
 		I18nMap:            convertI18nMap(model.I18nMap),
 		DetailDescriptions: model.DetailDescriptions,
+		IsPrivate:          model.IsPrivate,
 		AvatarURL:          model.AvatarURL,
 	}
 }
