@@ -36,16 +36,15 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 		return err
 	}
 
-	if app.IsPrivate {
-		_, err = c.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
-		if err != nil && !c.permissionUtil.isOwner(ctx, manager) {
-			return apierr.Unauthorized(errors.New("private app command can only be toggled by app developer who is owner"))
-		}
-		return nil
+	if c.permissionUtil.isOwner(ctx, manager) {
+		return apierr.Unauthorized(errors.New("only owner can toggle app command"))
 	}
 
-	if !c.permissionUtil.hasPermission(ctx, manager) {
-		return apierr.Unauthorized(errors.New("public app command can only be toggled by manager with permission"))
+	if app.IsPrivate {
+		_, err = c.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
+		if err != nil {
+			return apierr.Unauthorized(errors.New("private app command can only be toggled by app developer who is owner"))
+		}
 	}
 	return nil
 }

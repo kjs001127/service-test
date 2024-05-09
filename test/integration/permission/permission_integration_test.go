@@ -12,8 +12,6 @@ import (
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
@@ -21,7 +19,6 @@ import (
 
 const (
 	ownerManagerID    = "123"
-	nonOwnerManagerID = "12412"
 	ownerRoleID       = "843"
 	nonOwnerRoleID    = "844"
 	testTitle         = "test"
@@ -152,68 +149,6 @@ var _ = Describe("InstallApp", func() {
 
 			Expect(err).To(Not(BeNil()))
 			Expect(app).To(BeNil())
-		})
-	})
-
-	Context("when install public App by manager with install channelPermission", func() {
-		It("should install app", func() {
-			ctx := context.Background()
-
-			manager := account.Manager{
-				ID:        nonOwnerManagerID,
-				RoleID:    nonOwnerRoleID,
-				AccountID: nonOwnerAccountID,
-			}
-
-			managerRole := account.ManagerRole{
-				ID:          nonOwnerRoleID,
-				RoleType:    nonOwnerType,
-				Permissions: []account.Permission{{Action: channelPermission}},
-			}
-
-			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
-			app, _ := suite.AppCrudSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: false})
-
-			installationID := appmodel.InstallationID{
-				AppID:     app.ID,
-				ChannelID: channelID,
-			}
-
-			installedApp, err := suite.Install(ctx, manager, installationID)
-			Expect(err).To(BeNil())
-			Expect(installedApp).ToNot(BeNil())
-			Expect(installedApp.ID).To(Equal(app.ID))
-		})
-	})
-
-	Context("when install public App by manager with no install channelPermission", func() {
-		It("should return error", func() {
-			ctx := context.Background()
-
-			manager := account.Manager{
-				ID:        nonOwnerManagerID,
-				RoleID:    nonOwnerRoleID,
-				AccountID: nonOwnerAccountID,
-			}
-
-			managerRole := account.ManagerRole{
-				ID:          nonOwnerRoleID,
-				RoleType:    nonOwnerType,
-				Permissions: make([]account.Permission, 0),
-			}
-
-			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
-			app, _ := suite.AppCrudSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: false})
-
-			installationID := appmodel.InstallationID{
-				AppID:     app.ID,
-				ChannelID: channelID,
-			}
-
-			installedApp, err := suite.Install(ctx, manager, installationID)
-			Expect(err).To(Not(BeNil()))
-			Expect(apierr.IsUnauthorized(err)).To(BeTrue())
-			Expect(installedApp).To(BeNil())
 		})
 	})
 })

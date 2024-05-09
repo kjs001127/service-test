@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	ownerType  = "owner"
-	permission = "generalSettings"
+	ownerType = "owner"
 )
 
 type PermissionUtil struct {
@@ -26,25 +25,6 @@ func (a PermissionUtil) isOwner(ctx context.Context, manager account.Manager) bo
 	}
 	if role.RoleType == ownerType {
 		return true
-	}
-
-	return false
-}
-
-func (a PermissionUtil) hasPermission(ctx context.Context, manager account.Manager) bool {
-	role, err := a.roleFetcher.FetchRole(ctx, manager.RoleID)
-	if err != nil {
-		return false
-	}
-
-	if len(role.Permissions) <= 0 {
-		return false
-	}
-
-	for _, perm := range role.Permissions {
-		if perm.Action == permission {
-			return true
-		}
 	}
 
 	return false

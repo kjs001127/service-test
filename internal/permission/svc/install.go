@@ -36,15 +36,15 @@ func (a *ManagerInstallPermissionSvcImpl) OnInstall(ctx context.Context, manager
 		return err
 	}
 
-	if app.IsPrivate {
-		_, err = a.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
-		if err != nil && !a.permissionUtil.isOwner(ctx, manager) {
-			return apierr.Unauthorized(errors.New("private app can only be installed by app developer who is owner"))
-		}
+	if !a.permissionUtil.isOwner(ctx, manager) {
+		return apierr.Unauthorized(errors.New("only owner can install app"))
 	}
 
-	if !a.permissionUtil.hasPermission(ctx, manager) {
-		return apierr.Unauthorized(errors.New("public app can only be installed by manager with permission"))
+	if app.IsPrivate {
+		_, err = a.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
+		if err != nil {
+			return apierr.Unauthorized(errors.New("private app can only be installed by app developer who is owner"))
+		}
 	}
 
 	return nil
@@ -56,16 +56,15 @@ func (a *ManagerInstallPermissionSvcImpl) OnUnInstall(ctx context.Context, manag
 		return err
 	}
 
-	if app.IsPrivate {
-		_, err = a.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
-		if err != nil && !a.permissionUtil.isOwner(ctx, manager) {
-			return apierr.Unauthorized(errors.New("private app can only be uninstalled by app developer who is owner"))
-		}
-		return nil
+	if !a.permissionUtil.isOwner(ctx, manager) {
+		return apierr.Unauthorized(errors.New("only owner can uninstall app"))
 	}
 
-	if !a.permissionUtil.hasPermission(ctx, manager) {
-		return apierr.Unauthorized(errors.New("public app can only be uninstalled by manager with permission"))
+	if app.IsPrivate {
+		_, err = a.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
+		if err != nil {
+			return apierr.Unauthorized(errors.New("private app can only be uninstalled by app developer who is owner"))
+		}
 	}
 	return nil
 }
