@@ -42,7 +42,7 @@ var AppAccountRepo = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppAccountRepo,
-			fx.As(new(repo.AppAccountRepo)),
+			fx.As(new(svc.AppAccountRepo)),
 		),
 	),
 )

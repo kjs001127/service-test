@@ -9,7 +9,6 @@ import (
 	crudSvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
-	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
 
@@ -39,7 +38,7 @@ type PermissionTestSuite struct {
 
 	permission.AccountAppPermissionSvc
 	*managersvc.ManagerAwareInstallSvc
-	repo.AppAccountRepo
+	permission.AppAccountRepo
 	crudSvc.AppCrudSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
 }
