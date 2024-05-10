@@ -46,7 +46,7 @@ func (a *AppAccountRepoImpl) Delete(ctx context.Context, appID, accountID string
 }
 
 func (a *AppAccountRepoImpl) Fetch(ctx context.Context, appID, accountID string) (*model.AppAccount, error) {
-	res, err := models.AppAccounts(qm.Where("app_id = ? AND account_id = ?", appID, accountID)).One(ctx, a.db)
+	res, err := models.AppAccounts(qm.Where("app_id = $1", appID), qm.Where("account_id = $2", accountID)).One(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(errors.Wrap(err, "app account not found"))
 	} else if err != nil {
