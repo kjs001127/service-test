@@ -42,11 +42,6 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 		return app.WrapCommonErr(errors.New("function url empty"))
 	}
 
-	if serverSetting.SigningKey == nil {
-		a.logger.Debugw(ctx, "signing key is nil", "appID", target.ID)
-		return app.WrapCommonErr(errors.New("signing key empty"))
-	}
-
 	marshaled, err := json.Marshal(request)
 	if err != nil {
 		a.logger.Debugw(ctx, "function request cannot be marshalled",
@@ -84,17 +79,20 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 }
 
 func (a *Invoker) requestWithHttp(ctx context.Context, serverSetting model.ServerSetting, body []byte) ([]byte, error) {
-	signature, err := signutil.Sign(*serverSetting.SigningKey, body)
-	if err != nil {
-		return nil, err
+	headers := map[string]string{
+		contentTypeHeader: contentTypeJson,
+	}
+	if serverSetting.SigningKey != nil {
+		signature, err := signutil.Sign(*serverSetting.SigningKey, body)
+		if err != nil {
+			return nil, err
+		}
+		headers[xSignatureHeader] = signature
 	}
 	return a.requester.Request(ctx, HttpRequest{
-		Body:   body,
-		Method: http.MethodPut,
-		Headers: map[string]string{
-			contentTypeHeader: contentTypeJson,
-			xSignatureHeader:  signature,
-		},
-		Url: *serverSetting.FunctionURL,
+		Body:    body,
+		Method:  http.MethodPut,
+		Headers: headers,
+		Url:     *serverSetting.FunctionURL,
 	})
 }
