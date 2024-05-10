@@ -42,7 +42,7 @@ func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([
 	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
 
 	if since != "" {
-		queries = append(queries, qm.Where("id < $1", since))
+		queries = append(queries, qm.Where("id > $1", since))
 	}
 
 	apps, err := models.Apps(queries...).All(ctx, a.db)
