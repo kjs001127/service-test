@@ -19,7 +19,7 @@ import (
 //	@Tags		Public
 //
 //	@Param		app.AppRequest	body		dto.AppCreateRequest	true	"App title to create"
-//	@Param		x-account	header		string	true	"token"
+//	@Param		x-account		header		string					true	"token"
 //
 //	@Success	201				{object}	dto.AppResponse
 //	@Router		/desk/account/apps [post]
@@ -46,8 +46,8 @@ func (h *Handler) createApp(ctx *gin.Context) {
 //	@Summary	delete App to app-store
 //	@Tags		Public
 //
-//	@Param		x-account	header		string	true	"token"
-//	@Param		appId	path	string	true	"appID"
+//	@Param		x-account	header	string	true	"token"
+//	@Param		appId		path	string	true	"appID"
 //
 //	@Success	204
 //	@Router		/desk/account/apps/{appID}  [delete]
@@ -69,7 +69,7 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 //	@Summary	list apps
 //	@Tags		Public
 //
-//	@Param		x-account	header		string	true	"token"
+//	@Param		x-account	header	string	true	"token"
 //
 //	@Success	200
 //	@Router		/desk/account/apps  [get]
@@ -92,7 +92,7 @@ func (h *Handler) listApps(ctx *gin.Context) {
 //
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200	{object}	[]dto.AppResponse
+//	@Success	200			{object}	[]dto.AppResponse
 //	@Router		/desk/account/apps  [get]
 func (h *Handler) getCallableApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)

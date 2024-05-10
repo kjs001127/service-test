@@ -19,7 +19,7 @@ import (
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	settingsvc.Urls
+//	@Success	200			{object}	settingsvc.Urls
 //	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [get]
 func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -41,7 +41,7 @@ func (h *Handler) fetchEndpoints(ctx *gin.Context) {
 //
 //	@Param		appID			path	string			true	"appID"
 //	@Param		settingsvc.Urls	body	settingsvc.Urls	true	"dto"
-//	@Param		x-account		header		string		true	"token"
+//	@Param		x-account		header	string			true	"token"
 //
 //	@Success	200
 //	@Router		/desk/account/apps/{appID}/server-settings/endpoints  [put]
@@ -70,7 +70,7 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	dto.SigningKey
+//	@Success	200			{object}	dto.SigningKey
 //	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [put]
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -95,7 +95,7 @@ func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	dto.IssuedBefore
+//	@Success	200			{object}	dto.IssuedBefore
 //	@Router		/desk/account/apps/{appID}/server-settings/signing-key  [get]
 func (h *Handler) checkSigningKey(ctx *gin.Context) {
 	account := middleware.Account(ctx)

@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
@@ -34,26 +35,29 @@ func NewServerSettingSvcImpl(urlRepo AppServerSettingRepository) *ServerSettingS
 func (a *ServerSettingSvcImpl) UpsertUrls(ctx context.Context, appID string, urls Urls) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		setting, err := a.serverSettingRepo.Fetch(ctx, appID)
-		if err != nil {
+		if apierr.IsNotFound(err) {
+			setting = model.ServerSetting{}
+			setting.WamURL = urls.WamURL
+			setting.FunctionURL = urls.FunctionURL
+
+			if _, err := a.serverSettingRepo.Save(ctx, appID, setting); err != nil {
+				return err
+			}
+		} else if err != nil {
 			return err
 		}
-
-		setting.FunctionURL = urls.FunctionURL
-		setting.WamURL = urls.WamURL
-
-		if _, err := a.serverSettingRepo.Save(ctx, appID, setting); err != nil {
-			return err
-		}
-
 		return nil
 	})
 }
 
 func (a *ServerSettingSvcImpl) FetchUrls(ctx context.Context, appID string) (Urls, error) {
 	urls, err := a.serverSettingRepo.Fetch(ctx, appID)
-	if err != nil {
+	if apierr.IsNotFound(err) {
+		return Urls{}, nil
+	} else if err != nil {
 		return Urls{}, err
 	}
+
 	return Urls{
 		WamURL:      urls.WamURL,
 		FunctionURL: urls.FunctionURL,
