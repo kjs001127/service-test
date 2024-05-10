@@ -46,6 +46,13 @@ func (a *ServerSettingSvcImpl) UpsertUrls(ctx context.Context, appID string, url
 		} else if err != nil {
 			return err
 		}
+
+		setting.WamURL = urls.WamURL
+		setting.FunctionURL = urls.FunctionURL
+
+		if _, err := a.serverSettingRepo.Save(ctx, appID, setting); err != nil {
+			return err
+		}
 		return nil
 	})
 }
