@@ -4,6 +4,13 @@ import (
 	"context"
 	"testing"
 
+	"go.uber.org/fx"
+
+	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	crudSvc "github.com/channel-io/ch-app-store/internal/app/svc"
@@ -31,23 +38,27 @@ const (
 )
 
 type PermissionTestSuite struct {
-	testApp *TestApp
+	helper *TestHelper
 
-	permission.AccountAppPermissionSvc
-	*managersvc.ManagerAwareInstallSvc
-	permission.AppAccountRepo
-	crudSvc.AppLifecycleSvc
+	appSvc             permission.AccountAppPermissionSvc
+	installSvc         *managersvc.ManagerAwareInstallSvc
+	lifecycleSvc       crudSvc.AppLifecycleSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
 }
 
 var suite PermissionTestSuite
 
 var _ = BeforeSuite(func() {
-	suite.testApp = NewTestApp(
-		Populate(&suite.AccountAppPermissionSvc),
-		Populate(&suite.ManagerAwareInstallSvc),
-		Populate(&suite.AppAccountRepo),
-		Populate(&suite.AppLifecycleSvc),
+	suite.helper = NewTestHelper(
+		configfx.Values,
+		datadogfx.Datadog,
+		permissionfx.Permission,
+		appfx.App,
+		managerfx.Manager,
+
+		fx.Populate(&suite.appSvc),
+		fx.Populate(&suite.installSvc),
+		fx.Populate(&suite.lifecycleSvc),
 		Mock[account.ManagerRoleFetcher](&suite.managerRoleFetcher),
 	)
 })
@@ -57,8 +68,8 @@ var _ = BeforeEach(func() {
 })
 
 var _ = AfterSuite(func() {
-	suite.testApp.Stop()
-	suite.testApp.WithPreparedTables("app_accounts")
+	suite.helper.Stop()
+	suite.helper.WithPreparedTables("app_accounts")
 })
 
 var _ = Describe("CreateApp", func() {
@@ -66,7 +77,7 @@ var _ = Describe("CreateApp", func() {
 		It("should create app", func() {
 			ctx := context.Background()
 
-			app, err := suite.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 			Expect(app.Title).To(Equal(testTitle))
@@ -79,11 +90,11 @@ var _ = Describe("DeleteApp", func() {
 		It("should delete app", func() {
 			ctx := context.Background()
 
-			app, err := suite.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 
-			err = suite.DeleteApp(ctx, app.ID, ownerAccountID)
+			err = suite.appSvc.DeleteApp(ctx, app.ID, ownerAccountID)
 			Expect(err).To(BeNil())
 		})
 	})
@@ -107,7 +118,7 @@ var _ = Describe("InstallApp", func() {
 			}
 			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, ownerRoleID).Return(managerRole, nil)
 
-			app, err := suite.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 
@@ -115,7 +126,7 @@ var _ = Describe("InstallApp", func() {
 				AppID: app.ID,
 			}
 
-			installedApp, err := suite.Install(ctx, manager, installationID)
+			installedApp, err := suite.installSvc.Install(ctx, manager, installationID)
 			Expect(err).To(BeNil())
 			Expect(installedApp).ToNot(BeNil())
 			Expect(installedApp.ID).To(Equal(app.ID))
@@ -139,13 +150,13 @@ var _ = Describe("InstallApp", func() {
 			}
 
 			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
-			app, _ := suite.AppLifecycleSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
+			app, _ := suite.lifecycleSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
 
 			installationID := appmodel.InstallationID{
 				AppID:     app.ID,
 				ChannelID: channelID,
 			}
-			app, err := suite.Install(ctx, manager, installationID)
+			app, err := suite.installSvc.Install(ctx, manager, installationID)
 
 			Expect(err).To(Not(BeNil()))
 			Expect(app).To(BeNil())
