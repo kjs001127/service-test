@@ -6,11 +6,6 @@ import (
 
 	"go.uber.org/fx"
 
-	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	crudSvc "github.com/channel-io/ch-app-store/internal/app/svc"
@@ -50,11 +45,7 @@ var suite PermissionTestSuite
 
 var _ = BeforeSuite(func() {
 	suite.helper = NewTestHelper(
-		configfx.Values,
-		datadogfx.Datadog,
-		permissionfx.Permission,
-		appfx.App,
-		managerfx.Manager,
+		testOpts,
 
 		fx.Populate(&suite.appSvc),
 		fx.Populate(&suite.installSvc),
