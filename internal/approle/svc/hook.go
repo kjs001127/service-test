@@ -23,7 +23,7 @@ func (r RoleAppLifeCycleHook) OnAppDelete(ctx context.Context, app *model.App) e
 	if err := r.svc.DeleteRoles(ctx, app.ID); err != nil {
 		return err
 	}
-	if err := r.tokenSvc.DeleteAppToken(ctx, app.ID); err != nil {
+	if err := r.tokenSvc.DeleteAppSecret(ctx, app.ID); err != nil {
 		return err
 	}
 	return nil

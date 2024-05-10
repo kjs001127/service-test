@@ -36,12 +36,12 @@ func NewTokenSvc(
 	}
 }
 
-func (s *TokenSvc) DeleteAppToken(ctx context.Context, appID string) error {
+func (s *TokenSvc) DeleteAppSecret(ctx context.Context, appID string) error {
 	return s.tokenRepo.Delete(ctx, appID)
 }
 
-func (s *TokenSvc) RefreshAppToken(ctx context.Context, appID string) (string, error) {
-	token, err := generateToken()
+func (s *TokenSvc) RefreshAppSecret(ctx context.Context, appID string) (string, error) {
+	token, err := generateSecret()
 	if err != nil {
 		return "", err
 	}
@@ -56,7 +56,7 @@ func (s *TokenSvc) RefreshAppToken(ctx context.Context, appID string) (string, e
 	return token, nil
 }
 
-func generateToken() (string, error) {
+func generateSecret() (string, error) {
 	randomBytes := make([]byte, 16)
 	if _, err := rand.Read(randomBytes); err != nil {
 		return "", err

@@ -52,5 +52,5 @@ func (s *AccountAuthPermissionSvc) RefreshToken(ctx context.Context, appID strin
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return "", err
 	}
-	return s.tokenSvc.RefreshAppToken(ctx, appID)
+	return s.tokenSvc.RefreshAppSecret(ctx, appID)
 }
