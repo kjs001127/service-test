@@ -6,29 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
+	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 )
-
-// getPrivateApps godoc
-//
-//	@Summary	get list of Apps
-//	@Tags		Desk
-//
-//	@Param		x-account	header	string	true	"access token"
-//	@Param		channelID	path	string	true	"channelID"
-//
-//	@Success	200			{array}	dto.AppView
-//	@Router		/desk/v1/channels/{channelID}/app-store/private-apps  [get]
-func (h *Handler) getPrivateApps(ctx *gin.Context) {
-	account := middleware.Account(ctx)
-	apps, err := h.privateAppQuerySvc.GetAppsByAccount(ctx, account.ID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
-}
 
 // getApps godoc
 //
@@ -43,20 +24,40 @@ func (h *Handler) getPrivateApps(ctx *gin.Context) {
 //	@Success	200			{array}	dto.AppView
 //	@Router		/desk/v1/channels/{channelID}/app-store/apps  [get]
 func (h *Handler) getApps(ctx *gin.Context) {
-	since, limit := ctx.Query("since"), ctx.Query("limit")
-	limitNumber, err := strconv.Atoi(limit)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	apps, err := h.appRepo.FindPublicApps(ctx, since, limitNumber)
+	apps, err := h.findApps(ctx)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
+}
+
+func (h *Handler) findApps(ctx *gin.Context) ([]*appmodel.App, error) {
+	since, limit := ctx.Query("since"), ctx.Query("limit")
+	limitNumber, err := strconv.Atoi(limit)
+	if err != nil {
+		return nil, err
+	}
+
+	if isPrivate(ctx) {
+		return h.privateAppQuerySvc.GetAppsByAccount(ctx, middleware.Manager(ctx).AccountID)
+	} else {
+		return h.appRepo.FindPublicApps(ctx, since, limitNumber)
+	}
+}
+
+func isPrivate(ctx *gin.Context) bool {
+	isPrivateQuery := ctx.Query("isPrivate")
+	if len(isPrivateQuery) <= 0 {
+		return false
+	}
+	isPrivate, err := strconv.ParseBool(isPrivateQuery)
+	if err != nil {
+		return false
+	}
+
+	return isPrivate
 }
 
 // getAppDetail godoc
