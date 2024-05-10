@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	accountFetch = "/admin/account"
+	accountFetch = "/api/admin/account"
 )
 
 type Account struct {
