@@ -5,7 +5,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/admin/aibe"
-	"github.com/channel-io/ch-app-store/api/http/admin/appdev"
 	"github.com/channel-io/ch-app-store/api/http/admin/appserver"
 	"github.com/channel-io/ch-app-store/api/http/admin/install"
 	"github.com/channel-io/ch-app-store/api/http/admin/media"
@@ -17,7 +16,6 @@ import (
 
 var AdminHandlers = fx.Options(
 	fx.Provide(
-		gintoolfx.AddTag(appdev.NewHandler),
 		gintoolfx.AddTag(appserver.NewHandler),
 		gintoolfx.AddTag(aibe.NewHandler),
 		gintoolfx.AddTag(install.NewHandler),

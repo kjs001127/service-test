@@ -17,14 +17,14 @@ type AppRoleSvc struct {
 	roleCli  authgen.RoleFetcher
 	roleRepo AppRoleRepository
 	typeRule map[model.RoleType]TypeRule
-	appSvc   app.AppCrudSvc
+	appSvc   app.AppQuerySvc
 }
 
 func NewAppRoleSvc(
 	roleCli authgen.RoleFetcher,
 	roleRepo AppRoleRepository,
 	typeRule map[model.RoleType]TypeRule,
-	appSvc app.AppCrudSvc,
+	appSvc app.AppQuerySvc,
 ) *AppRoleSvc {
 	return &AppRoleSvc{
 		roleCli:  roleCli,

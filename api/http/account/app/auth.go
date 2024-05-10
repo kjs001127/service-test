@@ -16,10 +16,10 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path		string	true	"appId"
-//	@Param		roleType 	path		string	true 	"roleType"
+//	@Param		appId		path	string	true	"appId"
+//	@Param		roleType	path	string	true	"roleType"
 //
-//	@Success	200		{array}		model.Claim
+//	@Success	200			{array}	model.Claim
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchClaims(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -40,10 +40,10 @@ func (h *Handler) fetchClaims(ctx *gin.Context) {
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path		string	true	"appId"
-//	@Param		roleType 	path		string	true 	"roleType"
+//	@Param		appId		path	string	true	"appId"
+//	@Param		roleType	path	string	true	"roleType"
 //
-//	@Success	200		{array}		model.Claim
+//	@Success	200			{array}	model.Claim
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [put]
 func (h *Handler) modifyClaims(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -65,16 +65,16 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, claims)
 }
 
-// refreshToken godoc
+// refreshSecret godoc
 //
 //	@Summary	refresh signing key
 //	@Tags		Public
 //
-//	@Param		appId	path	string	true	"appId"
+//	@Param		appId	path		string	true	"appId"
 //
-//	@Success	200		dto.AppToken
-//	@Router		/desk/account/apps/{appId}/auth/token [put]
-func (h *Handler) refreshToken(ctx *gin.Context) {
+//	@Success	200		{object}	dto.AppSecret
+//	@Router		/desk/account/apps/{appId}/auth/secret [put]
+func (h *Handler) refreshSecret(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 
@@ -84,21 +84,21 @@ func (h *Handler) refreshToken(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &dto.AppToken{
-		Token: token,
+	ctx.JSON(http.StatusOK, &dto.AppSecret{
+		Secret: token,
 	})
 }
 
-// checkToken godoc
+// checkSecret godoc
 //
 //	@Summary	check token issued before
 //	@Tags		Public
 //
-//	@Param		appId	path	string	true	"appId"
+//	@Param		appId	path		string	true	"appId"
 //
-//	@Success	200		dto.IssuedBefore
-//	@Router		/desk/account/apps/{appId}/auth/token [get]
-func (h *Handler) checkToken(ctx *gin.Context) {
+//	@Success	200		{object}	dto.IssuedBefore
+//	@Router		/desk/account/apps/{appId}/auth/secret [get]
+func (h *Handler) checkSecret(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 

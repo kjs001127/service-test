@@ -36,7 +36,7 @@ type PermissionTestSuite struct {
 	permission.AccountAppPermissionSvc
 	*managersvc.ManagerAwareInstallSvc
 	permission.AppAccountRepo
-	crudSvc.AppCrudSvc
+	crudSvc.AppLifecycleSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
 }
 
@@ -47,7 +47,7 @@ var _ = BeforeSuite(func() {
 		Populate(&suite.AccountAppPermissionSvc),
 		Populate(&suite.ManagerAwareInstallSvc),
 		Populate(&suite.AppAccountRepo),
-		Populate(&suite.AppCrudSvc),
+		Populate(&suite.AppLifecycleSvc),
 		Mock[account.ManagerRoleFetcher](&suite.managerRoleFetcher),
 	)
 })
@@ -139,7 +139,7 @@ var _ = Describe("InstallApp", func() {
 			}
 
 			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
-			app, _ := suite.AppCrudSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
+			app, _ := suite.AppLifecycleSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
 
 			installationID := appmodel.InstallationID{
 				AppID:     app.ID,

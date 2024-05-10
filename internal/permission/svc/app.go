@@ -18,17 +18,20 @@ type AccountAppPermissionSvc interface {
 }
 
 type AccountAppPermissionSvcImpl struct {
-	appCrudSvc     app.AppCrudSvc
-	appAccountRepo AppAccountRepo
+	appCrudSvc      app.AppQuerySvc
+	appLifeCycleSvc app.AppLifecycleSvc
+	appAccountRepo  AppAccountRepo
 }
 
 func NewAccountAppPermissionSvc(
-	appCrudSvc app.AppCrudSvc,
+	appCrudSvc app.AppQuerySvc,
+	appLifecycleSvc app.AppLifecycleSvc,
 	appAccountRepo AppAccountRepo,
 ) *AccountAppPermissionSvcImpl {
 	return &AccountAppPermissionSvcImpl{
-		appCrudSvc:     appCrudSvc,
-		appAccountRepo: appAccountRepo,
+		appCrudSvc:      appCrudSvc,
+		appAccountRepo:  appAccountRepo,
+		appLifeCycleSvc: appLifecycleSvc,
 	}
 }
 
@@ -105,7 +108,7 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 			Title: title,
 		}
 
-		app, err := a.appCrudSvc.Create(ctx, &createApp)
+		app, err := a.appLifeCycleSvc.Create(ctx, &createApp)
 		if err != nil {
 			return nil, err
 		}
@@ -130,7 +133,7 @@ func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyReque
 			return nil, err
 		}
 
-		ret, err := a.appCrudSvc.Update(ctx, modifyRequest)
+		ret, err := a.appLifeCycleSvc.Update(ctx, modifyRequest)
 		if err != nil {
 			return nil, err
 		}
@@ -144,7 +147,7 @@ func (a *AccountAppPermissionSvcImpl) DeleteApp(ctx context.Context, appID strin
 		if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 			return err
 		}
-		err := a.appCrudSvc.Delete(ctx, appID)
+		err := a.appLifeCycleSvc.Delete(ctx, appID)
 		if err != nil {
 			return err
 		}

@@ -1,5 +1,5 @@
 package dto
 
-type AppToken struct {
-	Token string `json:"token"`
+type AppSecret struct {
+	Secret string `json:"secret"`
 }

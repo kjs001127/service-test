@@ -41,6 +41,6 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 	group.GET("/desk/account/apps/:appID/auth/roles/:roleType", h.fetchClaims)
 	group.PUT("/desk/account/apps/:appID/auth/roles/:roleType", h.modifyClaims)
 
-	group.GET("/desk/account/apps/:appID/auth/token", h.checkToken)
-	group.PUT("/desk/account/apps/:appID/auth/token", h.refreshToken)
+	group.GET("/desk/account/apps/:appID/auth/secret", h.checkSecret)
+	group.PUT("/desk/account/apps/:appID/auth/secret", h.refreshSecret)
 }

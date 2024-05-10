@@ -20,7 +20,8 @@ const (
 type AppCrudSvcTestSuite struct {
 	suite.Suite
 
-	crudSvc             svc.AppCrudSvc
+	crudSvc             svc.AppLifecycleSvc
+	querySvc            svc.AppQuerySvc
 	appRepo             *mocksvc.AppRepository
 	appInstallationRepo *mocksvc.AppInstallationRepository
 }
@@ -29,7 +30,8 @@ func (a *AppCrudSvcTestSuite) SetupTest() {
 	a.appRepo = mocksvc.NewAppRepository(a.T())
 	a.appInstallationRepo = mocksvc.NewAppInstallationRepository(a.T())
 
-	a.crudSvc = svc.NewAppCrudSvcImpl(a.appRepo, a.appInstallationRepo, nil)
+	a.querySvc = svc.NewAppQuerySvcImpl(a.appRepo)
+	a.crudSvc = svc.NewAppLifecycleSvc(a.appRepo, a.appInstallationRepo, nil)
 }
 
 func (a *AppCrudSvcTestSuite) TestCreate() {
@@ -101,7 +103,7 @@ func (a *AppCrudSvcTestSuite) TestRead() {
 
 	ctx := context.Background()
 
-	res, err := a.crudSvc.Read(ctx, appID)
+	res, err := a.querySvc.Read(ctx, appID)
 
 	assert.Equal(a.T(), appID, res.ID)
 	assert.Nil(a.T(), err)
@@ -129,7 +131,7 @@ func (a *AppCrudSvcTestSuite) TestReadPublicApps() {
 	a.appRepo.EXPECT().FindPublicApps(mock.Anything, mock.Anything, mock.Anything).Return(apps, nil)
 
 	ctx := context.Background()
-	res, err := a.crudSvc.ReadPublicApps(ctx, "0", 500)
+	res, err := a.querySvc.ReadPublicApps(ctx, "0", 500)
 
 	assert.Equal(a.T(), 3, len(res))
 	assert.False(a.T(), res[0].IsPrivate)
@@ -160,7 +162,7 @@ func (a *AppCrudSvcTestSuite) TestReadAllByAppIDs() {
 	a.appRepo.EXPECT().FindApps(mock.Anything, []string{"1", "3", "4"}).Return(apps, nil)
 
 	ctx := context.Background()
-	res, err := a.crudSvc.ReadAllByAppIDs(ctx, []string{"1", "3", "4"})
+	res, err := a.querySvc.ReadAllByAppIDs(ctx, []string{"1", "3", "4"})
 
 	assert.Equal(a.T(), 3, len(res))
 	assert.Nil(a.T(), err)

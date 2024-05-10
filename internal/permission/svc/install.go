@@ -13,13 +13,13 @@ import (
 )
 
 type ManagerInstallPermissionSvcImpl struct {
-	appCrudSvc     app.AppCrudSvc
+	appCrudSvc     app.AppQuerySvc
 	permissionUtil PermissionUtil
 	appAccountRepo AppAccountRepo
 }
 
 func NewManagerInstallPermissionSvc(
-	appCrudSvc app.AppCrudSvc,
+	appCrudSvc app.AppQuerySvc,
 	permissionUtil PermissionUtil,
 	appAccountRepo AppAccountRepo,
 ) *ManagerInstallPermissionSvcImpl {

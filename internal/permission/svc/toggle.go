@@ -13,13 +13,13 @@ import (
 )
 
 type ManagerCommandTogglePermissionSvcImpl struct {
-	appCrudSvc     app.AppCrudSvc
+	appCrudSvc     app.AppQuerySvc
 	permissionUtil PermissionUtil
 	appAccountRepo AppAccountRepo
 }
 
 func NewManagerCommandTogglePermissionSvc(
-	appCrudSvc app.AppCrudSvc,
+	appCrudSvc app.AppQuerySvc,
 	permissionUtil PermissionUtil,
 	appAccountRepo AppAccountRepo,
 ) *ManagerCommandTogglePermissionSvcImpl {

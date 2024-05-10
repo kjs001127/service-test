@@ -5,17 +5,16 @@ import (
 
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 	"github.com/channel-io/ch-app-store/internal/approle/svc"
-	"github.com/channel-io/ch-app-store/internal/permission/repo"
 )
 
 type AccountAuthPermissionSvc struct {
-	appAccountRepo repo.AppAccountRepo
+	appAccountRepo AppAccountRepo
 	delegate       *svc.AppRoleSvc
 	tokenSvc       *svc.TokenSvc
 }
 
 func NewAccountAuthPermissionSvc(
-	appAccountRepo repo.AppAccountRepo,
+	appAccountRepo AppAccountRepo,
 	delegate *svc.AppRoleSvc,
 	tokenSvc *svc.TokenSvc,
 ) *AccountAuthPermissionSvc {

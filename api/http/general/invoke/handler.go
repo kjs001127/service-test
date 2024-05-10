@@ -14,10 +14,10 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 type Handler struct {
 	invoker       *app.TypedInvoker[json.RawMessage, json.RawMessage]
 	nativeInvoker *native.FunctionInvoker
-	rbacAuth      middleware.Auth
+	rbacAuth      *middleware.Auth
 }
 
-func NewHandler(invoker *app.TypedInvoker[json.RawMessage, json.RawMessage], nativeInvoker *native.FunctionInvoker, rbacAuth middleware.Auth) *Handler {
+func NewHandler(invoker *app.TypedInvoker[json.RawMessage, json.RawMessage], nativeInvoker *native.FunctionInvoker, rbacAuth *middleware.Auth) *Handler {
 	return &Handler{invoker: invoker, nativeInvoker: nativeInvoker, rbacAuth: rbacAuth}
 }
 

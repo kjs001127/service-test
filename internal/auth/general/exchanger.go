@@ -18,11 +18,11 @@ const (
 
 type RBACExchanger struct {
 	cli     *resty.Client
-	parser  *ParserImpl
+	parser  Parser
 	authURL string
 }
 
-func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RBACExchanger {
+func NewRBACExchanger(cli *resty.Client, parser Parser, authURL string) *RBACExchanger {
 	return &RBACExchanger{cli: cli, parser: parser, authURL: authURL}
 }
 
