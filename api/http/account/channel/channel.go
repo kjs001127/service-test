@@ -16,6 +16,7 @@ import (
 //
 //	@Param		accountID	path		string	true	"accountID"
 //	@Param		appID		path		string	true	"appID"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200			{object}	dto.ChannelResponse
 //	@Router		/desk/accounts/apps/{appID}/channels [get]
