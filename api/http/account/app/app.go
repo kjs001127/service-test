@@ -55,7 +55,7 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 
-	err := h.appPermissionSvc.DeleteApp(ctx, account.ID, appID)
+	err := h.appPermissionSvc.DeleteApp(ctx, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
