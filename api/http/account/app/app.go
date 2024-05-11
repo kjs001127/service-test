@@ -47,7 +47,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 //	@Tags		Public
 //
 //	@Param		x-account	header	string	true	"token"
-//	@Param		appId		path	string	true	"appID"
+//	@Param		appID		path	string	true	"appID"
 //
 //	@Success	204
 //	@Router		/desk/account/apps/{appID}  [delete]
