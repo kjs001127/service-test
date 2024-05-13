@@ -2,13 +2,15 @@ package app_test
 
 import (
 	"context"
-
-	app "github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/internal/app/svc"
-	. "github.com/channel-io/ch-app-store/test"
+	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"go.uber.org/fx"
+
+	app "github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/internal/app/svc"
+	. "github.com/channel-io/ch-app-store/test/integration"
 )
 
 const (
@@ -16,25 +18,26 @@ const (
 	channelID = "1"
 )
 
-type AppIntegrationTestSuite struct {
-	testApp *TestApp
+type AppDAOTestSuite struct {
+	testApp *TestHelper
 
 	appRepository             svc.AppRepository
 	appInstallationRepository svc.AppInstallationRepository
 }
 
-var appIntegrationTestSuite AppIntegrationTestSuite
+var appIntegrationTestSuite AppDAOTestSuite
 
 var _ = BeforeSuite(func() {
-	appIntegrationTestSuite.testApp = NewTestApp(
-		Populate(&appIntegrationTestSuite.appRepository),
-		Populate(&appIntegrationTestSuite.appInstallationRepository),
+	appIntegrationTestSuite.testApp = NewTestHelper(
+		testOpts,
+		fx.Populate(&appIntegrationTestSuite.appRepository),
+		fx.Populate(&appIntegrationTestSuite.appInstallationRepository),
 	)
+	appIntegrationTestSuite.testApp.WithPreparedTables("apps", "app_installations")
 })
 
 var _ = AfterSuite(func() {
 	appIntegrationTestSuite.testApp.Stop()
-	appIntegrationTestSuite.testApp.TruncateAll()
 })
 
 var _ = Describe("AppRepository Save", func() {
@@ -102,3 +105,8 @@ var _ = Describe("AppInstallation Save", func() {
 		})
 	})
 })
+
+func TestAppDAOs(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "AppDAOTestSuite")
+}

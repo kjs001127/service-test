@@ -12,11 +12,7 @@ import (
 
 var GeneralHandlers = fx.Options(
 	fx.Provide(
-		fx.Annotate(
-			middleware.NewAuth,
-			fx.As(new(gintool.Middleware)),
-			fx.ResultTags(gintoolfx.MiddlewaresGroup),
-		),
+		middleware.NewAuth,
 		gintoolfx.AddTag(invoke.NewHandler),
 	),
 	fx.Supply(

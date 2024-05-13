@@ -10,8 +10,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/accountfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
@@ -36,11 +34,9 @@ var Test = fx.Options(
 	authfx.GeneralAuth,
 	authfx.PrincipalAuth,
 
-	accountfx.AppAccount,
 	appfx.App,
 	permissionfx.Permission,
 	brieffx.Brief,
-	appdevfx.AppDev,
 	commandfx.Command,
 	nativefx.Native,
 	approlefx.AppRole,

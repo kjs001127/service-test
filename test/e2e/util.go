@@ -12,7 +12,6 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
@@ -56,7 +55,6 @@ var fullAppModule = fx.Options(
 	apphttpfx.Function,
 	brieffx.Brief,
 	appfx.App,
-	appdevfx.AppDev,
 	invokelogfx.Loggers,
 	logfx.Logger,
 	mockauth.Module,

@@ -14,7 +14,7 @@ type AppInstallQuerySvc struct {
 	appRepo             AppRepository
 }
 
-func NewQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *AppInstallQuerySvc {
+func NewInstallQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *AppInstallQuerySvc {
 	return &AppInstallQuerySvc{appInstallationRepo: appChRepo, appRepo: appRepo}
 }
 

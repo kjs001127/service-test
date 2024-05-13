@@ -12,20 +12,79 @@ import (
 )
 
 const (
-	issueToken = "/general/auth/" + version + "/v1/token"
+	issueTokenVersion = "v1"
+	issueToken        = "/api/admin/auth/" + issueTokenVersion + "/token"
 )
 
 type RBACExchanger struct {
 	cli     *resty.Client
-	parser  *ParserImpl
+	parser  Parser
 	authURL string
 }
 
-func NewRBACExchanger(cli *resty.Client, parser *ParserImpl, authURL string) *RBACExchanger {
+func NewRBACExchanger(cli *resty.Client, parser Parser, authURL string) *RBACExchanger {
 	return &RBACExchanger{cli: cli, parser: parser, authURL: authURL}
 }
 
-func (e *RBACExchanger) Exchange(
+func (e *RBACExchanger) Refresh(
+	ctx context.Context,
+	refreshToken string,
+) (IssueResponse, error) {
+	r := e.cli.R()
+	r.SetContext(ctx)
+
+	r.
+		SetQueryParam("grant_type", "refresh_token").
+		SetQueryParam("refresh_token", refreshToken)
+
+	resp, err := r.Post(e.authURL + issueToken)
+	if err != nil {
+		return IssueResponse{}, err
+	}
+
+	var unmarshalled IssueResponse
+	if err := json.Unmarshal(resp.Body(), &unmarshalled); err != nil {
+		return IssueResponse{}, err
+	}
+
+	return unmarshalled, nil
+}
+
+func (e *RBACExchanger) ExchangeWithClientSecret(
+	ctx context.Context,
+	clientID string,
+	clientSecret string,
+	scopes Scopes,
+) (IssueResponse, error) {
+	r := e.cli.R()
+	r.SetContext(ctx)
+
+	var values url.Values
+	for key, vals := range scopes {
+		for _, val := range vals {
+			values.Add("scope", fmt.Sprintf("%s-%s", key, val))
+		}
+	}
+	r.
+		SetQueryParamsFromValues(values).
+		SetQueryParam("grant_type", "client_credentials").
+		SetQueryParam("client_secret", clientSecret).
+		SetQueryParam("client_id", clientID)
+
+	resp, err := r.Post(e.authURL + issueToken)
+	if err != nil {
+		return IssueResponse{}, err
+	}
+
+	var unmarshalled IssueResponse
+	if err := json.Unmarshal(resp.Body(), &unmarshalled); err != nil {
+		return IssueResponse{}, err
+	}
+
+	return unmarshalled, nil
+}
+
+func (e *RBACExchanger) ExchangeWithPrincipal(
 	ctx context.Context,
 	token principal.Token,
 	scopes Scopes,

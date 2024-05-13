@@ -1,6 +1,7 @@
 package appstore
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
@@ -9,7 +10,46 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/internal/approle/model"
 )
+
+// getAppRole godoc
+//
+//	@Summary	get claims of an app
+//	@Tags		Desk
+//
+//	@Param		x-account	header	string	true	"access token"
+//	@Param		channelID	path	string	true	"channelID"
+//	@Param		appID		path	string	true	"appID"
+//
+//	@Success	200		{array} 	dto.ClaimView
+//	@Router		/desk/v1/channels/{channelID}/app-store/{appID}/roles  [get]
+func (h *Handler) getAppRoles(ctx *gin.Context) {
+	appID := ctx.Param("appID")
+
+	views, err := h.roleViewsOf(ctx, appID)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, views)
+}
+
+func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.RoleViews, error) {
+	roleTypes := []model.RoleType{model.RoleTypeManager, model.RoleTypeUser, model.RoleTypeChannel}
+	ret := make(dto.RoleViews, 0, len(roleTypes))
+	for _, roleType := range roleTypes {
+		role, err := h.authSvc.FetchRole(ctx, appID, model.RoleTypeApp)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, dto.RoleView{
+			Type:   roleType,
+			Claims: role,
+		})
+	}
+	return ret, nil
+}
 
 // getApps godoc
 //

@@ -22,15 +22,17 @@ const (
 type AccountAppPermissionSvcTestSuite struct {
 	suite.Suite
 
-	permissionSvc  svc.AccountAppPermissionSvc
-	appCrudSvc     *mocksvc.AppCrudSvc
-	appAccountRepo *mockrepo.AppAccountRepo
+	permissionSvc   svc.AccountAppPermissionSvc
+	appCrudSvc      *mocksvc.AppQuerySvc
+	appLifecycleSvc *mocksvc.AppLifecycleSvc
+	appAccountRepo  *mockrepo.AppAccountRepo
 }
 
 func (s *AccountAppPermissionSvcTestSuite) SetupTest() {
-	s.appCrudSvc = mocksvc.NewAppCrudSvc(s.T())
+	s.appCrudSvc = mocksvc.NewAppQuerySvc(s.T())
+	s.appLifecycleSvc = mocksvc.NewAppLifecycleSvc(s.T())
 	s.appAccountRepo = mockrepo.NewAppAccountRepo(s.T())
-	s.permissionSvc = svc.NewAccountAppPermissionSvc(s.appCrudSvc, s.appAccountRepo)
+	s.permissionSvc = svc.NewAccountAppPermissionSvc(s.appCrudSvc, s.appLifecycleSvc, s.appAccountRepo)
 }
 
 func (s *AccountAppPermissionSvcTestSuite) TestGetCallableApps() {

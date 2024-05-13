@@ -15,13 +15,6 @@ type Token string
 func (t Token) Value() string {
 	return string(t)
 }
-func (t Token) Header() string {
-	return Header()
-}
-
-func Header() string {
-	return "x-access-token"
-}
 
 type Parser interface {
 	Parse(ctx context.Context, token string) (ParsedRBACToken, error)

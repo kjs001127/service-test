@@ -17,13 +17,13 @@ type AccountServerSettingPermissionSvc interface {
 
 type AccountServerSettingPermissionSvcImpl struct {
 	serverSettingSvc serverSettingSvc.ServerSettingSvc
-	appCrudSvc       appsvc.AppCrudSvc
+	appCrudSvc       appsvc.AppQuerySvc
 	appAccountRepo   AppAccountRepo
 }
 
 func NewAccountServerSettingPermissionSvc(
 	urlCrudSvc serverSettingSvc.ServerSettingSvc,
-	appCrudSvc appsvc.AppCrudSvc,
+	appCrudSvc appsvc.AppQuerySvc,
 	appAccountRepo AppAccountRepo,
 ) *AccountServerSettingPermissionSvcImpl {
 	return &AccountServerSettingPermissionSvcImpl{
