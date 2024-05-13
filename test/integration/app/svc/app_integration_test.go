@@ -2,13 +2,15 @@ package svc_test
 
 import (
 	"context"
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/internal/app/svc"
-	. "github.com/channel-io/ch-app-store/test/integration"
+	"testing"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/fx"
-	"testing"
+
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/internal/app/svc"
+	. "github.com/channel-io/ch-app-store/test/integration"
 )
 
 type AppIntegrationTestSuite struct {
@@ -32,11 +34,14 @@ var _ = BeforeSuite(func() {
 		fx.Populate(&suite.appInstallSvc),
 		fx.Populate(&suite.appInstallRepo),
 	)
-	suite.testHelper.WithPreparedTables("apps")
 })
 
 var _ = AfterSuite(func() {
 	suite.testHelper.Stop()
+})
+
+var _ = BeforeEach(func() {
+	suite.testHelper.WithPreparedTables("apps")
 })
 
 var _ = Describe("App create", func() {
@@ -201,7 +206,7 @@ var _ = Describe("Read public Apps", func() {
 		It("should read apps", func() {
 			ctx := context.Background()
 
-			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "0", 500)
+			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "", 500)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(apps).NotTo(BeNil())
@@ -225,7 +230,7 @@ var _ = Describe("Read public Apps", func() {
 		It("should return empty", func() {
 			ctx := context.Background()
 
-			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "0", 500)
+			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "", 500)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(apps).To(HaveLen(0))
