@@ -36,7 +36,7 @@ var _ = BeforeSuite(func() {
 })
 
 var _ = AfterEach(func() {
-	suite.testHelper.CleanTables("apps")
+	suite.testHelper.CleanTables("apps", "app_installations")
 })
 
 var _ = AfterSuite(func() {
@@ -228,7 +228,8 @@ var _ = Describe("Read all by appIDs", func() {
 			ctx := context.Background()
 
 			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
+				Title:     "test app",
+				IsPrivate: false,
 			})
 		})
 
