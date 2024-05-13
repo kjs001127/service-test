@@ -20,11 +20,6 @@ import (
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
 
-const (
-	xAccessTokenHeader  = "x-access-token"
-	authorizationHeader = "Authorization"
-)
-
 // invokeNative godoc
 //
 //	@Summary	invoke Function
@@ -132,21 +127,26 @@ func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.Chan
 	return chCtx
 }
 
+const (
+	xAccessTokenHeader  = "x-access-token"
+	authorizationHeader = "Authorization"
+)
+
 func tokenFrom(ctx *gin.Context) (string, bool) {
 	xAccessToken := ctx.GetHeader(xAccessTokenHeader)
-	if len(xAccessToken) <= 0 {
-		return "", false
+	if len(xAccessToken) > 0 {
+		return xAccessToken, true
 	}
 
 	rawAuthHeader := ctx.GetHeader(authorizationHeader)
-	if len(rawAuthHeader) <= 0 {
-		return "", false
+	if len(rawAuthHeader) > 0 {
+		_, token, ok := strings.Cut(rawAuthHeader, " ")
+		if !ok {
+			return "", false
+		}
+		return token, true
+
 	}
 
-	_, token, ok := strings.Cut(rawAuthHeader, " ")
-	if !ok {
-		return "", false
-	}
-
-	return token, true
+	return "", false
 }
