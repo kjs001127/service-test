@@ -38,6 +38,7 @@ var _ = BeforeSuite(func() {
 
 var _ = AfterSuite(func() {
 	appIntegrationTestSuite.testApp.Stop()
+	appIntegrationTestSuite.testApp.CleanTables("apps", "app_installations")
 })
 
 var _ = Describe("AppRepository Save", func() {

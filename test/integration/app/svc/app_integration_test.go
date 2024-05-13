@@ -35,10 +35,6 @@ var _ = BeforeSuite(func() {
 	suite.testHelper.WithPreparedTables("apps")
 })
 
-var _ = AfterEach(func() {
-	suite.testHelper.CleanTables("apps", "app_installations")
-})
-
 var _ = AfterSuite(func() {
 	suite.testHelper.Stop()
 })
@@ -48,6 +44,10 @@ var _ = Describe("App create", func() {
 	var err error
 
 	Context("when creating an app", func() {
+		AfterEach(func() {
+			suite.appRepository.Delete(context.Background(), app.ID)
+		})
+
 		It("should create an app", func() {
 			ctx := context.Background()
 
@@ -64,6 +64,7 @@ var _ = Describe("App create", func() {
 })
 
 var _ = Describe("App read", func() {
+
 	Context("when app exists", func() {
 		var app *appmodel.App
 
@@ -73,6 +74,10 @@ var _ = Describe("App read", func() {
 			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
 				Title: "test app",
 			})
+		})
+
+		AfterEach(func() {
+			suite.appRepository.Delete(context.Background(), app.ID)
 		})
 
 		It("should read an app", func() {
@@ -109,6 +114,10 @@ var _ = Describe("App update", func() {
 			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
 				Title: "test app",
 			})
+		})
+
+		AfterEach(func() {
+			suite.appRepository.Delete(context.Background(), app.ID)
 		})
 
 		It("should update an app", func() {
@@ -185,6 +194,10 @@ var _ = Describe("Read public Apps", func() {
 			})
 		})
 
+		AfterEach(func() {
+			suite.appRepository.Delete(context.Background(), app.ID)
+		})
+
 		It("should read apps", func() {
 			ctx := context.Background()
 
@@ -233,6 +246,10 @@ var _ = Describe("Read all by appIDs", func() {
 			})
 		})
 
+		AfterEach(func() {
+			suite.appRepository.Delete(context.Background(), app.ID)
+		})
+
 		It("should read apps", func() {
 			ctx := context.Background()
 
@@ -266,6 +283,11 @@ var _ = Describe("Install app", func() {
 			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
 				Title: "test app",
 			})
+		})
+
+		AfterEach(func() {
+			suite.appInstallRepo.DeleteByAppID(context.Background(), app.ID)
+			suite.appRepository.Delete(context.Background(), app.ID)
 		})
 
 		It("should install app", func() {
@@ -309,6 +331,11 @@ var _ = Describe("Install app by channel", func() {
 			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
 				Title: "test app",
 			})
+		})
+
+		AfterEach(func() {
+			suite.appInstallRepo.DeleteByAppID(context.Background(), app.ID)
+			suite.appRepository.Delete(context.Background(), app.ID)
 		})
 
 		It("should install app", func() {

@@ -39,6 +39,7 @@ type PermissionTestSuite struct {
 	installSvc         *managersvc.ManagerAwareInstallSvc
 	lifecycleSvc       crudSvc.AppLifecycleSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
+	appRepo            crudSvc.AppRepository
 }
 
 var suite PermissionTestSuite
@@ -50,6 +51,7 @@ var _ = BeforeSuite(func() {
 		fx.Populate(&suite.appSvc),
 		fx.Populate(&suite.installSvc),
 		fx.Populate(&suite.lifecycleSvc),
+		fx.Populate(&suite.appRepo),
 		Mock[account.ManagerRoleFetcher](&suite.managerRoleFetcher),
 	)
 	suite.helper.WithPreparedTables("apps", "app_accounts")
@@ -61,15 +63,22 @@ var _ = BeforeEach(func() {
 
 var _ = AfterSuite(func() {
 	suite.helper.Stop()
-	suite.helper.CleanTables("apps", "app_accounts")
+	suite.helper.CleanTables("app_installations", "apps", "app_accounts")
 })
 
 var _ = Describe("CreateApp", func() {
+	var app *appmodel.App
+	var err error
+
 	Context("when creating app", func() {
+		AfterEach(func() {
+			suite.appRepo.Delete(context.Background(), app.ID)
+		})
+
 		It("should create app", func() {
 			ctx := context.Background()
 
-			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err = suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 			Expect(app.Title).To(Equal(testTitle))
@@ -78,11 +87,18 @@ var _ = Describe("CreateApp", func() {
 })
 
 var _ = Describe("DeleteApp", func() {
+	var app *appmodel.App
+	var err error
+
 	Context("when deleting app", func() {
+		AfterEach(func() {
+			suite.appRepo.Delete(context.Background(), app.ID)
+		})
+
 		It("should delete app", func() {
 			ctx := context.Background()
 
-			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err = suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 
@@ -94,6 +110,13 @@ var _ = Describe("DeleteApp", func() {
 
 var _ = Describe("InstallApp", func() {
 	Context("when install private App by owner", func() {
+		var app *appmodel.App
+		var err error
+
+		AfterEach(func() {
+			suite.appRepo.Delete(context.Background(), app.ID)
+		})
+
 		It("should install app", func() {
 			ctx := context.Background()
 
@@ -110,7 +133,7 @@ var _ = Describe("InstallApp", func() {
 			}
 			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, ownerRoleID).Return(managerRole, nil)
 
-			app, err := suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
+			app, err = suite.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 			Expect(err).To(BeNil())
 			Expect(app).ToNot(BeNil())
 
@@ -126,6 +149,12 @@ var _ = Describe("InstallApp", func() {
 	})
 
 	Context("when install private App by non-owner", func() {
+		var app *appmodel.App
+
+		AfterEach(func() {
+			suite.appRepo.Delete(context.Background(), app.ID)
+		})
+
 		It("should return error", func() {
 			ctx := context.Background()
 
@@ -142,7 +171,7 @@ var _ = Describe("InstallApp", func() {
 			}
 
 			suite.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
-			app, _ := suite.lifecycleSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
+			app, _ = suite.lifecycleSvc.Create(ctx, &appmodel.App{Title: testTitle, IsPrivate: true})
 
 			installationID := appmodel.InstallationID{
 				AppID:     app.ID,
