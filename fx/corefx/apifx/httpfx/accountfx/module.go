@@ -3,7 +3,6 @@ package accountfx
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/account/app"
-	"github.com/channel-io/ch-app-store/api/http/account/channel"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/api/http/doc"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
@@ -13,7 +12,6 @@ import (
 
 var AccountHandlers = fx.Options(
 	fx.Provide(
-		gintoolfx.AddTag(channel.NewHandler),
 		gintoolfx.AddTag(app.NewHandler),
 
 		fx.Annotate(

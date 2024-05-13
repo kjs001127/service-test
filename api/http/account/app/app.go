@@ -93,7 +93,7 @@ func (h *Handler) listApps(ctx *gin.Context) {
 //	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200			{object}	[]dto.AppResponse
-//	@Router		/desk/account/apps  [get]
+//	@Router		/desk/account/auth/apps  [get]
 func (h *Handler) getCallableApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 
