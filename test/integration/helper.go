@@ -54,3 +54,12 @@ func (t *TestHelper) WithPreparedTables(tableNames ...string) *TestHelper {
 	}
 	return t
 }
+
+func (t *TestHelper) CleanTables(tableNames ...string) {
+	for _, tableName := range tableNames {
+		dataSource := *t.DB
+		if _, err := dataSource.Exec("TRUNCATE TABLE " + tableName + " CASCADE"); err != nil {
+			panic(err)
+		}
+	}
+}

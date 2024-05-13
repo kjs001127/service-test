@@ -52,6 +52,7 @@ var _ = BeforeSuite(func() {
 		fx.Populate(&suite.lifecycleSvc),
 		Mock[account.ManagerRoleFetcher](&suite.managerRoleFetcher),
 	)
+	suite.helper.WithPreparedTables("apps", "app_accounts")
 })
 
 var _ = BeforeEach(func() {
@@ -60,7 +61,7 @@ var _ = BeforeEach(func() {
 
 var _ = AfterSuite(func() {
 	suite.helper.Stop()
-	suite.helper.WithPreparedTables("app_accounts")
+	suite.helper.CleanTables("apps", "app_accounts")
 })
 
 var _ = Describe("CreateApp", func() {

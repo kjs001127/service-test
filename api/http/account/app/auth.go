@@ -18,10 +18,10 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path	string	true	"appId"
-//	@Param		roleType	path	string	true	"roleType"
+//	@Param		appId		path		string	true	"appId"
+//	@Param		roleType	path		string	true	"roleType"
 //
-//	@Success	200		{object}	dto.RoleView
+//	@Success	200			{object}	dto.RoleView
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchRole(ctx *gin.Context) {
 	acc := middleware.Account(ctx)

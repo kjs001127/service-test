@@ -1,4 +1,4 @@
-package app_test
+package dao_test
 
 import (
 	"context"
