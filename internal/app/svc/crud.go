@@ -67,11 +67,16 @@ func (a *AppLifecycleSvcImpl) Create(ctx context.Context, app *model.App) (*mode
 		app.ID = uid.New().Hex()
 		app.State = model.AppStateEnabled
 
+		ret, err := a.appRepo.Save(ctx, app)
+		if err != nil {
+			return nil, err
+		}
+
 		if err := a.callCreateHooks(ctx, app); err != nil {
 			return nil, err
 		}
 
-		return a.appRepo.Save(ctx, app)
+		return ret, nil
 	})
 }
 
@@ -82,11 +87,16 @@ func (a *AppLifecycleSvcImpl) Update(ctx context.Context, app *model.App) (*mode
 			return nil, err
 		}
 
+		ret, err := a.appRepo.Save(ctx, app)
+		if err != nil {
+			return nil, err
+		}
+
 		if err := a.callModifyHooks(ctx, appBefore, app); err != nil {
 			return nil, err
 		}
 
-		return a.appRepo.Save(ctx, app)
+		return ret, nil
 	})
 }
 
