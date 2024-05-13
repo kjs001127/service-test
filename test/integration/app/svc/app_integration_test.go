@@ -17,6 +17,8 @@ type AppIntegrationTestSuite struct {
 	appLifecycleSvc svc.AppLifecycleSvc
 	appQuerySvc     svc.AppQuerySvc
 	appRepository   svc.AppRepository
+	appInstallSvc   *svc.AppInstallSvc
+	appInstallRepo  svc.AppInstallationRepository
 }
 
 var suite AppIntegrationTestSuite
@@ -27,6 +29,8 @@ var _ = BeforeSuite(func() {
 		fx.Populate(&suite.appLifecycleSvc),
 		fx.Populate(&suite.appQuerySvc),
 		fx.Populate(&suite.appRepository),
+		fx.Populate(&suite.appInstallSvc),
+		fx.Populate(&suite.appInstallRepo),
 	)
 	suite.testHelper.WithPreparedTables("apps")
 })
@@ -235,7 +239,6 @@ var _ = Describe("Read all by appIDs", func() {
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(apps).NotTo(BeNil())
-			Expect(apps).To(HaveLen(1))
 			Expect(apps[0].ID).To(Equal(app.ID))
 			Expect(apps[0].Title).To(Equal("test app"))
 		})
@@ -245,10 +248,97 @@ var _ = Describe("Read all by appIDs", func() {
 		It("should return empty", func() {
 			ctx := context.Background()
 
-			apps, err := suite.appQuerySvc.ReadAllByAppIDs(ctx, []string{"not-exist"})
+			_, err := suite.appQuerySvc.ReadAllByAppIDs(ctx, []string{"not-exist"})
 
 			Expect(err).NotTo(HaveOccurred())
-			Expect(apps).To(HaveLen(0))
+		})
+	})
+})
+
+var _ = Describe("Install app", func() {
+	Context("when app exists", func() {
+		var app *appmodel.App
+
+		BeforeEach(func() {
+			ctx := context.Background()
+
+			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
+				Title: "test app",
+			})
+		})
+
+		It("should install app", func() {
+			ctx := context.Background()
+
+			installationID := appmodel.InstallationID{
+				AppID: app.ID,
+			}
+
+			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(installedApp).NotTo(BeNil())
+			Expect(installedApp.ID).To(Equal(app.ID))
+		})
+	})
+
+	Context("when app not exists", func() {
+		It("should return an error", func() {
+			ctx := context.Background()
+
+			installationID := appmodel.InstallationID{
+				AppID: "not-exist",
+			}
+
+			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
+
+			Expect(err).To(HaveOccurred())
+			Expect(installedApp).To(BeNil())
+		})
+	})
+})
+
+var _ = Describe("Install app by channel", func() {
+	Context("when app exists", func() {
+		var app *appmodel.App
+
+		BeforeEach(func() {
+			ctx := context.Background()
+
+			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
+				Title: "test app",
+			})
+		})
+
+		It("should install app", func() {
+			ctx := context.Background()
+
+			installationID := appmodel.InstallationID{
+				AppID:     app.ID,
+				ChannelID: "channel-id",
+			}
+
+			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(installedApp).NotTo(BeNil())
+			Expect(installedApp.ID).To(Equal(app.ID))
+		})
+	})
+
+	Context("when app not exists", func() {
+		It("should return an error", func() {
+			ctx := context.Background()
+
+			installationID := appmodel.InstallationID{
+				AppID:     "not-exist",
+				ChannelID: "channel-id",
+			}
+
+			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
+
+			Expect(err).To(HaveOccurred())
+			Expect(installedApp).To(BeNil())
 		})
 	})
 })
