@@ -49,7 +49,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 //	@Success	200						{object}	json.RawMessage
 //	@Router		/admin/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID := ctx.Param("id")
+	appID := ctx.Param("appID")
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {

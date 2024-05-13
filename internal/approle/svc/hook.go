@@ -7,12 +7,11 @@ import (
 )
 
 type RoleAppLifeCycleHook struct {
-	svc      *AppRoleSvc
-	tokenSvc *TokenSvc
+	svc *AppRoleSvc
 }
 
-func NewRoleClearHook(svc *AppRoleSvc, tokenSvc *TokenSvc) *RoleAppLifeCycleHook {
-	return &RoleAppLifeCycleHook{svc: svc, tokenSvc: tokenSvc}
+func NewRoleClearHook(svc *AppRoleSvc) *RoleAppLifeCycleHook {
+	return &RoleAppLifeCycleHook{svc: svc}
 }
 
 func (r RoleAppLifeCycleHook) OnAppCreate(ctx context.Context, app *model.App) error {
@@ -23,7 +22,7 @@ func (r RoleAppLifeCycleHook) OnAppDelete(ctx context.Context, app *model.App) e
 	if err := r.svc.DeleteRoles(ctx, app.ID); err != nil {
 		return err
 	}
-	if err := r.tokenSvc.DeleteAppSecret(ctx, app.ID); err != nil {
+	if err := r.svc.DeleteAppSecret(ctx, app.ID); err != nil {
 		return err
 	}
 	return nil

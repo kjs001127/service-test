@@ -23,6 +23,6 @@ func NewHandler(
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {
-	router.PUT("/admin/apps/:id/functions", h.invoke)
+	router.PUT("/admin/apps/:appID/functions", h.invoke)
 	router.PUT("/admin/native/functions", h.invokeNative)
 }

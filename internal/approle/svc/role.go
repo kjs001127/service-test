@@ -2,6 +2,8 @@ package svc
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
@@ -14,10 +16,11 @@ import (
 )
 
 type AppRoleSvc struct {
-	roleCli  authgen.RoleFetcher
-	roleRepo AppRoleRepository
-	typeRule map[model.RoleType]TypeRule
-	appSvc   app.AppQuerySvc
+	roleCli    authgen.RoleFetcher
+	roleRepo   AppRoleRepository
+	secretRepo AppSecretRepository
+	typeRule   map[model.RoleType]TypeRule
+	appSvc     app.AppQuerySvc
 }
 
 func NewAppRoleSvc(
@@ -25,12 +28,14 @@ func NewAppRoleSvc(
 	roleRepo AppRoleRepository,
 	typeRule map[model.RoleType]TypeRule,
 	appSvc app.AppQuerySvc,
+	secretRepo AppSecretRepository,
 ) *AppRoleSvc {
 	return &AppRoleSvc{
-		roleCli:  roleCli,
-		roleRepo: roleRepo,
-		typeRule: typeRule,
-		appSvc:   appSvc,
+		roleCli:    roleCli,
+		roleRepo:   roleRepo,
+		typeRule:   typeRule,
+		secretRepo: secretRepo,
+		appSvc:     appSvc,
 	}
 }
 
@@ -182,4 +187,41 @@ func (s *AppRoleSvc) GetAvailableClaims(ctx context.Context, roleType model.Role
 		})
 	}
 	return ret, nil
+}
+
+func (s *AppRoleSvc) DeleteAppSecret(ctx context.Context, appID string) error {
+	return s.secretRepo.Delete(ctx, appID)
+}
+
+func (s *AppRoleSvc) RefreshAppSecret(ctx context.Context, appID string) (string, error) {
+	token, err := generateSecret()
+	if err != nil {
+		return "", err
+	}
+
+	if err := s.secretRepo.Save(ctx, &model.AppSecret{
+		AppID:  appID,
+		Secret: token,
+	}); err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func generateSecret() (string, error) {
+	randomBytes := make([]byte, 16)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return "", err
+	}
+	secret := base64.URLEncoding.EncodeToString(randomBytes)
+	return secret, nil
+}
+
+func (s *AppRoleSvc) HasIssuedBefore(ctx context.Context, appID string) (bool, error) {
+	_, err := s.secretRepo.FetchByAppID(ctx, appID)
+	if apierr.IsNotFound(err) {
+		return false, nil
+	}
+	return true, nil
 }

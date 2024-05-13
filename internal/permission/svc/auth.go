@@ -10,15 +10,13 @@ import (
 type AccountAuthPermissionSvc struct {
 	appAccountRepo AppAccountRepo
 	delegate       *svc.AppRoleSvc
-	tokenSvc       *svc.TokenSvc
 }
 
 func NewAccountAuthPermissionSvc(
 	appAccountRepo AppAccountRepo,
 	delegate *svc.AppRoleSvc,
-	tokenSvc *svc.TokenSvc,
 ) *AccountAuthPermissionSvc {
-	return &AccountAuthPermissionSvc{appAccountRepo: appAccountRepo, delegate: delegate, tokenSvc: tokenSvc}
+	return &AccountAuthPermissionSvc{appAccountRepo: appAccountRepo, delegate: delegate}
 }
 
 func (s *AccountAuthPermissionSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, claims []*model.Claim, accountID string) ([]*model.Claim, error) {
@@ -45,12 +43,12 @@ func (s *AccountAuthPermissionSvc) HasTokenIssuedBefore(ctx context.Context, app
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return false, err
 	}
-	return s.tokenSvc.HasIssuedBefore(ctx, appID)
+	return s.delegate.HasIssuedBefore(ctx, appID)
 }
 
 func (s *AccountAuthPermissionSvc) RefreshToken(ctx context.Context, appID string, accountID string) (string, error) {
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return "", err
 	}
-	return s.tokenSvc.RefreshAppSecret(ctx, appID)
+	return s.delegate.RefreshAppSecret(ctx, appID)
 }
