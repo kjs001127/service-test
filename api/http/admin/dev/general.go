@@ -14,10 +14,10 @@ import (
 //	@Summary	fetch App general
 //	@Tags		Public
 //
-//	@Param		appID	path		string	true	"appID"
+//	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	dto.AppResponse
+//	@Success	200			{object}	dto.AppResponse
 //	@Router		/desk/account/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")

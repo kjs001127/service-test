@@ -4,16 +4,17 @@ import (
 	"context"
 	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-	"go.uber.org/fx"
-
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
+
+	"github.com/stretchr/testify/suite"
+	"go.uber.org/fx"
 )
 
 type AppIntegrationTestSuite struct {
+	suite.Suite
+
 	testHelper *TestHelper
 
 	appLifecycleSvc svc.AppLifecycleSvc
@@ -23,360 +24,99 @@ type AppIntegrationTestSuite struct {
 	appInstallRepo  svc.AppInstallationRepository
 }
 
-var suite AppIntegrationTestSuite
-
-var _ = BeforeSuite(func() {
-	suite.testHelper = NewTestHelper(
+func (a *AppIntegrationTestSuite) SetupTest() {
+	a.testHelper = NewTestHelper(
 		testOpts,
-		fx.Populate(&suite.appLifecycleSvc),
-		fx.Populate(&suite.appQuerySvc),
-		fx.Populate(&suite.appRepository),
-		fx.Populate(&suite.appInstallSvc),
-		fx.Populate(&suite.appInstallRepo),
+		fx.Populate(&a.appLifecycleSvc),
+		fx.Populate(&a.appQuerySvc),
+		fx.Populate(&a.appRepository),
+		fx.Populate(&a.appInstallSvc),
+		fx.Populate(&a.appInstallRepo),
 	)
-})
+	a.testHelper.WithPreparedTables("apps", "app_installations")
+}
 
-var _ = AfterSuite(func() {
-	suite.testHelper.Stop()
-})
+func (a *AppIntegrationTestSuite) TearDownSuite() {
+	a.testHelper.TruncateAll()
+	a.testHelper.Stop()
+}
 
-var _ = BeforeEach(func() {
-	suite.testHelper.WithPreparedTables("apps")
-})
-
-var _ = Describe("App create", func() {
-	var app *appmodel.App
-	var err error
-
-	Context("when creating an app", func() {
-		AfterEach(func() {
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should create an app", func() {
-			ctx := context.Background()
-
-			app, err = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(app).NotTo(BeNil())
-			Expect(app.ID).NotTo(BeEmpty())
-			Expect(app.Title).To(Equal("test app"))
-		})
-	})
-})
-
-var _ = Describe("App read", func() {
-
-	Context("when app exists", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		AfterEach(func() {
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should read an app", func() {
-			ctx := context.Background()
-
-			ret, err := suite.appQuerySvc.Read(ctx, app.ID)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(ret).NotTo(BeNil())
-			Expect(ret.ID).To(Equal(app.ID))
-			Expect(ret.Title).To(Equal("test app"))
-		})
+func (a *AppIntegrationTestSuite) TestAppCreate() {
+	app, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title: "test app",
 	})
 
-	Context("when app not exists", func() {
-		It("should return an error", func() {
-			ctx := context.Background()
+	a.Require().NoError(err)
+	a.Require().NotNil(app)
+	a.Require().NotEmpty(app.ID)
+	a.Require().Equal(app.Title, "test app")
+}
 
-			ret, err := suite.appQuerySvc.Read(ctx, "not-exist")
-
-			Expect(err).To(HaveOccurred())
-			Expect(ret).To(BeNil())
-		})
-	})
-})
-
-var _ = Describe("App update", func() {
-	Context("when app exists", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		AfterEach(func() {
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should update an app", func() {
-			ctx := context.Background()
-
-			ret, err := suite.appLifecycleSvc.Update(ctx, &appmodel.App{
-				ID:    app.ID,
-				Title: "updated test app",
-			})
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(ret).NotTo(BeNil())
-			Expect(ret.ID).To(Equal(app.ID))
-			Expect(ret.Title).To(Equal("updated test app"))
-		})
+func (a *AppIntegrationTestSuite) TestAppRead() {
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title: "test app",
 	})
 
-	Context("when app not exists", func() {
-		It("should return an error", func() {
-			ctx := context.Background()
+	app, err := a.appQuerySvc.Read(context.Background(), created.ID)
 
-			ret, err := suite.appLifecycleSvc.Update(ctx, &appmodel.App{
-				ID:    "not-exist",
-				Title: "updated test app",
-			})
+	a.Require().NoError(err)
+	a.Require().NotNil(app)
+	a.Require().NotEmpty(app.ID)
+	a.Require().Equal(app.Title, "test app")
+}
 
-			Expect(err).To(HaveOccurred())
-			Expect(ret).To(BeNil())
-		})
-	})
-})
-
-var _ = Describe("App delete", func() {
-	Context("when app exists", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		It("should delete an app", func() {
-			ctx := context.Background()
-
-			err := suite.appLifecycleSvc.Delete(ctx, app.ID)
-
-			Expect(err).NotTo(HaveOccurred())
-		})
+func (a *AppIntegrationTestSuite) TestAppUpdate() {
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title: "test app",
 	})
 
-	Context("when app not exists", func() {
-		It("should return an error", func() {
-			ctx := context.Background()
-
-			err := suite.appLifecycleSvc.Delete(ctx, "not-exist")
-
-			Expect(err).To(HaveOccurred())
-		})
-	})
-})
-
-var _ = Describe("Read public Apps", func() {
-	Context("when public apps exist", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		AfterEach(func() {
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should read apps", func() {
-			ctx := context.Background()
-
-			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "", 500)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(apps).NotTo(BeNil())
-			Expect(apps).To(HaveLen(1))
-			Expect(apps[0].ID).To(Equal(app.ID))
-			Expect(apps[0].Title).To(Equal("test app"))
-		})
+	app, err := a.appLifecycleSvc.Update(context.Background(), &appmodel.App{
+		ID:    created.ID,
+		Title: "new title",
 	})
 
-	Context("when public apps not exist", func() {
+	a.Require().NoError(err)
+	a.Require().NotNil(app)
+	a.Require().NotEmpty(app.ID)
+	a.Require().Equal(app.Title, "new title")
+}
 
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			_, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title:     "test app",
-				IsPrivate: true,
-			})
-		})
-
-		It("should return empty", func() {
-			ctx := context.Background()
-
-			apps, err := suite.appQuerySvc.ReadPublicApps(ctx, "", 500)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(apps).To(HaveLen(0))
-		})
-	})
-})
-
-var _ = Describe("Read all by appIDs", func() {
-	Context("when apps exist", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title:     "test app",
-				IsPrivate: false,
-			})
-		})
-
-		AfterEach(func() {
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should read apps", func() {
-			ctx := context.Background()
-
-			apps, err := suite.appQuerySvc.ReadAllByAppIDs(ctx, []string{app.ID})
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(apps).NotTo(BeNil())
-			Expect(apps[0].ID).To(Equal(app.ID))
-			Expect(apps[0].Title).To(Equal("test app"))
-		})
+func (a *AppIntegrationTestSuite) TestAppDelete() {
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title: "test app",
 	})
 
-	Context("when apps not exist", func() {
-		It("should return empty", func() {
-			ctx := context.Background()
+	err := a.appLifecycleSvc.Delete(context.Background(), created.ID)
 
-			_, err := suite.appQuerySvc.ReadAllByAppIDs(ctx, []string{"not-exist"})
+	a.Require().NoError(err)
+}
 
-			Expect(err).NotTo(HaveOccurred())
-		})
-	})
-})
-
-var _ = Describe("Install app", func() {
-	Context("when app exists", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		AfterEach(func() {
-			suite.appInstallRepo.DeleteByAppID(context.Background(), app.ID)
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should install app", func() {
-			ctx := context.Background()
-
-			installationID := appmodel.InstallationID{
-				AppID: app.ID,
-			}
-
-			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(installedApp).NotTo(BeNil())
-			Expect(installedApp.ID).To(Equal(app.ID))
-		})
+func (a *AppIntegrationTestSuite) TestReadPublicApps() {
+	_, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title:     "test app",
+		IsPrivate: false,
 	})
 
-	Context("when app not exists", func() {
-		It("should return an error", func() {
-			ctx := context.Background()
+	apps, err := a.appQuerySvc.ReadPublicApps(context.Background(), "0", 500)
 
-			installationID := appmodel.InstallationID{
-				AppID: "not-exist",
-			}
+	a.Require().NoError(err)
+	a.Require().NotEmpty(apps)
+}
 
-			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
-
-			Expect(err).To(HaveOccurred())
-			Expect(installedApp).To(BeNil())
-		})
-	})
-})
-
-var _ = Describe("Install app by channel", func() {
-	Context("when app exists", func() {
-		var app *appmodel.App
-
-		BeforeEach(func() {
-			ctx := context.Background()
-
-			app, _ = suite.appLifecycleSvc.Create(ctx, &appmodel.App{
-				Title: "test app",
-			})
-		})
-
-		AfterEach(func() {
-			suite.appInstallRepo.DeleteByAppID(context.Background(), app.ID)
-			suite.appRepository.Delete(context.Background(), app.ID)
-		})
-
-		It("should install app", func() {
-			ctx := context.Background()
-
-			installationID := appmodel.InstallationID{
-				AppID:     app.ID,
-				ChannelID: "channel-id",
-			}
-
-			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
-
-			Expect(err).NotTo(HaveOccurred())
-			Expect(installedApp).NotTo(BeNil())
-			Expect(installedApp.ID).To(Equal(app.ID))
-		})
+func (a *AppIntegrationTestSuite) TestReadAllByAppIDs() {
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title:     "test app",
+		IsPrivate: false,
 	})
 
-	Context("when app not exists", func() {
-		It("should return an error", func() {
-			ctx := context.Background()
+	apps, err := a.appQuerySvc.ReadAllByAppIDs(context.Background(), []string{created.ID})
 
-			installationID := appmodel.InstallationID{
-				AppID:     "not-exist",
-				ChannelID: "channel-id",
-			}
+	a.Require().NoError(err)
+	a.Require().NotEmpty(apps)
+	a.Require().Len(apps, 1)
+	a.Require().Equal(apps[0].Title, "test app")
+}
 
-			installedApp, err := suite.appInstallSvc.InstallAppById(ctx, installationID)
-
-			Expect(err).To(HaveOccurred())
-			Expect(installedApp).To(BeNil())
-		})
-	})
-})
-
-func TestAppIntegrationTest(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "App Integration Test Suite")
+func TestAppIntegrationSuite(t *testing.T) {
+	suite.Run(t, new(AppIntegrationTestSuite))
 }

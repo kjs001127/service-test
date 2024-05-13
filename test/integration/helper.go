@@ -2,7 +2,9 @@ package integration
 
 import (
 	"context"
+	"reflect"
 
+	"github.com/channel-io/ch-app-store/generated/models"
 	datasource "github.com/channel-io/ch-app-store/lib/db"
 
 	"go.uber.org/fx"
@@ -62,4 +64,16 @@ func (t *TestHelper) CleanTables(tableNames ...string) {
 			panic(err)
 		}
 	}
+}
+
+func (t *TestHelper) TruncateAll() *TestHelper {
+	v := reflect.ValueOf(models.TableNames)
+	numFields := v.NumField()
+	for i := 0; i < numFields; i++ {
+		dataSource := *t.DB
+		if _, err := dataSource.Exec("TRUNCATE TABLE " + v.Field(i).String() + " CASCADE"); err != nil {
+			panic(err)
+		}
+	}
+	return t
 }

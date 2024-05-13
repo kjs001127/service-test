@@ -15,7 +15,7 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appID		path		string	true	"appID"
+//	@Param		appID	path		string	true	"appID"
 //
 //	@Success	200		{object}	settingsvc.Urls
 //	@Router		/admin/apps/{appID}/server-settings/endpoints  [get]
@@ -62,7 +62,7 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //	@Summary	refresh signing key
 //	@Tags		Public
 //
-//	@Param		appID		path		string	true	"appID"
+//	@Param		appID	path		string	true	"appID"
 //
 //	@Success	200		{object}	dto.SigningKey
 //	@Router		/admin/apps/{appID}/server-settings/signing-key  [put]

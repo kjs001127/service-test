@@ -4,13 +4,12 @@ import (
 	"context"
 	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-	"go.uber.org/fx"
-
-	app "github.com/channel-io/ch-app-store/internal/app/model"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
+
+	"github.com/stretchr/testify/suite"
+	"go.uber.org/fx"
 )
 
 const (
@@ -19,95 +18,141 @@ const (
 )
 
 type AppDAOTestSuite struct {
+	suite.Suite
+
 	testApp *TestHelper
 
 	appRepository             svc.AppRepository
 	appInstallationRepository svc.AppInstallationRepository
 }
 
-var appIntegrationTestSuite AppDAOTestSuite
-
-var _ = BeforeSuite(func() {
-	appIntegrationTestSuite.testApp = NewTestHelper(
+func (a *AppDAOTestSuite) SetupTest() {
+	a.testApp = NewTestHelper(
 		testOpts,
-		fx.Populate(&appIntegrationTestSuite.appRepository),
-		fx.Populate(&appIntegrationTestSuite.appInstallationRepository),
+		fx.Populate(&a.appRepository),
+		fx.Populate(&a.appInstallationRepository),
 	)
-	appIntegrationTestSuite.testApp.WithPreparedTables("apps", "app_installations")
-})
+	a.testApp.WithPreparedTables("apps", "app_installations")
+}
 
-var _ = AfterSuite(func() {
-	appIntegrationTestSuite.testApp.Stop()
-	appIntegrationTestSuite.testApp.CleanTables("apps", "app_installations")
-})
+func (a *AppDAOTestSuite) TearDownSuite() {
+	a.testApp.TruncateAll()
+	a.testApp.Stop()
+}
 
-var _ = Describe("AppRepository Save", func() {
-	Context("when app is saved", func() {
-		It("should save app", func() {
-			app := app.App{
-				ID:        appID,
-				IsPrivate: false,
-			}
+func (a *AppDAOTestSuite) TestAppSave() {
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
 
-			ctx := context.Background()
+	ctx := context.Background()
 
-			res, err := appIntegrationTestSuite.appRepository.Save(ctx, &app)
+	res, err := a.appRepository.Save(ctx, app)
 
-			Expect(err).To(BeNil())
-			Expect(res).To(Not(BeNil()))
+	a.Require().NoError(err)
+	a.Require().NotNil(res)
 
-			res, err = appIntegrationTestSuite.appRepository.FindApp(ctx, appID)
+	res, err = a.appRepository.FindApp(ctx, appID)
 
-			Expect(err).To(BeNil())
-			Expect(res).To(Not(BeNil()))
-		})
-	})
-})
+	a.Require().NoError(err)
+	a.Require().NotNil(res)
+}
 
-var _ = Describe("AppRepository FindApp", func() {
-	Context("when app is found", func() {
-		It("should find app", func() {
-			app := app.App{
-				ID:        appID,
-				IsPrivate: false,
-			}
+func (a *AppDAOTestSuite) TestAppFind() {
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
 
-			ctx := context.Background()
+	ctx := context.Background()
 
-			_, _ = appIntegrationTestSuite.appRepository.Save(ctx, &app)
-			res, err := appIntegrationTestSuite.appRepository.FindApp(ctx, appID)
+	_, _ = a.appRepository.Save(ctx, app)
+	res, err := a.appRepository.FindApp(ctx, appID)
 
-			Expect(err).To(BeNil())
-			Expect(res).To(Not(BeNil()))
-		})
-	})
-})
+	a.Require().NoError(err)
+	a.Require().NotNil(res)
+}
 
-var _ = Describe("AppInstallation Save", func() {
-	Context("when app channel is saved", func() {
-		It("should save app channel", func() {
-			appChannel := &app.AppInstallation{
-				ChannelID: channelID,
-				AppID:     appID,
-			}
+func (a *AppDAOTestSuite) TestAppDelete() {
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
 
-			app := app.App{
-				ID:        appID,
-				IsPrivate: false,
-			}
+	ctx := context.Background()
 
-			ctx := context.Background()
+	_, _ = a.appRepository.Save(ctx, app)
+	err := a.appRepository.Delete(ctx, appID)
 
-			_, _ = appIntegrationTestSuite.appRepository.Save(ctx, &app)
+	a.Require().NoError(err)
+}
 
-			err := appIntegrationTestSuite.appInstallationRepository.Save(context.Background(), appChannel)
+func (a *AppDAOTestSuite) TestAppInstallationSave() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
 
-			Expect(err).To(BeNil())
-		})
-	})
-})
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
+
+	ctx := context.Background()
+
+	_, _ = a.appRepository.Save(ctx, app)
+	err := a.appInstallationRepository.Save(ctx, appChannel)
+
+	a.Require().NoError(err)
+}
+
+func (a *AppDAOTestSuite) TestAppInstallationDelete() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
+
+	ctx := context.Background()
+
+	_, _ = a.appRepository.Save(ctx, app)
+	_ = a.appInstallationRepository.Save(ctx, appChannel)
+	err := a.appInstallationRepository.DeleteByAppID(ctx, appID)
+
+	a.Require().NoError(err)
+}
+
+func (a *AppDAOTestSuite) TestAppInstallationFind() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	installationID := appmodel.InstallationID{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	app := &appmodel.App{
+		ID:        appID,
+		IsPrivate: false,
+	}
+
+	ctx := context.Background()
+
+	_, _ = a.appRepository.Save(ctx, app)
+	_ = a.appInstallationRepository.Save(ctx, appChannel)
+	res, err := a.appInstallationRepository.Fetch(ctx, installationID)
+
+	a.Require().NoError(err)
+	a.Require().NotNil(res)
+}
 
 func TestAppDAOs(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "AppDAOTestSuite")
+	suite.Run(t, new(AppDAOTestSuite))
 }

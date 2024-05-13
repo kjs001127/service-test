@@ -19,7 +19,7 @@ import (
 //
 //	@Param		app.AppCreateRequest	body		dto.AppCreateRequest	true	"App title to create"
 //
-//	@Success	201				{object}	dto.AppResponse
+//	@Success	201						{object}	dto.AppResponse
 //	@Router		/admin/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	var request dto.AppCreateRequest
