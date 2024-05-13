@@ -5,7 +5,9 @@ import (
 	_ "encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
@@ -14,7 +16,6 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/shared/dto"
 
-	"github.com/channel-io/ch-app-store/api/http/general/middleware"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
 )
@@ -36,12 +37,12 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 		return
 	}
 
-	rbacToken := middleware.RBAC(ctx)
+	rbacToken, exists := tokenFrom(ctx)
 
 	resp := h.nativeInvoker.Invoke(ctx,
 		native.Token{
-			Type:  "x-access-token",
-			Value: rbacToken.Token.Value(),
+			Exists: exists,
+			Value:  rbacToken,
 		},
 		native.FunctionRequest{
 			Method: req.Method,
@@ -72,9 +73,13 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	rbacToken := middleware.RBAC(ctx)
+	token, err := h.rbacFrom(ctx)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
 
-	if err := authFnCall(rbacToken, appID, req.Context.Channel.ID, req.Method); err != nil {
+	if err := authFnCall(token, appID, req.Context.Channel.ID, req.Method); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -84,12 +89,26 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		appID,
 		app.TypedRequest[json.RawMessage]{
 			FunctionName: req.Method,
-			Context:      fillCaller(rbacToken, req.Context),
+			Context:      fillCaller(token, req.Context),
 			Params:       req.Params,
 		},
 	)
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) rbacFrom(ctx *gin.Context) (genauth.ParsedRBACToken, error) {
+	token, exists := tokenFrom(ctx)
+	if !exists {
+		return genauth.ParsedRBACToken{}, apierr.Unauthorized(errors.New("token not found"))
+	}
+
+	parsed, err := h.parser.Parse(ctx, token)
+	if err != nil {
+		return genauth.ParsedRBACToken{}, apierr.Unauthorized(errors.New("token not valid"))
+	}
+
+	return parsed, nil
 }
 
 func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn string) error {
@@ -106,4 +125,25 @@ func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.Chan
 	chCtx.Caller.Type = app.CallerType(rbac.Caller.Type)
 	chCtx.Caller.ID = rbac.Caller.ID
 	return chCtx
+}
+
+const (
+	xAccessTokenHeader  = "x-access-token"
+	authorizationHeader = "Authorization"
+)
+
+func tokenFrom(ctx *gin.Context) (string, bool) {
+	xAccessToken := ctx.GetHeader(xAccessTokenHeader)
+	if len(xAccessToken) > 0 {
+		return xAccessToken, true
+	}
+
+	rawAuthHeader := ctx.GetHeader(authorizationHeader)
+	if len(rawAuthHeader) > 0 {
+		_, token, ok := strings.Cut(rawAuthHeader, " ")
+		return token, ok
+
+	}
+
+	return "", false
 }

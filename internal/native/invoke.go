@@ -9,8 +9,8 @@ import (
 )
 
 type Token struct {
-	Type  string
-	Value string
+	Exists bool
+	Value  string
 }
 
 type FunctionRequest struct {
