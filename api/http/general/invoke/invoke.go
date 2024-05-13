@@ -141,10 +141,7 @@ func tokenFrom(ctx *gin.Context) (string, bool) {
 	rawAuthHeader := ctx.GetHeader(authorizationHeader)
 	if len(rawAuthHeader) > 0 {
 		_, token, ok := strings.Cut(rawAuthHeader, " ")
-		if !ok {
-			return "", false
-		}
-		return token, true
+		return token, ok
 
 	}
 
