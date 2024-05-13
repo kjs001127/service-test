@@ -31,5 +31,5 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.GET("/apps", h.getApps)
 	group.GET("/apps/:appID", h.getAppDetail)
-	group.GET("/apps/:appID/claims", h.getAppRole)
+	group.GET("/apps/:appID/claims", h.getAppRoles)
 }
