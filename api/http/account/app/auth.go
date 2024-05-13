@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,9 +10,10 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 )
 
-// fetchClaims godoc
+// fetchRole godoc
 //
 //	@Summary	fetch App
 //	@Tags		Public
@@ -19,20 +21,34 @@ import (
 //	@Param		appId		path	string	true	"appId"
 //	@Param		roleType	path	string	true	"roleType"
 //
-//	@Success	200			{array}	model.Claim
+//	@Success	200		{object}	dto.RoleView
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
-func (h *Handler) fetchClaims(ctx *gin.Context) {
-	account := middleware.Account(ctx)
+func (h *Handler) fetchRole(ctx *gin.Context) {
+	acc := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
-
-	claims, err := h.authPermissionSvc.FetchRole(ctx, appID, roleType, account.ID)
+	view, err := h.roleViewOf(ctx, appID, acc.Account, roleType)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, claims)
+	ctx.JSON(http.StatusOK, view)
+}
+
+func (h *Handler) roleViewOf(ctx context.Context, appID string, account account.Account, roleType model.RoleType) (*dto.RoleView, error) {
+	claims, err := h.authPermissionSvc.FetchRole(ctx, appID, roleType, account.ID)
+	if err != nil {
+		return nil, err
+	}
+	availableClaims, err := h.authPermissionSvc.GetAvailableClaims(ctx, roleType)
+	if err != nil {
+		return nil, err
+	}
+	return &dto.RoleView{
+		AvailableClaims: availableClaims,
+		Claims:          claims,
+	}, nil
 }
 
 // modifyClaims godoc
