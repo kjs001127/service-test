@@ -39,8 +39,8 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
-	Description     *string        `json:"description"`
-	NameDescI18NMap map[string]any `json:"nameDescI18nMap"`
+	Description     *string            `json:"description"`
+	NameDescI18NMap map[string]I18nMap `json:"nameDescI18nMap"`
 
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        AlfMode `json:"alfMode"`
@@ -52,6 +52,11 @@ type Command struct {
 
 	UpdatedAt time.Time `json:"-"`
 	CreatedAt time.Time `json:"-"`
+}
+
+type I18nMap struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 func (c *Command) Validate() error {

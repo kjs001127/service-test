@@ -13,7 +13,6 @@ type Handler struct {
 	activationSvc *command.ToggleSvc
 }
 
-// TODO: fx 주입시, serviceName ParamTag 추가
 func NewHandler(
 	serviceName string,
 	rbacParser authgen.Parser,
