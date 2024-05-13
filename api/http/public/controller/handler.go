@@ -28,4 +28,5 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 		panic(err)
 	}
 	router.StaticFS("/public/v1/wam-controller", http.FS(static))
+	router.StaticFS("/public/wam-controller/v1", http.FS(static))
 }
