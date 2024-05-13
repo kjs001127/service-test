@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
@@ -39,8 +40,10 @@ func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.RoleViews,
 	roleTypes := []model.RoleType{model.RoleTypeManager, model.RoleTypeUser, model.RoleTypeChannel}
 	ret := make(dto.RoleViews, 0, len(roleTypes))
 	for _, roleType := range roleTypes {
-		role, err := h.authSvc.FetchRole(ctx, appID, model.RoleTypeApp)
-		if err != nil {
+		role, err := h.authSvc.FetchRole(ctx, appID, roleType)
+		if apierr.IsNotFound(err) {
+			continue
+		} else if err != nil {
 			return nil, err
 		}
 		ret = append(ret, dto.RoleView{
