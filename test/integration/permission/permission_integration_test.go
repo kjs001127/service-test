@@ -48,10 +48,10 @@ func (p *PermissionTestSuite) SetupTest() {
 		fx.Populate(&p.lifecycleSvc),
 		Mock[account.ManagerRoleFetcher](&p.managerRoleFetcher),
 	)
+	p.helper.TruncateAll()
 }
 
 func (p *PermissionTestSuite) TearDownSuite() {
-	p.helper.TruncateAll()
 	p.helper.Stop()
 }
 

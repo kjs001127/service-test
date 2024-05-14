@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/account/dto"
+	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 )
 
@@ -84,7 +84,7 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 //
 //	@Param		appId	path		string	true	"appId"
 //
-//	@Success	200		{object}	dto.AppSecret
+//	@Success	200		{object}	dto.AdminAppSecret
 //	@Router		/admin/apps/{appId}/auth/secret [put]
 func (h *Handler) refreshSecret(ctx *gin.Context) {
 	appID := ctx.Param("appID")
@@ -95,7 +95,7 @@ func (h *Handler) refreshSecret(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &dto.AppSecret{
+	ctx.JSON(http.StatusOK, &dto.AdminAppSecret{
 		Secret: token,
 	})
 }

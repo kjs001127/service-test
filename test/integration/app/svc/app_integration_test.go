@@ -37,10 +37,10 @@ func (a *AppIntegrationTestSuite) SetupTest() {
 		fx.Populate(&a.appInstallSvc),
 		fx.Populate(&a.appInstallRepo),
 	)
+	a.testHelper.TruncateAll()
 }
 
 func (a *AppIntegrationTestSuite) TearDownSuite() {
-	a.testHelper.TruncateAll()
 	a.testHelper.Stop()
 }
 

@@ -32,10 +32,10 @@ func (a *AppDAOTestSuite) SetupTest() {
 		fx.Populate(&a.appRepository),
 		fx.Populate(&a.appInstallationRepository),
 	)
+	a.testApp.TruncateAll()
 }
 
 func (a *AppDAOTestSuite) TearDownSuite() {
-	a.testApp.TruncateAll()
 	a.testApp.Stop()
 }
 
