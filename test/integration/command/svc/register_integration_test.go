@@ -2,12 +2,14 @@ package svc_test
 
 import (
 	"context"
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+	"go.uber.org/fx"
+
 	commandmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
-	"github.com/stretchr/testify/suite"
-	"go.uber.org/fx"
-	"testing"
 )
 
 const (
@@ -31,10 +33,10 @@ func (c *CommandRegisterSvcTestSuite) SetupTest() {
 		fx.Populate(&c.commandRepo),
 		fx.Populate(&c.settingRepo),
 	)
+	c.testHelper.TruncateAll()
 }
 
 func (c *CommandRegisterSvcTestSuite) TearDownSuite() {
-	c.testHelper.TruncateAll()
 	c.testHelper.Stop()
 }
 
