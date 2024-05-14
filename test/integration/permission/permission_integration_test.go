@@ -27,6 +27,7 @@ const (
 	ownerType         = "owner"
 	nonOwnerType      = "non-owner"
 	channelPermission = "generalSettings"
+	channelID         = "1"
 )
 
 type PermissionTestSuite struct {
@@ -83,6 +84,7 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByOwner() {
 		ID:        ownerManagerID,
 		RoleID:    ownerRoleID,
 		AccountID: ownerAccountID,
+		ChannelID: channelID,
 	}
 
 	managerRole := account.ManagerRole{
@@ -90,7 +92,7 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByOwner() {
 		RoleType:    ownerType,
 		Permissions: []account.Permission{{Action: channelPermission}},
 	}
-	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, ownerRoleID).Return(managerRole, nil)
+	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, channelID, ownerRoleID).Return(managerRole, nil)
 
 	app, err := p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 	p.Require().NotNil(app)
@@ -113,6 +115,7 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByNonOwner() {
 		ID:        ownerManagerID,
 		RoleID:    nonOwnerRoleID,
 		AccountID: nonOwnerAccountID,
+		ChannelID: channelID,
 	}
 
 	managerRole := account.ManagerRole{
@@ -120,7 +123,7 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByNonOwner() {
 		RoleType:    nonOwnerType,
 		Permissions: []account.Permission{{Action: channelPermission}},
 	}
-	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, nonOwnerRoleID).Return(managerRole, nil)
+	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, channelID, nonOwnerRoleID).Return(managerRole, nil)
 
 	app, err := p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 	p.Require().NotNil(app)

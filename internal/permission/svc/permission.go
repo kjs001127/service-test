@@ -19,7 +19,7 @@ func NewPermissionUtil(roleFetcher account.ManagerRoleFetcher) PermissionUtil {
 }
 
 func (a PermissionUtil) isOwner(ctx context.Context, manager account.Manager) bool {
-	role, err := a.roleFetcher.FetchRole(ctx, manager.RoleID)
+	role, err := a.roleFetcher.FetchRole(ctx, manager.ChannelID, manager.RoleID)
 	if err != nil {
 		return false
 	}

@@ -13,7 +13,8 @@ import (
 )
 
 const (
-	roleID = "843"
+	roleID    = "843"
+	channelID = "1"
 )
 
 type PermissionUtilSuite struct {
@@ -35,11 +36,12 @@ func (p *PermissionUtilSuite) TestIsOwner() {
 		Name:     "owner",
 	}
 
-	p.roleFetcher.EXPECT().FetchRole(mock.Anything, roleID).Return(role, nil)
+	p.roleFetcher.EXPECT().FetchRole(mock.Anything, channelID, roleID).Return(role, nil)
 
 	ctx := context.Background()
 	manager := account.Manager{
-		RoleID: roleID,
+		RoleID:    roleID,
+		ChannelID: channelID,
 	}
 	res := p.permissionUtil.isOwner(ctx, manager)
 
