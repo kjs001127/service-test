@@ -25,7 +25,7 @@ import (
 //	@Summary	invoke Function
 //	@Tags		General
 //
-//	@Param		x-access-token				header		string						true	"access token"
+//	@Param		x-access-token				header		string						false	"access token"
 //	@Param		dto.NativeFunctionRequest	body		dto.NativeFunctionRequest	true	"body of Function to invoke"
 //
 //	@Success	200							{object}	native.FunctionResponse
