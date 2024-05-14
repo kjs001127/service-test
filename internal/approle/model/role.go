@@ -17,6 +17,8 @@ type Claim struct {
 	Action  string `json:"action"`
 }
 
+type Claims []*Claim
+
 type RoleType string
 
 const (

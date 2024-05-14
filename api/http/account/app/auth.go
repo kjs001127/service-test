@@ -18,12 +18,11 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path	string	true	"appId"
-//	@Param		roleType	path	string	true	"roleType"
-//	@Param		x-account	header	string	true	"token"
-
-// @Success	200	{object}	dto.RoleView
-// @Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
+//	@Param		appId		path		string	true	"appId"
+//	@Param		roleType	path		string	true	"roleType"
+//	@Param		x-account	header		string	true	"token"
+//	@Success	200			{object}	dto.RoleView
+//	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchRole(ctx *gin.Context) {
 	acc := middleware.Account(ctx)
 	appID := ctx.Param("appID")
@@ -57,18 +56,19 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, account account.
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path	string	true	"appId"
-//	@Param		roleType	path	string	true	"roleType"
-//	@Param		x-account	header	string	true	"token"
+//	@Param		appId			path	string			true	"appId"
+//	@Param		roleType		path	string			true	"roleType"
+//	@Param		x-account		header	string			true	"token"
+//	@Param		model.Claims	body	model.Claims	true	"claims"
 //
-//	@Success	200			{array}	model.Claim
+//	@Success	200				{array}	model.Claim
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [put]
 func (h *Handler) modifyClaims(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
 
-	var claims []*model.Claim
+	var claims model.Claims
 	if err := ctx.ShouldBindBodyWith(&claims, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
