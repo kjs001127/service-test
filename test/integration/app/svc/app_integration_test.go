@@ -33,7 +33,6 @@ func (a *AppIntegrationTestSuite) SetupTest() {
 		fx.Populate(&a.appInstallSvc),
 		fx.Populate(&a.appInstallRepo),
 	)
-	a.testHelper.WithPreparedTables("apps", "app_installations")
 }
 
 func (a *AppIntegrationTestSuite) TearDownSuite() {

@@ -32,7 +32,6 @@ func (a *AppDAOTestSuite) SetupTest() {
 		fx.Populate(&a.appRepository),
 		fx.Populate(&a.appInstallationRepository),
 	)
-	a.testApp.WithPreparedTables("apps", "app_installations")
 }
 
 func (a *AppDAOTestSuite) TearDownSuite() {

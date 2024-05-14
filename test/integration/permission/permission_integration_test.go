@@ -48,7 +48,6 @@ func (p *PermissionTestSuite) SetupTest() {
 		fx.Populate(&p.lifecycleSvc),
 		Mock[account.ManagerRoleFetcher](&p.managerRoleFetcher),
 	)
-	p.helper.WithPreparedTables("apps", "app_installations", "app_accounts")
 }
 
 func (p *PermissionTestSuite) TearDownSuite() {
