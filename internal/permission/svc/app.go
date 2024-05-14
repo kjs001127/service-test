@@ -105,7 +105,9 @@ func (a *AccountAppPermissionSvcImpl) removeDuplicate(targets []*appmodel.App, n
 func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
 		createApp := appmodel.App{
-			Title: title,
+			Title:     title,
+			IsPrivate: true,
+			IsBuiltIn: false,
 		}
 
 		app, err := a.appLifeCycleSvc.Create(ctx, &createApp)
