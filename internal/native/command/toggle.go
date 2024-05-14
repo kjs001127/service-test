@@ -38,7 +38,7 @@ func (r *Handler) ToggleCommand(
 
 type ToggleCommandRequest struct {
 	ChannelID      string `json:"channelId"`
-	AppID          string `json:"appID"`
+	AppID          string `json:"appId"`
 	CommandEnabled bool   `json:"commandEnabled"`
 }
 
