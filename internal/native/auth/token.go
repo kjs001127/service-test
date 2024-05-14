@@ -19,10 +19,10 @@ type RefreshRequest struct {
 }
 
 type TokenIssueHandler struct {
-	svc *svc.TokenSvc
+	svc svc.TokenSvc
 }
 
-func NewTokenIssueHandler(svc *svc.TokenSvc) *TokenIssueHandler {
+func NewTokenIssueHandler(svc svc.TokenSvc) *TokenIssueHandler {
 	return &TokenIssueHandler{
 		svc: svc,
 	}

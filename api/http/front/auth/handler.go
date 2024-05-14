@@ -8,10 +8,10 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	tokenSvc *svc.TokenSvc
+	tokenSvc svc.TokenSvc
 }
 
-func NewHandler(tokenSvc *svc.TokenSvc) *Handler {
+func NewHandler(tokenSvc svc.TokenSvc) *Handler {
 	return &Handler{tokenSvc: tokenSvc}
 }
 

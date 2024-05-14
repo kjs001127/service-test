@@ -13,7 +13,15 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 )
 
-type TokenSvc struct {
+type TokenSvc interface {
+	IssueManagerToken(ctx context.Context, appID string, manager account.ManagerPrincipal) (general.IssueResponse, error)
+	IssueUserToken(ctx context.Context, appID string, user session.UserPrincipal) (general.IssueResponse, error)
+	IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error)
+	IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error)
+	RefreshToken(ctx context.Context, refreshToken string) (general.IssueResponse, error)
+}
+
+type TokenSvcImpl struct {
 	rbacExchanger   *general.RBACExchanger
 	installQuerySvc *app.AppInstallQuerySvc
 	tokenRepo       AppSecretRepository
@@ -25,8 +33,8 @@ func NewTokenSvc(
 	installQuerySvc *app.AppInstallQuerySvc,
 	tokenRepo AppSecretRepository,
 	roleRepo AppRoleRepository,
-) *TokenSvc {
-	return &TokenSvc{
+) *TokenSvcImpl {
+	return &TokenSvcImpl{
 		rbacExchanger:   rbacExchanger,
 		installQuerySvc: installQuerySvc,
 		tokenRepo:       tokenRepo,
@@ -34,7 +42,7 @@ func NewTokenSvc(
 	}
 }
 
-func (s *TokenSvc) IssueManagerToken(ctx context.Context, appID string, manager account.ManagerPrincipal) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, manager account.ManagerPrincipal) (general.IssueResponse, error) {
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, model.RoleTypeManager)
 	if err != nil {
 		return general.IssueResponse{}, err
@@ -44,7 +52,7 @@ func (s *TokenSvc) IssueManagerToken(ctx context.Context, appID string, manager 
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, manager.Token, scopes, appRole.Credentials.ClientID)
 }
 
-func (s *TokenSvc) IssueUserToken(ctx context.Context, appID string, user session.UserPrincipal) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueUserToken(ctx context.Context, appID string, user session.UserPrincipal) (general.IssueResponse, error) {
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, model.RoleTypeUser)
 	if err != nil {
 		return general.IssueResponse{}, err
@@ -54,7 +62,7 @@ func (s *TokenSvc) IssueUserToken(ctx context.Context, appID string, user sessio
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, user.Token, scopes, appRole.Credentials.ClientID)
 }
 
-func (s *TokenSvc) IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error) {
 	token, err := s.tokenRepo.FetchBySecret(ctx, appToken)
 	if err != nil {
 		return general.IssueResponse{}, err
@@ -80,7 +88,7 @@ func (s *TokenSvc) IssueChannelToken(ctx context.Context, channelID string, appT
 	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
 }
 
-func (s *TokenSvc) IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error) {
 	token, err := s.tokenRepo.FetchBySecret(ctx, appToken)
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, token.AppID, model.RoleTypeApp)
 	if err != nil {
@@ -90,6 +98,6 @@ func (s *TokenSvc) IssueAppToken(ctx context.Context, appToken string) (general.
 	return s.rbacExchanger.ExchangeWithClientSecret(ctx, appRole.Credentials.ClientID, appRole.Credentials.ClientSecret, scopes)
 }
 
-func (s *TokenSvc) RefreshToken(ctx context.Context, refreshToken string) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) RefreshToken(ctx context.Context, refreshToken string) (general.IssueResponse, error) {
 	return s.rbacExchanger.Refresh(ctx, refreshToken)
 }

@@ -79,7 +79,10 @@ var RemoteAppDevSvcs = fx.Options(
 	),
 	fx.Provide(
 		devsvc.NewAppRoleSvc,
-		devsvc.NewTokenSvc,
+		fx.Annotate(
+			devsvc.NewTokenSvc,
+			fx.As(new(devsvc.TokenSvc)),
+		),
 		fx.Annotate(
 			devsvc.NewRoleClearHook,
 			fx.As(new(app.AppLifeCycleHook)),
