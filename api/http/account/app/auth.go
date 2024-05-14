@@ -20,9 +20,10 @@ import (
 //
 //	@Param		appId		path		string	true	"appId"
 //	@Param		roleType	path		string	true	"roleType"
-//
-//	@Success	200			{object}	dto.RoleView
-//	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
+//	@Param		x-account	header		string	true	"token"
+
+// @Success	200			{object}	dto.RoleView
+// @Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchRole(ctx *gin.Context) {
 	acc := middleware.Account(ctx)
 	appID := ctx.Param("appID")
@@ -58,6 +59,7 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, account account.
 //
 //	@Param		appId		path	string	true	"appId"
 //	@Param		roleType	path	string	true	"roleType"
+//	@Param		x-account	header	string	true	"token"
 //
 //	@Success	200			{array}	model.Claim
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [put]
@@ -86,7 +88,8 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 //	@Summary	refresh signing key
 //	@Tags		Public
 //
-//	@Param		appId	path		string	true	"appId"
+//	@Param		appId		path		string	true	"appId"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	dto.AppSecret
 //	@Router		/desk/account/apps/{appId}/auth/secret [put]
@@ -110,7 +113,8 @@ func (h *Handler) refreshSecret(ctx *gin.Context) {
 //	@Summary	check token issued before
 //	@Tags		Public
 //
-//	@Param		appId	path		string	true	"appId"
+//	@Param		appId		path		string	true	"appId"
+//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200		{object}	dto.IssuedBefore
 //	@Router		/desk/account/apps/{appId}/auth/secret [get]
