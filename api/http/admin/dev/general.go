@@ -17,7 +17,7 @@ import (
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200			{object}	dto.AppResponse
+//	@Success	200			{object}	dto.AdminAppResponse
 //	@Router		/desk/account/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
@@ -36,15 +36,15 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Summary	modify App general
 //	@Tags		Public
 //
-//	@Param		appID					path		string					true	"appID"
-//	@Param		x-account				header		string					true	"token"
-//	@Param		svc.AppModifyRequest	body		dto.AppModifyRequest	true	"dto"
+//	@Param		appID						path		string						true	"appID"
+//	@Param		x-account					header		string						true	"token"
+//	@Param		svc.AdminAppModifyRequest	body		dto.AdminAppModifyRequest	true	"dto"
 //
-//	@Success	200						{object}	dto.AppResponse
+//	@Success	200							{object}	dto.AdminAppResponse
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
-	var request dto.AppModifyRequest
+	var request dto.AdminAppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return

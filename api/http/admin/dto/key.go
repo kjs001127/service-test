@@ -1,5 +1,5 @@
 package dto
 
-type SigningKey struct {
+type AdminSigningKey struct {
 	SigningKey string `json:"signingKey"`
 }

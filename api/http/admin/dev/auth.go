@@ -19,7 +19,7 @@ import (
 //	@Param		appId		path		string	true	"appId"
 //	@Param		roleType	path		string	true	"roleType"
 //
-//	@Success	200			{object}	dto.RoleView
+//	@Success	200			{object}	dto.AdminRoleView
 //	@Router		/admin/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchRole(ctx *gin.Context) {
 	appID := ctx.Param("appID")
@@ -33,7 +33,7 @@ func (h *Handler) fetchRole(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, view)
 }
 
-func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.RoleType) (*dto.RoleView, error) {
+func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.RoleType) (*dto.AdminRoleView, error) {
 	claims, err := h.roleSvc.FetchRole(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.R
 	if err != nil {
 		return nil, err
 	}
-	return &dto.RoleView{
+	return &dto.AdminRoleView{
 		AvailableClaims: availableClaims,
 		Claims:          claims,
 	}, nil

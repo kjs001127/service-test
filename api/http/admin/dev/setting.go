@@ -64,7 +64,7 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 //
 //	@Param		appID	path		string	true	"appID"
 //
-//	@Success	200		{object}	dto.SigningKey
+//	@Success	200		{object}	dto.AdminSigningKey
 //	@Router		/admin/apps/{appID}/server-settings/signing-key  [put]
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	appID := ctx.Param("appID")

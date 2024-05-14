@@ -18,11 +18,11 @@ import (
 //	@Summary	fetch App
 //	@Tags		Public
 //
-//	@Param		appId		path		string	true	"appId"
-//	@Param		roleType	path		string	true	"roleType"
-//	@Param		x-account	header		string	true	"token"
+//	@Param		appId		path	string	true	"appId"
+//	@Param		roleType	path	string	true	"roleType"
+//	@Param		x-account	header	string	true	"token"
 
-// @Success	200			{object}	dto.RoleView
+// @Success	200	{object}	dto.RoleView
 // @Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [get]
 func (h *Handler) fetchRole(ctx *gin.Context) {
 	acc := middleware.Account(ctx)
@@ -91,7 +91,7 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 //	@Param		appId		path		string	true	"appId"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	dto.AppSecret
+//	@Success	200			{object}	dto.AppSecret
 //	@Router		/desk/account/apps/{appId}/auth/secret [put]
 func (h *Handler) refreshSecret(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -116,7 +116,7 @@ func (h *Handler) refreshSecret(ctx *gin.Context) {
 //	@Param		appId		path		string	true	"appId"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200		{object}	dto.IssuedBefore
+//	@Success	200			{object}	dto.IssuedBefore
 //	@Router		/desk/account/apps/{appId}/auth/secret [get]
 func (h *Handler) checkSecret(ctx *gin.Context) {
 	account := middleware.Account(ctx)

@@ -23,7 +23,7 @@ import (
 //	@Param		channelID	path	string	true	"channelID"
 //	@Param		appID		path	string	true	"appID"
 //
-//	@Success	200		{array} 	dto.RoleView
+//	@Success	200		{array} 	dto.DeskRoleView
 //	@Router		/desk/v1/channels/{channelID}/app-store/{appID}/roles  [get]
 func (h *Handler) getAppRoles(ctx *gin.Context) {
 	appID := ctx.Param("appID")
@@ -36,9 +36,9 @@ func (h *Handler) getAppRoles(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, views)
 }
 
-func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.RoleViews, error) {
+func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.DeskRoleViews, error) {
 	roleTypes := []model.RoleType{model.RoleTypeManager, model.RoleTypeUser, model.RoleTypeChannel}
-	ret := make(dto.RoleViews, 0, len(roleTypes))
+	ret := make(dto.DeskRoleViews, 0, len(roleTypes))
 	for _, roleType := range roleTypes {
 		role, err := h.authSvc.FetchRole(ctx, appID, roleType)
 		if apierr.IsNotFound(err) {
@@ -46,7 +46,7 @@ func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.RoleViews,
 		} else if err != nil {
 			return nil, err
 		}
-		ret = append(ret, dto.RoleView{
+		ret = append(ret, dto.DeskRoleView{
 			Type:   roleType,
 			Claims: role,
 		})
