@@ -12,6 +12,10 @@ import (
 	"go.uber.org/fx"
 )
 
+const (
+	channelID = "1"
+)
+
 type AppIntegrationTestSuite struct {
 	suite.Suite
 
@@ -114,6 +118,61 @@ func (a *AppIntegrationTestSuite) TestReadAllByAppIDs() {
 	a.Require().NotEmpty(apps)
 	a.Require().Len(apps, 1)
 	a.Require().Equal(apps[0].Title, "test app")
+}
+
+func (a *AppIntegrationTestSuite) TestInstallApp() {
+	ctx := context.Background()
+
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title:     "test app",
+		IsPrivate: false,
+	})
+
+	app, err := a.appInstallSvc.InstallApp(ctx, channelID, created)
+
+	a.Require().NoError(err)
+	a.Require().NotNil(app)
+	a.Require().Equal(app.Title, "test app")
+}
+
+func (a *AppIntegrationTestSuite) TestInstallAppById() {
+	ctx := context.Background()
+
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title:     "test app",
+		IsPrivate: false,
+	})
+
+	installationID := appmodel.InstallationID{
+		AppID:     created.ID,
+		ChannelID: channelID,
+	}
+
+	app, err := a.appInstallSvc.InstallAppById(ctx, installationID)
+
+	a.Require().NoError(err)
+	a.Require().NotNil(app)
+	a.Require().Equal(app.Title, "test app")
+}
+
+func (a *AppIntegrationTestSuite) TestUninstallApp() {
+	ctx := context.Background()
+
+	created, _ := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+		Title:     "test app",
+		IsPrivate: false,
+	})
+
+	installationID := appmodel.InstallationID{
+		AppID:     created.ID,
+		ChannelID: channelID,
+	}
+
+	_, err := a.appInstallSvc.InstallAppById(ctx, installationID)
+	a.Require().NoError(err)
+
+	err = a.appInstallSvc.UnInstallApp(ctx, installationID)
+	a.Require().NoError(err)
 }
 
 func TestAppIntegrationSuite(t *testing.T) {

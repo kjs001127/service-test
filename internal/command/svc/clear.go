@@ -20,7 +20,7 @@ func (c CommandClearHook) OnAppCreate(ctx context.Context, app *model.App) error
 }
 
 func (c CommandClearHook) OnAppDelete(ctx context.Context, app *model.App) error {
-	if err := c.registerSvc.UnregisterAll(ctx, app.ID); err != nil {
+	if err := c.registerSvc.DeregisterAll(ctx, app.ID); err != nil {
 		return err
 	}
 

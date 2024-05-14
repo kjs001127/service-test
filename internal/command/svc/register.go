@@ -23,7 +23,7 @@ func NewRegisterSvc(repo CommandRepository, activationRepo ActivationSettingRepo
 	return &RegisterSvc{repo: repo, settingRepo: activationRepo}
 }
 
-func (s *RegisterSvc) UnregisterAll(ctx context.Context, appID string) error {
+func (s *RegisterSvc) DeregisterAll(ctx context.Context, appID string) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.repo.DeleteAllByAppID(ctx, appID); err != nil {
 			return err
