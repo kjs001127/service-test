@@ -36,7 +36,7 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 		return err
 	}
 
-	if c.permissionUtil.isOwner(ctx, manager) {
+	if !c.permissionUtil.isOwner(ctx, manager) {
 		return apierr.Unauthorized(errors.New("only owner can toggle app command"))
 	}
 
