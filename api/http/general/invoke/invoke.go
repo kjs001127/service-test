@@ -84,12 +84,18 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
+	context, err := ctxFrom(token)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
 	res := h.invoker.Invoke(
 		ctx,
 		appID,
 		app.TypedRequest[json.RawMessage]{
 			FunctionName: req.Method,
-			Context:      fillCaller(token, req.Context),
+			Context:      context,
 			Params:       req.Params,
 		},
 	)
@@ -121,10 +127,22 @@ func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn
 	return nil
 }
 
-func fillCaller(rbac genauth.ParsedRBACToken, chCtx app.ChannelContext) app.ChannelContext {
-	chCtx.Caller.Type = app.CallerType(rbac.Caller.Type)
-	chCtx.Caller.ID = rbac.Caller.ID
-	return chCtx
+const channelScope = "channel"
+
+func ctxFrom(rbac genauth.ParsedRBACToken) (app.ChannelContext, error) {
+	channelScopes := rbac.GetScope(channelScope)
+	if len(channelScopes) != 1 {
+		return app.ChannelContext{}, apierr.Unauthorized(errors.New("invalid channel scope"))
+	}
+	return app.ChannelContext{
+		Channel: app.Channel{
+			ID: channelScopes[0],
+		},
+		Caller: app.Caller{
+			Type: app.CallerType(rbac.Caller.Type),
+			ID:   rbac.Caller.ID,
+		},
+	}, nil
 }
 
 const (

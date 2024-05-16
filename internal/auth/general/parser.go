@@ -165,3 +165,7 @@ func (p *ParsedRBACToken) CheckScopes(scopes Scopes) bool {
 	}
 	return true
 }
+
+func (p *ParsedRBACToken) GetScope(scope string) []string {
+	return p.Scopes[scope]
+}
