@@ -5,6 +5,7 @@ import (
 )
 
 type AppView struct {
+	ID	    string		   `json:"id"`
 	Title       string                 `json:"title"`
 	Description *string                `json:"description"`
 	AvatarUrl   *string                `json:"avatarUrl"`
@@ -14,6 +15,7 @@ type AppView struct {
 
 func AppViewFrom(app *appmodel.App) *AppView {
 	return &AppView{
+		ID: 	     app.ID
 		Title:       app.Title,
 		Description: app.Description,
 		AvatarUrl:   app.AvatarURL,
