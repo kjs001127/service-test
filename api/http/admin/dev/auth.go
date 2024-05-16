@@ -9,6 +9,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
+	"github.com/channel-io/ch-app-store/internal/approle/svc"
 )
 
 // fetchRole godoc
@@ -38,13 +39,10 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.R
 	if err != nil {
 		return nil, err
 	}
-	availableClaims, err := h.roleSvc.GetAvailableClaims(ctx, roleType)
-	if err != nil {
-		return nil, err
-	}
+
 	return &dto.AdminRoleView{
-		AvailableClaims: availableClaims,
-		Claims:          claims,
+		NativeClaims: claims.NativeClaims,
+		AppClaims:    claims.AppClaims,
 	}, nil
 }
 
@@ -62,19 +60,19 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
 
-	var claims []*model.Claim
-	if err := ctx.ShouldBindBodyWith(&claims, binding.JSON); err != nil {
+	var req svc.ClaimsDTO
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	claims, err := h.roleSvc.UpdateRole(ctx, appID, roleType, claims)
+	err := h.roleSvc.UpdateRole(ctx, appID, roleType, &req)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, claims)
+	ctx.Status(http.StatusOK)
 }
 
 // refreshSecret godoc

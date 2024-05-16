@@ -16,12 +16,20 @@ import (
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 )
 
+const serviceNameGroup = `name:"serviceNames"`
+
 var AppRole = fx.Options(
 	RemoteAppDevSvcs,
 	AppRoleDaos,
 )
 
 var RemoteAppDevSvcs = fx.Options(
+	fx.Supply(
+		fx.Annotate(
+			[]string{config.Get().ServiceName, config.Get().ChannelServiceName},
+			fx.ResultTags(serviceNameGroup),
+		),
+	),
 	fx.Supply(
 		map[model.RoleType]devsvc.TypeRule{
 			model.RoleTypeApp: {
@@ -31,11 +39,6 @@ var RemoteAppDevSvcs = fx.Options(
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{
-						{
-							Service: appId,
-							Action:  "*",
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
-						},
 						{
 							Service: config.Get().ServiceName,
 							Action:  "registerCommands",
@@ -49,8 +52,41 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				DefaultClaimsOf: func(s string) []*protomodel.Claim {
-					return nil
+				AvailableClaims: []*protomodel.Claim{
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeUserChatMessage",
+						Scope:   []string{"channel-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeGroupMessage",
+						Scope:   []string{"channel-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "getUser",
+						Scope:   []string{"channel-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "getUserChat",
+						Scope:   []string{"channel-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "getManager",
+						Scope:   []string{"channel-{id}"},
+					},
+				},
+				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: appId,
+							Action:  "*",
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+					}
 				},
 			},
 
@@ -60,8 +96,21 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
 				PrincipalTypes: []string{session.XSessionHeader},
-				DefaultClaimsOf: func(s string) []*protomodel.Claim {
-					return nil
+				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: appId,
+							Action:  "*",
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+					}
+				},
+				AvailableClaims: []*protomodel.Claim{
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeUserChatMessageAsUser",
+						Scope:   []string{"channel-{id}"},
+					},
 				},
 			},
 
@@ -71,14 +120,40 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
 				PrincipalTypes: []string{account.XAccountHeader},
-				DefaultClaimsOf: func(appID string) []*protomodel.Claim {
-					return nil
+				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: appId,
+							Action:  "*",
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+					}
+				},
+				AvailableClaims: []*protomodel.Claim{
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeGroupMessageAsManager",
+						Scope:   []string{"channel-{id}", "manager-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeUserChatMessageAsManager",
+						Scope:   []string{"channel-{id}", "manager-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "writeDirectChatMessageAsManager",
+						Scope:   []string{"channel-{id}", "manager-{id}"},
+					},
 				},
 			},
 		},
 	),
 	fx.Provide(
-		devsvc.NewAppRoleSvc,
+		fx.Annotate(
+			devsvc.NewAppRoleSvc,
+			fx.ParamTags(``, ``, ``, ``, ``, serviceNameGroup),
+		),
 		fx.Annotate(
 			devsvc.NewTokenSvc,
 			fx.As(new(devsvc.TokenSvc)),

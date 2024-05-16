@@ -47,8 +47,9 @@ func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.DeskRoleVi
 			return nil, err
 		}
 		ret = append(ret, dto.DeskRoleView{
-			Type:   roleType,
-			Claims: role,
+			Type:         roleType,
+			NativeClaims: role.NativeClaims,
+			AppClaims:    role.AppClaims,
 		})
 	}
 	return ret, nil

@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	JwtServiceKey = `name:"jwtServiceKey"`
-	DwAdmin       = `name:"dwAdmin"`
-	Stage         = `name:"stage"`
-	ServiceName   = `name:"serviceName"`
+	JwtServiceKey      = `name:"jwtServiceKey"`
+	DwAdmin            = `name:"dwAdmin"`
+	Stage              = `name:"stage"`
+	ServiceName        = `name:"serviceName"`
+	ChannelServiceName = `name:"channelServiceName"`
 )
 
 var Values = fx.Options(
@@ -30,6 +31,10 @@ var Values = fx.Options(
 		fx.Annotate(
 			config.Get().ServiceName,
 			fx.ResultTags(ServiceName),
+		),
+		fx.Annotate(
+			config.Get().ChannelServiceName,
+			fx.ResultTags(ChannelServiceName),
 		),
 		config.Get().Log,
 		config.Get().DDB,

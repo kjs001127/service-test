@@ -10,6 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
+	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 )
 
@@ -41,13 +42,14 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, account account.
 	if err != nil {
 		return nil, err
 	}
-	availableClaims, err := h.authPermissionSvc.GetAvailableClaims(ctx, roleType)
+	availableClaims, err := h.authPermissionSvc.GetAvailableNativeClaims(ctx, roleType)
 	if err != nil {
 		return nil, err
 	}
 	return &dto.RoleView{
-		AvailableClaims: availableClaims,
-		Claims:          claims,
+		AvailableNativeClaims: availableClaims,
+		AppClaims:             claims.AppClaims,
+		NativeClaims:          claims.NativeClaims,
 	}, nil
 }
 
@@ -68,19 +70,18 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
 
-	var claims model.Claims
-	if err := ctx.ShouldBindBodyWith(&claims, binding.JSON); err != nil {
+	var req svc.ClaimsDTO
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	claims, err := h.authPermissionSvc.UpdateRole(ctx, appID, roleType, claims, account.ID)
-	if err != nil {
+	if err := h.authPermissionSvc.UpdateRole(ctx, appID, roleType, &req, account.ID); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, claims)
+	ctx.Status(http.StatusOK)
 }
 
 // refreshSecret godoc

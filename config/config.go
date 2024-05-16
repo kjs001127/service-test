@@ -27,10 +27,11 @@ var (
 var configFiles embed.FS
 
 type Config struct {
-	Stage       string `required:"true" name:"config.stage"`
-	ServiceName string `required:"true" name:"config.serviceName"`
-	Port        string `required:"true"`
-	Auth        struct {
+	Stage              string `required:"true" name:"config.stage"`
+	ServiceName        string `required:"true" name:"config.serviceName"`
+	ChannelServiceName string `required:"true"`
+	Port               string `required:"true"`
+	Auth               struct {
 		AuthAdminURL  string `required:"true"`
 		JWTServiceKey string `required:"true"`
 	}

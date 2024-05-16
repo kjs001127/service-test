@@ -16,8 +16,9 @@ type Handler struct {
 func NewHandler(
 	appPermissionSvc permission.AccountAppPermissionSvc,
 	settingPermissionSvc permission.AccountServerSettingPermissionSvc,
+	authPermissionSvc *permission.AccountAuthPermissionSvc,
 ) *Handler {
-	return &Handler{appPermissionSvc: appPermissionSvc, settingPermissionSvc: settingPermissionSvc}
+	return &Handler{appPermissionSvc: appPermissionSvc, settingPermissionSvc: settingPermissionSvc, authPermissionSvc: authPermissionSvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

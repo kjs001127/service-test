@@ -5,8 +5,9 @@ import (
 )
 
 type DeskRoleView struct {
-	Type   model.RoleType
-	Claims []*model.Claim
+	Type         model.RoleType `json:"type"`
+	AppClaims    model.Claims   `json:"appClaims"`
+	NativeClaims model.Claims   `json:"nativeClaims"`
 }
 
 type DeskRoleViews []DeskRoleView

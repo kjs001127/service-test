@@ -7,6 +7,6 @@ import (
 type RoleViews map[model.RoleType]AdminRoleView
 
 type AdminRoleView struct {
-	AvailableClaims []*model.Claim `json:"availableClaims"`
-	Claims          []*model.Claim `json:"claims"`
+	AppClaims    []*model.Claim `json:"appClaims"`
+	NativeClaims []*model.Claim `json:"nativeClaims"`
 }
