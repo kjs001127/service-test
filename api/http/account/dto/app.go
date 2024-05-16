@@ -15,7 +15,7 @@ type AppView struct {
 
 func AppViewFrom(app *appmodel.App) *AppView {
 	return &AppView{
-		ID: 	     app.ID
+		ID: 	     app.ID,
 		Title:       app.Title,
 		Description: app.Description,
 		AvatarUrl:   app.AvatarURL,
