@@ -18,6 +18,20 @@ type RefreshRequest struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+type Response struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int    `json:"expiresIn"`
+}
+
+func fromIssueResponse(response authgen.IssueResponse) *Response {
+	return &Response{
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		ExpiresIn:    response.ExpiresIn,
+	}
+}
+
 type TokenIssueHandler struct {
 	svc svc.TokenSvc
 }
@@ -41,7 +55,7 @@ func (c *TokenIssueHandler) refreshToken(ctx context.Context, token native.Token
 
 	resp, err := c.svc.RefreshToken(ctx, req.RefreshToken)
 
-	marshaled, err := json.Marshal(&resp)
+	marshaled, err := json.Marshal(fromIssueResponse(resp))
 	if err != nil {
 		return native.WrapCommonErr(err)
 	}
@@ -57,7 +71,7 @@ func (c *TokenIssueHandler) IssueToken(ctx context.Context, token native.Token, 
 
 	resp, err := c.doIssueToken(ctx, req)
 
-	marshaled, err := json.Marshal(&resp)
+	marshaled, err := json.Marshal(fromIssueResponse(resp))
 	if err != nil {
 		return native.WrapCommonErr(err)
 	}
