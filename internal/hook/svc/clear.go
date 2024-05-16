@@ -11,7 +11,7 @@ type AppHookClearHook struct {
 	toggleHookRepo ToggleHookRepository
 }
 
-func NewAppHookClearHook(hookRepo InstallHookRepository, toggleRepo ToggleHookRepository) *AppHookClearHook {
+func NewClearHook(hookRepo InstallHookRepository, toggleRepo ToggleHookRepository) *AppHookClearHook {
 	return &AppHookClearHook{hookRepo: hookRepo, toggleHookRepo: toggleRepo}
 }
 

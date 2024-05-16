@@ -14,13 +14,13 @@ type ToggleListener interface {
 }
 
 type ManagerAwareToggleSvc struct {
-	toggleSvc     *command.ToggleSvc
+	toggleSvc     command.ToggleSvc
 	listeners     []ToggleListener
 	postListeners []ToggleListener
 }
 
 func NewManagerAwareToggleSvc(
-	toggleSvc *command.ToggleSvc,
+	toggleSvc command.ToggleSvc,
 	listeners []ToggleListener,
 	postListeners []ToggleListener,
 ) *ManagerAwareToggleSvc {
@@ -38,8 +38,8 @@ func (s *ManagerAwareToggleSvc) Toggle(ctx context.Context, manager account.Mana
 
 	return tx.Do(ctx, func(ctx context.Context) error {
 		for _, listener := range s.listeners {
-			if err := listener.OnToggle(ctx, manager, installID, enable); err != nil {
-				return err
+			if toggleErr := listener.OnToggle(ctx, manager, installID, enable); toggleErr != nil {
+				return toggleErr
 			}
 		}
 		return s.toggleSvc.Toggle(ctx, installID, enable)

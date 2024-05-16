@@ -44,12 +44,12 @@ type AutoCompleteResponse struct {
 }
 
 type AutoCompleteInvoker struct {
-	invoker *app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse]
+	invoker app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse]
 	repo    CommandRepository
 }
 
 func NewAutoCompleteInvoker(
-	invoker *app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse],
+	invoker app.TypedInvoker[AutoCompleteBody, AutoCompleteResponse],
 	repo CommandRepository,
 ) *AutoCompleteInvoker {
 	return &AutoCompleteInvoker{invoker: invoker, repo: repo}

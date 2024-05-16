@@ -15,13 +15,13 @@ type InstallListener interface {
 }
 
 type ManagerAwareInstallSvc struct {
-	installSvc    *appsvc.AppInstallSvc
+	installSvc    appsvc.AppInstallSvc
 	listeners     []InstallListener
 	postListeners []InstallListener
 }
 
 func NewManagerAwareInstallSvc(
-	installSvc *appsvc.AppInstallSvc,
+	installSvc appsvc.AppInstallSvc,
 	listeners []InstallListener,
 	postListeners []InstallListener,
 ) *ManagerAwareInstallSvc {

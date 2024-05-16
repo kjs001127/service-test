@@ -5,17 +5,25 @@ import (
 	"encoding/json"
 )
 
-type TypedInvoker[REQ any, RES any] struct {
-	invoker *Invoker
+type TypedInvoker[REQ any, RES any] interface {
+	Invoke(
+		ctx context.Context,
+		appID string,
+		request TypedRequest[REQ],
+	) TypedResponse[RES]
+}
+
+type TypedInvokerImpl[REQ any, RES any] struct {
+	invoker Invoker
 }
 
 func NewTypedInvoker[REQ any, RES any](
-	invoker *Invoker,
-) *TypedInvoker[REQ, RES] {
-	return &TypedInvoker[REQ, RES]{invoker: invoker}
+	invoker Invoker,
+) TypedInvoker[REQ, RES] {
+	return &TypedInvokerImpl[REQ, RES]{invoker: invoker}
 }
 
-func (i *TypedInvoker[REQ, RES]) Invoke(
+func (i *TypedInvokerImpl[REQ, RES]) Invoke(
 	ctx context.Context,
 	appID string,
 	request TypedRequest[REQ],

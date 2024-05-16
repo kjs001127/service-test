@@ -24,7 +24,7 @@ type AppIntegrationTestSuite struct {
 	appLifecycleSvc svc.AppLifecycleSvc
 	appQuerySvc     svc.AppQuerySvc
 	appRepository   svc.AppRepository
-	appInstallSvc   *svc.AppInstallSvc
+	appInstallSvc   svc.AppInstallSvc
 	appInstallRepo  svc.AppInstallationRepository
 }
 

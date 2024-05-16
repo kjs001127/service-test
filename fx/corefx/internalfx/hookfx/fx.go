@@ -41,16 +41,15 @@ var InstallHookSvc = fx.Options(
 		fx.Annotate(
 			svc.NewToggleHookSvc,
 			fx.As(new(managersvc.ToggleListener)),
-			fx.ResultTags(managerfx.PostToggleHandlerGroup),
+			fx.ResultTags(managerfx.PreToggleHandlerGroup),
 		),
-		appsvc.NewTypedInvoker[svc.ToggleHookRequest, svc.ToggleHookResponse],
 	),
 )
 
 var InstallHookClearHook = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			svc.NewAppHookClearHook,
+			svc.NewClearHook,
 			fx.As(new(appsvc.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),

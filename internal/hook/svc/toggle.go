@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
@@ -12,12 +13,12 @@ import (
 
 type HookSendingToggleSvc struct {
 	repo    ToggleHookRepository
-	invoker *app.TypedInvoker[ToggleHookRequest, ToggleHookResponse]
+	invoker app.TypedInvoker[ToggleHookRequest, ToggleHookResponse]
 }
 
 func NewToggleHookSvc(
 	repo ToggleHookRepository,
-	invoker *app.TypedInvoker[ToggleHookRequest, ToggleHookResponse],
+	invoker app.TypedInvoker[ToggleHookRequest, ToggleHookResponse],
 ) *HookSendingToggleSvc {
 	return &HookSendingToggleSvc{repo: repo, invoker: invoker}
 }
@@ -57,7 +58,7 @@ func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Man
 	})
 
 	if resp.IsError() || !resp.Result.Enable {
-		return resp.Error
+		return fmt.Errorf("toggle fail: %w", resp.Error)
 	}
 
 	return nil

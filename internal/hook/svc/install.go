@@ -33,12 +33,12 @@ func (h *InstallHookSvc) Upsert(ctx context.Context, appID string, hooks *model.
 }
 
 type PostInstallHandler struct {
-	invoker  *svc.Invoker
+	invoker  svc.Invoker
 	hookRepo InstallHookRepository
 	logger   log.ContextAwareLogger
 }
 
-func NewPostInstallHandler(invoker *svc.Invoker, hookRepo InstallHookRepository, logger log.ContextAwareLogger) *PostInstallHandler {
+func NewPostInstallHandler(invoker svc.Invoker, hookRepo InstallHookRepository, logger log.ContextAwareLogger) *PostInstallHandler {
 	return &PostInstallHandler{invoker: invoker, hookRepo: hookRepo, logger: logger}
 }
 

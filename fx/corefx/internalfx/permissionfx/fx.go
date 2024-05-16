@@ -36,6 +36,7 @@ var PermissionSvc = fx.Options(
 		),
 		svc.NewAccountAuthPermissionSvc,
 		svc.NewPermissionUtil,
+
 	),
 )
 

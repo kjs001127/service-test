@@ -144,8 +144,12 @@ func (a *AppDAOTestSuite) TestAppInstallationFind() {
 
 	ctx := context.Background()
 
-	_, _ = a.appRepository.Save(ctx, app)
-	_ = a.appInstallationRepository.Save(ctx, appChannel)
+	_, err := a.appRepository.Save(ctx, app)
+	a.Require().NoError(err)
+
+	err = a.appInstallationRepository.Save(ctx, appChannel)
+	a.Require().NoError(err)
+
 	res, err := a.appInstallationRepository.Fetch(ctx, installationID)
 
 	a.Require().NoError(err)

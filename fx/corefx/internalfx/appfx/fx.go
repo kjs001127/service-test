@@ -7,6 +7,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/internal/app/repo"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/internal/hook/svc"
 )
 
 const (
@@ -26,6 +27,7 @@ var AppSvcs = fx.Options(
 		fx.Annotate(
 			app.NewAppInstallSvc,
 			fx.ParamTags(``, ``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+			fx.As(new(app.AppInstallSvc)),
 		),
 
 		app.NewInstallQuerySvc,
@@ -40,9 +42,11 @@ var AppSvcs = fx.Options(
 		),
 		fx.Annotate(
 			app.NewInvoker,
+			fx.As(new(app.Invoker)),
 			fx.ParamTags(``, ``, ``, FunctionListenersGroup),
 		),
 		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
+		app.NewTypedInvoker[svc.ToggleHookRequest, svc.ToggleHookResponse],
 	),
 )
 

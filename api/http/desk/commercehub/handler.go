@@ -10,11 +10,11 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	invoker *app.TypedInvoker[json.RawMessage, json.RawMessage]
+	invoker app.TypedInvoker[json.RawMessage, json.RawMessage]
 }
 
 func NewHandler(
-	invoker *app.TypedInvoker[json.RawMessage, json.RawMessage],
+	invoker app.TypedInvoker[json.RawMessage, json.RawMessage],
 ) *Handler {
 	return &Handler{invoker: invoker}
 }
