@@ -8,24 +8,22 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	"github.com/pkg/errors"
 )
 
 type ManagerCommandTogglePermissionSvcImpl struct {
 	appCrudSvc     app.AppQuerySvc
-	permissionUtil PermissionUtil
+	strategy       Strategy
 	appAccountRepo AppAccountRepo
 }
 
 func NewManagerCommandTogglePermissionSvc(
 	appCrudSvc app.AppQuerySvc,
-	permissionUtil PermissionUtil,
+	strategy Strategy,
 	appAccountRepo AppAccountRepo,
 ) *ManagerCommandTogglePermissionSvcImpl {
 	return &ManagerCommandTogglePermissionSvcImpl{
 		appCrudSvc:     appCrudSvc,
-		permissionUtil: permissionUtil,
+		strategy:       strategy,
 		appAccountRepo: appAccountRepo,
 	}
 }
@@ -36,15 +34,8 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 		return err
 	}
 
-	if !c.permissionUtil.isOwner(ctx, manager) {
-		return apierr.Unauthorized(errors.New("only owner can toggle app command"))
-	}
-
-	if app.IsPrivate {
-		_, err = c.appAccountRepo.Fetch(ctx, installationID.AppID, manager.AccountID)
-		if err != nil {
-			return apierr.Unauthorized(errors.New("private app command can only be toggled by app developer who is owner"))
-		}
+	if err = c.strategy.HasPermission(ctx, manager, app); err != nil {
+		return apierr.Unauthorized(err)
 	}
 	return nil
 }

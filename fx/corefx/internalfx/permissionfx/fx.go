@@ -35,8 +35,21 @@ var PermissionSvc = fx.Options(
 			fx.As(new(svc.AccountServerSettingPermissionSvc)),
 		),
 		svc.NewAccountAuthPermissionSvc,
+		fx.Annotate(
+			svc.NewPermissionStrategy,
+			fx.As(new(svc.Strategy)),
+		),
 		svc.NewPermissionUtil,
+	),
+)
 
+var Strategy = fx.Options(
+	fx.Provide(
+		fx.Annotate(
+			svc.NewPermissionStrategy,
+			fx.As(new(svc.Strategy)),
+		),
+		svc.NewPermissionUtil,
 	),
 )
 
