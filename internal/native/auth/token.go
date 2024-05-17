@@ -70,6 +70,9 @@ func (c *TokenIssueHandler) IssueToken(ctx context.Context, token native.Token, 
 	}
 
 	resp, err := c.doIssueToken(ctx, req)
+	if err != nil {
+		return native.WrapCommonErr(err)
+	}
 
 	marshaled, err := json.Marshal(fromIssueResponse(resp))
 	if err != nil {
