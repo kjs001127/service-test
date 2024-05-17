@@ -2,10 +2,12 @@ package dto
 
 import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+
+	"github.com/pkg/errors"
 )
 
 type AppView struct {
-	ID	    string		   `json:"id"`
+	ID          string                 `json:"id"`
 	Title       string                 `json:"title"`
 	Description *string                `json:"description"`
 	AvatarUrl   *string                `json:"avatarUrl"`
@@ -15,7 +17,7 @@ type AppView struct {
 
 func AppViewFrom(app *appmodel.App) *AppView {
 	return &AppView{
-		ID: 	     app.ID,
+		ID:          app.ID,
 		Title:       app.Title,
 		Description: app.Description,
 		AvatarUrl:   app.AvatarURL,
@@ -55,6 +57,17 @@ type AppModifyRequest struct {
 	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
 	AvatarUrl          *string               `json:"avatarUrl,omitempty"`
 	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
+}
+
+func (r *AppModifyRequest) Validate() error {
+	if len(r.Title) < 2 || len(r.Title) > 20 {
+		return errors.New("title length should be between 2 and 20")
+	}
+
+	if r.Description != nil && len(*r.Description) > 100 {
+		return errors.New("description length should be less than 100")
+	}
+	return nil
 }
 
 type I18nFields struct {

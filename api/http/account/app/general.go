@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -50,6 +51,11 @@ func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	var request dto.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
+		return
+	}
+
+	if err := request.Validate(); err != nil {
+		_ = ctx.Error(apierr.BadRequest(err))
 		return
 	}
 

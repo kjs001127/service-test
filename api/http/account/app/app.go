@@ -11,6 +11,8 @@ import (
 
 	_ "github.com/channel-io/ch-app-store/internal/app/model"
 	_ "github.com/channel-io/ch-app-store/internal/permission/svc"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
 
 // createApp godoc
@@ -31,6 +33,11 @@ func (h *Handler) createApp(ctx *gin.Context) {
 		return
 	}
 
+	err := request.Validate()
+	if err != nil {
+		_ = ctx.Error(apierr.BadRequest(err))
+		return
+	}
 	created, err := h.appPermissionSvc.CreateApp(ctx, request.Title, account.ID)
 
 	if err != nil {
