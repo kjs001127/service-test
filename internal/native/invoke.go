@@ -19,7 +19,7 @@ type FunctionRequest struct {
 }
 
 type FunctionResponse struct {
-	Error  Err             `json:"error,omitempty"`
+	Error  *Err            `json:"error,omitempty"`
 	Result json.RawMessage `json:"result,omitempty"`
 }
 
@@ -30,7 +30,7 @@ type Err struct {
 
 func WrapCommonErr(err error) FunctionResponse {
 	return FunctionResponse{
-		Error: Err{
+		Error: &Err{
 			Type:    "common",
 			Message: err.Error(),
 		},
@@ -38,6 +38,10 @@ func WrapCommonErr(err error) FunctionResponse {
 }
 
 func (r *FunctionResponse) IsError() bool {
+	if r.Error == nil {
+		return false
+	}
+
 	if len(r.Error.Type) <= 0 && len(r.Error.Message) <= 0 {
 		return false
 	}
@@ -80,7 +84,7 @@ func (i *FunctionInvoker) Invoke(
 	handler, ok := i.router[req.Method]
 	if !ok {
 		i.logger.Warnw(ctx, "handler not found", "request", req)
-		return FunctionResponse{Error: Err{
+		return FunctionResponse{Error: &Err{
 			Type:    "common",
 			Message: fmt.Sprintf("method not found: %s", req.Method),
 		}}

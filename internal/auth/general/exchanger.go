@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/go-resty/resty/v2"
 
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
@@ -37,6 +38,8 @@ func (e *RBACExchanger) Refresh(
 		SetQueryParam("grant_type", "refresh_token").
 		SetQueryParam("refresh_token", refreshToken)
 
+	r.SetHeader("Content-Type", "application/x-www-form-urlencoded")
+
 	resp, err := r.Post(e.authURL + issueToken)
 	if err != nil {
 		return IssueResponse{}, err
@@ -45,6 +48,8 @@ func (e *RBACExchanger) Refresh(
 	var unmarshalled IssueResponse
 	if err := json.Unmarshal(resp.Body(), &unmarshalled); err != nil {
 		return IssueResponse{}, err
+	} else if resp.IsError() {
+		return IssueResponse{}, apierr.Unauthorized(fmt.Errorf("token fetch fail, response: %s", resp.Body()))
 	}
 
 	return unmarshalled, nil
@@ -59,7 +64,7 @@ func (e *RBACExchanger) ExchangeWithClientSecret(
 	r := e.cli.R()
 	r.SetContext(ctx)
 
-	var values url.Values
+	values := make(url.Values)
 	for key, vals := range scopes {
 		for _, val := range vals {
 			values.Add("scope", fmt.Sprintf("%s-%s", key, val))
@@ -71,9 +76,13 @@ func (e *RBACExchanger) ExchangeWithClientSecret(
 		SetQueryParam("client_secret", clientSecret).
 		SetQueryParam("client_id", clientID)
 
+	r.SetHeader("Content-Type", "application/x-www-form-urlencoded")
+
 	resp, err := r.Post(e.authURL + issueToken)
 	if err != nil {
 		return IssueResponse{}, err
+	} else if resp.IsError() {
+		return IssueResponse{}, apierr.Unauthorized(fmt.Errorf("token fetch fail, response: %s", resp.Body()))
 	}
 
 	var unmarshalled IssueResponse
@@ -93,7 +102,7 @@ func (e *RBACExchanger) ExchangeWithPrincipal(
 	r := e.cli.R()
 	r.SetContext(ctx)
 
-	var values url.Values
+	values := make(url.Values)
 	for key, vals := range scopes {
 		for _, val := range vals {
 			values.Add("scope", fmt.Sprintf("%s-%s", key, val))
@@ -101,14 +110,18 @@ func (e *RBACExchanger) ExchangeWithPrincipal(
 	}
 	r.
 		SetQueryParamsFromValues(values).
-		SetQueryParam("principal_type", token.Type()).
 		SetQueryParam("grant_type", "principal").
+		SetQueryParam("client_id", clientID).
 		SetQueryParam("principal_token", token.Value()).
-		SetQueryParam("client_id", clientID)
+		SetQueryParam("principal_type", token.Type())
+
+	r.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := r.Post(e.authURL + issueToken)
 	if err != nil {
 		return IssueResponse{}, err
+	} else if resp.IsError() {
+		return IssueResponse{}, apierr.Unauthorized(fmt.Errorf("token fetch fail, response: %s", resp.Body()))
 	}
 
 	var unmarshalled IssueResponse

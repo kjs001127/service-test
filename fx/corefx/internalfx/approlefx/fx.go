@@ -84,7 +84,7 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: appId,
 							Action:  "*",
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+							Scope:   []string{"channel-{id}"},
 						},
 					}
 				},
@@ -101,7 +101,7 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: appId,
 							Action:  "*",
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+							Scope:   []string{"channel-{id}"},
 						},
 					}
 				},
@@ -125,7 +125,7 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: appId,
 							Action:  "*",
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+							Scope:   []string{fmt.Sprintf("channel-{id}")},
 						},
 					}
 				},
