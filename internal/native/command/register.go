@@ -30,6 +30,9 @@ type CmdDTO struct {
 	ActionFunctionName       string  `json:"actionFunctionName"`
 	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
 
+	AlfMode        model.AlfMode `json:"alfMode,omitempty"`
+	AlfDescription *string       `json:"alfDescription,omitempty"`
+
 	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
 }
 
@@ -42,7 +45,8 @@ func (d *CmdDTO) toCmd() *model.Command {
 		ActionFunctionName:       d.ActionFunctionName,
 		AutoCompleteFunctionName: d.AutoCompleteFunctionName,
 		ParamDefinitions:         d.ParamDefinitions,
-		AlfMode:                  model.AlfModeDisable,
+		AlfMode:                  d.AlfMode,
+		AlfDescription:           d.AlfDescription,
 	}
 }
 

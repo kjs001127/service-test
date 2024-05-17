@@ -39,14 +39,19 @@ func (defs ParamDefinitions) validate() error {
 }
 
 type ParamDefinition struct {
-	Name            ParamName      `json:"name"`
-	Type            ParamType      `json:"type"`
-	Required        bool           `json:"required"`
-	Description     string         `json:"description,omitempty"`
-	Choices         Choices        `json:"choices,omitempty"`
-	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
-	AutoComplete    bool           `json:"autoComplete,omitempty"`
-	AlfDescription  string         `json:"alfDescription,omitempty"`
+	Name            ParamName     `json:"name"`
+	Type            ParamType     `json:"type"`
+	Required        bool          `json:"required"`
+	Description     string        `json:"description,omitempty"`
+	Choices         Choices       `json:"choices,omitempty"`
+	NameDescI18nMap ParamDefI18ns `json:"nameDescI18nMap,omitempty"`
+	AutoComplete    bool          `json:"autoComplete,omitempty"`
+	AlfDescription  string        `json:"alfDescription,omitempty"`
+}
+
+type ParamDefI18ns struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 func (d *ParamDefinition) validate() error {
