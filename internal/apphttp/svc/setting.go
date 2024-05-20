@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+
 	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -94,7 +95,9 @@ func (a *ServerSettingSvcImpl) RefreshSigningKey(ctx context.Context, appID stri
 
 	return tx.DoReturn(ctx, func(ctx context.Context) (string, error) {
 		settings, err := a.serverSettingRepo.Fetch(ctx, appID)
-		if err != nil {
+		if apierr.IsNotFound(err) {
+			settings = model.ServerSetting{}
+		} else if err != nil {
 			return "", err
 		}
 
