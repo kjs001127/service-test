@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"unicode/utf8"
+
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 
 	"github.com/pkg/errors"
@@ -60,11 +62,11 @@ type AppModifyRequest struct {
 }
 
 func (r *AppModifyRequest) Validate() error {
-	if len(r.Title) < 2 || len(r.Title) > 20 {
+	if utf8.RuneCountInString(r.Title) < 2 || utf8.RuneCountInString(r.Title) > 20 {
 		return errors.New("title length should be between 2 and 20")
 	}
 
-	if r.Description != nil && len(*r.Description) > 100 {
+	if r.Description != nil && utf8.RuneCountInString(*r.Description) > 100 {
 		return errors.New("description length should be less than 100")
 	}
 	return nil
