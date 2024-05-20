@@ -42,8 +42,10 @@ func (a *AppHttpProxy) Proxy(ctx context.Context, req WamProxyRequest) error {
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(wamUrl)
-	proxy.Director = func(request *http.Request) {
-		request.Host = wamUrl.Host
+	originalDirector := proxy.Director
+	proxy.Director = func(req *http.Request) {
+		originalDirector(req)
+		req.Host = wamUrl.Host
 	}
 	proxy.Transport = a.requester
 	proxy.ServeHTTP(req.Writer, req.Req)
