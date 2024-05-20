@@ -138,6 +138,7 @@ type IssueResponse struct {
 	ExpiresIn             int      `json:"expires_in"`
 	ExpiresAt             int64    `json:"expires_at"`
 	RefreshTokenExpiresAt int64    `json:"refresh_token_expires_at"`
+	RefreshTokenExpiresIn int      `json:"refresh_token_expires_in"`
 	TokenType             string   `json:"token_type"`
 	Scope                 []string `json:"scope"`
 }
