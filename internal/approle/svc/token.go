@@ -48,7 +48,7 @@ func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, mana
 		return general.IssueResponse{}, err
 	}
 
-	scopes := general.Scopes{"channel": {manager.ChannelID}, "manager": {manager.ID}, "app": {appID}}
+	scopes := general.Scopes{"channel": {manager.ChannelID}, "manager": {manager.ID}}
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, manager.Token, scopes, appRole.Credentials.ClientID)
 }
 
@@ -58,7 +58,7 @@ func (s *TokenSvcImpl) IssueUserToken(ctx context.Context, appID string, user se
 		return general.IssueResponse{}, err
 	}
 
-	scopes := general.Scopes{"channel": {user.ChannelID}, "user": {user.ID}, "app": {appID}}
+	scopes := general.Scopes{"channel": {user.ChannelID}, "user": {user.ID}}
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, user.Token, scopes, appRole.Credentials.ClientID)
 }
 
