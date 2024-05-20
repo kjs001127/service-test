@@ -133,9 +133,11 @@ func (e *RBACExchanger) ExchangeWithPrincipal(
 }
 
 type IssueResponse struct {
-	AccessToken  string   `json:"access_token"`
-	RefreshToken string   `json:"refresh_token"`
-	ExpiresIn    int      `json:"expires_in"`
-	TokenType    string   `json:"token_type"`
-	Scope        []string `json:"scope"`
+	AccessToken           string   `json:"access_token"`
+	RefreshToken          string   `json:"refresh_token"`
+	ExpiresIn             int      `json:"expires_in"`
+	ExpiresAt             int64    `json:"expires_at"`
+	RefreshTokenExpiresAt int64    `json:"refresh_token_expires_at"`
+	TokenType             string   `json:"token_type"`
+	Scope                 []string `json:"scope"`
 }
