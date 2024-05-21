@@ -83,7 +83,6 @@ func (p *HookTestSuite) SetupTest() {
 }
 
 func (p *HookTestSuite) TearDownSuite() {
-	p.helper.TruncateAll()
 	p.helper.Stop()
 }
 
