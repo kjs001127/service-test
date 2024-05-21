@@ -244,6 +244,17 @@
         wamIframe.src = `${baseAppStoreUrl}/public/v1/apps/${wamData.appId}/wams/${wamData.wamName}/`
         document.body.appendChild(wamIframe)
 
+        if (!wamIframe.contentWindow.ChannelIOWam) {
+          wamIframe.contentWindow.ChannelIOWam = {}
+        }
+
+        wamIframe.contentWindow.ChannelIOWam.close = close
+        wamIframe.contentWindow.ChannelIOWam.callCommand = callCommand
+        wamIframe.contentWindow.ChannelIOWam.setSize = setSize
+        wamIframe.contentWindow.ChannelIOWam.callFunction = callFunction
+        wamIframe.contentWindow.ChannelIOWam.callNativeFunction = callNativeFunction
+        wamIframe.contentWindow.ChannelIOWam.getWamData = getWamData
+
         wamIframe.contentWindow.close = close
         wamIframe.contentWindow.callCommand = callCommand
         wamIframe.contentWindow.setSize = setSize
