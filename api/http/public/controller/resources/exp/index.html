@@ -53,7 +53,6 @@
         }
       })()
 
-      const baseDropWizardUrl = 'https://api.exp.channel.io'
       const baseAppStoreUrl = 'https://app-store-api.exp.channel.io'
 
       function sendToClient(wamEvent) {
@@ -128,12 +127,11 @@
       }
 
       function refreshAuthToken() {
-        return fetch(`${baseDropWizardUrl}/general/auth/v1/token?grant_type=refresh_token&refresh_token=${wamData.refreshToken}`, {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
+        return fetch(`${baseAppStoreUrl}/general/v1/token/refresh`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            refreshToken: wamData.refreshToken,
+          })
         })
         .then(response => response.json())
       }
