@@ -1,4 +1,4 @@
-package hook_test
+package integration_test
 
 import (
 	"go.uber.org/fx"
