@@ -142,6 +142,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		DetailDescriptions: null.JSONFrom(detailDescriptions),
 		DetailImageUrls:    appTarget.DetailImageURLs,
 		AvatarURL:          null.StringFromPtr(appTarget.AvatarURL),
+		ManualURL:          null.StringFromPtr(appTarget.ManualURL),
 		State:              string(appTarget.State),
 		IsPrivate:          appTarget.IsPrivate,
 		IsBuiltIn:          null.BoolFrom(appTarget.IsBuiltIn),
