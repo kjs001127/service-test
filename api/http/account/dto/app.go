@@ -7,8 +7,8 @@ import (
 type AppView struct {
 	ID          string                 `json:"id"`
 	Title       string                 `json:"title"`
-	Description *string                `json:"description"`
-	AvatarUrl   *string                `json:"avatarUrl"`
+	Description *string                `json:"description,omitempty"`
+	AvatarUrl   *string                `json:"avatarUrl,omitempty"`
 	IsPrivate   bool                   `json:"isPrivate"`
 	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 }
