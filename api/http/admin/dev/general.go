@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/channel-io/ch-app-store/api/http/admin/dto"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 // readGeneral godoc
@@ -17,7 +17,7 @@ import (
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200			{object}	dto.AdminAppResponse
+//	@Success	200			{object}	appmodel.App
 //	@Router		/desk/account/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
@@ -28,7 +28,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.FromApp(app))
+	ctx.JSON(http.StatusOK, app)
 }
 
 // modifyGeneral godoc
@@ -36,22 +36,22 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Summary	modify App general
 //	@Tags		Public
 //
-//	@Param		appID						path		string						true	"appID"
-//	@Param		x-account					header		string						true	"token"
-//	@Param		svc.AdminAppModifyRequest	body		dto.AdminAppModifyRequest	true	"dto"
+//	@Param		appID			path		string			true	"appID"
+//	@Param		x-account		header		string			true	"token"
+//	@Param		appmodel.App	body		appmodel.App	true	"dto"
 //
-//	@Success	200							{object}	dto.AdminAppResponse
+//	@Success	200				{object}	appmodel.App
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
-	var request dto.AdminAppModifyRequest
+	var request appmodel.App
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
+	request.ID = appID
 
-	app, err := h.modifySvc.Update(ctx, request.ConvertToApp(appID))
-
+	app, err := h.modifySvc.Update(ctx, &request)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

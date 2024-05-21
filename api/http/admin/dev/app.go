@@ -19,7 +19,7 @@ import (
 //
 //	@Param		app.AppCreateRequest	body		dto.AppCreateRequest	true	"App title to create"
 //
-//	@Success	201						{object}	dto.AdminAppResponse
+//	@Success	201						{object}	appmodel.App
 //	@Router		/admin/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	var request dto.AppCreateRequest
@@ -29,13 +29,12 @@ func (h *Handler) createApp(ctx *gin.Context) {
 	}
 
 	created, err := h.modifySvc.Create(ctx, request.ConvertToApp())
-
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, dto.FromApp(created))
+	ctx.JSON(http.StatusCreated, created)
 }
 
 // deleteApp godoc
