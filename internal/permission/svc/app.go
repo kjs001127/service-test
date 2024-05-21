@@ -2,16 +2,51 @@ package svc
 
 import (
 	"context"
+	"unicode/utf8"
+
+	"github.com/pkg/errors"
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
+type AppModifyRequest struct {
+	Title              string                         `json:"title"`
+	Description        *string                        `json:"description,omitempty"`
+	DetailImageURLs    []string                       `json:"detailImageUrls,omitempty"`
+	DetailDescriptions []map[string]any               `json:"detailDescriptions,omitempty"`
+	ManualURL          *string                        `json:"manualUrl,omitempty"`
+	AvatarUrl          *string                        `json:"avatarUrl,omitempty"`
+	I18nMap            map[string]appmodel.I18nFields `json:"i18nMap,omitempty"`
+}
+
+func (r *AppModifyRequest) Validate() error {
+	if utf8.RuneCountInString(r.Title) < 2 || utf8.RuneCountInString(r.Title) > 20 {
+		return errors.New("title length should be between 2 and 20")
+	}
+
+	if r.Description != nil && utf8.RuneCountInString(*r.Description) > 100 {
+		return errors.New("description length should be less than 100")
+	}
+	return nil
+}
+
+func (r *AppModifyRequest) applyTo(target *appmodel.App) *appmodel.App {
+	target.Title = r.Title
+	target.DetailImageURLs = r.DetailImageURLs
+	target.DetailDescriptions = r.DetailDescriptions
+	target.I18nMap = r.I18nMap
+	target.Description = r.Description
+	target.ManualURL = r.ManualURL
+	target.AvatarURL = r.AvatarUrl
+	return target
+}
+
 type AccountAppPermissionSvc interface {
 	ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error)
 	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
-	ModifyApp(ctx context.Context, modifyRequest *appmodel.App, appID string, accountID string) (*appmodel.App, error)
+	ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 	GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
 	GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
@@ -123,19 +158,24 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 	})
 }
 
-func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest *appmodel.App, appID string, accountID string) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appmodel.App, error) {
+	if err := modifyRequest.Validate(); err != nil {
+		return nil, err
+	}
 	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
 		_, err := a.appAccountRepo.Fetch(ctx, appID, accountID)
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = a.appCrudSvc.Read(ctx, appID)
+		oldbie, err := a.appCrudSvc.Read(ctx, appID)
 		if err != nil {
 			return nil, err
 		}
 
-		ret, err := a.appLifeCycleSvc.Update(ctx, modifyRequest)
+		newbie := modifyRequest.applyTo(oldbie)
+
+		ret, err := a.appLifeCycleSvc.Update(ctx, newbie)
 		if err != nil {
 			return nil, err
 		}

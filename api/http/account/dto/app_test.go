@@ -3,14 +3,14 @@ package dto_test
 import (
 	"testing"
 
-	"github.com/channel-io/ch-app-store/api/http/account/dto"
+	"github.com/channel-io/ch-app-store/internal/permission/svc"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAppModifyValidate(t *testing.T) {
 	t.Run("Test title length", func(t *testing.T) {
-		req := dto.AppModifyRequest{
+		req := svc.AppModifyRequest{
 			Title: "정상적인 타이틀20글자보다 적음",
 		}
 
@@ -18,7 +18,7 @@ func TestAppModifyValidate(t *testing.T) {
 	})
 
 	t.Run("Test under length 2", func(t *testing.T) {
-		req := dto.AppModifyRequest{
+		req := svc.AppModifyRequest{
 			Title: "1",
 		}
 
@@ -26,7 +26,7 @@ func TestAppModifyValidate(t *testing.T) {
 	})
 
 	t.Run("Test over length 20", func(t *testing.T) {
-		req := dto.AppModifyRequest{
+		req := svc.AppModifyRequest{
 			Title: "이건20글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이",
 		}
 
@@ -34,7 +34,7 @@ func TestAppModifyValidate(t *testing.T) {
 	})
 
 	t.Run("Test description length", func(t *testing.T) {
-		req := dto.AppModifyRequest{
+		req := svc.AppModifyRequest{
 			Title:       "정상적인 타이틀20글자보다 적음",
 			Description: new(string),
 		}
@@ -43,7 +43,7 @@ func TestAppModifyValidate(t *testing.T) {
 	})
 
 	t.Run("Test description over length 100", func(t *testing.T) {
-		req := dto.AppModifyRequest{
+		req := svc.AppModifyRequest{
 			Title:       "정상적인 타이틀20글자보다 적음",
 			Description: new(string),
 		}

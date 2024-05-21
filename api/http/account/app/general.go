@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
+	"github.com/channel-io/ch-app-store/internal/permission/svc"
 )
 
 // readGeneral godoc
@@ -41,26 +41,20 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //
 //	@Param		appID					path		string					true	"appID"
 //	@Param		x-account				header		string					true	"token"
-//	@Param		svc.AppModifyRequest	body		dto.AppModifyRequest	true	"dto"
+//	@Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
 //
 //	@Success	200						{object}	dto.AppResponse
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
-	var request dto.AppModifyRequest
+	var request svc.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	if err := request.Validate(); err != nil {
-		_ = ctx.Error(apierr.BadRequest(err))
-		return
-	}
-
-	app, err := h.appPermissionSvc.ModifyApp(ctx, request.ConvertToApp(appID), appID, account.ID)
-
+	app, err := h.appPermissionSvc.ModifyApp(ctx, &request, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
