@@ -109,6 +109,7 @@ type AppResponse struct {
 	Title              string                `json:"title"`
 	Description        *string               `json:"description,omitempty"`
 	DetailDescriptions []map[string]any      `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string              `json:"detailImageUrls,omitempty"`
 	I18nMap            map[string]I18nFields `json:"i18nMap,omitempty"`
 	AvatarURL          *string               `json:"avatarUrl,omitempty"`
 	IsPrivate          bool                  `json:"isPrivate"`
@@ -121,8 +122,10 @@ func FromApp(model *appmodel.App) *AppResponse {
 		Description:        model.Description,
 		I18nMap:            convertI18nMap(model.I18nMap),
 		DetailDescriptions: model.DetailDescriptions,
-		IsPrivate:          model.IsPrivate,
-		AvatarURL:          model.AvatarURL,
+		DetailImageURLs:    model.DetailImageURLs,
+
+		IsPrivate: model.IsPrivate,
+		AvatarURL: model.AvatarURL,
 	}
 }
 
