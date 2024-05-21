@@ -238,6 +238,10 @@
         return wamData[key]
       }
 
+      function getVersion() {
+        return 'v1'
+      }
+
       function loadWam() {
         const wamIframe = document.createElement('iframe')
         wamIframe.id = 'wam'
@@ -254,6 +258,8 @@
         wamIframe.contentWindow.ChannelIOWam.callFunction = callFunction
         wamIframe.contentWindow.ChannelIOWam.callNativeFunction = callNativeFunction
         wamIframe.contentWindow.ChannelIOWam.getWamData = getWamData
+        wamIframe.contentWindow.ChannelIOWam.getVersion = getVersion
+        wamIframe.contentWindow.ChannelIOWam.version = getVersion()
 
         wamIframe.contentWindow.close = close
         wamIframe.contentWindow.callCommand = callCommand
@@ -261,6 +267,7 @@
         wamIframe.contentWindow.callFunction = callFunction
         wamIframe.contentWindow.callNativeFunction = callNativeFunction
         wamIframe.contentWindow.getWamData = getWamData
+        wamIframe.contentWindow.getVersion = getVersion
       }
 
       window.onload = loadWam
