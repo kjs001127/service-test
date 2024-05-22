@@ -12,7 +12,7 @@ type AppCreateRequest struct {
 
 func (r *AppCreateRequest) Validate() error {
 	if utf8.RuneCountInString(r.Title) < 2 || utf8.RuneCountInString(r.Title) > 20 {
-		return errors.New("title length should be between 2 and 20")
+		return errors.New("Title length should be between 2 and 20")
 	}
 	return nil
 }

@@ -23,11 +23,11 @@ type AppModifyRequest struct {
 
 func (r *AppModifyRequest) Validate() error {
 	if utf8.RuneCountInString(r.Title) < 2 || utf8.RuneCountInString(r.Title) > 20 {
-		return errors.New("title length should be between 2 and 20")
+		return errors.New("Title length should be between 2 and 20")
 	}
 
 	if r.Description != nil && utf8.RuneCountInString(*r.Description) > 100 {
-		return errors.New("description length should be less than 100")
+		return errors.New("Description length should be less than 100")
 	}
 	return nil
 }
