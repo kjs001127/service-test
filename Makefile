@@ -105,7 +105,7 @@ run:
 dev: build run
 
 test: build
-	GO_ENV=$(TEST_ENV) go test `go list ./... | grep -v ./generated`
+	GO_ENV=$(TEST_ENV) go test `go list ./... | grep -v ./generated` -p 1
 
 clean: clean-target clean-gen
 
