@@ -20,7 +20,7 @@ type CommandDTO struct {
 	Description     *string                `json:"description,omitempty"`
 	NameDescI18nMap map[string]cmd.I18nMap `json:"nameDescI18nMap,omitempty"`
 
-	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions"`
+	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions,omitempty"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
