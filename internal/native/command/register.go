@@ -14,9 +14,8 @@ import (
 )
 
 type RegisterRequest struct {
-	AppID           string  `json:"appId"`
-	Commands        CmdDTOs `json:"commands"`
-	EnableByDefault bool    `json:"enableByDefault"`
+	AppID    string  `json:"appId"`
+	Commands CmdDTOs `json:"commands"`
 }
 
 type CmdDTOs []CmdDTO
@@ -76,7 +75,7 @@ func (r *Handler) RegisterCommand(
 		AppID:              req.AppID,
 		Commands:           req.Commands.toCmds(),
 		ToggleFunctionName: nil,
-		EnableByDefault:    req.EnableByDefault,
+		EnableByDefault:    true,
 	}); err != nil {
 		return native.WrapCommonErr(err)
 	}
