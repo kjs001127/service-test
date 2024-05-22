@@ -79,13 +79,13 @@ func (h *Handler) invoke(ctx *gin.Context) {
 		return
 	}
 
-	if err := authFnCall(token, appID, req.Context.Channel.ID, req.Method); err != nil {
+	context, err := ctxFrom(token)
+	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	context, err := ctxFrom(token)
-	if err != nil {
+	if err := authFnCall(token, appID, context.Channel.ID, req.Method); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
