@@ -2,9 +2,9 @@ package svc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
@@ -57,8 +57,10 @@ func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Man
 		},
 	})
 
-	if resp.IsError() || !resp.Result.Enable {
-		return fmt.Errorf("toggle fail: %w", resp.Error)
+	if resp.IsError() {
+		return resp.Error
+	} else if !resp.Result.Enable {
+		return errors.New("toggle failed")
 	}
 
 	return nil
