@@ -24,7 +24,7 @@ import (
 //	@Param		appID		path	string	true	"appID"
 //
 //	@Success	200		{array} 	dto.DeskRoleView
-//	@Router		/desk/v1/channels/{channelID}/app-store/{appID}/roles  [get]
+//	@Router		/desk/v1/channels/{channelID}/app-store/apps/{appID}/roles  [get]
 func (h *Handler) getAppRoles(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
