@@ -22,11 +22,43 @@ type AppModifyRequest struct {
 }
 
 func (r *AppModifyRequest) Validate() error {
-	if utf8.RuneCountInString(r.Title) < 2 || utf8.RuneCountInString(r.Title) > 20 {
-		return errors.New("Title length should be between 2 and 20")
+	err := validateTitle(r.Title)
+	if err != nil {
+		return err
 	}
 
-	if r.Description != nil && utf8.RuneCountInString(*r.Description) > 100 {
+	err = validateDescription(r.Description)
+	if err != nil {
+		return err
+	}
+
+	if r.I18nMap == nil {
+		return nil
+	}
+
+	for _, item := range r.I18nMap {
+		err = validateTitle(item.Title)
+		if err != nil {
+			return err
+		}
+
+		err = validateDescription(&item.Description)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateTitle(title string) error {
+	if utf8.RuneCountInString(title) < 2 || utf8.RuneCountInString(title) > 20 {
+		return errors.New("Title length should be between 2 and 20")
+	}
+	return nil
+}
+
+func validateDescription(description *string) error {
+	if description != nil && utf8.RuneCountInString(*description) > 100 {
 		return errors.New("Description length should be less than 100")
 	}
 	return nil
