@@ -50,7 +50,7 @@ var externalAppTransport = &http.Transport{
 }
 
 var dwTransport = &http.Transport{
-	DialContext:           filteringDialer.DialContext,
+	DialContext:           dialer.DialContext,
 	ForceAttemptHTTP2:     true,
 	MaxIdleConns:          runtime.GOMAXPROCS(0) * 5,
 	MaxConnsPerHost:       runtime.GOMAXPROCS(0) * 5,
