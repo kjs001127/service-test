@@ -19,15 +19,32 @@ type AppStoreDetailView struct {
 }
 
 type AppView struct {
-	ID          string  `json:"id"`
-	Title       string  `json:"title"`
-	AvatarURL   *string `json:"avatarUrl,omitempty"`
-	Description *string `json:"description,omitempty"`
-	IsBuiltIn   bool    `json:"isBuiltIn"`
+	ID          string                 `json:"id"`
+	Title       string                 `json:"title"`
+	AvatarURL   *string                `json:"avatarUrl,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	IsBuiltIn   bool                   `json:"isBuiltIn"`
+	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
+	IsPrivate   bool                   `json:"isPrivate"`
 
 	// legacy fields
-	State     string `json:"state"`
-	IsPrivate bool   `json:"isPrivate"`
+	State string `json:"state"`
+}
+
+type AppViewI18n struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+func convertAppViewI18n(app *model.App) map[string]AppViewI18n {
+	ret := make(map[string]AppViewI18n)
+	for lang, i18n := range app.I18nMap {
+		ret[lang] = AppViewI18n{
+			Title:       i18n.Title,
+			Description: i18n.Description,
+		}
+	}
+	return ret
 }
 
 func NewAppView(origin *model.App) *AppView {
@@ -37,10 +54,11 @@ func NewAppView(origin *model.App) *AppView {
 		AvatarURL:   origin.AvatarURL,
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
+		I18nMap:     convertAppViewI18n(origin),
+		IsPrivate:   origin.IsPrivate,
 
 		// legacy fields
-		State:     "",
-		IsPrivate: origin.IsPrivate,
+		State: "",
 	}
 }
 
@@ -65,7 +83,8 @@ type AppDetailView struct {
 	ManualURL          *string          `json:"manualUrl,omitempty"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
-	IsBuiltIn          bool             `json:"isBuiltIn"`
+	I18nMap            map[string]AppDetailI18n
+	IsBuiltIn          bool `json:"isBuiltIn"`
 }
 
 func NewAppDetailView(origin *model.App) *AppDetailView {
@@ -78,7 +97,28 @@ func NewAppDetailView(origin *model.App) *AppDetailView {
 		ManualURL:          origin.ManualURL,
 		DetailDescriptions: origin.DetailDescriptions,
 		DetailImageURLs:    origin.DetailImageURLs,
+		I18nMap:            convertAppDetailI18n(origin),
 	}
+}
+
+type AppDetailI18n struct {
+	Title              string           `json:"title"`
+	Description        string           `json:"description"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+}
+
+func convertAppDetailI18n(app *model.App) map[string]AppDetailI18n {
+	ret := make(map[string]AppDetailI18n)
+	for lang, i18n := range app.I18nMap {
+		ret[lang] = AppDetailI18n{
+			Title:              i18n.Title,
+			Description:        i18n.Description,
+			DetailDescriptions: i18n.DetailDescriptions,
+			DetailImageURLs:    i18n.DetailImageURLs,
+		}
+	}
+	return ret
 }
 
 func NewAppDetailViews(origins []*model.App) []*AppDetailView {
