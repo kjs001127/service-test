@@ -116,6 +116,10 @@ func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model
 		return nil, err
 	}
 
+	if role == nil || role.Role == nil {
+		return &ClaimsDTO{}, nil
+	}
+
 	allClaims := s.fromProtoClaims(role.Role.Claims)
 	nativeClaims, appClaims := s.classifyClaims(allClaims)
 	return &ClaimsDTO{NativeClaims: nativeClaims, AppClaims: appClaims}, nil
