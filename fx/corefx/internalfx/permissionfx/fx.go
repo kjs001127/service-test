@@ -1,6 +1,8 @@
 package permissionfx
 
 import (
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
+	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
 	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	"github.com/channel-io/ch-app-store/internal/permission/svc"
 
@@ -20,11 +22,32 @@ var PermissionSvc = fx.Options(
 		),
 		fx.Annotate(
 			svc.NewManagerInstallPermissionSvc,
-			fx.As(new(svc.ManagerInstallPermissionSvc)),
+			fx.As(new(managersvc.InstallListener)),
+			fx.ResultTags(managerfx.PreInstallHandlerGroup),
 		),
 		fx.Annotate(
 			svc.NewManagerCommandTogglePermissionSvc,
-			fx.As(new(svc.ManagerCommandTogglePermissionSvc)),
+			fx.As(new(managersvc.ToggleListener)),
+			fx.ResultTags(managerfx.PreToggleHandlerGroup),
+		),
+		fx.Annotate(
+			svc.NewAccountServerSettingPermissionSvc,
+			fx.As(new(svc.AccountServerSettingPermissionSvc)),
+		),
+		svc.NewAccountAuthPermissionSvc,
+		fx.Annotate(
+			svc.NewPermissionStrategy,
+			fx.As(new(svc.Strategy)),
+		),
+		svc.NewPermissionUtil,
+	),
+)
+
+var Strategy = fx.Options(
+	fx.Provide(
+		fx.Annotate(
+			svc.NewPermissionStrategy,
+			fx.As(new(svc.Strategy)),
 		),
 		svc.NewPermissionUtil,
 	),
@@ -34,7 +57,7 @@ var AppAccountRepo = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			repo.NewAppAccountRepo,
-			fx.As(new(repo.AppAccountRepo)),
+			fx.As(new(svc.AppAccountRepo)),
 		),
 	),
 )

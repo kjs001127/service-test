@@ -6,35 +6,39 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
+	signutil "github.com/channel-io/ch-app-store/internal/apphttp/util"
 	"github.com/channel-io/ch-app-store/lib/log"
+
+	"github.com/pkg/errors"
 )
 
 const (
 	contentTypeHeader = "Content-Type"
 	contentTypeJson   = "application/json"
+	xSignatureHeader  = "X-Signature"
 )
 
 type Invoker struct {
-	requester HttpRequester
-	repo      AppUrlRepository
-	logger    log.ContextAwareLogger
+	internalRequester HttpRequester
+	externalRequester HttpRequester
+	repo              AppServerSettingRepository
+	logger            log.ContextAwareLogger
 }
 
-func NewInvoker(requester HttpRequester, repo AppUrlRepository, logger log.ContextAwareLogger) *Invoker {
-	return &Invoker{requester: requester, repo: repo, logger: logger}
+func NewInvoker(requester HttpRequester, proxyRequester HttpRequester, repo AppServerSettingRepository, logger log.ContextAwareLogger) *Invoker {
+	return &Invoker{internalRequester: requester, externalRequester: proxyRequester, repo: repo, logger: logger}
 }
 
 func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
-	urls, err := a.repo.Fetch(ctx, target.ID)
+	serverSetting, err := a.repo.Fetch(ctx, target.ID)
 	if err != nil {
 		return app.WrapCommonErr(err)
 	}
 
-	if urls.FunctionURL == nil {
+	if serverSetting.FunctionURL == nil {
 		a.logger.Debugw(ctx, "function url is nil", "appID", target.ID)
 		return app.WrapCommonErr(errors.New("function url empty"))
 	}
@@ -50,7 +54,7 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 
 	a.logger.Debugw(ctx, "function request", "appID", target.ID, "request", json.RawMessage(marshaled))
 
-	ret, err := a.requestWithHttp(ctx, *urls.FunctionURL, marshaled)
+	ret, err := a.requestWithHttp(ctx, serverSetting, marshaled)
 	if err != nil {
 		a.logger.Warnw(ctx, "function http request failed", "appID", target.ID, "error", err)
 		return app.WrapCommonErr(err)
@@ -75,13 +79,30 @@ func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.
 	return jsonResp
 }
 
-func (a *Invoker) requestWithHttp(ctx context.Context, url string, body []byte) ([]byte, error) {
-	return a.requester.Request(ctx, HttpRequest{
-		Body:   body,
-		Method: http.MethodPut,
-		Headers: map[string]string{
-			contentTypeHeader: contentTypeJson,
-		},
-		Url: url,
-	})
+func (a *Invoker) requestWithHttp(ctx context.Context, serverSetting model.ServerSetting, body []byte) ([]byte, error) {
+	headers := map[string]string{
+		contentTypeHeader: contentTypeJson,
+	}
+	if serverSetting.SigningKey != nil {
+		signature, err := signutil.Sign(*serverSetting.SigningKey, body)
+		if err != nil {
+			return nil, err
+		}
+		headers[xSignatureHeader] = signature
+	}
+	req := HttpRequest{
+		Body:    body,
+		Method:  http.MethodPut,
+		Headers: headers,
+		Url:     *serverSetting.FunctionURL,
+	}
+
+	switch serverSetting.AccessType {
+	case model.AccessType_External:
+		return a.externalRequester.Request(ctx, req)
+	case model.AccessType_Internal:
+		return a.internalRequester.Request(ctx, req)
+	default:
+		return nil, errors.New("invalid connect type")
+	}
 }

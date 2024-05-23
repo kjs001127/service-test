@@ -30,7 +30,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 	}
 
 	token := ctx.GetHeader("x-access-token")
-	resp := h.nativeInvoker.Invoke(ctx, native.Token{Type: "x-access-token", Value: token}, native.FunctionRequest{
+	resp := h.nativeInvoker.Invoke(ctx, native.Token{Exists: true, Value: token}, native.FunctionRequest{
 		Method: req.Method,
 		Params: req.Params,
 	})
@@ -49,7 +49,7 @@ func (h *Handler) invokeNative(ctx *gin.Context) {
 //	@Success	200						{object}	json.RawMessage
 //	@Router		/admin/apps/{appID}/functions [put]
 func (h *Handler) invoke(ctx *gin.Context) {
-	appID := ctx.Param("id")
+	appID := ctx.Param("appID")
 
 	var req dto.JsonFunctionRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {

@@ -8,8 +8,8 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
@@ -28,15 +28,15 @@ var Datadog = fx.Options(
 			func(client *resty.Client) *resty.Client {
 				return datadog.DecorateResty(client)
 			},
-			fx.ResultTags(restyfx.Dw),
-			fx.ParamTags(restyfx.Dw),
+			fx.ResultTags(httpfx.DW),
+			fx.ParamTags(httpfx.DW),
 		),
 		fx.Annotate(
 			func(client *resty.Client) *resty.Client {
 				return datadog.DecorateResty(client)
 			},
-			fx.ResultTags(restyfx.App),
-			fx.ParamTags(restyfx.App),
+			fx.ResultTags(httpfx.InternalApp),
+			fx.ParamTags(httpfx.InternalApp),
 		),
 		datadog.DecorateLogger,
 	),

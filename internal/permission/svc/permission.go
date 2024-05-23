@@ -4,15 +4,16 @@ import (
 	"context"
 
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
-	ownerType  = "owner"
-	permission = "generalSettings"
+	ownerType = "owner"
 )
 
 type PermissionUtil struct {
 	roleFetcher account.ManagerRoleFetcher
+	logger      log.ContextAwareLogger
 }
 
 func NewPermissionUtil(roleFetcher account.ManagerRoleFetcher) PermissionUtil {
@@ -20,31 +21,13 @@ func NewPermissionUtil(roleFetcher account.ManagerRoleFetcher) PermissionUtil {
 }
 
 func (a PermissionUtil) isOwner(ctx context.Context, manager account.Manager) bool {
-	role, err := a.roleFetcher.FetchRole(ctx, manager.RoleID)
+	role, err := a.roleFetcher.FetchRole(ctx, manager.ChannelID, manager.RoleID)
 	if err != nil {
+		a.logger.Error(ctx, "error while fetching role", err)
 		return false
 	}
 	if role.RoleType == ownerType {
 		return true
-	}
-
-	return false
-}
-
-func (a PermissionUtil) hasPermission(ctx context.Context, manager account.Manager) bool {
-	role, err := a.roleFetcher.FetchRole(ctx, manager.RoleID)
-	if err != nil {
-		return false
-	}
-
-	if len(role.Permissions) <= 0 {
-		return false
-	}
-
-	for _, perm := range role.Permissions {
-		if perm.Action == permission {
-			return true
-		}
 	}
 
 	return false

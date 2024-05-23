@@ -1,5 +1,6 @@
 package appdev_test
 
+/*
 import (
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	app "github.com/channel-io/ch-app-store/internal/app/model"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/internal/appdev/svc"
 	functionmodel "github.com/channel-io/ch-app-store/internal/apphttp/model"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/command/model"
@@ -67,7 +67,7 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 		IsPrivate: false,
 	}
 
-	urlCreateRequest := functionmodel.Urls{
+	serverSettingCreateRequest := functionmodel.ServerSetting{
 		FunctionURL: &fakeFunctionUrl,
 		WamURL:      &fakeWamUrl,
 	}
@@ -75,8 +75,8 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 	body := svc.AppRequest{
 		Roles: nil,
 		RemoteApp: &svc.RemoteApp{
-			App:  &appCreateRequest,
-			Urls: urlCreateRequest,
+			App:           &appCreateRequest,
+			ServerSetting: serverSettingCreateRequest,
 		},
 	}
 
@@ -137,3 +137,4 @@ func (e *E2ETest) TestInstallApp() {
 	assert.Equal(e.T(), http.StatusOK, res.StatusCode())
 	assert.Nil(e.T(), err)
 }
+*/

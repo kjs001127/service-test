@@ -38,8 +38,9 @@ func NewAppView(origin *model.App) *AppView {
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
 
+		// legacy fields
 		State:     "",
-		IsPrivate: false,
+		IsPrivate: origin.IsPrivate,
 	}
 }
 
@@ -93,8 +94,8 @@ type CommandView struct {
 	Name  string    `json:"name"`
 	Scope cmd.Scope `json:"scope"`
 
-	Description     *string        `json:"description,omitempty"`
-	NameDescI18nMap map[string]any `json:"nameDescI18nMap,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	NameDescI18nMap map[string]cmd.I18nMap `json:"nameDescI18nMap,omitempty"`
 
 	ParamDefinitions cmd.ParamDefinitions `json:"paramDefinitions,omitempty"`
 

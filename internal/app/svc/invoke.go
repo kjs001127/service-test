@@ -7,7 +7,11 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
-type Invoker struct {
+type Invoker interface {
+	Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse
+}
+
+type InvokerImpl struct {
 	querySvc *AppInstallQuerySvc
 	appRepo  AppRepository
 	handler  InvokeHandler
@@ -20,11 +24,11 @@ func NewInvoker(
 	appRepo AppRepository,
 	handler InvokeHandler,
 	listeners []FunctionRequestListener,
-) *Invoker {
-	return &Invoker{querySvc: querySvc, appRepo: appRepo, handler: handler, listeners: listeners}
+) *InvokerImpl {
+	return &InvokerImpl{querySvc: querySvc, appRepo: appRepo, handler: handler, listeners: listeners}
 }
 
-func (i *Invoker) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
+func (i *InvokerImpl) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
 	app, err := i.querySvc.Query(ctx, model.InstallationID{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
@@ -118,7 +122,7 @@ type FunctionRequestListener interface {
 	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
 }
 
-func (i *Invoker) callListeners(ctx context.Context, event FunctionInvokeEvent) {
+func (i *InvokerImpl) callListeners(ctx context.Context, event FunctionInvokeEvent) {
 	for _, listener := range i.listeners {
 		listener.OnInvoke(ctx, event)
 	}

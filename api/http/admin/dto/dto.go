@@ -1,10 +1,10 @@
 package dto
 
 import (
-	accountmodel "github.com/channel-io/ch-app-store/internal/account/model"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
+	accountmodel "github.com/channel-io/ch-app-store/internal/permission/model"
 )
 
 type InstalledApp struct {
@@ -28,5 +28,5 @@ type BriefRequest struct {
 }
 
 type ChannelResponse struct {
-	Channels []*accountmodel.Channel
+	Channels []*accountmodel.Channel `json:"channels"`
 }

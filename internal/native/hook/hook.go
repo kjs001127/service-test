@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
-	"github.com/channel-io/ch-app-store/internal/installhook/model"
-	"github.com/channel-io/ch-app-store/internal/installhook/svc"
+	"github.com/channel-io/ch-app-store/internal/hook/model"
+	"github.com/channel-io/ch-app-store/internal/hook/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -16,11 +16,11 @@ import (
 
 type Hook struct {
 	serviceName string
-	svc         *svc.HookSvc
+	svc         *svc.InstallHookSvc
 	rbacParser  authgen.Parser
 }
 
-func NewHook(serviceName string, svc *svc.HookSvc, rbacParser authgen.Parser) *Hook {
+func NewHook(serviceName string, svc *svc.InstallHookSvc, rbacParser authgen.Parser) *Hook {
 	return &Hook{
 		serviceName: serviceName,
 		svc:         svc,

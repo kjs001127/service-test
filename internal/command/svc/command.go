@@ -12,15 +12,15 @@ import (
 
 type Invoker struct {
 	repository        CommandRepository
-	requester         *app.TypedInvoker[CommandBody, Action]
-	activationChecker *ActivationSvc
+	requester         app.TypedInvoker[CommandBody, Action]
+	activationChecker ToggleSvc
 	listeners         []CommandRequestListener
 }
 
 func NewInvoker(
 	repository CommandRepository,
-	requester *app.TypedInvoker[CommandBody, Action],
-	activationSvc *ActivationSvc,
+	requester app.TypedInvoker[CommandBody, Action],
+	activationSvc ToggleSvc,
 	listeners []CommandRequestListener,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, listeners: listeners, activationChecker: activationSvc}

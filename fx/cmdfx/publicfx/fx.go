@@ -2,6 +2,7 @@ package publicfx
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
+	accountfx2 "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/accountfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/generalfx"
@@ -9,21 +10,20 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/accountfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/togglehookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 
 	"go.uber.org/fx"
 )
@@ -35,7 +35,6 @@ var Public = fx.Options(
 	authfx.GeneralAuth,
 	authfx.PrincipalAuth,
 
-	accountfx.AppAccount,
 	appfx.App,
 	permissionfx.Permission,
 	brieffx.Brief,
@@ -43,14 +42,14 @@ var Public = fx.Options(
 	nativefx.Native,
 	approlefx.AppRole,
 	apphttpfx.Function,
-	installhookfx.InstallHooks,
-	togglehookfx.ToggleHook,
+	managerfx.Manager,
+	hookfx.Hook,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,
 
 	configfx.Values,
-	restyfx.Clients,
+	httpfx.Clients,
 	datadogfx.Datadog,
 	logfx.Logger,
 	ddbfx.DynamoDB,
@@ -61,5 +60,6 @@ var PublicHttp = fx.Options(
 	frontfx.FrontHandlers,
 	deskfx.DeskHandlers,
 	publicfx.PublicHandlers,
+	accountfx2.AccountHandlers,
 	gintoolfx.ApiServer,
 )

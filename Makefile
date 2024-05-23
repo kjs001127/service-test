@@ -2,7 +2,8 @@
 MODULE_NAME := $(shell go list -m)
 PROJECT_PATH := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = ch-app-store
-APPS := admin desk front general public
+APPS := admin general
+DOC_TARGETS := admin desk front general account
 
 export PATH := ${PATH}:${GOPATH}/bin
 
@@ -104,7 +105,7 @@ run:
 dev: build run
 
 test: build
-	GO_ENV=$(TEST_ENV) go test `go list ./... | grep -v ./generated`
+	GO_ENV=$(TEST_ENV) go test `go list ./... | grep -v ./generated` -p 1
 
 clean: clean-target clean-gen
 
@@ -117,8 +118,8 @@ clean-target:
 docs: docs-clean docs-gen docs-fmt
 
 docs-gen:
-	@for app in ${APPS} ; do \
-		swag init -d api/http/$$app -g swagger.go -o api/http/swagger --pd --instanceName swagger_$$app ; \
+	@for doc in ${DOC_TARGETS} ; do \
+		swag init -d api/http/$$doc -g swagger.go -o api/http/swagger --pd --instanceName swagger_$$doc ; \
 	done
 
 docs-clean:

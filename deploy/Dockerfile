@@ -1,5 +1,5 @@
 # This Dockerfile is only used by CI/CD Pipeline system
-FROM debian:bookworm-slim AS runtime
+FROM public.ecr.aws/i8a4b9p4/circleci-base/debian:bookworm-slim-curl AS runtime
 
 RUN apt-get update \
   && apt-get install -y ca-certificates \
@@ -16,8 +16,6 @@ ARG TARGET_ADMIN_PORT
 WORKDIR /$TARGET_APP
 
 # k8s 환경에서 환경변수 설정은 .env 파일이 아닌 configmap & secret 에서 가져옴.
-COPY ./target/bin/$TARGET_APP-desk.$TARGETOS.$TARGETARCH ./desk
-COPY ./target/bin/$TARGET_APP-front.$TARGETOS.$TARGETARCH ./front
 COPY ./target/bin/$TARGET_APP-general.$TARGETOS.$TARGETARCH ./general
 COPY ./target/bin/$TARGET_APP-admin.$TARGETOS.$TARGETARCH ./admin
 COPY ./deploy/run.sh ./run.sh

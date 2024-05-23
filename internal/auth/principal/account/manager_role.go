@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	roleFetch = "/api/admin/roles/{roleID}" // core로 할지 변경 여지가 있음
+	roleFetch = "/api/admin/channels/{channelID}/roles/{roleID}"
 )
 
 type Permission struct {
@@ -29,7 +29,7 @@ type ManagerRoleResponse struct {
 }
 
 type ManagerRoleFetcher interface {
-	FetchRole(ctx context.Context, roleID string) (ManagerRole, error)
+	FetchRole(ctx context.Context, channelID, roleID string) (ManagerRole, error)
 }
 
 type ManagerRoleFetcherImpl struct {
@@ -41,10 +41,12 @@ func NewManagerRoleFetcher(cli *resty.Client, roleURL string) *ManagerRoleFetche
 	return &ManagerRoleFetcherImpl{cli: cli, authURL: roleURL}
 }
 
-func (c *ManagerRoleFetcherImpl) FetchRole(ctx context.Context, roleID string) (ManagerRole, error) {
+func (c *ManagerRoleFetcherImpl) FetchRole(ctx context.Context, channelID, roleID string) (ManagerRole, error) {
 	req := c.cli.R()
 	req.SetContext(ctx)
+	req.SetPathParam("channelID", channelID)
 	req.SetPathParam("roleID", roleID)
+
 	resp, err := req.Get(c.authURL + roleFetch)
 	if err != nil {
 		return ManagerRole{}, err

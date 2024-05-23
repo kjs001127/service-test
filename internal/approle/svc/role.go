@@ -2,172 +2,275 @@ package svc
 
 import (
 	"context"
-	"fmt"
+	"crypto/rand"
+	"encoding/base64"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
+	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
 
+type ClaimsDTO struct {
+	NativeClaims model.Claims `json:"nativeClaims"`
+	AppClaims    model.Claims `json:"appClaims"`
+}
+
 type AppRoleSvc struct {
-	roleCli   authgen.RoleFetcher
-	roleRepo  AppRoleRepository
-	urlRepo   svc.AppUrlRepository
-	manager   appsvc.AppCrudSvc
-	typeRules map[model.RoleType]TypeRule
+	roleCli        authgen.RoleFetcher
+	roleRepo       AppRoleRepository
+	secretRepo     AppSecretRepository
+	typeRule       map[model.RoleType]TypeRule
+	appSvc         app.AppQuerySvc
+	nativeServices []string
 }
 
 func NewAppRoleSvc(
 	roleCli authgen.RoleFetcher,
 	roleRepo AppRoleRepository,
-	typeRules map[model.RoleType]TypeRule,
+	typeRule map[model.RoleType]TypeRule,
+	appSvc app.AppQuerySvc,
+	secretRepo AppSecretRepository,
+	nativeServices []string,
 ) *AppRoleSvc {
-	return &AppRoleSvc{roleCli: roleCli, roleRepo: roleRepo, typeRules: typeRules}
+	return &AppRoleSvc{
+		roleCli:        roleCli,
+		roleRepo:       roleRepo,
+		typeRule:       typeRule,
+		secretRepo:     secretRepo,
+		appSvc:         appSvc,
+		nativeServices: nativeServices,
+	}
 }
 
-func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string, req []*RoleWithType) ([]*RoleWithCredential, error) {
-	var roles []*RoleWithCredential
-	for _, r := range req {
-		rules, ok := s.typeRules[r.Type]
-		if !ok {
-			return nil, apierr.NotFound(fmt.Errorf("no role type found %s", r.Type))
-		}
-
-		/*
-			if err := checkScopes(r, rules); err != nil {
-				return nil, err
-			}
-
-		*/
-
-		r.Claims = append(r.Claims, defaultClaimsOf(appID, rules)...)
-
+func (s *AppRoleSvc) CreateRoles(ctx context.Context, appID string) error {
+	for _, roleType := range model.AvailableRoleTypes {
+		typeRule := s.typeRule[roleType]
 		res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
-			Claims:                r.Claims,
-			AllowedPrincipalTypes: rules.GrantedPrincipalTypes,
-			AllowedGrantTypes:     rules.GrantTypes,
+			Claims:                typeRule.DefaultClaimsOf(appID),
+			AllowedPrincipalTypes: typeRule.PrincipalTypes,
+			AllowedGrantTypes:     typeRule.GrantTypes,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "create role fail")
+			return err
 		}
 
 		if err := s.roleRepo.Save(ctx, &model.AppRole{
-			AppID:           appID,
-			RoleID:          res.Role.Id,
-			RoleCredentials: res.Credentials,
-			Type:            r.Type,
+			AppID:  appID,
+			Type:   roleType,
+			RoleID: res.Role.Id,
+			Credentials: &model.Credentials{
+				ClientSecret: res.Credentials.ClientSecret,
+				ClientID:     res.Credentials.ClientId,
+			},
 		}); err != nil {
-			return nil, errors.WithStack(err)
-		}
-
-		roles = append(roles, &RoleWithCredential{
-			RoleWithType:    &RoleWithType{Role: res.Role, Type: r.Type},
-			RoleCredentials: res.Credentials,
-		})
-	}
-	return roles, nil
-}
-
-const allActions = "*"
-
-func defaultClaimsOf(appID string, rule TypeRule) []*protomodel.Claim {
-	return []*protomodel.Claim{{
-		Scope:   rule.GrantedScopes,
-		Service: appID,
-		Action:  allActions,
-	}}
-}
-
-func checkScopes(role *RoleWithType, rule TypeRule) error {
-	// mark granted scopes of input role type
-	grantedScopes := make(map[string]bool)
-	for _, grantedScope := range rule.GrantedScopes {
-		grantedScopes[grantedScope] = true
-	}
-
-	for _, claim := range role.Claims {
-
-		// mark input scopes of claim
-		inputScopes := make(map[string]bool)
-		for _, scope := range claim.Scope {
-			inputScopes[scope] = true
-		}
-
-		// check if all granted scopes are in input scopes
-		for _, grantedScope := range rule.GrantedScopes {
-			if _, ok := inputScopes[grantedScope]; !ok {
-				return fmt.Errorf("input scope must contain scope %s on role type %s", grantedScope, role.Type)
-			}
-		}
-
-		// check if all input scopes are in granted scopes
-		for _, inputScope := range claim.Scope {
-			if _, ok := grantedScopes[inputScope]; !ok {
-				return fmt.Errorf("input scope %s is not granted for role type %s", inputScope, role.Type)
-			}
+			return err
 		}
 	}
 	return nil
 }
 
-func (s *AppRoleSvc) FetchRole(ctx context.Context, roleID string) (*model.AppRole, error) {
-	return s.roleRepo.FetchByRoleID(ctx, roleID)
+func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, request *ClaimsDTO) error {
+	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
+	if err != nil {
+		return err
+	}
+
+	appClaims, err := s.appClaimsToProto(ctx, request.AppClaims)
+	if err != nil {
+		return err
+	}
+
+	nativeClaims, err := s.nativeClaimsToProto(roleType, request.NativeClaims)
+	if err != nil {
+		return err
+	}
+
+	allClaims := make([]*protomodel.Claim, 0, len(request.AppClaims)+len(request.NativeClaims))
+	allClaims = append(allClaims, appClaims...)
+	allClaims = append(allClaims, nativeClaims...)
+
+	_, err = s.roleCli.UpdateRole(ctx, &service.ReplaceRoleClaimsRequest{
+		RoleId: appRole.RoleID,
+		Claims: allClaims,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (s *AppRoleSvc) FetchRoles(ctx context.Context, appID string) ([]*RoleWithCredential, error) {
-	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
+func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model.RoleType) (*ClaimsDTO, error) {
+	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
 	}
 
-	var roles []*RoleWithCredential
-	for _, c := range appRoles {
-		role, err := s.roleCli.GetRole(ctx, c.RoleID)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		roles = append(roles, &RoleWithCredential{
-			RoleWithType:    &RoleWithType{Role: role.Role, Type: c.Type},
-			RoleCredentials: c.RoleCredentials,
-		})
+	role, err := s.roleCli.GetRole(ctx, appRole.RoleID)
+	if err != nil {
+		return nil, err
 	}
-	return roles, nil
+
+	if role == nil || role.Role == nil {
+		return &ClaimsDTO{}, nil
+	}
+
+	allClaims := s.fromProtoClaims(role.Role.Claims)
+	nativeClaims, appClaims := s.classifyClaims(allClaims)
+	return &ClaimsDTO{NativeClaims: nativeClaims, AppClaims: appClaims}, nil
+}
+
+func (s *AppRoleSvc) classifyClaims(claims []*model.Claim) (natives []*model.Claim, apps []*model.Claim) {
+	for _, claim := range claims {
+		if s.isNativeSvc(claim.Service) {
+			natives = append(natives, claim)
+		} else {
+			apps = append(apps, claim)
+		}
+	}
+	return
+}
+
+func (s *AppRoleSvc) isNativeSvc(svcName string) bool {
+	for _, nativeSvc := range s.nativeServices {
+		if svcName == nativeSvc {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *AppRoleSvc) DeleteRoles(ctx context.Context, appID string) error {
-	appRoles, err := s.roleRepo.FetchByAppID(ctx, appID)
-	if err != nil {
-		return errors.WithStack(err)
+	roles, err := s.roleRepo.FetchByAppID(ctx, appID)
+	if apierr.IsNotFound(err) {
+		return nil
+	} else if err != nil {
+		return err
 	}
-	if err = s.roleRepo.DeleteByAppID(ctx, appID); err != nil {
-		return errors.WithStack(err)
-	}
-	for _, c := range appRoles {
-		if _, err = s.roleCli.DeleteRole(ctx, c.RoleID); err != nil {
-			return errors.Wrap(err, "error while deleting roles")
+
+	for _, role := range roles {
+		if _, err := s.roleCli.DeleteRole(ctx, role.RoleID); err != nil {
+			return err
 		}
 	}
-	return nil
+
+	return s.roleRepo.DeleteByAppID(ctx, appID)
 }
 
-type TypeRule struct {
-	GrantTypes            []protomodel.GrantType
-	GrantedPrincipalTypes []string
-	GrantedScopes         []string
+func (s *AppRoleSvc) fromProtoClaims(claims []*protomodel.Claim) []*model.Claim {
+	ret := make([]*model.Claim, 0, len(claims))
+	for _, claim := range claims {
+		ret = append(ret, s.fromProtoClaim(claim))
+	}
+	return ret
 }
 
-type RoleWithType struct {
-	*protomodel.Role
-	Type model.RoleType `json:"type"`
+func (s *AppRoleSvc) fromProtoClaim(claim *protomodel.Claim) *model.Claim {
+	return &model.Claim{
+		Service: claim.Service,
+		Action:  claim.Action,
+	}
 }
 
-type RoleWithCredential struct {
-	*RoleWithType
-	*protomodel.RoleCredentials
+func (s *AppRoleSvc) nativeClaimsToProto(t model.RoleType, claims []*model.Claim) ([]*protomodel.Claim, error) {
+	ret := make([]*protomodel.Claim, 0, len(claims))
+	for _, claim := range claims {
+		protoClaim, found := s.findMatchingAvailableClaim(t, claim)
+		if !found {
+			return nil, apierr.Unauthorized(errors.New("contains claim that is not permitted"))
+		}
+		ret = append(ret, protoClaim)
+	}
+	return ret, nil
+}
+
+func (s *AppRoleSvc) findMatchingAvailableClaim(t model.RoleType, claim *model.Claim) (*protomodel.Claim, bool) {
+	claims := s.typeRule[t].AvailableClaims
+	for _, protoClaim := range claims {
+		if protoClaim.Service == claim.Service && protoClaim.Action == claim.Action {
+			return protoClaim, true
+		}
+	}
+	return nil, false
+}
+
+func (s *AppRoleSvc) appClaimsToProto(ctx context.Context, claims model.Claims) ([]*protomodel.Claim, error) {
+	appIds := make([]string, 0, len(claims))
+	for _, claim := range claims {
+		appIds = append(appIds, claim.Service)
+	}
+
+	apps, err := s.appSvc.ReadAllByAppIDs(ctx, appIds)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(apps) != len(appIds) {
+		return nil, apierr.NotFound(errors.New("app not found"))
+	}
+
+	ret := make([]*protomodel.Claim, 0, len(claims))
+	for _, claim := range claims {
+		ret = append(ret, &protomodel.Claim{
+			Service: claim.Service,
+			Action:  claim.Action,
+			Scope:   []string{"channel-{id}"},
+		})
+	}
+
+	return ret, nil
+}
+
+func (s *AppRoleSvc) GetAvailableNativeClaims(ctx context.Context, roleType model.RoleType) ([]*model.Claim, error) {
+	claims := s.typeRule[roleType].AvailableClaims
+	ret := make([]*model.Claim, 0, len(claims))
+	for _, claim := range claims {
+		ret = append(ret, &model.Claim{
+			Service: claim.Service,
+			Action:  claim.Action,
+		})
+	}
+	return ret, nil
+}
+
+func (s *AppRoleSvc) DeleteAppSecret(ctx context.Context, appID string) error {
+	return s.secretRepo.Delete(ctx, appID)
+}
+
+func (s *AppRoleSvc) RefreshAppSecret(ctx context.Context, appID string) (string, error) {
+	token, err := generateSecret()
+	if err != nil {
+		return "", err
+	}
+
+	if err := s.secretRepo.Save(ctx, &model.AppSecret{
+		AppID:  appID,
+		Secret: token,
+	}); err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func generateSecret() (string, error) {
+	randomBytes := make([]byte, 16)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return "", err
+	}
+	secret := base64.URLEncoding.EncodeToString(randomBytes)
+	return secret, nil
+}
+
+func (s *AppRoleSvc) HasIssuedBefore(ctx context.Context, appID string) (bool, error) {
+	_, err := s.secretRepo.FetchByAppID(ctx, appID)
+	if apierr.IsNotFound(err) {
+		return false, nil
+	}
+	return true, nil
 }

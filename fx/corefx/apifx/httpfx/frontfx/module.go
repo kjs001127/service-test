@@ -5,6 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/doc"
+	"github.com/channel-io/ch-app-store/api/http/front/auth"
 	"github.com/channel-io/ch-app-store/api/http/front/command"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
@@ -13,6 +14,7 @@ import (
 var FrontHandlers = fx.Options(
 	fx.Provide(
 		gintoolfx.AddTag(command.NewHandler),
+		gintoolfx.AddTag(auth.NewHandler),
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),

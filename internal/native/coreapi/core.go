@@ -70,8 +70,8 @@ func (a *CoreApi) Handle(ctx context.Context, token native.Token, fnReq native.F
 
 	r := a.resty.R()
 
-	if len(token.Type) > 0 && len(token.Value) > 0 {
-		r.SetHeader(token.Type, token.Value)
+	if token.Exists && len(token.Value) > 0 {
+		r.SetHeader("x-access-token", token.Value)
 	}
 
 	r.SetHeader(contentTypeHeader, mimeTypeJson)

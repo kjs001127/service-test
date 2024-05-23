@@ -2,8 +2,9 @@ package nativefx
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/auth"
 	"github.com/channel-io/ch-app-store/internal/native/command"
 	"github.com/channel-io/ch-app-store/internal/native/coreapi"
 	"github.com/channel-io/ch-app-store/internal/native/hook"
@@ -17,7 +18,7 @@ var Native = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			coreapi.NewCoreApi,
-			fx.ParamTags(configfx.DwAdmin, restyfx.Dw),
+			fx.ParamTags(configfx.DWAdmin, httpfx.DW),
 			fx.As(new(native.FunctionRegistrant)),
 			fx.ResultTags(`group:"handler"`),
 		),
@@ -48,6 +49,11 @@ var Native = fx.Options(
 			fx.As(new(native.FunctionRegistrant)),
 			fx.ResultTags(`group:"handler"`),
 			fx.ParamTags(configfx.ServiceName),
+		),
+		fx.Annotate(
+			auth.NewTokenIssueHandler,
+			fx.As(new(native.FunctionRegistrant)),
+			fx.ResultTags(`group:"handler"`),
 		),
 	),
 )

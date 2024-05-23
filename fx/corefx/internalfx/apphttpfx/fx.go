@@ -3,8 +3,8 @@ package apphttpfx
 import (
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/apphttp/infra"
 	"github.com/channel-io/ch-app-store/internal/apphttp/repo"
@@ -22,13 +22,18 @@ var FunctionSvcs = fx.Options(
 		fx.Annotate(
 			svc.NewInvoker,
 			fx.As(new(app.InvokeHandler)),
+			fx.ParamTags(httpfx.InternalApp, httpfx.ExternalApp),
+		),
+		fx.Annotate(
+			svc.NewServerSettingSvcImpl,
+			fx.As(new(svc.ServerSettingSvc)),
 		),
 		fx.Annotate(
 			svc.NewAppHttpProxy,
-			fx.ParamTags(``, restyfx.App),
+			fx.ParamTags(``, httpfx.InternalApp, httpfx.ExternalApp),
 		),
 		fx.Annotate(
-			svc.NewAppHookClearHook,
+			svc.NewLifeCycleHook,
 			fx.As(new(app.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
@@ -40,7 +45,15 @@ var FunctionHttps = fx.Options(
 		fx.Annotate(
 			infra.NewHttpRequester,
 			fx.As(new(svc.HttpRequester)),
-			fx.ParamTags(restyfx.App),
+			fx.ParamTags(httpfx.InternalApp),
+			fx.ResultTags(httpfx.InternalApp),
+		),
+
+		fx.Annotate(
+			infra.NewHttpRequester,
+			fx.As(new(svc.HttpRequester)),
+			fx.ParamTags(httpfx.ExternalApp),
+			fx.ResultTags(httpfx.ExternalApp),
 		),
 	),
 )
@@ -48,8 +61,8 @@ var FunctionHttps = fx.Options(
 var FunctionDaos = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			repo.NewAppUrlDao,
-			fx.As(new(svc.AppUrlRepository)),
+			repo.NewAppServerSettingDao,
+			fx.As(new(svc.AppServerSettingRepository)),
 		),
 	),
 )

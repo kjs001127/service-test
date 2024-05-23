@@ -9,8 +9,14 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
-type AppInstallSvc struct {
-	appInstallationRepo           AppInstallationRepository
+type AppInstallSvc interface {
+	InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error)
+	InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error)
+	UnInstallApp(ctx context.Context, req model.InstallationID) error
+}
+
+type AppInstallSvcImpl struct {
+	appInstallationRepo AppInstallationRepository
 	appRepo             AppRepository
 	preInstallHandlers  []InstallHandler
 	postInstallHandlers []InstallHandler
@@ -21,16 +27,16 @@ func NewAppInstallSvc(
 	appRepo AppRepository,
 	preInstallHandlers []InstallHandler,
 	postInstallHandlers []InstallHandler,
-) *AppInstallSvc {
-	return &AppInstallSvc{
-		appInstallationRepo:           appInstallationRepo,
+) *AppInstallSvcImpl {
+	return &AppInstallSvcImpl{
+		appInstallationRepo: appInstallationRepo,
 		appRepo:             appRepo,
 		preInstallHandlers:  preInstallHandlers,
 		postInstallHandlers: postInstallHandlers,
 	}
 }
 
-func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error) {
+func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error) {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
@@ -39,7 +45,7 @@ func (s *AppInstallSvc) InstallAppById(ctx context.Context, req model.Installati
 	return s.InstallApp(ctx, req.ChannelID, app)
 }
 
-func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
+func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
 
 	err := tx.Do(ctx, func(ctx context.Context) error {
 		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
@@ -67,7 +73,7 @@ func (s *AppInstallSvc) InstallApp(ctx context.Context, channelID string, app *m
 	return app, nil
 }
 
-func (s *AppInstallSvc) UnInstallApp(ctx context.Context, req model.InstallationID) error {
+func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.InstallationID) error {
 	app, err := s.appRepo.FindApp(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)

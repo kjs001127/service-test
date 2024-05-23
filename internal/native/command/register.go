@@ -8,16 +8,61 @@ import (
 	"github.com/pkg/errors"
 
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
 )
+
+type RegisterRequest struct {
+	AppID    string  `json:"appId"`
+	Commands CmdDTOs `json:"commands"`
+}
+
+type CmdDTOs []CmdDTO
+type CmdDTO struct {
+	Name  string      `json:"name"`
+	Scope model.Scope `json:"scope"`
+
+	Description     *string                  `json:"description"`
+	NameDescI18NMap map[string]model.I18nMap `json:"nameDescI18nMap"`
+
+	ActionFunctionName       string  `json:"actionFunctionName"`
+	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
+
+	AlfMode        model.AlfMode `json:"alfMode,omitempty"`
+	AlfDescription *string       `json:"alfDescription,omitempty"`
+
+	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
+}
+
+func (d *CmdDTO) toCmd() *model.Command {
+	return &model.Command{
+		Name:                     d.Name,
+		Scope:                    d.Scope,
+		Description:              d.Description,
+		NameDescI18NMap:          d.NameDescI18NMap,
+		ActionFunctionName:       d.ActionFunctionName,
+		AutoCompleteFunctionName: d.AutoCompleteFunctionName,
+		ParamDefinitions:         d.ParamDefinitions,
+		AlfMode:                  d.AlfMode,
+		AlfDescription:           d.AlfDescription,
+	}
+}
+
+func (d CmdDTOs) toCmds() []*model.Command {
+	ret := make([]*model.Command, 0, len(d))
+	for _, cmd := range d {
+		ret = append(ret, cmd.toCmd())
+	}
+	return ret
+}
 
 func (r *Handler) RegisterCommand(
 	ctx context.Context,
 	token native.Token,
 	request native.FunctionRequest,
 ) native.FunctionResponse {
-	var req command.CommandRegisterRequest
+	var req RegisterRequest
 	if err := json.Unmarshal(request.Params, &req); err != nil {
 		return native.WrapCommonErr(err)
 	}
@@ -26,7 +71,12 @@ func (r *Handler) RegisterCommand(
 		return native.WrapCommonErr(err)
 	}
 
-	if err := r.registerSvc.Register(ctx, &req); err != nil {
+	if err := r.registerSvc.Register(ctx, &command.CommandRegisterRequest{
+		AppID:              req.AppID,
+		Commands:           req.Commands.toCmds(),
+		ToggleFunctionName: nil,
+		EnableByDefault:    true,
+	}); err != nil {
 		return native.WrapCommonErr(err)
 	}
 
@@ -38,7 +88,7 @@ const (
 	appScope         = "app"
 )
 
-func (r *Handler) authorizeReg(ctx context.Context, token native.Token, req *command.CommandRegisterRequest) error {
+func (r *Handler) authorizeReg(ctx context.Context, token native.Token, req *RegisterRequest) error {
 	parsedRbac, err := r.rbacParser.Parse(ctx, token.Value)
 	if err != nil {
 		return err

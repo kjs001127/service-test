@@ -12,9 +12,8 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdevfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/installhookfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -26,6 +25,7 @@ import (
 	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
@@ -33,7 +33,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
@@ -56,14 +55,13 @@ var fullAppModule = fx.Options(
 	apphttpfx.Function,
 	brieffx.Brief,
 	appfx.App,
-	appdevfx.AppDev,
 	invokelogfx.Loggers,
 	logfx.Logger,
 	mockauth.Module,
 	commandfx.Command,
-	restyfx.Clients,
+	httpfx.Clients,
 	nativefx.Native,
-	installhookfx.InstallHooks,
+	hookfx.Hook,
 
 	fx.Supply(log.New("Test")),
 )
@@ -103,7 +101,7 @@ func beforeAll(t *testing.T) {
 			httpmock.ActivateNonDefault(dwCli.GetClient())
 			httpmock.ActivateNonDefault(appCli.GetClient())
 			internalClients = append(internalClients, dwCli, appCli)
-		}, fx.ParamTags(restyfx.Dw, restyfx.App)),
+		}, fx.ParamTags(httpfx.DW, httpfx.InternalApp)),
 	)
 	getDB := fx.Invoke(func(testDB *sql.DB) { db = testDB })
 	options = append(options, mockServers, getDB)

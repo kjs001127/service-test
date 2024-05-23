@@ -16,11 +16,13 @@ const (
 	fetchRole   = roleBaseUri + "/getRole"
 	createRole  = roleBaseUri + "/createRole"
 	deleteRole  = roleBaseUri + "/deleteRole"
+	replaceRole = roleBaseUri + "/replaceRoleClaims"
 )
 
 type RoleFetcher interface {
 	GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error)
 	CreateRole(ctx context.Context, request *service.CreateRoleRequest) (*service.CreateRoleResult, error)
+	UpdateRole(ctx context.Context, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error)
 	DeleteRole(ctx context.Context, roleID string) (*service.DeleteRoleResult, error)
 }
 
@@ -29,13 +31,33 @@ type RoleClientImpl struct {
 	authUrl string
 }
 
-func (f *RoleClientImpl) UpdateRole(ctx context.Context, roleID string, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewRoleClientImpl(cli *resty.Client, authUrl string) *RoleClientImpl {
 	return &RoleClientImpl{cli: cli, authUrl: authUrl}
+}
+
+func (f *RoleClientImpl) UpdateRole(ctx context.Context, request *service.ReplaceRoleClaimsRequest) (*service.ReplaceRoleClaimsResult, error) {
+	r := f.cli.R()
+	r.SetContext(ctx)
+
+	body, err := proto.Marshal(request)
+	if err != nil {
+		return nil, err
+	}
+	r.SetBody(body)
+	r.SetHeader("Content-Type", "application/x-protobuf")
+	r.SetHeader("Accept", "application/x-protobuf")
+
+	rawRes, err := r.Post(f.authUrl + replaceRole)
+	if err != nil {
+		return &service.ReplaceRoleClaimsResult{}, err
+	}
+
+	var res service.ReplaceRoleClaimsResult
+	if err := proto.Unmarshal(rawRes.Body(), &res); err != nil {
+		return &res, err
+	}
+
+	return &res, nil
 }
 
 func (f *RoleClientImpl) GetRole(ctx context.Context, roleID string) (*service.GetRoleResult, error) {

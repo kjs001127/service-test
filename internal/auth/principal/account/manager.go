@@ -34,6 +34,7 @@ type Manager struct {
 	Name      string `json:"name"`
 	Email     string `json:"email"`
 	RoleID    string `json:"roleId"`
+	Language  string `json:"language"`
 }
 
 type ManagerPrincipal struct {
