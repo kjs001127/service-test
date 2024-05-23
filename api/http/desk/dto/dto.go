@@ -40,7 +40,7 @@ func NewAppView(origin *model.App) *AppView {
 
 		// legacy fields
 		State:     "",
-		IsPrivate: false,
+		IsPrivate: origin.IsPrivate,
 	}
 }
 
