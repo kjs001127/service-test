@@ -36,6 +36,7 @@ func (a *AppServerSettingDao) Fetch(ctx context.Context, appID string) (model.Se
 		FunctionURL: res.FunctionURL.Ptr(),
 		WamURL:      res.WamURL.Ptr(),
 		SigningKey:  res.SigningKey.Ptr(),
+		AccessType:  model.AccessType(res.AccessType),
 	}, nil
 }
 
@@ -45,6 +46,7 @@ func (a *AppServerSettingDao) Save(ctx context.Context, appID string, serverSett
 		WamURL:      null.StringFromPtr(serverSetting.WamURL),
 		FunctionURL: null.StringFromPtr(serverSetting.FunctionURL),
 		SigningKey:  null.StringFromPtr(serverSetting.SigningKey),
+		AccessType:  string(serverSetting.AccessType),
 	}
 	err := setting.Upsert(
 		ctx,

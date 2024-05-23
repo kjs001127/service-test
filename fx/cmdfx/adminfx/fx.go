@@ -6,6 +6,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
@@ -18,7 +19,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 
 	"go.uber.org/fx"
 )
@@ -48,7 +48,7 @@ var Admin = fx.Options(
 	systemlogfx.SystemLog,
 
 	ddbfx.DynamoDB,
-	restyfx.Clients,
+	httpfx.Clients,
 	configfx.Values,
 	logfx.Logger,
 	datadogfx.Datadog,

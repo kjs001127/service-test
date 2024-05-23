@@ -25,6 +25,7 @@ import (
 	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
@@ -32,7 +33,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/restyfx"
 	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
@@ -59,7 +59,7 @@ var fullAppModule = fx.Options(
 	logfx.Logger,
 	mockauth.Module,
 	commandfx.Command,
-	restyfx.Clients,
+	httpfx.Clients,
 	nativefx.Native,
 	hookfx.Hook,
 
@@ -101,7 +101,7 @@ func beforeAll(t *testing.T) {
 			httpmock.ActivateNonDefault(dwCli.GetClient())
 			httpmock.ActivateNonDefault(appCli.GetClient())
 			internalClients = append(internalClients, dwCli, appCli)
-		}, fx.ParamTags(restyfx.Dw, restyfx.App)),
+		}, fx.ParamTags(httpfx.DW, httpfx.InternalApp)),
 	)
 	getDB := fx.Invoke(func(testDB *sql.DB) { db = testDB })
 	options = append(options, mockServers, getDB)

@@ -22,13 +22,14 @@ const (
 )
 
 type Invoker struct {
-	requester HttpRequester
-	repo      AppServerSettingRepository
-	logger    log.ContextAwareLogger
+	internalRequester HttpRequester
+	externalRequester HttpRequester
+	repo              AppServerSettingRepository
+	logger            log.ContextAwareLogger
 }
 
-func NewInvoker(requester HttpRequester, repo AppServerSettingRepository, logger log.ContextAwareLogger) *Invoker {
-	return &Invoker{requester: requester, repo: repo, logger: logger}
+func NewInvoker(requester HttpRequester, proxyRequester HttpRequester, repo AppServerSettingRepository, logger log.ContextAwareLogger) *Invoker {
+	return &Invoker{internalRequester: requester, externalRequester: proxyRequester, repo: repo, logger: logger}
 }
 
 func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
@@ -89,10 +90,19 @@ func (a *Invoker) requestWithHttp(ctx context.Context, serverSetting model.Serve
 		}
 		headers[xSignatureHeader] = signature
 	}
-	return a.requester.Request(ctx, HttpRequest{
+	req := HttpRequest{
 		Body:    body,
 		Method:  http.MethodPut,
 		Headers: headers,
 		Url:     *serverSetting.FunctionURL,
-	})
+	}
+
+	switch serverSetting.AccessType {
+	case model.AccessType_External:
+		return a.externalRequester.Request(ctx, req)
+	case model.AccessType_Internal:
+		return a.internalRequester.Request(ctx, req)
+	default:
+		return nil, errors.New("invalid connect type")
+	}
 }

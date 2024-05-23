@@ -9,15 +9,22 @@ import (
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
+
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 )
 
 type AppHttpProxy struct {
-	repo      AppServerSettingRepository
-	requester http.RoundTripper
+	repo              AppServerSettingRepository
+	internalRequester http.RoundTripper
+	externalRequester http.RoundTripper
 }
 
-func NewAppHttpProxy(repo AppServerSettingRepository, tripper http.RoundTripper) *AppHttpProxy {
-	return &AppHttpProxy{repo: repo, requester: tripper}
+func NewAppHttpProxy(
+	repo AppServerSettingRepository,
+	internal http.RoundTripper,
+	external http.RoundTripper,
+) *AppHttpProxy {
+	return &AppHttpProxy{repo: repo, internalRequester: internal, externalRequester: external}
 }
 
 type WamProxyRequest struct {
@@ -47,7 +54,16 @@ func (a *AppHttpProxy) Proxy(ctx context.Context, req WamProxyRequest) error {
 		originalDirector(req)
 		req.Host = wamUrl.Host
 	}
-	proxy.Transport = a.requester
+
+	switch serverSetting.AccessType {
+	case model.AccessType_External:
+		proxy.Transport = a.externalRequester
+	case model.AccessType_Internal:
+		proxy.Transport = a.internalRequester
+	default:
+		return errors.New("accessType invalid")
+	}
+
 	proxy.ServeHTTP(req.Writer, req.Req)
 	return nil
 }
