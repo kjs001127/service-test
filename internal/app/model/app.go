@@ -19,10 +19,10 @@ type App struct {
 }
 
 type I18nFields struct {
-	Title             string           `json:"title"`
-	DetailImageURLs   []string         `json:"detailImageUrls,omitempty"`
-	DetailDescription []map[string]any `json:"detailDescription,omitempty"`
-	Description       string           `json:"description,omitempty"`
+	Title              string           `json:"title"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	Description        string           `json:"description,omitempty"`
 }
 
 type AppState string

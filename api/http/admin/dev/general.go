@@ -15,10 +15,9 @@ import (
 //	@Tags		Public
 //
 //	@Param		appID		path		string	true	"appID"
-//	@Param		x-account	header		string	true	"token"
 //
 //	@Success	200			{object}	appmodel.App
-//	@Router		/desk/account/apps/{appID}/general  [get]
+//	@Router		/admin/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
@@ -37,11 +36,10 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Tags		Public
 //
 //	@Param		appID			path		string			true	"appID"
-//	@Param		x-account		header		string			true	"token"
 //	@Param		appmodel.App	body		appmodel.App	true	"dto"
 //
 //	@Success	200				{object}	appmodel.App
-//	@Router		/desk/account/apps/{appID}/general  [put]
+//	@Router		/admin/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	var request appmodel.App
