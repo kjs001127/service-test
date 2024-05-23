@@ -76,15 +76,15 @@ type WysiwygView struct {
 }
 
 type AppDetailView struct {
-	ID                 string           `json:"id"`
-	Title              string           `json:"title"`
-	AvatarURL          *string          `json:"avatarUrl,omitempty"`
-	Description        *string          `json:"description,omitempty"`
-	ManualURL          *string          `json:"manualUrl,omitempty"`
-	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
-	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
-	I18nMap            map[string]AppDetailI18n
-	IsBuiltIn          bool `json:"isBuiltIn"`
+	ID                 string                   `json:"id"`
+	Title              string                   `json:"title"`
+	AvatarURL          *string                  `json:"avatarUrl,omitempty"`
+	Description        *string                  `json:"description,omitempty"`
+	ManualURL          *string                  `json:"manualUrl,omitempty"`
+	DetailDescriptions []map[string]any         `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string                 `json:"detailImageUrls,omitempty"`
+	I18nMap            map[string]AppDetailI18n `json:"i18nMap"`
+	IsBuiltIn          bool                     `json:"isBuiltIn"`
 }
 
 func NewAppDetailView(origin *model.App) *AppDetailView {
