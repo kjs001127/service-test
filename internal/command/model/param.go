@@ -1,12 +1,21 @@
 package model
 
 import (
+	"fmt"
+	"regexp"
+	"unicode/utf8"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 )
 
 type ParamName string
 type ParamType string
+
+var paramNameRegex = regexp.MustCompile(`^[a-zA-Z]{1,20}$`)
+var paramNameI18nRegex = regexp.MustCompile(`^[^\s_]{1,20}$`)
+
+var maxParamDescriptionLength = 50
 
 var validParamTypes = []ParamType{
 	ParamTypeString, ParamTypeFloat, ParamTypeInt, ParamTypeBool,
@@ -58,6 +67,28 @@ func (d *ParamDefinition) validate() error {
 	if !d.isValidType() {
 		return apierr.BadRequest(errors.Errorf("param name %s has invalid type %s", d.Name, d.Type))
 	}
+
+	if !paramNameRegex.MatchString(string(d.Name)) {
+		return apierr.BadRequest(errors.Errorf("param name %s must only have alphabet and numbers with letters below 20", d.Name))
+	}
+
+	if utf8.RuneCountInString(d.Description) > maxParamDescriptionLength {
+		return apierr.BadRequest(fmt.Errorf("max param description length is %d", maxParamDescriptionLength))
+	}
+
+	for _, i18n := range d.NameDescI18nMap {
+		if !paramNameI18nRegex.MatchString(i18n.Name) {
+			return apierr.BadRequest(errors.Errorf("i18n param name %s must only have letters without space below 20", d.Name))
+		}
+		if utf8.RuneCountInString(i18n.Description) > maxParamDescriptionLength {
+			return apierr.BadRequest(fmt.Errorf("max i18n param description length is %d", maxParamDescriptionLength))
+		}
+	}
+
+	if utf8.RuneCountInString(d.AlfDescription) > maxAlfDescriptionLength {
+		return apierr.BadRequest(fmt.Errorf("alfDescription max length is %d", maxAlfDescriptionLength))
+	}
+
 	if err := d.Choices.validate(); err != nil {
 		return err
 	}
