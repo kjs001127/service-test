@@ -23,7 +23,7 @@ import (
 //	@Param		app.AppRequest	body		dto.AppCreateRequest	true	"App title to create"
 //	@Param		x-account		header		string					true	"token"
 //
-//	@Success	201				{object}	dto.AppResponse
+//	@Success	201				{object}	dto.AppGeneral
 //	@Router		/desk/account/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -99,7 +99,7 @@ func (h *Handler) listApps(ctx *gin.Context) {
 //
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200			{object}	[]dto.AppResponse
+//	@Success	200			{object}	[]dto.AppGeneral
 //	@Router		/desk/account/auth/apps  [get]
 func (h *Handler) getCallableApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)

@@ -23,6 +23,7 @@ type I18nFields struct {
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	Description        string           `json:"description,omitempty"`
+	ManualURL          string           `json:"manualURL,omitempty"`
 }
 
 type AppState string

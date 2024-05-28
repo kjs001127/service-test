@@ -106,6 +106,7 @@ type AppDetailI18n struct {
 	Description        string           `json:"description"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	ManualURL          string           `json:"manualUrl,omitempty"`
 }
 
 func convertAppDetailI18n(app *model.App) map[string]AppDetailI18n {
@@ -116,6 +117,7 @@ func convertAppDetailI18n(app *model.App) map[string]AppDetailI18n {
 			Description:        i18n.Description,
 			DetailDescriptions: i18n.DetailDescriptions,
 			DetailImageURLs:    i18n.DetailImageURLs,
+			ManualURL:          i18n.ManualURL,
 		}
 	}
 	return ret
