@@ -48,24 +48,46 @@ type AppViewI18n struct {
 	Description string `json:"description,omitempty"`
 }
 
-type AppResponse struct {
-	ID                 string                         `json:"id"`
-	Title              string                         `json:"title"`
-	Description        *string                        `json:"description,omitempty"`
-	DetailDescriptions []map[string]any               `json:"detailDescriptions,omitempty"`
-	DetailImageURLs    []string                       `json:"detailImageUrls,omitempty"`
-	I18nMap            map[string]appmodel.I18nFields `json:"i18nMap,omitempty"`
-	AvatarURL          *string                        `json:"avatarUrl,omitempty"`
-	ManualURL          *string                        `json:"manualUrl"`
-	IsPrivate          bool                           `json:"isPrivate"`
+type AppGeneral struct {
+	ID                 string                    `json:"id"`
+	Title              string                    `json:"title"`
+	Description        *string                   `json:"description,omitempty"`
+	DetailDescriptions []map[string]any          `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string                  `json:"detailImageUrls,omitempty"`
+	I18nMap            map[string]AppGeneralI18n `json:"i18nMap,omitempty"`
+	AvatarURL          *string                   `json:"avatarUrl,omitempty"`
+	ManualURL          *string                   `json:"manualUrl"`
+	IsPrivate          bool                      `json:"isPrivate"`
 }
 
-func FromApp(model *appmodel.App) *AppResponse {
-	return &AppResponse{
+type AppGeneralI18n struct {
+	Title              string           `json:"title"`
+	Description        string           `json:"description"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	ManualURL          string           `json:"manualUrl,omitempty"`
+}
+
+func convertAppGeneralI18n(app *appmodel.App) map[string]AppGeneralI18n {
+	ret := make(map[string]AppGeneralI18n)
+	for lang, i18n := range app.I18nMap {
+		ret[lang] = AppGeneralI18n{
+			Title:              i18n.Title,
+			Description:        i18n.Description,
+			DetailDescriptions: i18n.DetailDescriptions,
+			DetailImageURLs:    i18n.DetailImageURLs,
+			ManualURL:          i18n.ManualURL,
+		}
+	}
+	return ret
+}
+
+func FromApp(model *appmodel.App) *AppGeneral {
+	return &AppGeneral{
 		ID:                 model.ID,
 		Title:              model.Title,
 		Description:        model.Description,
-		I18nMap:            model.I18nMap,
+		I18nMap:            convertAppGeneralI18n(model),
 		DetailDescriptions: model.DetailDescriptions,
 		DetailImageURLs:    model.DetailImageURLs,
 		ManualURL:          model.ManualURL,
@@ -74,8 +96,8 @@ func FromApp(model *appmodel.App) *AppResponse {
 	}
 }
 
-func FromApps(models []*appmodel.App) []*AppResponse {
-	ret := make([]*AppResponse, 0, len(models))
+func FromApps(models []*appmodel.App) []*AppGeneral {
+	ret := make([]*AppGeneral, 0, len(models))
 	for _, m := range models {
 		ret = append(ret, FromApp(m))
 	}

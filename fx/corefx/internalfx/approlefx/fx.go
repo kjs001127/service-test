@@ -78,6 +78,11 @@ var RemoteAppDevSvcs = fx.Options(
 						Action:  "getManager",
 						Scope:   []string{"channel-{id}"},
 					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "searchManagers",
+						Scope:   []string{"channel-{id}"},
+					},
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{

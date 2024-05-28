@@ -19,7 +19,7 @@ import (
 //	@Param		appID		path		string	true	"appID"
 //	@Param		x-account	header		string	true	"token"
 //
-//	@Success	200			{object}	dto.AppResponse
+//	@Success	200			{object}	dto.AppGeneral
 //	@Router		/desk/account/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
@@ -43,7 +43,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Param		x-account				header		string					true	"token"
 //	@Param		svc.AppModifyRequest	body		svc.AppModifyRequest	true	"dto"
 //
-//	@Success	200						{object}	dto.AppResponse
+//	@Success	200						{object}	dto.AppGeneral
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
