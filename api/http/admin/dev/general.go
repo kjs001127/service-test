@@ -14,9 +14,9 @@ import (
 //	@Summary	fetch App general
 //	@Tags		Public
 //
-//	@Param		appID		path		string	true	"appID"
+//	@Param		appID	path		string	true	"appID"
 //
-//	@Success	200			{object}	appmodel.App
+//	@Success	200		{object}	appmodel.App
 //	@Router		/admin/apps/{appID}/general  [get]
 func (h *Handler) readGeneral(ctx *gin.Context) {
 	appID := ctx.Param("appID")

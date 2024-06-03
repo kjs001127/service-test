@@ -82,6 +82,7 @@ type AccountAppPermissionSvc interface {
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 	GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
 	GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
+	GetPrivateAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
 }
 
 type AccountAppPermissionSvcImpl struct {
@@ -100,6 +101,34 @@ func NewAccountAppPermissionSvc(
 		appAccountRepo:  appAccountRepo,
 		appLifeCycleSvc: appLifecycleSvc,
 	}
+}
+
+func (a *AccountAppPermissionSvcImpl) GetPrivateAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
+		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+		if err != nil {
+			return nil, err
+		}
+		appIDs := make([]string, 0, len(appAccounts))
+		for _, appAccount := range appAccounts {
+			appIDs = append(appIDs, appAccount.AppID)
+		}
+
+		apps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
+		if err != nil {
+			return nil, err
+		}
+
+		privateApps := make([]*appmodel.App, 0, len(apps))
+		for _, app := range apps {
+			if app.IsPrivate {
+				privateApps = append(privateApps, app)
+			}
+		}
+
+		return privateApps, nil
+	}, tx.ReadOnly())
+
 }
 
 func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
@@ -136,17 +165,17 @@ func (a *AccountAppPermissionSvcImpl) GetAppsByAccount(ctx context.Context, acco
 
 func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
-		privateApps, err := a.GetAppsByAccount(ctx, accountID)
+		accountApps, err := a.GetAppsByAccount(ctx, accountID)
 
 		publicApps, err := a.appCrudSvc.ReadPublicApps(ctx, "0", 500)
 		if err != nil {
 			return nil, err
 		}
 
-		filteredPublicApps := a.removeDuplicate(publicApps, privateApps)
+		filteredPublicApps := a.removeDuplicate(publicApps, accountApps)
 
-		ret := make([]*appmodel.App, 0, len(privateApps)+len(filteredPublicApps))
-		ret = append(ret, privateApps...)
+		ret := make([]*appmodel.App, 0, len(accountApps)+len(filteredPublicApps))
+		ret = append(ret, accountApps...)
 		ret = append(ret, filteredPublicApps...)
 
 		return ret, nil

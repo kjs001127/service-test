@@ -85,7 +85,7 @@ func (h *Handler) findApps(ctx *gin.Context) ([]*appmodel.App, error) {
 	}
 
 	if isPrivate(ctx) {
-		return h.privateAppQuerySvc.GetAppsByAccount(ctx, middleware.Manager(ctx).AccountID)
+		return h.privateAppQuerySvc.GetPrivateAppsByAccount(ctx, middleware.Manager(ctx).AccountID)
 	} else {
 		return h.appRepo.FindPublicApps(ctx, since, limitNumber)
 	}
