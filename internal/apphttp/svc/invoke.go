@@ -21,15 +21,16 @@ const (
 	xSignatureHeader  = "X-Signature"
 )
 
+type RequesterMap map[model.AccessType]HttpRequester
+
 type Invoker struct {
-	internalRequester HttpRequester
-	externalRequester HttpRequester
-	repo              AppServerSettingRepository
-	logger            log.ContextAwareLogger
+	requesterMap RequesterMap
+	repo         AppServerSettingRepository
+	logger       log.ContextAwareLogger
 }
 
-func NewInvoker(requester HttpRequester, proxyRequester HttpRequester, repo AppServerSettingRepository, logger log.ContextAwareLogger) *Invoker {
-	return &Invoker{internalRequester: requester, externalRequester: proxyRequester, repo: repo, logger: logger}
+func NewInvoker(requesterMap RequesterMap, repo AppServerSettingRepository, logger log.ContextAwareLogger) *Invoker {
+	return &Invoker{requesterMap: requesterMap, repo: repo, logger: logger}
 }
 
 func (a *Invoker) Invoke(ctx context.Context, target *appmodel.App, request app.JsonFunctionRequest) app.JsonFunctionResponse {
@@ -97,12 +98,9 @@ func (a *Invoker) requestWithHttp(ctx context.Context, serverSetting model.Serve
 		Url:     *serverSetting.FunctionURL,
 	}
 
-	switch serverSetting.AccessType {
-	case model.AccessType_External:
-		return a.externalRequester.Request(ctx, req)
-	case model.AccessType_Internal:
-		return a.internalRequester.Request(ctx, req)
-	default:
-		return nil, errors.New("invalid connect type")
+	requester, exists := a.requesterMap[serverSetting.AccessType]
+	if !exists {
+		return nil, errors.New("invalid accessType")
 	}
+	return requester.Request(ctx, req)
 }
