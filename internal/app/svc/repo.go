@@ -10,7 +10,6 @@ type AppRepository interface {
 	Save(ctx context.Context, app *model.App) (*model.App, error)
 	FindApps(ctx context.Context, appIDs []string) ([]*model.App, error)
 	FindApp(ctx context.Context, appID string) (*model.App, error)
-	FindPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error)
 	FindBuiltInApps(ctx context.Context) ([]*model.App, error)
 	Delete(ctx context.Context, appID string) error
 }

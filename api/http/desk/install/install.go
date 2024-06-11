@@ -3,14 +3,14 @@ package install
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // install godoc
@@ -95,6 +95,12 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
+	appWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApp(ctx, appFound)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
 	cmds, err := h.cmdQuerySvc.FetchAllWithActivation(ctx, installID)
 	if err != nil {
 		_ = ctx.Error(err)
@@ -103,7 +109,7 @@ func (h *Handler) query(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, dto.InstalledAppDetailView{
 		Commands: dto.NewInstalledCommandViews(cmds),
-		App:      dto.NewAppDetailView(appFound),
+		App:      dto.NewAppWithDisplayDetailView(appWithDisplay),
 	})
 }
 
@@ -126,8 +132,13 @@ func (h *Handler) queryAll(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
+	appsWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApps(ctx, apps)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
 
-	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
+	ctx.JSON(http.StatusOK, dto.NewAppWithDisplayViews(appsWithDisplay))
 }
 
 // toggleCmd godoc
@@ -176,9 +187,9 @@ func (h *Handler) toggleCmd(ctx *gin.Context) {
 //	@Tags			Desk
 //	@Description	get App and Installation installed to channel.
 //
-//	@Param			x-account	header		string	true	"access token"
-//	@Param			channelID	path		string	true	"id of Channel"
-//	@Param			appID		path		string	false	"id of App"
+//	@Param			x-account	header	string	true	"access token"
+//	@Param			channelID	path	string	true	"id of Channel"
+//	@Param			appID		path	string	false	"id of App"
 //
 //	@Success		200			{array}	dto.InstalledCommandView
 //	@Router			/desk/v1/channels/{channelID}/installed-apps/{appID}/commands [get]

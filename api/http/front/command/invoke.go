@@ -146,7 +146,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, frontdto.AppsAndCommands{
-		Apps:     apps,
+		Apps:     frontdto.NewAppDTOs(apps),
 		Commands: frontdto.NewCommandDTOs(cmds),
 	})
 }

@@ -3,6 +3,7 @@ package dto
 import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	display "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	accountmodel "github.com/channel-io/ch-app-store/internal/permission/model"
 )
@@ -13,8 +14,8 @@ type InstalledApp struct {
 }
 
 type AppsAndFullCommands struct {
-	Apps     []*appmodel.App `json:"apps"`
-	Commands []*cmd.Command  `json:"commands"`
+	Apps     []*display.AppWithDisplay `json:"apps"`
+	Commands []*cmd.Command            `json:"commands"`
 }
 
 type RegisterRequest struct {

@@ -23,6 +23,10 @@ var PermissionSvc = fx.Options(
 			fx.As(new(svc.AccountAppPermissionSvc)),
 		),
 		fx.Annotate(
+			svc.NewAccountDisplayPermissionSvc,
+			fx.As(new(svc.AccountDisplayPermissionSvc)),
+		),
+		fx.Annotate(
 			svc.NewManagerInstallPermissionSvc,
 			fx.As(new(appsvc.InstallListener)),
 			fx.ResultTags(appfx.PreInstallHandlerGroup),

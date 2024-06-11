@@ -4,6 +4,7 @@ import (
 	"context"
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 
 	"github.com/pkg/errors"
@@ -15,12 +16,18 @@ type Strategy interface {
 
 type PermissionStrategy struct {
 	appAccountRepo AppAccountRepo
+	displayRepo    displaysvc.AppDisplayRepository
 	permissionUtil PermissionUtil
 }
 
-func NewPermissionStrategy(appAccountRepo AppAccountRepo, permissionUtil PermissionUtil) *PermissionStrategy {
+func NewPermissionStrategy(
+	appAccountRepo AppAccountRepo,
+	displayRepo displaysvc.AppDisplayRepository,
+	permissionUtil PermissionUtil,
+) *PermissionStrategy {
 	return &PermissionStrategy{
 		appAccountRepo: appAccountRepo,
+		displayRepo:    displayRepo,
 		permissionUtil: permissionUtil,
 	}
 }
@@ -30,8 +37,13 @@ func (s *PermissionStrategy) HasPermission(ctx context.Context, manager account.
 		return errors.New("manager is not owner of the channel")
 	}
 
-	if app.IsPrivate {
-		_, err := s.appAccountRepo.Fetch(ctx, app.ID, manager.AccountID)
+	display, err := s.displayRepo.FindDisplay(ctx, app.ID)
+	if err != nil {
+		return errors.New("cannot find display of app")
+	}
+
+	if display.IsPrivate {
+		_, err := s.appAccountRepo.Fetch(ctx, display.AppID, manager.AccountID)
 		if err != nil {
 			return errors.New("manager is not the developer of the private app")
 		}

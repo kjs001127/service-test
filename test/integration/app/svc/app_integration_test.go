@@ -102,24 +102,23 @@ func (a *AppIntegrationTestSuite) TestAppDelete() {
 	a.Require().NoError(err)
 }
 
-func (a *AppIntegrationTestSuite) TestReadPublicApps() {
-	_, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	apps, err := a.appQuerySvc.ReadPublicApps(context.Background(), "0", 500)
-
-	a.Require().NoError(err)
-	a.Require().NotEmpty(apps)
-}
+//func (a *AppIntegrationTestSuite) TestReadPublicApps() {
+//	_, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
+//		Title: "test app",
+//	})
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	apps, err := a.appQuerySvc.ReadPublicApps(context.Background(), "0", 500)
+//
+//	a.Require().NoError(err)
+//	a.Require().NotEmpty(apps)
+//}
 
 func (a *AppIntegrationTestSuite) TestReadAllByAppIDs() {
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title:     "test app",
-		IsPrivate: false,
+		Title: "test app",
 	})
 	if err != nil {
 		panic(err)
@@ -137,8 +136,7 @@ func (a *AppIntegrationTestSuite) TestInstallApp() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title:     "test app",
-		IsPrivate: false,
+		Title: "test app",
 	})
 	if err != nil {
 		panic(err)
@@ -155,8 +153,7 @@ func (a *AppIntegrationTestSuite) TestInstallAppById() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title:     "test app",
-		IsPrivate: false,
+		Title: "test app",
 	})
 	if err != nil {
 		panic(err)
@@ -178,8 +175,7 @@ func (a *AppIntegrationTestSuite) TestUninstallApp() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title:     "test app",
-		IsPrivate: false,
+		Title: "test app",
 	})
 	if err != nil {
 		panic(err)

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 )
 
 type AppView struct {
@@ -13,26 +13,26 @@ type AppView struct {
 	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 }
 
-func AppViewFrom(app *appmodel.App) *AppView {
+func AppWithDisplayViewFrom(app *displaysvc.AppWithDisplay) *AppView {
 	return &AppView{
 		ID:          app.ID,
 		Title:       app.Title,
 		Description: app.Description,
 		AvatarUrl:   app.AvatarURL,
-		I18nMap:     convertAppViewI18n(app),
+		I18nMap:     convertAppWithDisplayViewI18n(app),
 		IsPrivate:   app.IsPrivate,
 	}
 }
 
-func AppViewsFrom(apps []*appmodel.App) []*AppView {
+func AppWithDisplayViewsFrom(apps []*displaysvc.AppWithDisplay) []*AppView {
 	ret := make([]*AppView, 0, len(apps))
 	for _, app := range apps {
-		ret = append(ret, AppViewFrom(app))
+		ret = append(ret, AppWithDisplayViewFrom(app))
 	}
 	return ret
 }
 
-func convertAppViewI18n(app *appmodel.App) map[string]AppViewI18n {
+func convertAppWithDisplayViewI18n(app *displaysvc.AppWithDisplay) map[string]AppViewI18n {
 	ret := make(map[string]AppViewI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppViewI18n{
@@ -68,7 +68,7 @@ type AppGeneralI18n struct {
 	ManualURL          string           `json:"manualUrl,omitempty"`
 }
 
-func convertAppGeneralI18n(app *appmodel.App) map[string]AppGeneralI18n {
+func convertAppWithDisplayI18n(app *displaysvc.AppWithDisplay) map[string]AppGeneralI18n {
 	ret := make(map[string]AppGeneralI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppGeneralI18n{
@@ -82,12 +82,12 @@ func convertAppGeneralI18n(app *appmodel.App) map[string]AppGeneralI18n {
 	return ret
 }
 
-func FromApp(model *appmodel.App) *AppGeneral {
+func FromAppWithDisplay(model *displaysvc.AppWithDisplay) *AppGeneral {
 	return &AppGeneral{
 		ID:                 model.ID,
 		Title:              model.Title,
 		Description:        model.Description,
-		I18nMap:            convertAppGeneralI18n(model),
+		I18nMap:            convertAppWithDisplayI18n(model),
 		DetailDescriptions: model.DetailDescriptions,
 		DetailImageURLs:    model.DetailImageURLs,
 		ManualURL:          model.ManualURL,
@@ -96,10 +96,10 @@ func FromApp(model *appmodel.App) *AppGeneral {
 	}
 }
 
-func FromApps(models []*appmodel.App) []*AppGeneral {
+func FromAppsWithDisplay(models []*displaysvc.AppWithDisplay) []*AppGeneral {
 	ret := make([]*AppGeneral, 0, len(models))
 	for _, m := range models {
-		ret = append(ret, FromApp(m))
+		ret = append(ret, FromAppWithDisplay(m))
 	}
 	return ret
 }

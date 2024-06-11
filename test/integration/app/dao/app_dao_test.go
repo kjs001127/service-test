@@ -41,8 +41,7 @@ func (a *AppDAOTestSuite) TearDownSuite() {
 
 func (a *AppDAOTestSuite) TestAppSave() {
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()
@@ -60,8 +59,7 @@ func (a *AppDAOTestSuite) TestAppSave() {
 
 func (a *AppDAOTestSuite) TestAppFind() {
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()
@@ -75,8 +73,7 @@ func (a *AppDAOTestSuite) TestAppFind() {
 
 func (a *AppDAOTestSuite) TestAppDelete() {
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()
@@ -94,8 +91,7 @@ func (a *AppDAOTestSuite) TestAppInstallationSave() {
 	}
 
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()
@@ -113,8 +109,7 @@ func (a *AppDAOTestSuite) TestAppInstallationDelete() {
 	}
 
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()
@@ -138,8 +133,7 @@ func (a *AppDAOTestSuite) TestAppInstallationFind() {
 	}
 
 	app := &appmodel.App{
-		ID:        appID,
-		IsPrivate: false,
+		ID: appID,
 	}
 
 	ctx := context.Background()

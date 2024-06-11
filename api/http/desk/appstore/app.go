@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/gin-gonic/gin"
-
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/gin-gonic/gin"
 )
 
 // getAppRole godoc
@@ -68,16 +69,16 @@ func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.DeskRoleVi
 //	@Success	200			{array}	dto.AppView
 //	@Router		/desk/v1/channels/{channelID}/app-store/apps  [get]
 func (h *Handler) getApps(ctx *gin.Context) {
-	apps, err := h.findApps(ctx)
+	appsWithDisplay, err := h.findAppsWithDisplay(ctx)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.NewAppViews(apps))
+	ctx.JSON(http.StatusOK, dto.NewAppWithDisplayViews(appsWithDisplay))
 }
 
-func (h *Handler) findApps(ctx *gin.Context) ([]*appmodel.App, error) {
+func (h *Handler) findAppsWithDisplay(ctx *gin.Context) ([]*displaysvc.AppWithDisplay, error) {
 	since, limit := ctx.Query("since"), ctx.Query("limit")
 	limitNumber, err := strconv.Atoi(limit)
 	if err != nil {
@@ -85,9 +86,9 @@ func (h *Handler) findApps(ctx *gin.Context) ([]*appmodel.App, error) {
 	}
 
 	if isPrivate(ctx) {
-		return h.privateAppQuerySvc.GetPrivateAppsByAccount(ctx, middleware.Manager(ctx).AccountID)
+		return h.privateDisplayQuerySvc.GetPrivateAppsWithDisplayByAccount(ctx, middleware.Manager(ctx).AccountID)
 	} else {
-		return h.appRepo.FindPublicApps(ctx, since, limitNumber)
+		return h.appWithDisplayQuerySvc.ReadPublicAppsWithDisplay(ctx, since, limitNumber)
 	}
 }
 
@@ -113,12 +114,12 @@ func isPrivate(ctx *gin.Context) bool {
 //	@Param		channelID	path		string	true	"channelID"
 //	@Param		appID		path		string	true	"appID"
 //
-//	@Success	200			{object}	dto.AppDetailView
+//	@Success	200			{object}	dto.AppStoreDetailView
 //	@Router		/desk/v1/channels/{channelID}/app-store/apps/{appID}  [get]
 func (h *Handler) getAppDetail(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
-	app, err := h.appRepo.FindApp(ctx, appID)
+	appWithDisplay, err := h.appWithDisplayQuerySvc.Read(ctx, appID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -131,7 +132,7 @@ func (h *Handler) getAppDetail(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.AppStoreDetailView{
-		App:      dto.NewAppDetailView(app),
+		App:      dto.NewAppWithDisplayDetailView(appWithDisplay),
 		Commands: dto.NewCommandViews(cmds),
 	})
 }

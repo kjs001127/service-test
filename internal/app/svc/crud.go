@@ -24,7 +24,6 @@ type AppLifecycleSvc interface {
 
 type AppQuerySvc interface {
 	Read(ctx context.Context, appID string) (*model.App, error)
-	ReadPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error)
 	ReadAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.App, error)
 }
 
@@ -38,10 +37,6 @@ func NewAppQuerySvcImpl(appRepo AppRepository) *AppQuerySvcImpl {
 
 func (a *AppQuerySvcImpl) Read(ctx context.Context, appID string) (*model.App, error) {
 	return a.appRepo.FindApp(ctx, appID)
-}
-
-func (a *AppQuerySvcImpl) ReadPublicApps(ctx context.Context, since string, limit int) ([]*model.App, error) {
-	return a.appRepo.FindPublicApps(ctx, since, limit)
 }
 
 func (a *AppQuerySvcImpl) ReadAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.App, error) {

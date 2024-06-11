@@ -36,23 +36,6 @@ func (a *AppDAO) FindBuiltInApps(ctx context.Context) ([]*app.App, error) {
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([]*app.App, error) {
-	var queries []qm.QueryMod
-	queries = append(queries, qm.Where("is_private = false"))
-	queries = append(queries, qm.Limit(limit), qm.OrderBy("id desc"))
-
-	if since != "" {
-		queries = append(queries, qm.Where("id > $1", since))
-	}
-
-	apps, err := models.Apps(queries...).All(ctx, a.db)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while querying app")
-	}
-
-	return a.unmarshalAll(apps)
-}
-
 func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
 	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -99,80 +82,42 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 	return a.unmarshal(model)
 }
 
-func (a *AppDAO) Update(ctx context.Context, app *app.App) (*app.App, error) {
-
-	model, err := a.marshal(app)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling app")
-	}
-
-	if err = model.Upsert(
-		ctx,
-		a.db,
-		true,
-		[]string{"id"},
-		boil.Blacklist("id"),
-		boil.Infer(),
-	); err != nil {
-		return nil, errors.Wrap(err, "error while upserting app")
-	}
-
-	return a.unmarshal(model)
-}
-
 func (a *AppDAO) Delete(ctx context.Context, appID string) error {
 	_, err := models.Apps(qm.Where("id = ?", appID)).DeleteAll(ctx, a.db)
 	return errors.Wrap(err, "error while deleting app")
 }
 
 func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
-	detailDescriptions, err := json.Marshal(appTarget.DetailDescriptions)
-	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
-	}
 	i18nMap, err := json.Marshal(appTarget.I18nMap)
 	if err != nil {
 		return nil, errors.Wrap(err, "while marshaling i18nMap")
 	}
 
 	return &models.App{
-		ID:                 appTarget.ID,
-		Title:              appTarget.Title,
-		Description:        null.StringFromPtr(appTarget.Description),
-		DetailDescriptions: null.JSONFrom(detailDescriptions),
-		DetailImageUrls:    appTarget.DetailImageURLs,
-		AvatarURL:          null.StringFromPtr(appTarget.AvatarURL),
-		ManualURL:          null.StringFromPtr(appTarget.ManualURL),
-		State:              string(appTarget.State),
-		IsPrivate:          appTarget.IsPrivate,
-		IsBuiltIn:          null.BoolFrom(appTarget.IsBuiltIn),
-		I18nMap:            null.JSONFrom(i18nMap),
+		ID:          appTarget.ID,
+		Title:       appTarget.Title,
+		Description: null.StringFromPtr(appTarget.Description),
+		AvatarURL:   null.StringFromPtr(appTarget.AvatarURL),
+		State:       string(appTarget.State),
+		IsBuiltIn:   null.BoolFrom(appTarget.IsBuiltIn),
+		I18nMap:     null.JSONFrom(i18nMap),
 	}, nil
 }
 
 func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
-	var detailDescriptions []map[string]any
-	if err := rawApp.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
-		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
-	}
-
 	var i18nMap map[string]app.I18nFields
 	if err := rawApp.I18nMap.Unmarshal(&i18nMap); err != nil {
 		return nil, errors.Wrap(err, "error while marshaling i18nMap")
 	}
 
 	return &app.App{
-		ID:                 rawApp.ID,
-		State:              app.AppState(rawApp.State),
-		AvatarURL:          rawApp.AvatarURL.Ptr(),
-		Title:              rawApp.Title,
-		Description:        rawApp.Description.Ptr(),
-		ManualURL:          rawApp.ManualURL.Ptr(),
-		DetailDescriptions: detailDescriptions,
-		DetailImageURLs:    rawApp.DetailImageUrls,
-		IsPrivate:          rawApp.IsPrivate,
-		IsBuiltIn:          rawApp.IsBuiltIn.Bool,
-		I18nMap:            i18nMap,
+		ID:          rawApp.ID,
+		State:       app.AppState(rawApp.State),
+		AvatarURL:   rawApp.AvatarURL.Ptr(),
+		Title:       rawApp.Title,
+		Description: rawApp.Description.Ptr(),
+		IsBuiltIn:   rawApp.IsBuiltIn.Bool,
+		I18nMap:     i18nMap,
 	}, nil
 }
 

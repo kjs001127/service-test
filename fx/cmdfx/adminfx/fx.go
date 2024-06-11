@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
@@ -36,6 +37,7 @@ var Admin = fx.Options(
 	authfx.PrincipalAuth,
 
 	appfx.App,
+	appdisplayfx.AppDisplay,
 	permissionfx.Permission,
 	commandfx.Command,
 	approlefx.AppRole,

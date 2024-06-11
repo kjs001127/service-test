@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -66,11 +66,8 @@ func validateDescription(description *string) error {
 
 func (r *AppModifyRequest) applyTo(target *appmodel.App) *appmodel.App {
 	target.Title = r.Title
-	target.DetailImageURLs = r.DetailImageURLs
-	target.DetailDescriptions = r.DetailDescriptions
 	target.I18nMap = r.I18nMap
 	target.Description = r.Description
-	target.ManualURL = r.ManualURL
 	target.AvatarURL = r.AvatarUrl
 	return target
 }
@@ -80,20 +77,17 @@ type AccountAppPermissionSvc interface {
 	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
 	ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
-	GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
-	GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
-	GetPrivateAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error)
 }
 
 type AccountAppPermissionSvcImpl struct {
-	appCrudSvc      app.AppQuerySvc
-	appLifeCycleSvc app.AppLifecycleSvc
+	appCrudSvc      appsvc.AppQuerySvc
+	appLifeCycleSvc appsvc.AppLifecycleSvc
 	appAccountRepo  AppAccountRepo
 }
 
 func NewAccountAppPermissionSvc(
-	appCrudSvc app.AppQuerySvc,
-	appLifecycleSvc app.AppLifecycleSvc,
+	appCrudSvc appsvc.AppQuerySvc,
+	appLifecycleSvc appsvc.AppLifecycleSvc,
 	appAccountRepo AppAccountRepo,
 ) *AccountAppPermissionSvcImpl {
 	return &AccountAppPermissionSvcImpl{
@@ -101,34 +95,6 @@ func NewAccountAppPermissionSvc(
 		appAccountRepo:  appAccountRepo,
 		appLifeCycleSvc: appLifecycleSvc,
 	}
-}
-
-func (a *AccountAppPermissionSvcImpl) GetPrivateAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
-		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
-		if err != nil {
-			return nil, err
-		}
-		appIDs := make([]string, 0, len(appAccounts))
-		for _, appAccount := range appAccounts {
-			appIDs = append(appIDs, appAccount.AppID)
-		}
-
-		apps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
-		if err != nil {
-			return nil, err
-		}
-
-		privateApps := make([]*appmodel.App, 0, len(apps))
-		for _, app := range apps {
-			if app.IsPrivate {
-				privateApps = append(privateApps, app)
-			}
-		}
-
-		return privateApps, nil
-	}, tx.ReadOnly())
-
 }
 
 func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
@@ -143,66 +109,10 @@ func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string,
 	return ret, nil
 }
 
-func (a *AccountAppPermissionSvcImpl) GetAppsByAccount(ctx context.Context, accountID string) ([]*appmodel.App, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
-		appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
-		if err != nil {
-			return nil, err
-		}
-		appIDs := make([]string, 0, len(appAccounts))
-		for _, appAccount := range appAccounts {
-			appIDs = append(appIDs, appAccount.AppID)
-		}
-
-		privateApps, err := a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
-		if err != nil {
-			return nil, err
-		}
-
-		return privateApps, nil
-	}, tx.ReadOnly())
-}
-
-func (a *AccountAppPermissionSvcImpl) GetCallableApps(ctx context.Context, accountID string) ([]*appmodel.App, error) {
-	return tx.DoReturn(ctx, func(ctx context.Context) ([]*appmodel.App, error) {
-		accountApps, err := a.GetAppsByAccount(ctx, accountID)
-
-		publicApps, err := a.appCrudSvc.ReadPublicApps(ctx, "0", 500)
-		if err != nil {
-			return nil, err
-		}
-
-		filteredPublicApps := a.removeDuplicate(publicApps, accountApps)
-
-		ret := make([]*appmodel.App, 0, len(accountApps)+len(filteredPublicApps))
-		ret = append(ret, accountApps...)
-		ret = append(ret, filteredPublicApps...)
-
-		return ret, nil
-	}, tx.ReadOnly())
-}
-
-func (a *AccountAppPermissionSvcImpl) removeDuplicate(targets []*appmodel.App, notToContains []*appmodel.App) []*appmodel.App {
-	notToContainMap := make(map[string]*appmodel.App)
-	for _, notToContain := range notToContains {
-		notToContainMap[notToContain.ID] = notToContain
-	}
-
-	ret := make([]*appmodel.App, 0)
-	for _, target := range targets {
-		if _, exists := notToContainMap[target.ID]; !exists {
-			ret = append(ret, target)
-		}
-	}
-
-	return ret
-}
-
 func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
 		createApp := appmodel.App{
 			Title:     title,
-			IsPrivate: true,
 			IsBuiltIn: false,
 		}
 

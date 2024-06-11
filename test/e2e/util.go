@@ -26,6 +26,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
@@ -55,6 +56,7 @@ var fullAppModule = fx.Options(
 	apphttpfx.Function,
 	brieffx.Brief,
 	appfx.App,
+	appdisplayfx.AppDisplay,
 	invokelogfx.Loggers,
 	logfx.Logger,
 	mockauth.Module,

@@ -52,15 +52,13 @@ func (a *AppCrudSvcTestSuite) TestCreate() {
 
 func (a *AppCrudSvcTestSuite) TestUpdate() {
 	before := &appmodel.App{
-		ID:        appID,
-		Title:     "test",
-		IsPrivate: false,
+		ID:    appID,
+		Title: "test",
 	}
 
 	update := &appmodel.App{
-		ID:        appID,
-		Title:     "newTitle",
-		IsPrivate: true,
+		ID:    appID,
+		Title: "newTitle",
 	}
 
 	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(before, nil)
@@ -70,15 +68,14 @@ func (a *AppCrudSvcTestSuite) TestUpdate() {
 
 	res, err := a.crudSvc.Update(ctx, update)
 
-	assert.True(a.T(), res.IsPrivate)
+	assert.Equal(a.T(), update.Title, res.Title)
 	assert.Nil(a.T(), err)
 }
 
 func (a *AppCrudSvcTestSuite) TestDelete() {
 	app := &appmodel.App{
-		ID:        appID,
-		Title:     "test",
-		IsPrivate: false,
+		ID:    appID,
+		Title: "test",
 	}
 
 	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(app, nil)
@@ -94,9 +91,8 @@ func (a *AppCrudSvcTestSuite) TestDelete() {
 
 func (a *AppCrudSvcTestSuite) TestRead() {
 	app := &appmodel.App{
-		ID:        appID,
-		Title:     "test",
-		IsPrivate: false,
+		ID:    appID,
+		Title: "test",
 	}
 
 	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(app, nil)
@@ -109,53 +105,50 @@ func (a *AppCrudSvcTestSuite) TestRead() {
 	assert.Nil(a.T(), err)
 }
 
-func (a *AppCrudSvcTestSuite) TestReadPublicApps() {
-	apps := []*appmodel.App{
-		&appmodel.App{
-			ID:        "1",
-			Title:     "public app1",
-			IsPrivate: false,
-		},
-		&appmodel.App{
-			ID:        "2",
-			Title:     "public app2",
-			IsPrivate: false,
-		},
-		&appmodel.App{
-			ID:        "3",
-			Title:     "public app3",
-			IsPrivate: false,
-		},
-	}
-
-	a.appRepo.EXPECT().FindPublicApps(mock.Anything, mock.Anything, mock.Anything).Return(apps, nil)
-
-	ctx := context.Background()
-	res, err := a.querySvc.ReadPublicApps(ctx, "0", 500)
-
-	assert.Equal(a.T(), 3, len(res))
-	assert.False(a.T(), res[0].IsPrivate)
-	assert.False(a.T(), res[1].IsPrivate)
-	assert.False(a.T(), res[2].IsPrivate)
-	assert.Nil(a.T(), err)
-}
+//func (a *AppCrudSvcTestSuite) TestReadPublicApps() {
+//	apps := []*appmodel.App{
+//		&appmodel.App{
+//			ID:        "1",
+//			Title:     "public app1",
+//			IsPrivate: false,
+//		},
+//		&appmodel.App{
+//			ID:        "2",
+//			Title:     "public app2",
+//			IsPrivate: false,
+//		},
+//		&appmodel.App{
+//			ID:        "3",
+//			Title:     "public app3",
+//			IsPrivate: false,
+//		},
+//	}
+//
+//	a.appRepo.EXPECT().FindPublicApps(mock.Anything, mock.Anything, mock.Anything).Return(apps, nil)
+//
+//	ctx := context.Background()
+//	res, err := a.querySvc.ReadPublicApps(ctx, "0", 500)
+//
+//	assert.Equal(a.T(), 3, len(res))
+//	assert.False(a.T(), res[0].IsPrivate)
+//	assert.False(a.T(), res[1].IsPrivate)
+//	assert.False(a.T(), res[2].IsPrivate)
+//	assert.Nil(a.T(), err)
+//}
 
 func (a *AppCrudSvcTestSuite) TestReadAllByAppIDs() {
 	apps := []*appmodel.App{
-		&appmodel.App{
-			ID:        "1",
-			Title:     "public app1",
-			IsPrivate: false,
+		{
+			ID:    "1",
+			Title: "public app1",
 		},
-		&appmodel.App{
-			ID:        "3",
-			Title:     "public app3",
-			IsPrivate: false,
+		{
+			ID:    "3",
+			Title: "public app3",
 		},
-		&appmodel.App{
-			ID:        "4",
-			Title:     "public app4",
-			IsPrivate: true,
+		{
+			ID:    "4",
+			Title: "public app4",
 		},
 	}
 

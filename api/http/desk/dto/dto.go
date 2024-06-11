@@ -3,7 +3,8 @@ package dto
 import (
 	"time"
 
-	"github.com/channel-io/ch-app-store/internal/app/model"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
@@ -36,7 +37,7 @@ type AppViewI18n struct {
 	Description string `json:"description"`
 }
 
-func convertAppViewI18n(app *model.App) map[string]AppViewI18n {
+func convertAppViewI18n(app *appmodel.App) map[string]AppViewI18n {
 	ret := make(map[string]AppViewI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppViewI18n{
@@ -47,14 +48,25 @@ func convertAppViewI18n(app *model.App) map[string]AppViewI18n {
 	return ret
 }
 
-func NewAppView(origin *model.App) *AppView {
+func convertAppWithDisplayViewI18n(app *displaysvc.AppWithDisplay) map[string]AppViewI18n {
+	ret := make(map[string]AppViewI18n)
+	for lang, i18n := range app.I18nMap {
+		ret[lang] = AppViewI18n{
+			Title:       i18n.Title,
+			Description: i18n.Description,
+		}
+	}
+	return ret
+}
+
+func NewAppWithDisplayView(origin *displaysvc.AppWithDisplay) *AppView {
 	return &AppView{
 		ID:          origin.ID,
 		Title:       origin.Title,
 		AvatarURL:   origin.AvatarURL,
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
-		I18nMap:     convertAppViewI18n(origin),
+		I18nMap:     convertAppWithDisplayViewI18n(origin),
 		IsPrivate:   origin.IsPrivate,
 
 		// legacy fields
@@ -62,7 +74,30 @@ func NewAppView(origin *model.App) *AppView {
 	}
 }
 
-func NewAppViews(origins []*model.App) []*AppView {
+func NewAppWithDisplayViews(origins []*displaysvc.AppWithDisplay) []*AppView {
+	ret := make([]*AppView, 0, len(origins))
+	for _, origin := range origins {
+		ret = append(ret, NewAppWithDisplayView(origin))
+	}
+	return ret
+}
+
+func NewAppView(origin *appmodel.App) *AppView {
+	return &AppView{
+		ID:          origin.ID,
+		Title:       origin.Title,
+		AvatarURL:   origin.AvatarURL,
+		Description: origin.Description,
+		IsBuiltIn:   origin.IsBuiltIn,
+		I18nMap:     convertAppViewI18n(origin),
+
+		// legacy fields
+		IsPrivate: true,
+		State:     "",
+	}
+}
+
+func NewAppViews(origins []*appmodel.App) []*AppView {
 	ret := make([]*AppView, 0, len(origins))
 	for _, origin := range origins {
 		ret = append(ret, NewAppView(origin))
@@ -87,7 +122,7 @@ type AppDetailView struct {
 	IsBuiltIn          bool                     `json:"isBuiltIn"`
 }
 
-func NewAppDetailView(origin *model.App) *AppDetailView {
+func NewAppWithDisplayDetailView(origin *displaysvc.AppWithDisplay) *AppDetailView {
 	return &AppDetailView{
 		ID:                 origin.ID,
 		Title:              origin.Title,
@@ -97,7 +132,7 @@ func NewAppDetailView(origin *model.App) *AppDetailView {
 		ManualURL:          origin.ManualURL,
 		DetailDescriptions: origin.DetailDescriptions,
 		DetailImageURLs:    origin.DetailImageURLs,
-		I18nMap:            convertAppDetailI18n(origin),
+		I18nMap:            convertAppWithDisplayI18n(origin),
 	}
 }
 
@@ -109,7 +144,7 @@ type AppDetailI18n struct {
 	ManualURL          string           `json:"manualUrl,omitempty"`
 }
 
-func convertAppDetailI18n(app *model.App) map[string]AppDetailI18n {
+func convertAppWithDisplayI18n(app *displaysvc.AppWithDisplay) map[string]AppDetailI18n {
 	ret := make(map[string]AppDetailI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppDetailI18n{
@@ -119,14 +154,6 @@ func convertAppDetailI18n(app *model.App) map[string]AppDetailI18n {
 			DetailImageURLs:    i18n.DetailImageURLs,
 			ManualURL:          i18n.ManualURL,
 		}
-	}
-	return ret
-}
-
-func NewAppDetailViews(origins []*model.App) []*AppDetailView {
-	ret := make([]*AppDetailView, 0, len(origins))
-	for _, origin := range origins {
-		ret = append(ret, NewAppDetailView(origin))
 	}
 	return ret
 }

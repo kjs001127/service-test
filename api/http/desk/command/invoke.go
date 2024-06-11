@@ -3,14 +3,14 @@ package command
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"golang.org/x/text/language"
-
 	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/text/language"
 )
 
 const callerTypeManager = "manager"
@@ -132,7 +132,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		x-account	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	dto.AppView
+//	@Success	200			{object}	deskdto.WysiwygView
 //	@Router		/desk/v1/channels/{channelID}/apps [get]
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")

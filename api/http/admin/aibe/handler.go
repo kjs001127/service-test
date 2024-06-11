@@ -2,6 +2,7 @@ package aibe
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
+	display "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	systemlog "github.com/channel-io/ch-app-store/internal/systemlog/svc"
@@ -10,17 +11,24 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	briefInvoker *brief.Invoker
-	systemLogSvc *systemlog.SystemLogSvc
-	querySvc     *command.WysiwygQuerySvc
+	briefInvoker           *brief.Invoker
+	systemLogSvc           *systemlog.SystemLogSvc
+	querySvc               *command.WysiwygQuerySvc
+	appWithDisplayQuerySvc display.AppWithDisplayQuerySvc
 }
 
 func NewHandler(
 	briefInvoker *brief.Invoker,
 	systemLogSvc *systemlog.SystemLogSvc,
 	querySvc *command.WysiwygQuerySvc,
+	appWithDisplayQuerySvc display.AppWithDisplayQuerySvc,
 ) *Handler {
-	return &Handler{briefInvoker: briefInvoker, systemLogSvc: systemLogSvc, querySvc: querySvc}
+	return &Handler{
+		briefInvoker:           briefInvoker,
+		systemLogSvc:           systemLogSvc,
+		querySvc:               querySvc,
+		appWithDisplayQuerySvc: appWithDisplayQuerySvc,
+	}
 }
 
 // RegisterRoutes @TODO refactor api spec @Camel
