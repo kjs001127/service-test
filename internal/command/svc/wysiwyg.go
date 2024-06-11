@@ -9,12 +9,12 @@ import (
 )
 
 type WysiwygQuerySvc struct {
-	querySvc       *app.AppInstallQuerySvc
+	querySvc       *app.InstalledAppQuerySvc
 	cmdRepo        CommandRepository
 	activationRepo ActivationRepository
 }
 
-func NewWysiwygQuerySvc(querySvc *app.AppInstallQuerySvc, cmdRepo CommandRepository, activationRepo ActivationRepository) *WysiwygQuerySvc {
+func NewWysiwygQuerySvc(querySvc *app.InstalledAppQuerySvc, cmdRepo CommandRepository, activationRepo ActivationRepository) *WysiwygQuerySvc {
 	return &WysiwygQuerySvc{querySvc: querySvc, cmdRepo: cmdRepo, activationRepo: activationRepo}
 }
 
@@ -24,18 +24,18 @@ func (s *WysiwygQuerySvc) Query(ctx context.Context, channelID string, scope cmd
 		return nil, nil, err
 	}
 
-	filteredApps, err := s.filterOnlyActiveApps(ctx, channelID, apps)
+	commands, err := s.cmdRepo.FetchByAppIDsAndScope(ctx, idsOf(apps), scope)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	commands, err := s.cmdRepo.FetchByAppIDsAndScope(ctx, idsOf(filteredApps), scope)
+	cmdsToReturn, err := s.filterOnlyActiveCmds(ctx, channelID, commands)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	appsToReturn := s.filterAppWithCmds(apps, commands)
-	return appsToReturn, commands, nil
+	appsToReturn := s.filterAppWithCmds(apps, cmdsToReturn)
+	return appsToReturn, cmdsToReturn, nil
 }
 
 func idsOf(apps []*appmodel.App) []string {
@@ -64,24 +64,21 @@ func (s *WysiwygQuerySvc) filterAppWithCmds(installedApps []*appmodel.App, cmds 
 	return ret
 }
 
-func (s *WysiwygQuerySvc) filterOnlyActiveApps(ctx context.Context, channelID string, installedApps []*appmodel.App) ([]*appmodel.App, error) {
-	activations, err := s.activationRepo.FetchAllByAppIDs(ctx, channelID, app.AppIDsOf(installedApps))
+func (s *WysiwygQuerySvc) filterOnlyActiveCmds(ctx context.Context, channelID string, cmds []*cmdmodel.Command) ([]*cmdmodel.Command, error) {
+	activations, err := s.activationRepo.FetchByChannelID(ctx, channelID)
 	if err != nil {
 		return nil, err
 	}
 
-	activationMap := make(map[string]bool)
-	for _, activation := range activations {
-		activationMap[activation.AppID] = activation.Enabled
-	}
+	activationMap := activations.ToMap()
 
-	var ret []*appmodel.App
-	for _, installedApp := range installedApps {
-		if activated, exists := activationMap[installedApp.ID]; exists && !activated {
-			continue
+	var ret []*cmdmodel.Command
+	for _, cmd := range cmds {
+		activation, exists := activationMap[cmd.ID]
+
+		if (exists && activation.Enabled) || (!exists && cmd.EnabledByDefault) {
+			ret = append(ret, cmd)
 		}
-
-		ret = append(ret, installedApp)
 	}
 
 	return ret, nil

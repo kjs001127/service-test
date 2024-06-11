@@ -30,14 +30,14 @@ type EmptyRequest struct {
 
 type Invoker struct {
 	repo     BriefRepository
-	querySvc *app.AppInstallQuerySvc
+	querySvc *app.InstalledAppQuerySvc
 	invoker  app.TypedInvoker[EmptyRequest, BriefResponse]
 	logger   log.ContextAwareLogger
 }
 
 func NewInvoker(
 	repo BriefRepository,
-	querySvc *app.AppInstallQuerySvc,
+	querySvc *app.InstalledAppQuerySvc,
 	invoker app.TypedInvoker[EmptyRequest, BriefResponse],
 	logger log.ContextAwareLogger,
 ) *Invoker {

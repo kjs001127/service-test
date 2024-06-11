@@ -5,12 +5,12 @@ import (
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
 
 type InstalledAppDetailView struct {
-	App            *AppDetailView `json:"app"`
-	Commands       []*CommandView `json:"commands"`
-	CommandEnabled bool           `json:"commandEnabled"`
+	App      *AppDetailView          `json:"app"`
+	Commands []*InstalledCommandView `json:"commands"`
 }
 
 type AppStoreDetailView struct {
@@ -131,6 +131,26 @@ func NewAppDetailViews(origins []*model.App) []*AppDetailView {
 	return ret
 }
 
+type InstalledCommandView struct {
+	*CommandView
+	Enabled bool `json:"enabled"`
+}
+
+func NewInstalledCommandView(cmd *svc.CommandWithActivation) *InstalledCommandView {
+	return &InstalledCommandView{
+		CommandView: NewCommandView(cmd.Command),
+		Enabled:     cmd.Enabled,
+	}
+}
+
+func NewInstalledCommandViews(origins []*svc.CommandWithActivation) []*InstalledCommandView {
+	ret := make([]*InstalledCommandView, 0, len(origins))
+	for _, origin := range origins {
+		ret = append(ret, NewInstalledCommandView(origin))
+	}
+	return ret
+}
+
 type CommandView struct {
 	AppID string    `json:"appId,o"`
 	Name  string    `json:"name"`
@@ -167,6 +187,8 @@ func NewCommandViews(origins []*cmd.Command) []*CommandView {
 }
 
 type CommandToggleRequest struct {
-	Language       string `json:"language"`
-	CommandEnabled bool   `json:"commandEnabled"`
+	Scope    cmd.Scope `json:"scope"`
+	Name     string    `json:"name"`
+	Enabled  bool      `json:"enabled"`
+	Language string    `json:"language"`
 }

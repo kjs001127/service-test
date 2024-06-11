@@ -23,7 +23,6 @@ type CommandRegisterSvcTestSuite struct {
 
 	registerSvc *svc.RegisterSvc
 	commandRepo svc.CommandRepository
-	settingRepo svc.ActivationSettingRepository
 }
 
 func (c *CommandRegisterSvcTestSuite) SetupTest() {
@@ -31,7 +30,6 @@ func (c *CommandRegisterSvcTestSuite) SetupTest() {
 		testOpts,
 		fx.Populate(&c.registerSvc),
 		fx.Populate(&c.commandRepo),
-		fx.Populate(&c.settingRepo),
 	)
 	c.testHelper.TruncateAll()
 }
@@ -51,9 +49,8 @@ func (c *CommandRegisterSvcTestSuite) TestRegister() {
 	}}
 
 	req := &svc.CommandRegisterRequest{
-		AppID:           appID,
-		EnableByDefault: true,
-		Commands:        commands,
+		AppID:    appID,
+		Commands: commands,
 	}
 
 	err := c.registerSvc.Register(ctx, req)
@@ -72,9 +69,8 @@ func (c *CommandRegisterSvcTestSuite) TestDeregisterAll() {
 	}}
 
 	req := &svc.CommandRegisterRequest{
-		AppID:           appID,
-		EnableByDefault: true,
-		Commands:        commands,
+		AppID:    appID,
+		Commands: commands,
 	}
 
 	err := c.registerSvc.Register(ctx, req)

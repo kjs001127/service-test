@@ -72,10 +72,8 @@ func (r *Handler) RegisterCommand(
 	}
 
 	if err := r.registerSvc.Register(ctx, &command.CommandRegisterRequest{
-		AppID:              req.AppID,
-		Commands:           req.Commands.toCmds(),
-		ToggleFunctionName: nil,
-		EnableByDefault:    true,
+		AppID:    req.AppID,
+		Commands: req.Commands.toCmds(),
 	}); err != nil {
 		return native.WrapCommonErr(err)
 	}

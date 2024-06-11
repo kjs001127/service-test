@@ -1,15 +1,21 @@
 package model
 
-import (
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-)
-
 type Activation struct {
-	appmodel.InstallationID
+	ActivationID
 	Enabled bool
 }
 
-type ActivationSetting struct {
-	AppID           string
-	EnableByDefault bool
+type Activations []*Activation
+
+func (activations Activations) ToMap() map[string]*Activation {
+	ret := make(map[string]*Activation)
+	for _, a := range activations {
+		ret[a.CommandID] = a
+	}
+	return ret
+}
+
+type ActivationID struct {
+	ChannelID string
+	CommandID string
 }

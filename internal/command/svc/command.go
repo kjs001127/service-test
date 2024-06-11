@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 )
@@ -13,14 +12,14 @@ import (
 type Invoker struct {
 	repository        CommandRepository
 	requester         app.TypedInvoker[CommandBody, Action]
-	activationChecker ToggleSvc
+	activationChecker ActivationSvc
 	listeners         []CommandRequestListener
 }
 
 func NewInvoker(
 	repository CommandRepository,
 	requester app.TypedInvoker[CommandBody, Action],
-	activationSvc ToggleSvc,
+	activationSvc ActivationSvc,
 	listeners []CommandRequestListener,
 ) *Invoker {
 	return &Invoker{repository: repository, requester: requester, listeners: listeners, activationChecker: activationSvc}
@@ -73,10 +72,7 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 }
 
 func (r *Invoker) checkActivated(ctx context.Context, request CommandRequest) error {
-	activated, err := r.activationChecker.Check(ctx, appmodel.InstallationID{
-		AppID:     request.AppID,
-		ChannelID: request.ChannelID,
-	})
+	activated, err := r.activationChecker.Check(ctx, request.CommandKey, request.ChannelID)
 	if err != nil {
 		return err
 	}

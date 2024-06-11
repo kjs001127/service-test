@@ -9,16 +9,16 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 
-type AppInstallQuerySvc struct {
+type InstalledAppQuerySvc struct {
 	appInstallationRepo AppInstallationRepository
 	appRepo             AppRepository
 }
 
-func NewInstallQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *AppInstallQuerySvc {
-	return &AppInstallQuerySvc{appInstallationRepo: appChRepo, appRepo: appRepo}
+func NewInstallQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *InstalledAppQuerySvc {
+	return &InstalledAppQuerySvc{appInstallationRepo: appChRepo, appRepo: appRepo}
 }
 
-func (s *AppInstallQuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, error) {
+func (s *InstalledAppQuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, error) {
 	if err := s.installBuiltInApps(ctx, channelID); err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func appIDsOf(installations []*model.AppInstallation) []string {
 	return appIDs
 }
 
-func (s *AppInstallQuerySvc) Query(ctx context.Context, install model.InstallationID) (*model.App, error) {
+func (s *InstalledAppQuerySvc) Query(ctx context.Context, install model.InstallationID) (*model.App, error) {
 	app, err := s.appRepo.FindApp(ctx, install.AppID)
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -64,7 +64,7 @@ func (s *AppInstallQuerySvc) Query(ctx context.Context, install model.Installati
 	return app, nil
 }
 
-func (s *AppInstallQuerySvc) CheckInstall(ctx context.Context, install model.InstallationID) (bool, error) {
+func (s *InstalledAppQuerySvc) CheckInstall(ctx context.Context, install model.InstallationID) (bool, error) {
 	_, err := s.Query(ctx, install)
 	if apierr.IsNotFound(err) {
 		return false, nil
@@ -83,7 +83,7 @@ func AppIDsOf(apps []*model.App) []string {
 	return appIDs
 }
 
-func (s *AppInstallQuerySvc) installBuiltInApps(ctx context.Context, channelID string) error {
+func (s *InstalledAppQuerySvc) installBuiltInApps(ctx context.Context, channelID string) error {
 	builtInApps, err := s.appRepo.FindBuiltInApps(ctx)
 	if err != nil {
 		return errors.Wrap(err, "query builtIn fail")
@@ -98,7 +98,7 @@ func (s *AppInstallQuerySvc) installBuiltInApps(ctx context.Context, channelID s
 	return nil
 }
 
-func (s *AppInstallQuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) error {
+func (s *InstalledAppQuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) error {
 	return s.appInstallationRepo.SaveIfNotExists(ctx, &model.AppInstallation{
 		AppID:     builtIn.ID,
 		ChannelID: channelID,

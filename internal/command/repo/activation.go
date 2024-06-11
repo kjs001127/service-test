@@ -10,7 +10,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 )
@@ -28,16 +27,16 @@ func (a *ActivationRepository) Save(ctx context.Context, activation *model.Activ
 		ctx,
 		a.db,
 		true,
-		[]string{"app_id", "channel_id"},
-		boil.Blacklist("app_id", "channel_id"),
+		[]string{"command_id", "channel_id"},
+		boil.Blacklist("command_id", "channel_id"),
 		boil.Infer(),
 	)
 }
 
-func (a *ActivationRepository) Fetch(ctx context.Context, key appmodel.InstallationID) (*model.Activation, error) {
-	res, err := models.CommandActivations(
+func (a *ActivationRepository) Fetch(ctx context.Context, key model.ActivationID) (*model.Activation, error) {
+	res, err := models.CommandChannelActivations(
 		qm.Select("*"),
-		qm.Where("app_id = $1", key.AppID),
+		qm.Where("command_id = $1", key.CommandID),
 		qm.Where("channel_id = $2", key.ChannelID),
 	).One(ctx, a.db)
 
@@ -50,51 +49,63 @@ func (a *ActivationRepository) Fetch(ctx context.Context, key appmodel.Installat
 	return unmarshalActivation(res), nil
 }
 
-func (a *ActivationRepository) FetchAllByAppIDs(ctx context.Context, channelID string, appIDs []string) ([]*model.Activation, error) {
-	slice := make([]interface{}, len(appIDs))
-	for i, v := range appIDs {
-		slice[i] = v
-	}
-
-	mods, err := models.CommandActivations(
-		qm.Select("*"),
-		qm.Where("channel_id = ?", channelID),
-		qm.WhereIn("app_id IN ?", slice...),
-	).All(ctx, a.db)
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalAllActivations(mods), nil
-}
-
-func (a *ActivationRepository) Delete(ctx context.Context, key appmodel.InstallationID) error {
-	_, err := models.CommandActivations(
-		qm.Where("app_id = $1", key.AppID),
+func (a *ActivationRepository) Delete(ctx context.Context, key model.ActivationID) error {
+	_, err := models.CommandChannelActivations(
+		qm.Where("command_id = $1", key.CommandID),
 		qm.Where("channel_id = $2", key.ChannelID),
 	).DeleteAll(ctx, a.db)
 	return err
 }
 
-func marshalActivation(activation *model.Activation) *models.CommandActivation {
-	return &models.CommandActivation{
-		AppID:     activation.AppID,
+func (a *ActivationRepository) FetchByChannelID(ctx context.Context, channelID string) (model.Activations, error) {
+	res, err := models.CommandChannelActivations(
+		qm.Select("*"),
+		qm.Where("channel_id = $1", channelID),
+	).All(ctx, a.db)
+	if err != nil {
+		return nil, err
+	}
+
+	return unmarshalAllActivations(res), nil
+}
+
+func (a *ActivationRepository) FetchByChannelIDAndCmdIDs(ctx context.Context, channelID string, commandIDs []string) (model.Activations, error) {
+	slice := make([]interface{}, len(commandIDs))
+	for i, v := range commandIDs {
+		slice[i] = v
+	}
+
+	ret, err := models.CommandChannelActivations(
+		qm.Select("*"),
+		qm.Where("channel_id = ?", channelID),
+		qm.WhereIn("command_id IN ?", slice...),
+	).All(ctx, a.db)
+	if err != nil {
+		return nil, err
+	}
+
+	return unmarshalAllActivations(ret), nil
+}
+
+func marshalActivation(activation *model.Activation) *models.CommandChannelActivation {
+	return &models.CommandChannelActivation{
+		CommandID: activation.CommandID,
 		ChannelID: activation.ChannelID,
 		Enabled:   activation.Enabled,
 	}
 }
 
-func unmarshalActivation(mod *models.CommandActivation) *model.Activation {
+func unmarshalActivation(mod *models.CommandChannelActivation) *model.Activation {
 	return &model.Activation{
-		InstallationID: appmodel.InstallationID{
-			AppID:     mod.AppID,
+		ActivationID: model.ActivationID{
+			CommandID: mod.CommandID,
 			ChannelID: mod.ChannelID,
 		},
 		Enabled: mod.Enabled,
 	}
 }
 
-func unmarshalAllActivations(mods models.CommandActivationSlice) []*model.Activation {
+func unmarshalAllActivations(mods models.CommandChannelActivationSlice) []*model.Activation {
 	ret := make([]*model.Activation, 0, len(mods))
 	for _, mod := range mods {
 		ret = append(ret, unmarshalActivation(mod))

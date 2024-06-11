@@ -4,7 +4,6 @@ import (
 	"context"
 
 	app "github.com/channel-io/ch-app-store/internal/app/model"
-	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
@@ -15,13 +14,13 @@ type InstallListener interface {
 }
 
 type ManagerAwareInstallSvc struct {
-	installSvc    appsvc.AppInstallSvc
+	installSvc    AppInstallSvc
 	listeners     []InstallListener
 	postListeners []InstallListener
 }
 
 func NewManagerAwareInstallSvc(
-	installSvc appsvc.AppInstallSvc,
+	installSvc AppInstallSvc,
 	listeners []InstallListener,
 	postListeners []InstallListener,
 ) *ManagerAwareInstallSvc {

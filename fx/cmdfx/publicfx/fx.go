@@ -19,7 +19,6 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
@@ -42,7 +41,6 @@ var Public = fx.Options(
 	nativefx.Native,
 	approlefx.AppRole,
 	apphttpfx.Function,
-	managerfx.Manager,
 	hookfx.Hook,
 
 	invokelogfx.Loggers,

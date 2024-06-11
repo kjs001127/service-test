@@ -9,12 +9,12 @@ var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	installer app.AppInstallSvc
-	querySvc  *app.AppInstallQuerySvc
+	querySvc  *app.InstalledAppQuerySvc
 }
 
 func NewHandler(
 	installer app.AppInstallSvc,
-	querySvc *app.AppInstallQuerySvc,
+	querySvc *app.InstalledAppQuerySvc,
 ) *Handler {
 	return &Handler{installer: installer, querySvc: querySvc}
 }
