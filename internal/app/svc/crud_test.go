@@ -46,7 +46,7 @@ func (a *AppCrudSvcTestSuite) TestCreate() {
 	res, err := a.crudSvc.Create(ctx, app)
 
 	// ID 비교는 Hex()를 사용하기 때문에 불가능
-	assert.Equal(a.T(), appmodel.AppStateEnabled, res.State)
+	assert.Equal(a.T(), app.Title, res.Title)
 	assert.Nil(a.T(), err)
 }
 

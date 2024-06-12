@@ -60,7 +60,6 @@ func NewAppLifecycleSvc(
 func (a *AppLifecycleSvcImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
 		app.ID = uid.New().Hex()
-		app.State = model.AppStateEnabled
 
 		ret, err := a.appRepo.Save(ctx, app)
 		if err != nil {

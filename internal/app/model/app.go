@@ -1,8 +1,7 @@
 package model
 
 type App struct {
-	ID    string   `json:"id"`
-	State AppState `json:"state"`
+	ID string `json:"id"`
 
 	Title       string  `json:"title"`
 	AvatarURL   *string `json:"avatarUrl,omitempty"`
@@ -17,12 +16,5 @@ type I18nFields struct {
 	Title       string `json:"title"`
 	Description string `json:"description,omitempty"`
 }
-
-type AppState string
-
-const (
-	AppStateEnabled  = AppState("enabled")
-	AppStateDisabled = AppState("disabled")
-)
 
 type AppType string

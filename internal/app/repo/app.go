@@ -98,7 +98,6 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		Title:       appTarget.Title,
 		Description: null.StringFromPtr(appTarget.Description),
 		AvatarURL:   null.StringFromPtr(appTarget.AvatarURL),
-		State:       string(appTarget.State),
 		IsBuiltIn:   null.BoolFrom(appTarget.IsBuiltIn),
 		I18nMap:     null.JSONFrom(i18nMap),
 	}, nil
@@ -112,7 +111,6 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 
 	return &app.App{
 		ID:          rawApp.ID,
-		State:       app.AppState(rawApp.State),
 		AvatarURL:   rawApp.AvatarURL.Ptr(),
 		Title:       rawApp.Title,
 		Description: rawApp.Description.Ptr(),
