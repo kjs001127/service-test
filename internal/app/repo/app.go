@@ -73,7 +73,7 @@ func (a *AppDAO) Save(ctx context.Context, app *app.App) (*app.App, error) {
 		a.db,
 		true,
 		[]string{"id"},
-		boil.Blacklist("id"),
+		boil.Blacklist("id", "created_at"),
 		boil.Infer(),
 	); err != nil {
 		return nil, errors.Wrap(err, "error while upserting app")
