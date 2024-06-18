@@ -38,7 +38,7 @@ func (s Scope) isDefined() bool {
 	return false
 }
 
-var nameRegex = regexp.MustCompile(`^[a-zA-Z]{1,20}$`)
+var nameRegex = regexp.MustCompile(`^[a-zA-Z_-]{1,20}$`)
 var i18nNameRegex = regexp.MustCompile(`^[^\s_]{1,20}$`)
 var maxDescriptionLength = 100
 

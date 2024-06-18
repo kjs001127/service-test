@@ -12,7 +12,7 @@ import (
 func testCommand() *model.Command {
 	return &model.Command{
 		AppID:       "test12",
-		Name:        "testCommand",
+		Name:        "test-command",
 		Description: null.StringFrom("한글 설명입니다").Ptr(),
 		Scope:       model.ScopeDesk,
 		AlfMode:     model.AlfModeDisable,
