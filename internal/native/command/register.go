@@ -33,6 +33,8 @@ type CmdDTO struct {
 	AlfDescription *string       `json:"alfDescription,omitempty"`
 
 	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
+
+	EnabledByDefault bool `json:"enabledByDefault,omitempty"`
 }
 
 func (d *CmdDTO) toCmd() *model.Command {
@@ -46,6 +48,7 @@ func (d *CmdDTO) toCmd() *model.Command {
 		ParamDefinitions:         d.ParamDefinitions,
 		AlfMode:                  d.AlfMode,
 		AlfDescription:           d.AlfDescription,
+		EnabledByDefault:         d.EnabledByDefault,
 	}
 }
 
