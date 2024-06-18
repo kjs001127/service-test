@@ -21,31 +21,27 @@ type AppBrief struct {
 
 type BriefResponse string
 type BriefRequest struct {
-	Context   app.ChannelContext
-	ChannelID string
-}
-
-type EmptyRequest struct {
+	Language string `json:"language"`
 }
 
 type Invoker struct {
 	repo     BriefRepository
 	querySvc *app.InstalledAppQuerySvc
-	invoker  app.TypedInvoker[EmptyRequest, BriefResponse]
+	invoker  app.TypedInvoker[BriefRequest, BriefResponse]
 	logger   log.ContextAwareLogger
 }
 
 func NewInvoker(
 	repo BriefRepository,
 	querySvc *app.InstalledAppQuerySvc,
-	invoker app.TypedInvoker[EmptyRequest, BriefResponse],
+	invoker app.TypedInvoker[BriefRequest, BriefResponse],
 	logger log.ContextAwareLogger,
 ) *Invoker {
 	return &Invoker{repo: repo, querySvc: querySvc, invoker: invoker, logger: logger}
 }
 
-func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResponses, error) {
-	apps, err := i.querySvc.QueryAll(ctx, req.Channel.ID)
+func (i *Invoker) Invoke(ctx context.Context, chCtx app.ChannelContext, req BriefRequest) (BriefResponses, error) {
+	apps, err := i.querySvc.QueryAll(ctx, chCtx.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}
@@ -56,7 +52,7 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 	}
 
 	i.logger.Infow(ctx, "invoking brief",
-		"channelID", req.Channel,
+		"channelID", chCtx.Channel,
 		"appIds", app.AppIDsOf(apps),
 	)
 
@@ -69,9 +65,10 @@ func (i *Invoker) Invoke(ctx context.Context, req app.ChannelContext) (BriefResp
 		childCtx, cancel := context.WithCancel(ctx)
 		go func() {
 			defer cancel()
-			res := i.invoker.Invoke(childCtx, brief.AppID, app.TypedRequest[EmptyRequest]{
+			res := i.invoker.Invoke(childCtx, brief.AppID, app.TypedRequest[BriefRequest]{
 				FunctionName: brief.BriefFunctionName,
-				Context:      req,
+				Context:      chCtx,
+				Params:       req,
 			})
 			if res.Error == nil {
 				ch <- &AppBrief{AppId: brief.AppID, Brief: string(res.Result)}

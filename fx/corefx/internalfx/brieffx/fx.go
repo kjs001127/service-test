@@ -17,7 +17,7 @@ var Brief = fx.Options(
 var BriefSvcs = fx.Options(
 	fx.Provide(
 		svc.NewInvoker,
-		app.NewTypedInvoker[svc.EmptyRequest, svc.BriefResponse],
+		app.NewTypedInvoker[svc.BriefRequest, svc.BriefResponse],
 		fx.Annotate(
 			svc.NewBriefClearHook,
 			fx.As(new(app.AppLifeCycleHook)),

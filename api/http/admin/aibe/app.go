@@ -62,7 +62,7 @@ func (h *Handler) invokeBrief(ctx *gin.Context) {
 	}
 
 	var ret brief.BriefResponses
-	ret, err := h.briefInvoker.Invoke(ctx, req.Context)
+	ret, err := h.briefInvoker.Invoke(ctx, req.Context, req.Params)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

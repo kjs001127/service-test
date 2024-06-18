@@ -4,6 +4,7 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	display "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
+	brief "github.com/channel-io/ch-app-store/internal/brief/svc"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	accountmodel "github.com/channel-io/ch-app-store/internal/permission/model"
 )
@@ -26,6 +27,7 @@ type RegisterRequest struct {
 
 type BriefRequest struct {
 	Context app.ChannelContext `json:"context"`
+	Params  brief.BriefRequest `json:"params"`
 }
 
 type ChannelResponse struct {
