@@ -28,13 +28,13 @@ func NewManagerCommandTogglePermissionSvc(
 	}
 }
 
-func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, manager account.Manager, req svc.ToggleCommandRequest) error {
+func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, manager account.ManagerRequester, req svc.ToggleCommandRequest) error {
 	app, err := c.appCrudSvc.Read(ctx, req.Command.AppID)
 	if err != nil {
 		return err
 	}
 
-	if err = c.strategy.HasPermission(ctx, manager, app); err != nil {
+	if err = c.strategy.HasPermission(ctx, manager.Manager, app); err != nil {
 		return apierr.Unauthorized(err)
 	}
 	return nil

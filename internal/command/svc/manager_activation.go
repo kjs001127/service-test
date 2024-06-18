@@ -9,7 +9,7 @@ import (
 )
 
 type ToggleListener interface {
-	OnToggle(ctx context.Context, manager account.Manager, request ToggleCommandRequest) error
+	OnToggle(ctx context.Context, manager account.ManagerRequester, request ToggleCommandRequest) error
 }
 
 type ManagerAwareActivationSvc struct {
@@ -28,7 +28,7 @@ func NewManagerAwareToggleSvc(
 	return &ManagerAwareActivationSvc{toggleSvc: toggleSvc, listeners: listeners, postListeners: postListeners, cmdRepo: cmdRepo}
 }
 
-func (s *ManagerAwareActivationSvc) Toggle(ctx context.Context, manager account.Manager, req ToggleCommandRequest) (err error) {
+func (s *ManagerAwareActivationSvc) Toggle(ctx context.Context, manager account.ManagerRequester, req ToggleCommandRequest) (err error) {
 	defer func() {
 		if err == nil {
 			for _, listener := range s.postListeners {
@@ -48,7 +48,7 @@ func (s *ManagerAwareActivationSvc) Toggle(ctx context.Context, manager account.
 
 }
 
-func (s *ManagerAwareActivationSvc) ToggleByKey(ctx context.Context, manager account.Manager, req ToggleRequest) (err error) {
+func (s *ManagerAwareActivationSvc) ToggleByKey(ctx context.Context, manager account.ManagerRequester, req ToggleRequest) (err error) {
 	cmd, err := s.cmdRepo.Fetch(ctx, req.Command)
 	if err != nil {
 		return err

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
-	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	cmd "github.com/channel-io/ch-app-store/internal/command/svc"
@@ -28,9 +28,9 @@ func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	manager := middleware.Manager(ctx)
+	managerRequester := middleware.ManagerRequester(ctx)
 
-	_, err := h.installer.Install(ctx, manager.Manager, appmodel.InstallationID{
+	_, err := h.installer.Install(ctx, managerRequester.Manager, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})
@@ -56,9 +56,10 @@ func (h *Handler) install(ctx *gin.Context) {
 //	@Router		/desk/v1/channels/{channelID}/installed-apps/{appID} [delete]
 func (h *Handler) uninstall(ctx *gin.Context) {
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
-	manager := middleware.Manager(ctx)
 
-	if err := h.installer.UnInstall(ctx, manager.Manager, appmodel.InstallationID{
+	managerRequester := middleware.ManagerRequester(ctx)
+
+	if err := h.installer.UnInstall(ctx, managerRequester.Manager, appmodel.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	}); err != nil {
@@ -160,12 +161,12 @@ func (h *Handler) toggleCmd(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
-	manager := middleware.Manager(ctx)
-	manager.Manager.Language = body.Language
+
+	managerRequester := middleware.ManagerRequester(ctx)
 
 	channelID, appID := ctx.Param("channelID"), ctx.Param("appID")
 
-	if err := h.activateSvc.ToggleByKey(ctx, manager.Manager, cmd.ToggleRequest{
+	if err := h.activateSvc.ToggleByKey(ctx, managerRequester, cmd.ToggleRequest{
 		Command: cmdmodel.CommandKey{
 			Name:  body.Name,
 			Scope: body.Scope,

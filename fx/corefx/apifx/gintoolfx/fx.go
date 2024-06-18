@@ -29,6 +29,11 @@ var ApiServer = fx.Options(
 			fx.ParamTags(``, excludePath),
 			fx.As(new(gintool.Middleware)),
 		),
+		fx.Annotate(
+			middleware.NewRequest,
+			fx.ResultTags(MiddlewaresGroup),
+			fx.As(new(gintool.Middleware)),
+		),
 	),
 
 	fx.Supply(

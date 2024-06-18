@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
+
 	"github.com/friendsofgo/errors"
 	"github.com/golang-jwt/jwt"
 )
@@ -31,6 +33,11 @@ type User struct {
 type UserPrincipal struct {
 	User
 	Token Token
+}
+
+type UserRequester struct {
+	principal.Requester
+	UserPrincipal
 }
 
 type UserJwt struct {

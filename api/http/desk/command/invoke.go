@@ -4,13 +4,12 @@ import (
 	"net/http"
 
 	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
-	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"golang.org/x/text/language"
 )
 
 const callerTypeManager = "manager"
@@ -35,11 +34,10 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
-	manager := middleware.Manager(ctx)
 
-	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
-		body.Language = lang
-	}
+	managerRequester := middleware.ManagerRequester(ctx)
+
+	body.Language = managerRequester.Language
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
@@ -50,7 +48,7 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 		},
 		Caller: command.Caller{
 			Type: callerTypeManager,
-			ID:   manager.ID,
+			ID:   managerRequester.ID,
 		},
 		CommandBody: body,
 	})
@@ -60,21 +58,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
-}
-
-func locale(ctx *gin.Context) (string, bool) {
-	tags, _, err := language.ParseAcceptLanguage(ctx.GetHeader("Accept-Language"))
-	if err != nil {
-		return "", false
-	}
-	for _, tag := range tags {
-		lang, conf := tag.Base()
-		if conf >= language.High {
-			return lang.String(), true
-		}
-	}
-
-	return "", false
 }
 
 // autoComplete godoc
@@ -97,11 +80,9 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
-	manager := middleware.Manager(ctx)
 
-	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
-		body.Language = lang
-	}
+	managerRequester := middleware.ManagerRequester(ctx)
+	body.Language = managerRequester.Language
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
@@ -112,7 +93,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 		},
 		Caller: command.Caller{
 			Type: callerTypeManager,
-			ID:   manager.ID,
+			ID:   managerRequester.ID,
 		},
 		Body: body,
 	})
