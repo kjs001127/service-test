@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	"github.com/channel-io/ch-app-store/api/http/front/middleware"
+	"strings"
+
+	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 
 	"github.com/gin-gonic/gin"
@@ -13,17 +15,20 @@ const (
 
 type UserRequest struct{}
 
-func NewUserRequest() *Request {
-	return &Request{}
+func NewUserRequest() *UserRequest {
+	return &UserRequest{}
 }
 
 func (r *UserRequest) Priority() int {
-	return 1
+	return 3
 }
 
 func (r *UserRequest) Handle(ctx *gin.Context) {
-	requester := Requester(ctx)
-	user := middleware.User(ctx)
+	if !strings.HasPrefix(ctx.Request.RequestURI, FrontPathPrefix) {
+		return
+	}
+	requester := middleware.Requester(ctx)
+	user := User(ctx)
 
 	userRequester := session.UserRequester{
 		Requester:     requester,
@@ -34,7 +39,7 @@ func (r *UserRequest) Handle(ctx *gin.Context) {
 }
 
 func UserRequester(ctx *gin.Context) session.UserRequester {
-	rawRequester, _ := ctx.Get(RequesterKey)
+	rawRequester, _ := ctx.Get(middleware.RequesterKey)
 
 	return rawRequester.(session.UserRequester)
 }

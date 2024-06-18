@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 
 	"github.com/gin-gonic/gin"
@@ -13,17 +13,20 @@ const (
 
 type ManagerRequest struct{}
 
-func NewManagerRequest() *Request {
-	return &Request{}
+func NewManagerRequest() *ManagerRequest {
+	return &ManagerRequest{}
 }
 
 func (r *ManagerRequest) Priority() int {
-	return 1
+	return 3
 }
 
 func (r *ManagerRequest) Handle(ctx *gin.Context) {
-	requester := Requester(ctx)
-	manager := middleware.Manager(ctx)
+	if !regex.MatchString(ctx.Request.RequestURI) {
+		return
+	}
+	requester := middleware.Requester(ctx)
+	manager := Manager(ctx)
 
 	managerRequester := account.ManagerRequester{
 		Requester:        requester,

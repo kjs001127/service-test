@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/dto"
-	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
+	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	cmd "github.com/channel-io/ch-app-store/internal/command/svc"

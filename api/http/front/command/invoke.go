@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
-	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
+	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 
