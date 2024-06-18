@@ -39,7 +39,7 @@ func (r *UserRequest) Handle(ctx *gin.Context) {
 }
 
 func UserRequester(ctx *gin.Context) session.UserRequester {
-	rawRequester, _ := ctx.Get(middleware.RequesterKey)
+	rawRequester, _ := ctx.Get(UserRequesterKey)
 
 	return rawRequester.(session.UserRequester)
 }
