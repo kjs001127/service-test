@@ -34,10 +34,14 @@ type CmdDTO struct {
 
 	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
 
-	EnabledByDefault bool `json:"enabledByDefault"`
+	EnabledByDefault *bool `json:"enabledByDefault"`
 }
 
 func (d *CmdDTO) toCmd() *model.Command {
+	if d.EnabledByDefault == nil {
+		defaultEnabled := true
+		d.EnabledByDefault = &defaultEnabled
+	}
 	return &model.Command{
 		Name:                     d.Name,
 		Scope:                    d.Scope,
@@ -48,7 +52,7 @@ func (d *CmdDTO) toCmd() *model.Command {
 		ParamDefinitions:         d.ParamDefinitions,
 		AlfMode:                  d.AlfMode,
 		AlfDescription:           d.AlfDescription,
-		EnabledByDefault:         d.EnabledByDefault,
+		EnabledByDefault:         *d.EnabledByDefault,
 	}
 }
 
