@@ -34,7 +34,7 @@ type CmdDTO struct {
 
 	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
 
-	EnabledByDefault bool `json:"enabledByDefault,omitempty"`
+	EnabledByDefault bool `json:"enabledByDefault"`
 }
 
 func (d *CmdDTO) toCmd() *model.Command {
