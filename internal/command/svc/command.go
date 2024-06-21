@@ -28,7 +28,7 @@ func NewInvoker(
 func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, error) {
 
 	if err := r.checkActivated(ctx, request); err != nil {
-		return Action{}, nil
+		return Action{}, err
 	}
 
 	cmd, err := r.repository.Fetch(ctx, request.CommandKey)
