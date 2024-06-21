@@ -69,6 +69,21 @@ func TestInvalidI18nName(t *testing.T) {
 	}
 }
 
+func TestValidI18nName(t *testing.T) {
+	validI18nNames := []string{
+		"한글이름",
+		"name12",
+		"언더_스코어허용",
+	}
+	for _, validName := range validI18nNames {
+		command := testCommand()
+		command.NameDescI18NMap["ko"] = model.I18nMap{
+			Name: validName,
+		}
+		assert.NoError(t, command.Validate())
+	}
+}
+
 func TestParamDefinitionName(t *testing.T) {
 	invalidNames := []string{
 		"한글이름",

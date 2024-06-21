@@ -39,7 +39,7 @@ func (s Scope) isDefined() bool {
 }
 
 var nameRegex = regexp.MustCompile(`^[a-zA-Z_-]{1,20}$`)
-var i18nNameRegex = regexp.MustCompile(`^[^\s_]{1,20}$`)
+var i18nNameRegex = regexp.MustCompile(`^[^\s]{1,20}$`)
 var maxDescriptionLength = 100
 
 type Command struct {
