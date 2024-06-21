@@ -13,7 +13,7 @@ type ParamName string
 type ParamType string
 
 var paramNameRegex = regexp.MustCompile(`^[a-zA-Z_-]{1,20}$`)
-var paramNameI18nRegex = regexp.MustCompile(`^[^\s_]{1,20}$`)
+var paramNameI18nRegex = regexp.MustCompile(`^[^\s]{1,20}$`)
 
 var maxParamDescriptionLength = 50
 
