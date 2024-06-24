@@ -34,6 +34,7 @@ func (r *Request) Handle(ctx *gin.Context) {
 		lang, conf := tag.Base()
 		if conf >= languageUtil.High {
 			language = lang.String()
+			break
 		}
 	}
 
