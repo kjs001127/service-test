@@ -15,21 +15,16 @@ import (
 )
 
 type RegisterSvc struct {
-	repo        CommandRepository
-	settingRepo ActivationSettingRepository
+	repo CommandRepository
 }
 
-func NewRegisterSvc(repo CommandRepository, activationRepo ActivationSettingRepository) *RegisterSvc {
-	return &RegisterSvc{repo: repo, settingRepo: activationRepo}
+func NewRegisterSvc(repo CommandRepository) *RegisterSvc {
+	return &RegisterSvc{repo: repo}
 }
 
 func (s *RegisterSvc) DeregisterAll(ctx context.Context, appID string) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.repo.DeleteAllByAppID(ctx, appID); err != nil {
-			return err
-		}
-
-		if err := s.settingRepo.Delete(ctx, appID); err != nil {
 			return err
 		}
 		return nil
@@ -40,13 +35,6 @@ func (s *RegisterSvc) Register(ctx context.Context, req *CommandRegisterRequest)
 	return tx.Do(ctx, func(ctx context.Context) error {
 		if err := s.validateRequest(req.AppID, req.Commands); err != nil {
 			return errors.WithStack(err)
-		}
-
-		if err := s.settingRepo.Save(ctx, &model.ActivationSetting{
-			AppID:           req.AppID,
-			EnableByDefault: req.EnableByDefault,
-		}); err != nil {
-			return err
 		}
 
 		oldbies, err := s.repo.FetchAllByAppID(ctx, req.AppID)
@@ -81,10 +69,8 @@ func (s *RegisterSvc) validateRequest(appID string, cmds []*model.Command) error
 }
 
 type CommandRegisterRequest struct {
-	AppID              string           `json:"appId"`
-	EnableByDefault    bool             `json:"enableByDefault"`
-	ToggleFunctionName *string          `json:"toggleFunctionName,omitempty"`
-	Commands           []*model.Command `json:"commands"`
+	AppID    string           `json:"appId"`
+	Commands []*model.Command `json:"commands"`
 }
 
 type UpdateKey struct {

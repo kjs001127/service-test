@@ -38,8 +38,8 @@ func (s Scope) isDefined() bool {
 	return false
 }
 
-var nameRegex = regexp.MustCompile(`^[a-zA-Z]{1,20}$`)
-var i18nNameRegex = regexp.MustCompile(`^[^\s_]{1,20}$`)
+var nameRegex = regexp.MustCompile(`^[a-zA-Z_-]{1,20}$`)
+var i18nNameRegex = regexp.MustCompile(`^[^\s]{1,20}$`)
 var maxDescriptionLength = 100
 
 type Command struct {
@@ -60,6 +60,9 @@ type Command struct {
 
 	ParamDefinitions ParamDefinitions `json:"paramDefinitions"`
 
+	EnabledByDefault   bool   `json:"enabledByDefault"`
+	ToggleFunctionName string `json:"toggleFunctionName"`
+
 	UpdatedAt time.Time `json:"-"`
 	CreatedAt time.Time `json:"-"`
 }
@@ -69,6 +72,13 @@ type I18nMap struct {
 	Description string `json:"description"`
 }
 
+func (c *Command) Key() CommandKey {
+	return CommandKey{
+		AppID: c.AppID,
+		Scope: c.Scope,
+		Name:  c.Name,
+	}
+}
 func (c *Command) Validate() error {
 	if len(c.AppID) == 0 {
 		return apierr.BadRequest(fmt.Errorf("appID must not be empty"))
@@ -126,7 +136,7 @@ type Query struct {
 }
 
 type CommandKey struct {
-	AppID string
-	Scope Scope
-	Name  string
+	AppID string `json:"appId"`
+	Scope Scope  `json:"scope"`
+	Name  string `json:"name"`
 }

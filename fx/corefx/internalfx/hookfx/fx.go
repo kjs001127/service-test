@@ -2,11 +2,11 @@ package hookfx
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
+	commandsvc "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/hook/repo"
 	"github.com/channel-io/ch-app-store/internal/hook/svc"
-	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
 
 	"go.uber.org/fx"
 )
@@ -35,14 +35,15 @@ var InstallHookSvc = fx.Options(
 		svc.NewInstallHookSvc,
 		fx.Annotate(
 			svc.NewPostInstallHandler,
-			fx.As(new(managersvc.InstallListener)),
-			fx.ResultTags(managerfx.PostInstallHandlerGroup),
+			fx.As(new(appsvc.InstallListener)),
+			fx.ResultTags(appfx.PostInstallHandlerGroup),
 		),
 		fx.Annotate(
 			svc.NewToggleHookSvc,
-			fx.As(new(managersvc.ToggleListener)),
-			fx.ResultTags(managerfx.PreToggleHandlerGroup),
+			fx.As(new(commandsvc.ToggleListener)),
+			fx.ResultTags(commandfx.PreToggleHandlerGroup),
 		),
+		svc.NewToggleHookSvc,
 	),
 )
 

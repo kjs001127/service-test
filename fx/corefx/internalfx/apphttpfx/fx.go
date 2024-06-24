@@ -1,12 +1,15 @@
 package apphttpfx
 
 import (
+	"net/http"
+
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/apphttp/infra"
+	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 	"github.com/channel-io/ch-app-store/internal/apphttp/repo"
 	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
 )
@@ -19,18 +22,14 @@ var Function = fx.Options(
 
 var FunctionSvcs = fx.Options(
 	fx.Provide(
+		svc.NewAppHttpProxy,
 		fx.Annotate(
 			svc.NewInvoker,
 			fx.As(new(app.InvokeHandler)),
-			fx.ParamTags(httpfx.InternalApp, httpfx.ExternalApp),
 		),
 		fx.Annotate(
 			svc.NewServerSettingSvcImpl,
 			fx.As(new(svc.ServerSettingSvc)),
-		),
-		fx.Annotate(
-			svc.NewAppHttpProxy,
-			fx.ParamTags(``, httpfx.InternalApp, httpfx.ExternalApp),
 		),
 		fx.Annotate(
 			svc.NewLifeCycleHook,
@@ -54,6 +53,27 @@ var FunctionHttps = fx.Options(
 			fx.As(new(svc.HttpRequester)),
 			fx.ParamTags(httpfx.ExternalApp),
 			fx.ResultTags(httpfx.ExternalApp),
+		),
+	),
+	fx.Provide(
+		fx.Annotate(
+			func(internal svc.HttpRequester, external svc.HttpRequester) svc.RequesterMap {
+				return svc.RequesterMap{
+					model.AccessType_Internal: internal,
+					model.AccessType_External: external,
+				}
+			},
+			fx.ParamTags(httpfx.InternalApp, httpfx.ExternalApp),
+		),
+
+		fx.Annotate(
+			func(internal http.RoundTripper, external http.RoundTripper) svc.RoundTripperMap {
+				return svc.RoundTripperMap{
+					model.AccessType_Internal: internal,
+					model.AccessType_External: external,
+				}
+			},
+			fx.ParamTags(httpfx.InternalApp, httpfx.ExternalApp),
 		),
 	),
 )

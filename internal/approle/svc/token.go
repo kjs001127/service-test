@@ -23,14 +23,14 @@ type TokenSvc interface {
 
 type TokenSvcImpl struct {
 	rbacExchanger   *general.RBACExchanger
-	installQuerySvc *app.AppInstallQuerySvc
+	installQuerySvc *app.InstalledAppQuerySvc
 	tokenRepo       AppSecretRepository
 	roleRepo        AppRoleRepository
 }
 
 func NewTokenSvc(
 	rbacExchanger *general.RBACExchanger,
-	installQuerySvc *app.AppInstallQuerySvc,
+	installQuerySvc *app.InstalledAppQuerySvc,
 	tokenRepo AppSecretRepository,
 	roleRepo AppRoleRepository,
 ) *TokenSvcImpl {

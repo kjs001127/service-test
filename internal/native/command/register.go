@@ -33,9 +33,15 @@ type CmdDTO struct {
 	AlfDescription *string       `json:"alfDescription,omitempty"`
 
 	ParamDefinitions model.ParamDefinitions `json:"paramDefinitions"`
+
+	EnabledByDefault *bool `json:"enabledByDefault"`
 }
 
 func (d *CmdDTO) toCmd() *model.Command {
+	if d.EnabledByDefault == nil {
+		defaultEnabled := true
+		d.EnabledByDefault = &defaultEnabled
+	}
 	return &model.Command{
 		Name:                     d.Name,
 		Scope:                    d.Scope,
@@ -46,6 +52,7 @@ func (d *CmdDTO) toCmd() *model.Command {
 		ParamDefinitions:         d.ParamDefinitions,
 		AlfMode:                  d.AlfMode,
 		AlfDescription:           d.AlfDescription,
+		EnabledByDefault:         *d.EnabledByDefault,
 	}
 }
 
@@ -72,10 +79,8 @@ func (r *Handler) RegisterCommand(
 	}
 
 	if err := r.registerSvc.Register(ctx, &command.CommandRegisterRequest{
-		AppID:              req.AppID,
-		Commands:           req.Commands.toCmds(),
-		ToggleFunctionName: nil,
-		EnableByDefault:    true,
+		AppID:    req.AppID,
+		Commands: req.Commands.toCmds(),
 	}); err != nil {
 		return native.WrapCommonErr(err)
 	}

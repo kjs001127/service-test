@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/pkg/errors"
 
@@ -61,7 +62,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			return errors.WithStack(err)
 		}
 		return nil
-	})
+	}, tx.Isolation(sql.LevelSerializable))
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +93,7 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 		}
 
 		return nil
-	}); err != nil {
+	}, tx.Isolation(sql.LevelSerializable)); err != nil {
 		return err
 	}
 

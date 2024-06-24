@@ -13,18 +13,18 @@ import (
 	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 )
 
+type RoundTripperMap map[model.AccessType]http.RoundTripper
+
 type AppHttpProxy struct {
-	repo              AppServerSettingRepository
-	internalRequester http.RoundTripper
-	externalRequester http.RoundTripper
+	repo       AppServerSettingRepository
+	tripperMap RoundTripperMap
 }
 
 func NewAppHttpProxy(
 	repo AppServerSettingRepository,
-	internal http.RoundTripper,
-	external http.RoundTripper,
+	tripperMap RoundTripperMap,
 ) *AppHttpProxy {
-	return &AppHttpProxy{repo: repo, internalRequester: internal, externalRequester: external}
+	return &AppHttpProxy{repo: repo, tripperMap: tripperMap}
 }
 
 type WamProxyRequest struct {
@@ -55,15 +55,12 @@ func (a *AppHttpProxy) Proxy(ctx context.Context, req WamProxyRequest) error {
 		req.Host = wamUrl.Host
 	}
 
-	switch serverSetting.AccessType {
-	case model.AccessType_External:
-		proxy.Transport = a.externalRequester
-	case model.AccessType_Internal:
-		proxy.Transport = a.internalRequester
-	default:
+	requester, exists := a.tripperMap[serverSetting.AccessType]
+	if !exists {
 		return errors.New("accessType invalid")
 	}
 
+	proxy.Transport = requester
 	proxy.ServeHTTP(req.Writer, req.Req)
 	return nil
 }

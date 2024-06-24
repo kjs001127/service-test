@@ -15,11 +15,11 @@ import (
 
 type Checker struct {
 	serviceName string
-	svc         *svc.AppInstallQuerySvc
+	svc         *svc.InstalledAppQuerySvc
 	rbacParser  authgen.Parser
 }
 
-func NewChecker(serviceName string, svc *svc.AppInstallQuerySvc, rbacParser authgen.Parser) *Checker {
+func NewChecker(serviceName string, svc *svc.InstalledAppQuerySvc, rbacParser authgen.Parser) *Checker {
 	return &Checker{
 		serviceName: serviceName,
 		svc:         svc,

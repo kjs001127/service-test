@@ -4,14 +4,13 @@ import (
 	_ "encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"golang.org/x/text/language"
-
 	frontdto "github.com/channel-io/ch-app-store/api/http/front/dto"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 const callerTypeUser = "user"
@@ -36,11 +35,9 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
-	user := middleware.User(ctx)
 
-	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
-		body.Language = lang
-	}
+	user := middleware.UserRequester(ctx)
+	body.Language = user.Language
 
 	res, err := h.invoker.Invoke(ctx, command.CommandRequest{
 		ChannelID: channelID,
@@ -61,21 +58,6 @@ func (h *Handler) executeCommand(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
-}
-
-func locale(ctx *gin.Context) (string, bool) {
-	tags, _, err := language.ParseAcceptLanguage(ctx.GetHeader("Accept-Language"))
-	if err != nil {
-		return "", false
-	}
-	for _, tag := range tags {
-		lang, conf := tag.Base()
-		if conf >= language.High {
-			return lang.String(), true
-		}
-	}
-
-	return "", false
 }
 
 // autoComplete godoc
@@ -99,11 +81,8 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 
 	appID, name, channelID := ctx.Param("appID"), ctx.Param("name"), ctx.Param("channelID")
 
-	user := middleware.User(ctx)
-
-	if lang, exists := locale(ctx); len(body.Language) <= 0 && exists {
-		body.Language = lang
-	}
+	user := middleware.UserRequester(ctx)
+	body.Language = user.Language
 
 	res, err := h.autoCompleteInvoker.Invoke(ctx, command.AutoCompleteRequest{
 		ChannelID: channelID,
@@ -146,7 +125,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, frontdto.AppsAndCommands{
-		Apps:     apps,
+		Apps:     frontdto.NewAppDTOs(apps),
 		Commands: frontdto.NewCommandDTOs(cmds),
 	})
 }

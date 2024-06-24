@@ -49,6 +49,8 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 
 		"createDirectChat": directChatBaseUri + "/createDirectChat",
 
+		"manageUserChat": userChatBaseUri + "/manageUserChat",
+
 		"getManager":       managerBaseUri + "/getManager",
 		"batchGetManagers": managerBaseUri + "/batchGetManagers",
 		"searchManagers":   managerBaseUri + "/searchManagers",

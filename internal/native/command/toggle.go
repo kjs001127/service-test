@@ -7,8 +7,9 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/internal/app/model"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	cmd "github.com/channel-io/ch-app-store/internal/command/model"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
 )
 
@@ -26,10 +27,11 @@ func (r *Handler) ToggleCommand(
 		return native.WrapCommonErr(err)
 	}
 
-	if err := r.activationSvc.Toggle(ctx, model.InstallationID{
-		AppID:     req.AppID,
+	if err := r.activationSvc.ToggleByKey(ctx, svc.ToggleRequest{
+		Enabled:   req.CommandEnabled,
 		ChannelID: req.ChannelID,
-	}, req.CommandEnabled); err != nil {
+		Command:   req.CommandKey,
+	}); err != nil {
 		return native.WrapCommonErr(err)
 	}
 
@@ -37,8 +39,8 @@ func (r *Handler) ToggleCommand(
 }
 
 type ToggleCommandRequest struct {
+	cmd.CommandKey
 	ChannelID      string `json:"channelId"`
-	AppID          string `json:"appId"`
 	CommandEnabled bool   `json:"commandEnabled"`
 }
 

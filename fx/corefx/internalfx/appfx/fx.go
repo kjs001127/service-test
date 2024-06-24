@@ -45,6 +45,11 @@ var AppSvcs = fx.Options(
 			fx.As(new(app.Invoker)),
 			fx.ParamTags(``, ``, ``, FunctionListenersGroup),
 		),
+		fx.Annotate(
+			app.NewManagerAwareInstallSvc,
+			fx.ParamTags(``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+		),
+
 		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
 		app.NewTypedInvoker[svc.ToggleHookRequest, svc.ToggleHookResponse],
 	),

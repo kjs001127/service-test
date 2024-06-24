@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	CommandListenersGroup = `group:"commandListeners"`
+	CommandListenersGroup  = `group:"commandListeners"`
+	PreToggleHandlerGroup  = `group:"managerPreToggle"`
+	PostToggleHandlerGroup = `group:"managerPostToggle"`
 )
 
 var Command = fx.Options(
@@ -20,7 +22,7 @@ var Command = fx.Options(
 var CommandSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			svc.NewCommandClearHook,
+			svc.NewAppLifecycleHook,
 			fx.As(new(app.AppLifeCycleHook)),
 			fx.ResultTags(appfx.LifecycleHookGroup),
 		),
@@ -31,13 +33,13 @@ var CommandSvcs = fx.Options(
 		app.NewTypedInvoker[svc.AutoCompleteBody, svc.AutoCompleteResponse],
 		fx.Annotate(
 			svc.NewActivationSvc,
-			fx.As(new(app.InstallHandler)),
-			fx.ResultTags(appfx.PreInstallHandlerGroup),
+			fx.As(new(svc.ActivationSvc)),
 		),
 		fx.Annotate(
-			svc.NewActivationSvc,
-			fx.As(new(svc.ToggleSvc)),
+			svc.NewManagerAwareToggleSvc,
+			fx.ParamTags(``, PreToggleHandlerGroup, PostToggleHandlerGroup),
 		),
+		svc.NewInstalledCommandQuerySvc,
 	),
 
 	fx.Provide(
@@ -57,10 +59,6 @@ var CommandDAOs = fx.Options(
 		fx.Annotate(
 			repo.NewActivationRepository,
 			fx.As(new(svc.ActivationRepository)),
-		),
-		fx.Annotate(
-			repo.NewActivationSettingRepository,
-			fx.As(new(svc.ActivationSettingRepository)),
 		),
 	),
 )

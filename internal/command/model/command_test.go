@@ -12,7 +12,7 @@ import (
 func testCommand() *model.Command {
 	return &model.Command{
 		AppID:       "test12",
-		Name:        "testCommand",
+		Name:        "test-command",
 		Description: null.StringFrom("한글 설명입니다").Ptr(),
 		Scope:       model.ScopeDesk,
 		AlfMode:     model.AlfModeDisable,
@@ -66,6 +66,21 @@ func TestInvalidI18nName(t *testing.T) {
 			Name: invalidName,
 		}
 		assert.Error(t, command.Validate())
+	}
+}
+
+func TestValidI18nName(t *testing.T) {
+	validI18nNames := []string{
+		"한글이름",
+		"name12",
+		"언더_스코어허용",
+	}
+	for _, validName := range validI18nNames {
+		command := testCommand()
+		command.NameDescI18NMap["ko"] = model.I18nMap{
+			Name: validName,
+		}
+		assert.NoError(t, command.Validate())
 	}
 }
 

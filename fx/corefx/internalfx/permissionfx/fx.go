@@ -1,8 +1,10 @@
 package permissionfx
 
 import (
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/managerfx"
-	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
+	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
+	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/permission/repo"
 	"github.com/channel-io/ch-app-store/internal/permission/svc"
 
@@ -21,14 +23,18 @@ var PermissionSvc = fx.Options(
 			fx.As(new(svc.AccountAppPermissionSvc)),
 		),
 		fx.Annotate(
+			svc.NewAccountDisplayPermissionSvc,
+			fx.As(new(svc.AccountDisplayPermissionSvc)),
+		),
+		fx.Annotate(
 			svc.NewManagerInstallPermissionSvc,
-			fx.As(new(managersvc.InstallListener)),
-			fx.ResultTags(managerfx.PreInstallHandlerGroup),
+			fx.As(new(appsvc.InstallListener)),
+			fx.ResultTags(appfx.PreInstallHandlerGroup),
 		),
 		fx.Annotate(
 			svc.NewManagerCommandTogglePermissionSvc,
-			fx.As(new(managersvc.ToggleListener)),
-			fx.ResultTags(managerfx.PreToggleHandlerGroup),
+			fx.As(new(command.ToggleListener)),
+			fx.ResultTags(commandfx.PreToggleHandlerGroup),
 		),
 		fx.Annotate(
 			svc.NewAccountServerSettingPermissionSvc,

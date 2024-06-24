@@ -3,6 +3,7 @@ package dev
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
+	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	settingsvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
 	rolesvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 )
@@ -10,19 +11,30 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	querySvc   app.AppQuerySvc
-	modifySvc  app.AppLifecycleSvc
-	settingSvc settingsvc.ServerSettingSvc
-	roleSvc    *rolesvc.AppRoleSvc
+	querySvc               app.AppQuerySvc
+	modifySvc              app.AppLifecycleSvc
+	appWithDisplayQuerySvc displaysvc.AppWithDisplayQuerySvc
+	displayModifySvc       displaysvc.DisplayLifecycleSvc
+	settingSvc             settingsvc.ServerSettingSvc
+	roleSvc                *rolesvc.AppRoleSvc
 }
 
 func NewHandler(
 	querySvc app.AppQuerySvc,
 	modifySvc app.AppLifecycleSvc,
+	appWithDisplayQuerySvc displaysvc.AppWithDisplayQuerySvc,
+	displayModifySvc displaysvc.DisplayLifecycleSvc,
 	settingSvc settingsvc.ServerSettingSvc,
 	roleSvc *rolesvc.AppRoleSvc,
 ) *Handler {
-	return &Handler{querySvc: querySvc, modifySvc: modifySvc, settingSvc: settingSvc, roleSvc: roleSvc}
+	return &Handler{
+		querySvc:               querySvc,
+		modifySvc:              modifySvc,
+		appWithDisplayQuerySvc: appWithDisplayQuerySvc,
+		displayModifySvc:       displayModifySvc,
+		settingSvc:             settingSvc,
+		roleSvc:                roleSvc,
+	}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

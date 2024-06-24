@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
+
 	"github.com/go-resty/resty/v2"
 )
 
@@ -34,12 +36,16 @@ type Manager struct {
 	Name      string `json:"name"`
 	Email     string `json:"email"`
 	RoleID    string `json:"roleId"`
-	Language  string `json:"language"`
 }
 
 type ManagerPrincipal struct {
 	Manager
 	Token Token
+}
+
+type ManagerRequester struct {
+	principal.Requester
+	ManagerPrincipal
 }
 
 type ManagerFetcher interface {

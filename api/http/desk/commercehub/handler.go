@@ -24,4 +24,5 @@ func (h *Handler) RegisterRoutes(router gintool.Router) {
 
 	group.GET("/config", h.getConfig)
 	group.PUT("/config", h.setConfig)
+	group.DELETE("/config", h.deleteConfig)
 }

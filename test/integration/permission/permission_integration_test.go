@@ -6,9 +6,8 @@ import (
 
 	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	crudSvc "github.com/channel-io/ch-app-store/internal/app/svc"
+	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
-	managersvc "github.com/channel-io/ch-app-store/internal/manager/svc"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
 
@@ -36,8 +35,8 @@ type PermissionTestSuite struct {
 	helper *TestHelper
 
 	appSvc             permission.AccountAppPermissionSvc
-	installSvc         *managersvc.ManagerAwareInstallSvc
-	lifecycleSvc       crudSvc.AppLifecycleSvc
+	installSvc         *appsvc.ManagerAwareInstallSvc
+	lifecycleSvc       appsvc.AppLifecycleSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
 }
 

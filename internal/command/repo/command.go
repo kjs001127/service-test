@@ -162,6 +162,7 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 		AlfDescription:           null.StringFromPtr(cmd.AlfDescription),
 		AlfMode:                  string(cmd.AlfMode),
 		ParamDefinitions:         paramDef,
+		EnabledByDefault:         cmd.EnabledByDefault,
 	}, nil
 }
 
@@ -189,6 +190,7 @@ func marshal(c *models.Command) (*model.Command, error) {
 		ParamDefinitions:         paramDefs,
 		UpdatedAt:                c.UpdatedAt,
 		CreatedAt:                c.CreatedAt,
+		EnabledByDefault:         c.EnabledByDefault,
 		AlfMode:                  model.AlfMode(c.AlfMode),
 	}, nil
 }

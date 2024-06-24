@@ -10,14 +10,14 @@ type Handler struct {
 	serviceName   string
 	rbacParser    authgen.Parser
 	registerSvc   *command.RegisterSvc
-	activationSvc command.ToggleSvc
+	activationSvc command.ActivationSvc
 }
 
 func NewHandler(
 	serviceName string,
 	rbacParser authgen.Parser,
 	registerSvc *command.RegisterSvc,
-	activationSvc command.ToggleSvc,
+	activationSvc command.ActivationSvc,
 ) *Handler {
 	return &Handler{
 		serviceName:   serviceName,

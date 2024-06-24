@@ -3,9 +3,9 @@ package svc
 import (
 	"context"
 
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
@@ -28,13 +28,13 @@ func NewManagerCommandTogglePermissionSvc(
 	}
 }
 
-func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, manager account.Manager, installationID appmodel.InstallationID, commandEnabled bool) error {
-	app, err := c.appCrudSvc.Read(ctx, installationID.AppID)
+func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, manager account.ManagerRequester, req svc.ToggleCommandRequest) error {
+	app, err := c.appCrudSvc.Read(ctx, req.Command.AppID)
 	if err != nil {
 		return err
 	}
 
-	if err = c.strategy.HasPermission(ctx, manager, app); err != nil {
+	if err = c.strategy.HasPermission(ctx, manager.Manager, app); err != nil {
 		return apierr.Unauthorized(err)
 	}
 	return nil

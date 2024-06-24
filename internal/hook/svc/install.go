@@ -23,7 +23,7 @@ func NewInstallHookSvc(hookRepo InstallHookRepository) *InstallHookSvc {
 	return &InstallHookSvc{hookRepo: hookRepo}
 }
 
-func (h *InstallHookSvc) Upsert(ctx context.Context, appID string, hooks *model.AppInstallHooks) (*model.AppInstallHooks, error) {
+func (h *InstallHookSvc) RegisterHook(ctx context.Context, appID string, hooks *model.AppInstallHooks) (*model.AppInstallHooks, error) {
 	err := h.hookRepo.Save(ctx, appID, hooks)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save hooks")

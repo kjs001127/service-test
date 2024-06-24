@@ -3,26 +3,27 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/pkg/errors"
-
-	app "github.com/channel-io/ch-app-store/internal/app/model"
+	display "github.com/channel-io/ch-app-store/internal/appdisplay/model"
 	"github.com/channel-io/ch-app-store/internal/approle/model"
 	"github.com/channel-io/ch-app-store/internal/approle/svc"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/pkg/errors"
 )
 
 type AccountAuthPermissionSvc struct {
 	appAccountRepo AppAccountRepo
-	appSvc         AccountAppPermissionSvc
+	displaySvc     AccountDisplayPermissionSvc
 	delegate       *svc.AppRoleSvc
 }
 
 func NewAccountAuthPermissionSvc(
 	appAccountRepo AppAccountRepo,
-	appSvc AccountAppPermissionSvc,
+	displaySvc AccountDisplayPermissionSvc,
 	delegate *svc.AppRoleSvc,
 ) *AccountAuthPermissionSvc {
-	return &AccountAuthPermissionSvc{appAccountRepo: appAccountRepo, delegate: delegate, appSvc: appSvc}
+	return &AccountAuthPermissionSvc{appAccountRepo: appAccountRepo, delegate: delegate, displaySvc: displaySvc}
 }
 
 func (s *AccountAuthPermissionSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, claims *svc.ClaimsDTO, accountID string) error {
@@ -30,7 +31,7 @@ func (s *AccountAuthPermissionSvc) UpdateRole(ctx context.Context, appID string,
 		return err
 	}
 
-	callables, err := s.appSvc.GetCallableApps(ctx, accountID)
+	callables, err := s.displaySvc.GetCallableDisplays(ctx, accountID)
 	if err != nil {
 		return err
 	}
@@ -44,9 +45,9 @@ func (s *AccountAuthPermissionSvc) UpdateRole(ctx context.Context, appID string,
 	return s.delegate.UpdateRole(ctx, appID, roleType, claims)
 }
 
-func (s *AccountAuthPermissionSvc) isCallable(callables []*app.App, targetAppID string) bool {
+func (s *AccountAuthPermissionSvc) isCallable(callables []*display.AppDisplay, targetAppID string) bool {
 	for _, callable := range callables {
-		if callable.ID == targetAppID {
+		if callable.AppID == targetAppID {
 			return true
 		}
 	}

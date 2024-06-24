@@ -12,7 +12,7 @@ type Invoker interface {
 }
 
 type InvokerImpl struct {
-	querySvc *AppInstallQuerySvc
+	querySvc *InstalledAppQuerySvc
 	appRepo  AppRepository
 	handler  InvokeHandler
 
@@ -20,7 +20,7 @@ type InvokerImpl struct {
 }
 
 func NewInvoker(
-	querySvc *AppInstallQuerySvc,
+	querySvc *InstalledAppQuerySvc,
 	appRepo AppRepository,
 	handler InvokeHandler,
 	listeners []FunctionRequestListener,

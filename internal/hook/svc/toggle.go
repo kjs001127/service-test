@@ -2,16 +2,18 @@ package svc
 
 import (
 	"context"
-
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
+	"github.com/channel-io/ch-app-store/internal/command/svc"
+	"github.com/channel-io/ch-app-store/internal/hook/model"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
 
-type HookSendingToggleSvc struct {
+type ToggleHookSvc struct {
 	repo    ToggleHookRepository
 	invoker app.TypedInvoker[ToggleHookRequest, ToggleHookResponse]
 }
@@ -19,30 +21,23 @@ type HookSendingToggleSvc struct {
 func NewToggleHookSvc(
 	repo ToggleHookRepository,
 	invoker app.TypedInvoker[ToggleHookRequest, ToggleHookResponse],
-) *HookSendingToggleSvc {
-	return &HookSendingToggleSvc{repo: repo, invoker: invoker}
+) *ToggleHookSvc {
+	return &ToggleHookSvc{repo: repo, invoker: invoker}
 }
 
-type ManagerToggleRequest struct {
-	ManagerID string
-	Language  string
-	InstallID appmodel.InstallationID
-	Enabled   bool
-}
-
-func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Manager, installID appmodel.InstallationID, enable bool) error {
-	hooks, err := s.repo.Fetch(ctx, installID.AppID)
+func (s *ToggleHookSvc) OnToggle(ctx context.Context, manager account.ManagerRequester, request svc.ToggleCommandRequest) error {
+	hooks, err := s.repo.Fetch(ctx, request.Command.AppID)
 	if apierr.IsNotFound(err) {
 		return nil
 	} else if err != nil {
 		return err
 	}
 
-	resp := s.invoker.Invoke(ctx, installID.AppID, app.TypedRequest[ToggleHookRequest]{
+	resp := s.invoker.Invoke(ctx, request.Command.AppID, app.TypedRequest[ToggleHookRequest]{
 		FunctionName: hooks.ToggleFunctionName,
 		Context: app.ChannelContext{
 			Channel: app.Channel{
-				ID: installID.ChannelID,
+				ID: request.ChannelID,
 			},
 			Caller: app.Caller{
 				Type: app.CallerTypeManager,
@@ -50,10 +45,10 @@ func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Man
 			},
 		},
 		Params: ToggleHookRequest{
-			AppID:     installID.AppID,
-			ChannelID: installID.ChannelID,
-			Enable:    enable,
-			Language:  manager.Language,
+			CommandKey: request.Command.Key(),
+			ChannelID:  request.ChannelID,
+			Enable:     request.Enabled,
+			Language:   manager.Language,
 		},
 	})
 
@@ -66,43 +61,13 @@ func (s *HookSendingToggleSvc) OnToggle(ctx context.Context, manager account.Man
 	return nil
 }
 
-func (s *HookSendingToggleSvc) callHookIfExists(ctx context.Context, req ManagerToggleRequest) error {
-	hooks, err := s.repo.Fetch(ctx, req.InstallID.AppID)
-	if apierr.IsNotFound(err) {
-		return nil
-	} else if err != nil {
-		return err
-	}
-
-	resp := s.invoker.Invoke(ctx, req.InstallID.AppID, app.TypedRequest[ToggleHookRequest]{
-		FunctionName: hooks.ToggleFunctionName,
-		Context: app.ChannelContext{
-			Channel: app.Channel{
-				ID: req.InstallID.ChannelID,
-			},
-			Caller: app.Caller{
-				Type: app.CallerTypeManager,
-				ID:   req.ManagerID,
-			},
-		},
-		Params: ToggleHookRequest{
-			AppID:     req.InstallID.AppID,
-			ChannelID: req.InstallID.ChannelID,
-			Enable:    req.Enabled,
-			Language:  req.Language,
-		},
-	})
-
-	if resp.IsError() || !resp.Result.Enable {
-		return resp.Error
-	}
-
-	return nil
+func (s *ToggleHookSvc) RegisterHook(ctx context.Context, hooks *model.CommandToggleHooks) error {
+	return s.repo.Save(ctx, hooks)
 }
 
 type ToggleHookRequest struct {
+	cmdmodel.CommandKey
 	ChannelID string `json:"channelId"`
-	AppID     string `json:"appId"`
 	Enable    bool   `json:"enabled"`
 	Language  string `json:"language"`
 }
