@@ -57,6 +57,19 @@ func (a *ActivationRepository) Delete(ctx context.Context, key model.ActivationI
 	return err
 }
 
+func (a *ActivationRepository) DeleteAllBy(ctx context.Context, channelID string, commandIDs []string) error {
+	slice := make([]interface{}, len(commandIDs))
+	for i, v := range commandIDs {
+		slice[i] = v
+	}
+
+	_, err := models.CommandChannelActivations(
+		qm.WhereIn("command_id IN $1", slice...),
+		qm.Where("channel_id = $2", channelID),
+	).DeleteAll(ctx, a.db)
+	return err
+}
+
 func (a *ActivationRepository) FetchByChannelID(ctx context.Context, channelID string) (model.Activations, error) {
 	res, err := models.CommandChannelActivations(
 		qm.Select("*"),

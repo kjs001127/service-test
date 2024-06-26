@@ -3,10 +3,10 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/command/model"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
 
 type ActivationSvc interface {
@@ -70,7 +70,7 @@ func (s *ActivationSvcImpl) Check(ctx context.Context, key model.CommandKey, cha
 		ChannelID: channelID,
 	})
 	if apierr.IsNotFound(err) {
-		return cmd.EnabledByDefault, nil
+		return false, nil
 	} else if err != nil {
 		return false, err
 	}
@@ -110,7 +110,7 @@ func (s *InstalledCommandQuerySvc) FetchAllWithActivation(ctx context.Context, i
 		} else {
 			ret = append(ret, &CommandWithActivation{
 				Command: cmd,
-				Enabled: cmd.EnabledByDefault,
+				Enabled: false,
 			})
 		}
 	}
@@ -124,4 +124,44 @@ func idsOfCmds(cmds []*model.Command) []string {
 		ret = append(ret, cmd.ID)
 	}
 	return ret
+}
+
+type PreInstallHandler struct {
+	activationRepo ActivationRepository
+	cmdRepo        CommandRepository
+}
+
+func NewPreInstallHandler(activationRepo ActivationRepository, cmdRepo CommandRepository) *PreInstallHandler {
+	return &PreInstallHandler{activationRepo: activationRepo, cmdRepo: cmdRepo}
+}
+
+func (h *PreInstallHandler) OnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
+	cmds, err := h.cmdRepo.FetchAllByAppID(ctx, app.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, cmd := range cmds {
+		err := h.activationRepo.Save(ctx, &model.Activation{
+			ActivationID: model.ActivationID{
+				CommandID: cmd.ID,
+				ChannelID: channelID,
+			},
+			Enabled: cmd.EnabledByDefault,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (h *PreInstallHandler) OnUnInstall(ctx context.Context, app *appmodel.App, channelID string) error {
+	cmds, err := h.cmdRepo.FetchAllByAppID(ctx, app.ID)
+	if err != nil {
+		return err
+	}
+
+	return h.activationRepo.DeleteAllBy(ctx, channelID, idsOfCmds(cmds))
 }
