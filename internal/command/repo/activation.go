@@ -75,8 +75,8 @@ func (a *ActivationRepository) DeleteAllBy(ctx context.Context, channelID string
 	}
 
 	_, err := models.CommandChannelActivations(
-		qm.WhereIn("command_id IN $1", slice...),
-		qm.Where("channel_id = $2", channelID),
+		qm.WhereIn("command_id IN ?", slice...),
+		qm.Where("channel_id = ?", channelID),
 	).DeleteAll(ctx, a.db)
 	return err
 }
