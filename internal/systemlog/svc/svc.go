@@ -18,7 +18,7 @@ const (
 )
 
 const TTL = 24 * time.Hour * 7
-const maxMessageSize = 2000
+const maxMessageSize = 10_000
 
 type SystemLogSvc struct {
 	repo SystemLogRepository
