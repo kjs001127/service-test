@@ -33,6 +33,17 @@ func (a *ActivationRepository) Save(ctx context.Context, activation *model.Activ
 	)
 }
 
+func (a *ActivationRepository) SaveIfNotExists(ctx context.Context, activation *model.Activation) error {
+	return marshalActivation(activation).Upsert(
+		ctx,
+		a.db,
+		false,
+		[]string{"command_id", "channel_id"},
+		boil.None(),
+		boil.Infer(),
+	)
+}
+
 func (a *ActivationRepository) Fetch(ctx context.Context, key model.ActivationID) (*model.Activation, error) {
 	res, err := models.CommandChannelActivations(
 		qm.Select("*"),

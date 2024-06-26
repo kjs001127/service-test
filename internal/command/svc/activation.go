@@ -142,15 +142,28 @@ func (h *PreInstallHandler) OnInstall(ctx context.Context, app *appmodel.App, ch
 	}
 
 	for _, cmd := range cmds {
-		err := h.activationRepo.Save(ctx, &model.Activation{
-			ActivationID: model.ActivationID{
-				CommandID: cmd.ID,
-				ChannelID: channelID,
-			},
-			Enabled: cmd.EnabledByDefault,
-		})
-		if err != nil {
-			return err
+		if app.IsBuiltIn == true {
+			err := h.activationRepo.SaveIfNotExists(ctx, &model.Activation{
+				ActivationID: model.ActivationID{
+					CommandID: cmd.ID,
+					ChannelID: channelID,
+				},
+				Enabled: true,
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			err := h.activationRepo.Save(ctx, &model.Activation{
+				ActivationID: model.ActivationID{
+					CommandID: cmd.ID,
+					ChannelID: channelID,
+				},
+				Enabled: cmd.EnabledByDefault,
+			})
+			if err != nil {
+				return err
+			}
 		}
 	}
 

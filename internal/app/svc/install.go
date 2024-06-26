@@ -13,6 +13,7 @@ import (
 type AppInstallSvc interface {
 	InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error)
 	InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error)
+	InstallBuiltInApp(ctx context.Context, channelID string, app *model.App) error
 	UnInstallApp(ctx context.Context, req model.InstallationID) error
 }
 
@@ -44,6 +45,24 @@ func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.Instal
 	}
 
 	return s.InstallApp(ctx, req.ChannelID, app)
+}
+
+func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID string, app *model.App) error {
+	return tx.Do(ctx, func(ctx context.Context) error {
+		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+			return errors.Wrap(err, "error while handling onInstall")
+		}
+
+		installation := &model.AppInstallation{
+			AppID:     app.ID,
+			ChannelID: channelID,
+		}
+		err := s.appInstallationRepo.SaveIfNotExists(ctx, installation)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	}, tx.Isolation(sql.LevelSerializable))
 }
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {

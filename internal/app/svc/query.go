@@ -3,19 +3,29 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/pkg/errors"
-
 	"github.com/channel-io/ch-app-store/internal/app/model"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/pkg/errors"
 )
 
 type InstalledAppQuerySvc struct {
 	appInstallationRepo AppInstallationRepository
 	appRepo             AppRepository
+	appInstallSvc       AppInstallSvc
 }
 
-func NewInstallQuerySvc(appChRepo AppInstallationRepository, appRepo AppRepository) *InstalledAppQuerySvc {
-	return &InstalledAppQuerySvc{appInstallationRepo: appChRepo, appRepo: appRepo}
+func NewInstallQuerySvc(
+	appChRepo AppInstallationRepository,
+	appRepo AppRepository,
+	appInstallSvc AppInstallSvc,
+) *InstalledAppQuerySvc {
+	return &InstalledAppQuerySvc{
+		appInstallationRepo: appChRepo,
+		appRepo:             appRepo,
+		appInstallSvc:       appInstallSvc,
+	}
 }
 
 func (s *InstalledAppQuerySvc) QueryAll(ctx context.Context, channelID string) ([]*model.App, error) {
@@ -51,7 +61,7 @@ func (s *InstalledAppQuerySvc) Query(ctx context.Context, install model.Installa
 	}
 
 	if app.IsBuiltIn {
-		if err := s.installBuiltInApp(ctx, install.ChannelID, app); err != nil {
+		if err := s.appInstallSvc.InstallBuiltInApp(ctx, install.ChannelID, app); err != nil {
 			return nil, err
 		}
 	}
@@ -90,17 +100,10 @@ func (s *InstalledAppQuerySvc) installBuiltInApps(ctx context.Context, channelID
 	}
 
 	for _, builtIn := range builtInApps {
-		if err := s.installBuiltInApp(ctx, channelID, builtIn); err != nil {
+		if err := s.appInstallSvc.InstallBuiltInApp(ctx, channelID, builtIn); err != nil {
 			return errors.Wrap(err, "install builtIn app fail")
 		}
 	}
 
 	return nil
-}
-
-func (s *InstalledAppQuerySvc) installBuiltInApp(ctx context.Context, channelID string, builtIn *model.App) error {
-	return s.appInstallationRepo.SaveIfNotExists(ctx, &model.AppInstallation{
-		AppID:     builtIn.ID,
-		ChannelID: channelID,
-	})
 }
