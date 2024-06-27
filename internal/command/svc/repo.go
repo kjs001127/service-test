@@ -20,8 +20,10 @@ type CommandRepository interface {
 
 type ActivationRepository interface {
 	Save(ctx context.Context, activation *model.Activation) error
+	SaveIfNotExists(ctx context.Context, activation *model.Activation) error
 	Fetch(ctx context.Context, key model.ActivationID) (*model.Activation, error)
 	FetchByChannelID(ctx context.Context, channelID string) (model.Activations, error)
 	FetchByChannelIDAndCmdIDs(ctx context.Context, channelID string, cmdIDs []string) (model.Activations, error)
 	Delete(ctx context.Context, key model.ActivationID) error
+	DeleteAllBy(ctx context.Context, channelID string, cmdIDs []string) error
 }

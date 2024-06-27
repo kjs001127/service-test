@@ -76,7 +76,7 @@ func (s *WysiwygQuerySvc) filterOnlyActiveCmds(ctx context.Context, channelID st
 	for _, cmd := range cmds {
 		activation, exists := activationMap[cmd.ID]
 
-		if (exists && activation.Enabled) || (!exists && cmd.EnabledByDefault) {
+		if exists && activation.Enabled {
 			ret = append(ret, cmd)
 		}
 	}

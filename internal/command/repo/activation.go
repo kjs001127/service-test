@@ -33,6 +33,17 @@ func (a *ActivationRepository) Save(ctx context.Context, activation *model.Activ
 	)
 }
 
+func (a *ActivationRepository) SaveIfNotExists(ctx context.Context, activation *model.Activation) error {
+	return marshalActivation(activation).Upsert(
+		ctx,
+		a.db,
+		false,
+		[]string{"command_id", "channel_id"},
+		boil.None(),
+		boil.Infer(),
+	)
+}
+
 func (a *ActivationRepository) Fetch(ctx context.Context, key model.ActivationID) (*model.Activation, error) {
 	res, err := models.CommandChannelActivations(
 		qm.Select("*"),
@@ -53,6 +64,19 @@ func (a *ActivationRepository) Delete(ctx context.Context, key model.ActivationI
 	_, err := models.CommandChannelActivations(
 		qm.Where("command_id = $1", key.CommandID),
 		qm.Where("channel_id = $2", key.ChannelID),
+	).DeleteAll(ctx, a.db)
+	return err
+}
+
+func (a *ActivationRepository) DeleteAllBy(ctx context.Context, channelID string, commandIDs []string) error {
+	slice := make([]interface{}, len(commandIDs))
+	for i, v := range commandIDs {
+		slice[i] = v
+	}
+
+	_, err := models.CommandChannelActivations(
+		qm.WhereIn("command_id IN ?", slice...),
+		qm.Where("channel_id = ?", channelID),
 	).DeleteAll(ctx, a.db)
 	return err
 }

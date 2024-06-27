@@ -36,6 +36,11 @@ var CommandSvcs = fx.Options(
 			fx.As(new(svc.ActivationSvc)),
 		),
 		fx.Annotate(
+			svc.NewPreInstallHandler,
+			fx.As(new(app.InstallHandler)),
+			fx.ResultTags(appfx.PreInstallHandlerGroup),
+		),
+		fx.Annotate(
 			svc.NewManagerAwareToggleSvc,
 			fx.ParamTags(``, PreToggleHandlerGroup, PostToggleHandlerGroup),
 		),
