@@ -44,7 +44,7 @@ func TestInvalidName(t *testing.T) {
 		"한글이름",
 		"name12",
 		"name with space",
-		"tooMuchLongLongLongName",
+		"tooMuchLongLongLongLongLongName",
 	}
 
 	for _, invalidName := range invalidNames {
@@ -57,7 +57,7 @@ func TestInvalidName(t *testing.T) {
 func TestInvalidI18nName(t *testing.T) {
 	invalidI18nNames := []string{
 		"name with space",
-		"tooMuchLongLongLongName",
+		"tooMuchLongLongLongLongLongName",
 		"한글인데 띄어쓰기가 있음",
 	}
 	for _, invalidName := range invalidI18nNames {
@@ -89,7 +89,7 @@ func TestParamDefinitionName(t *testing.T) {
 		"한글이름",
 		"name with space",
 		"name12",
-		"tooMuchLongLongLongName",
+		"tooMuchLongLongLongLongLongName",
 	}
 	for _, invalidName := range invalidNames {
 		command := testCommand()
