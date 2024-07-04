@@ -1,4 +1,4 @@
-package integration_test
+package svc_test
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"

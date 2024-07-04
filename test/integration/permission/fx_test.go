@@ -1,4 +1,4 @@
-package integration_test
+package permission_test
 
 import (
 	"github.com/channel-io/ch-app-store/fx/corefx/configfx"

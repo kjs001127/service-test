@@ -1,4 +1,4 @@
-package integration_test
+package dao_test
 
 import (
 	"go.uber.org/fx"
