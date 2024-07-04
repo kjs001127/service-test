@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/pkg/errors"
-
 	"github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
+	"github.com/pkg/errors"
 )
 
 type AppInstallSvc interface {
@@ -48,21 +50,31 @@ func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.Instal
 }
 
 func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID string, app *model.App) error {
-	return tx.Do(ctx, func(ctx context.Context) error {
-		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
-			return errors.Wrap(err, "error while handling onInstall")
-		}
-
-		installation := &model.AppInstallation{
-			AppID:     app.ID,
-			ChannelID: channelID,
-		}
-		err := s.appInstallationRepo.SaveIfNotExists(ctx, installation)
-		if err != nil {
-			return errors.WithStack(err)
-		}
+	_, err := s.appInstallationRepo.Fetch(ctx, model.InstallationID{
+		AppID:     app.ID,
+		ChannelID: channelID,
+	})
+	if err == nil {
 		return nil
-	}, tx.Isolation(sql.LevelSerializable))
+	}
+	if apierr.IsNotFound(err) {
+		return tx.Do(ctx, func(ctx context.Context) error {
+			if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+				return errors.Wrap(err, "error while handling onInstall")
+			}
+
+			installation := &model.AppInstallation{
+				AppID:     app.ID,
+				ChannelID: channelID,
+			}
+			err := s.appInstallationRepo.SaveIfNotExists(ctx, installation)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			return nil
+		}, tx.Isolation(sql.LevelSerializable))
+	}
+	return errors.Wrap(err, "error while querying built in app")
 }
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
