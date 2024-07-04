@@ -56,10 +56,22 @@ func (a *ManagerInstallPermissionSvcImpl) OnInstall(ctx context.Context, manager
 }
 
 // OnUnInstall
-// manager must be an owner of channel.
+// if app is a private app, manager must be an owner of channel.
+// if app is a public app, manager has general_settings permission.
 func (a *ManagerInstallPermissionSvcImpl) OnUnInstall(ctx context.Context, manager account.Manager, installationID appmodel.InstallationID) error {
-	if !a.permissionUtil.isOwner(ctx, manager) {
-		return apierr.Unauthorized(errors.New("manager is not owner of the channel"))
+	appDisplay, err := a.appDisplayRepo.FindDisplay(ctx, installationID.AppID)
+	if err != nil {
+		return err
+	}
+	if appDisplay.IsPrivate {
+		if !a.permissionUtil.isOwner(ctx, manager) {
+			return apierr.Unauthorized(errors.New("manager is not owner of the channel"))
+		}
+		return nil
+	}
+
+	if !a.permissionUtil.hasGeneralSettings(ctx, manager) {
+		return apierr.Unauthorized(errors.New("manager does not have general settings permission"))
 	}
 	return nil
 }
