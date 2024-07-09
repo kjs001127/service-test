@@ -18,7 +18,7 @@ const (
 	ExternalApp = `name:"externalApp"`
 )
 const (
-	dwTimeout  = time.Second * 10
+	dwTimeout  = time.Second * 30
 	appTimeout = time.Second * 30
 )
 
