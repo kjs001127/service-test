@@ -19,6 +19,7 @@ const (
 	directChatBaseUri = v1BaseUri + "/direct-chats"
 	userBaseUri       = v1BaseUri + "/users"
 	channelBaseUri    = v1BaseUri + "/channels"
+	mediumBaseUri     = v1BaseUri + "/mediums"
 
 	contentTypeHeader = "Content-Type"
 	mimeTypeJson      = "application/json"
@@ -59,6 +60,10 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 
 		"getUser":    userBaseUri + "/getUser",
 		"getChannel": channelBaseUri + "/getChannel",
+
+		// only for app messenger server
+		"findOrCreateContactAndUser": mediumBaseUri + "/findOrCreateContactAndUser",
+		"searchUserChatsByContact":   userChatBaseUri + "/searchUserChatsByContact",
 	}
 	return api
 }
