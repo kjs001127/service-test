@@ -22,7 +22,7 @@ func Do(
 		func(ctx context.Context) (interface{}, error) {
 			return nil, body(ctx)
 		},
-		sqlOptions...,
+		sqlOptions..
 	)
 	return err
 }
@@ -102,12 +102,6 @@ func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error
 	tx, err := transactor.BeginTx(ctx, &txOptions)
 	if err != nil {
 		return nil, nil, err
-	}
-
-	for _, option := range options {
-		if err := option.onBegin(ctx); err != nil {
-			return nil, nil, rollbackTx(tx, err)
-		}
 	}
 
 	return tx, context.WithValue(ctx, txKey, tx), nil
