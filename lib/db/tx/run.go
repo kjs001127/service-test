@@ -37,6 +37,11 @@ func DoReturn[R any](
 	}
 
 	if hasTx(ctx) {
+		for _, opt := range opts {
+			if err := opt.onBegin(ctx); err != nil {
+				return nil, err
+			}
+		}
 		return body(ctx)
 	}
 
@@ -48,17 +53,23 @@ func DoReturn[R any](
 
 	defer func() {
 		if err := recover(); err != nil {
-			_ = rollbackTx(ctx, tx, nil, opts...)
+			_ = rollbackTx(tx, nil)
 			panic(err)
 		}
 
 		if retErr != nil {
-			retErr = rollbackTx(ctx, tx, retErr, opts...)
+			retErr = rollbackTx(tx, retErr)
 			return
 		}
 
-		retErr = commitTx(ctx, tx, opts...)
+		retErr = commitTx(tx)
 	}()
+
+	for _, opt := range opts {
+		if err := opt.onBegin(ctx); err != nil {
+			return nil, err
+		}
+	}
 
 	return body(txCtx)
 }
@@ -67,12 +78,7 @@ func hasTx(ctx context.Context) bool {
 	return ctx.Value(txKey) != nil
 }
 
-func commitTx(ctx context.Context, tx Tx, options ...Option) error {
-	for _, o := range options {
-		if err := o.onCommit(ctx); err != nil {
-			return rollbackTx(ctx, tx, err, options...)
-		}
-	}
+func commitTx(tx Tx) error {
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("commit failed. cause: %v", err)
 	}
@@ -80,11 +86,7 @@ func commitTx(ctx context.Context, tx Tx, options ...Option) error {
 	return nil
 }
 
-func rollbackTx(ctx context.Context, tx Tx, cause error, options ...Option) error {
-	for _, o := range options {
-		o.onRollback(ctx)
-	}
-
+func rollbackTx(tx Tx, cause error) error {
 	if err := tx.Rollback(); err != nil {
 		return fmt.Errorf("rollback fail, err:%v rollback cause: %w", err, cause)
 	}
@@ -103,7 +105,7 @@ func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error
 
 	for _, option := range options {
 		if err := option.onBegin(ctx); err != nil {
-			return nil, nil, rollbackTx(ctx, tx, err, options...)
+			return nil, nil, rollbackTx(tx, err)
 		}
 	}
 
@@ -114,21 +116,12 @@ func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error
 type Option interface {
 	apply(options *sql.TxOptions)
 	onBegin(ctx context.Context) error
-	onCommit(ctx context.Context) error
-	onRollback(ctx context.Context)
 }
 
 type IsolationOption sql.IsolationLevel
 
 func (i IsolationOption) onBegin(ctx context.Context) error {
 	return nil
-}
-
-func (i IsolationOption) onCommit(ctx context.Context) error {
-	return nil
-}
-
-func (i IsolationOption) onRollback(ctx context.Context) {
 }
 
 func (i IsolationOption) apply(options *sql.TxOptions) {
@@ -139,13 +132,6 @@ type ReadOnlyOption bool
 
 func (i ReadOnlyOption) onBegin(ctx context.Context) error {
 	return nil
-}
-
-func (i ReadOnlyOption) onCommit(ctx context.Context) error {
-	return nil
-}
-
-func (i ReadOnlyOption) onRollback(ctx context.Context) {
 }
 
 func (i ReadOnlyOption) apply(options *sql.TxOptions) {

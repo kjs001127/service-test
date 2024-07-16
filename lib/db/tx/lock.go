@@ -7,9 +7,9 @@ import (
 )
 
 type lockOption struct {
-	isShared bool
-	name     string
-	key      int64
+	isShared  bool
+	namespace int32
+	id        int32
 }
 
 func (l lockOption) apply(options *sql.TxOptions) {
@@ -18,41 +18,34 @@ func (l lockOption) apply(options *sql.TxOptions) {
 func (l lockOption) onBegin(ctx context.Context) error {
 	if tx, ok := ctx.Value(txKey).(*sql.Tx); ok {
 		if l.isShared {
-			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock_shared($1)", l.key)
+			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock_shared($1, $2)", l.namespace, l.id)
 			return err
 		} else {
-			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock($1)", l.key)
+			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock($1, $2)", l.namespace, l.id)
 			return err
 		}
 	}
 	return nil
 }
 
-func (l lockOption) onCommit(ctx context.Context) error {
-	return nil
-}
-
-func (l lockOption) onRollback(ctx context.Context) {
-}
-
-func XLock(name string) Option {
+func XLock(namespace string, id string) Option {
 	return lockOption{
-		name:     name,
-		isShared: false,
-		key:      hash(name),
+		namespace: hash(namespace),
+		id:        hash(id),
+		isShared:  false,
 	}
 }
 
-func SLock(name string) Option {
+func SLock(namespace string, id string) Option {
 	return lockOption{
-		name:     name,
-		isShared: true,
-		key:      hash(name),
+		namespace: hash(namespace),
+		id:        hash(id),
+		isShared:  true,
 	}
 }
 
-func hash(s string) int64 {
-	h := fnv.New64a()
+func hash(s string) int32 {
+	h := fnv.New32a()
 	_, _ = h.Write([]byte(s))
-	return int64(h.Sum64())
+	return int32(h.Sum32())
 }
