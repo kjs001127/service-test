@@ -35,7 +35,7 @@ func (l lockOption) onCommit(ctx context.Context) error {
 func (l lockOption) onRollback(ctx context.Context) {
 }
 
-func Xlock(name string) Option {
+func XLock(name string) Option {
 	return lockOption{
 		name:     name,
 		isShared: false,
