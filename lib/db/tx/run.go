@@ -30,7 +30,7 @@ func Do(
 func DoReturn[R any](
 	ctx context.Context,
 	body func(context.Context) (R, error),
-	sqlOptions ...Option,
+	opts ...Option,
 ) (ret R, retErr error) {
 	if transactor == nil {
 		panic(errors.New("transactor is not configured"))
@@ -40,7 +40,7 @@ func DoReturn[R any](
 		return body(ctx)
 	}
 
-	tx, txCtx, err := beginTx(ctx, sqlOptions...)
+	tx, txCtx, err := beginTx(ctx, opts...)
 	if err != nil {
 		var empty R
 		return empty, err
@@ -48,20 +48,16 @@ func DoReturn[R any](
 
 	defer func() {
 		if err := recover(); err != nil {
-			_ = tx.Rollback()
+			_ = rollbackTx(ctx, tx, nil, opts...)
 			panic(err)
 		}
 
 		if retErr != nil {
-			if err := tx.Rollback(); err != nil {
-				retErr = fmt.Errorf("rollback fail, rollback cause: %w", err)
-			}
+			retErr = rollbackTx(ctx, tx, retErr, opts...)
 			return
 		}
 
-		if err := tx.Commit(); err != nil {
-			retErr = fmt.Errorf("commit failed. cause: %v", err)
-		}
+		retErr = commitTx(ctx, tx, opts...)
 	}()
 
 	return body(txCtx)
@@ -69,6 +65,30 @@ func DoReturn[R any](
 
 func hasTx(ctx context.Context) bool {
 	return ctx.Value(txKey) != nil
+}
+
+func commitTx(ctx context.Context, tx Tx, options ...Option) error {
+	for _, o := range options {
+		if err := o.onCommit(ctx); err != nil {
+			return rollbackTx(ctx, tx, err, options...)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit failed. cause: %v", err)
+	}
+
+	return nil
+}
+
+func rollbackTx(ctx context.Context, tx Tx, cause error, options ...Option) error {
+	for _, o := range options {
+		o.onRollback(ctx)
+	}
+
+	if err := tx.Rollback(); err != nil {
+		return fmt.Errorf("rollback fail, err:%v rollback cause: %w", err, cause)
+	}
+	return cause
 }
 
 func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error) {
@@ -80,21 +100,53 @@ func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error
 	if err != nil {
 		return nil, nil, err
 	}
+
+	for _, option := range options {
+		if err := option.onBegin(ctx); err != nil {
+			return nil, nil, rollbackTx(ctx, tx, err, options...)
+		}
+	}
+
 	return tx, context.WithValue(ctx, txKey, tx), nil
 }
 
 // Option is options for transaction
 type Option interface {
 	apply(options *sql.TxOptions)
+	onBegin(ctx context.Context) error
+	onCommit(ctx context.Context) error
+	onRollback(ctx context.Context)
 }
 
 type IsolationOption sql.IsolationLevel
+
+func (i IsolationOption) onBegin(ctx context.Context) error {
+	return nil
+}
+
+func (i IsolationOption) onCommit(ctx context.Context) error {
+	return nil
+}
+
+func (i IsolationOption) onRollback(ctx context.Context) {
+}
 
 func (i IsolationOption) apply(options *sql.TxOptions) {
 	options.Isolation = sql.IsolationLevel(i)
 }
 
 type ReadOnlyOption bool
+
+func (i ReadOnlyOption) onBegin(ctx context.Context) error {
+	return nil
+}
+
+func (i ReadOnlyOption) onCommit(ctx context.Context) error {
+	return nil
+}
+
+func (i ReadOnlyOption) onRollback(ctx context.Context) {
+}
 
 func (i ReadOnlyOption) apply(options *sql.TxOptions) {
 	options.ReadOnly = bool(i)
