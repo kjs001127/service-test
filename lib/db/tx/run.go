@@ -39,7 +39,8 @@ func DoReturn[R any](
 	if hasTx(ctx) {
 		for _, opt := range opts {
 			if err := opt.onBegin(ctx); err != nil {
-				return nil, err
+				retErr = err
+				return
 			}
 		}
 		return body(ctx)
@@ -59,15 +60,15 @@ func DoReturn[R any](
 
 		if retErr != nil {
 			retErr = rollbackTx(tx, retErr)
-			return
+		} else {
+			retErr = commitTx(tx)
 		}
-
-		retErr = commitTx(tx)
 	}()
 
 	for _, opt := range opts {
 		if err := opt.onBegin(ctx); err != nil {
-			return nil, err
+			retErr = err
+			return
 		}
 	}
 
