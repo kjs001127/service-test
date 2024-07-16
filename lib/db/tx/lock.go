@@ -6,16 +6,16 @@ import (
 	"hash/fnv"
 )
 
-type LockOption struct {
+type lockOption struct {
 	isShared bool
 	name     string
 	key      int64
 }
 
-func (l LockOption) apply(options *sql.TxOptions) {
+func (l lockOption) apply(options *sql.TxOptions) {
 }
 
-func (l LockOption) onBegin(ctx context.Context) error {
+func (l lockOption) onBegin(ctx context.Context) error {
 	if tx, ok := ctx.Value(txKey).(*sql.Tx); ok {
 		if l.isShared {
 			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock_shared($1)", l.key)
@@ -28,15 +28,15 @@ func (l LockOption) onBegin(ctx context.Context) error {
 	return nil
 }
 
-func (l LockOption) onCommit(ctx context.Context) error {
+func (l lockOption) onCommit(ctx context.Context) error {
 	return nil
 }
 
-func (l LockOption) onRollback(ctx context.Context) {
+func (l lockOption) onRollback(ctx context.Context) {
 }
 
 func Xlock(name string) Option {
-	return LockOption{
+	return lockOption{
 		name:     name,
 		isShared: false,
 		key:      hash(name),
@@ -44,7 +44,7 @@ func Xlock(name string) Option {
 }
 
 func SLock(name string) Option {
-	return LockOption{
+	return lockOption{
 		name:     name,
 		isShared: true,
 		key:      hash(name),
