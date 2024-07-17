@@ -22,7 +22,7 @@ func Do(
 		func(ctx context.Context) (interface{}, error) {
 			return nil, body(ctx)
 		},
-		sqlOptions..
+		sqlOptions...,
 	)
 	return err
 }
