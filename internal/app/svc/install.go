@@ -79,7 +79,7 @@ func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID str
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
 
-	err := tx.Do(ctx, func(ctx context.Context) error {
+	if err := tx.Do(ctx, func(ctx context.Context) error {
 		installation := &model.AppInstallation{
 			AppID:     app.ID,
 			ChannelID: channelID,
@@ -93,8 +93,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			return errors.Wrap(err, "error while handling onInstall")
 		}
 		return nil
-	}, tx.SLock(namespaceApp, app.ID))
-	if err != nil {
+	}, tx.SLock(namespaceApp, app.ID)); err != nil {
 		return nil, err
 	}
 
