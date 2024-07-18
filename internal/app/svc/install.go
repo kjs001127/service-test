@@ -14,7 +14,7 @@ import (
 type AppInstallSvc interface {
 	InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error)
 	InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error)
-	InstallBuiltInApp(ctx context.Context, channelID string, app *model.App) error
+	InstallAppIfNotExists(ctx context.Context, channelID string, app *model.App) (*model.App, error)
 	UnInstallApp(ctx context.Context, req model.InstallationID) error
 }
 
@@ -48,33 +48,19 @@ func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.Instal
 	return s.InstallApp(ctx, req.ChannelID, app)
 }
 
-func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID string, app *model.App) error {
+func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
 	_, err := s.appInstallationRepo.Fetch(ctx, model.InstallationID{
 		AppID:     app.ID,
 		ChannelID: channelID,
 	})
 	if err == nil {
-		return nil
+		return app, nil
 	}
+
 	if apierr.IsNotFound(err) {
-		return tx.Do(ctx, func(ctx context.Context) error {
-			installation := &model.AppInstallation{
-				AppID:     app.ID,
-				ChannelID: channelID,
-			}
-			err := s.appInstallationRepo.SaveIfNotExists(ctx, installation)
-			if err != nil {
-				return errors.WithStack(err)
-			}
-
-			if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
-				return errors.Wrap(err, "error while handling onInstall")
-			}
-
-			return nil
-		}, tx.SLock(namespaceApp, app.ID))
+		return s.InstallApp(ctx, channelID, app)
 	}
-	return errors.Wrap(err, "error while querying built in app")
+	return app, nil
 }
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
@@ -84,6 +70,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			AppID:     app.ID,
 			ChannelID: channelID,
 		}
+
 		err := s.appInstallationRepo.Save(ctx, installation)
 		if err != nil {
 			return errors.WithStack(err)
