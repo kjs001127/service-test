@@ -2,7 +2,6 @@ package svc
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
@@ -59,10 +58,6 @@ func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID str
 	}
 	if apierr.IsNotFound(err) {
 		return tx.Do(ctx, func(ctx context.Context) error {
-			if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
-				return errors.Wrap(err, "error while handling onInstall")
-			}
-
 			installation := &model.AppInstallation{
 				AppID:     app.ID,
 				ChannelID: channelID,
@@ -71,8 +66,13 @@ func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID str
 			if err != nil {
 				return errors.WithStack(err)
 			}
+
+			if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+				return errors.Wrap(err, "error while handling onInstall")
+			}
+
 			return nil
-		}, tx.Isolation(sql.LevelSerializable))
+		}, tx.SLock(namespaceApp, app.ID))
 	}
 	return errors.Wrap(err, "error while querying built in app")
 }
@@ -80,10 +80,6 @@ func (s *AppInstallSvcImpl) InstallBuiltInApp(ctx context.Context, channelID str
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
 
 	err := tx.Do(ctx, func(ctx context.Context) error {
-		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
-			return errors.Wrap(err, "error while handling onInstall")
-		}
-
 		installation := &model.AppInstallation{
 			AppID:     app.ID,
 			ChannelID: channelID,
@@ -92,8 +88,12 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 		if err != nil {
 			return errors.WithStack(err)
 		}
+
+		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+			return errors.Wrap(err, "error while handling onInstall")
+		}
 		return nil
-	}, tx.Isolation(sql.LevelSerializable))
+	}, tx.SLock(namespaceApp, app.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -115,16 +115,16 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 	}
 
 	if err := tx.Do(ctx, func(ctx context.Context) error {
-		if err := callOnUnInstall(ctx, s.preInstallHandlers, app, req.ChannelID); err != nil {
-			return errors.Wrap(err, "error while uninstalling app")
-		}
-
 		if err = s.appInstallationRepo.Delete(ctx, req); err != nil {
 			return errors.WithStack(err)
 		}
 
+		if err := callOnUnInstall(ctx, s.preInstallHandlers, app, req.ChannelID); err != nil {
+			return errors.Wrap(err, "error while uninstalling app")
+		}
+
 		return nil
-	}, tx.Isolation(sql.LevelSerializable)); err != nil {
+	}, tx.SLock(namespaceApp, app.ID)); err != nil {
 		return err
 	}
 

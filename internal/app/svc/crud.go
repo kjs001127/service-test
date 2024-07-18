@@ -71,7 +71,7 @@ func (a *AppLifecycleSvcImpl) Create(ctx context.Context, app *model.App) (*mode
 		}
 
 		return ret, nil
-	})
+	}, tx.XLock(namespaceApp, app.ID))
 }
 
 func (a *AppLifecycleSvcImpl) Update(ctx context.Context, app *model.App) (*model.App, error) {
@@ -91,7 +91,7 @@ func (a *AppLifecycleSvcImpl) Update(ctx context.Context, app *model.App) (*mode
 		}
 
 		return ret, nil
-	})
+	}, tx.XLock(namespaceApp, app.ID))
 }
 
 func (a *AppLifecycleSvcImpl) Delete(ctx context.Context, appID string) error {
@@ -102,17 +102,17 @@ func (a *AppLifecycleSvcImpl) Delete(ctx context.Context, appID string) error {
 			return err
 		}
 
-		if err := a.callDeleteHooks(ctx, app); err != nil {
-			return err
-		}
 		if err := a.appInstallationRepo.DeleteByAppID(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}
 		if err := a.appRepo.Delete(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}
+		if err := a.callDeleteHooks(ctx, app); err != nil {
+			return err
+		}
 		return nil
-	})
+	}, tx.XLock(namespaceApp, appID))
 }
 
 func (a *AppLifecycleSvcImpl) callDeleteHooks(ctx context.Context, app *model.App) error {

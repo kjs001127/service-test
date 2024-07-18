@@ -2,7 +2,6 @@ package svc
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -50,7 +49,7 @@ func (s *RegisterSvc) Register(ctx context.Context, req *CommandRegisterRequest)
 		}
 
 		return updater.Update(ctx, oldbies, req.Commands)
-	}, tx.Isolation(sql.LevelSerializable))
+	}, tx.XLock(namespaceCommand, req.AppID))
 }
 
 func (s *RegisterSvc) validateRequest(appID string, cmds []*model.Command) error {
