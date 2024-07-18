@@ -17,7 +17,8 @@ func NewDataSource(driverName string, cfg db.Config) (*sql.DB, error) {
 		return nil, err
 	}
 	open.SetMaxOpenConns(cfg.MaxOpenConn)
-	open.SetConnMaxLifetime(20 * time.Minute)
-	open.SetConnMaxIdleTime(10 * time.Minute)
+	open.SetMaxIdleConns(cfg.MaxOpenConn)
+	open.SetConnMaxLifetime(1 * time.Hour)
+	open.SetConnMaxIdleTime(15 * time.Minute)
 	return open, nil
 }

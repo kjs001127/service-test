@@ -93,6 +93,16 @@ var RemoteAppDevSvcs = fx.Options(
 						Action:  "manageUserChat",
 						Scope:   []string{"channel-{id}"},
 					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "getGroup",
+						Scope:   []string{"channel-{id}"},
+					},
+					{
+						Service: config.Get().ChannelServiceName,
+						Action:  "batchGetManagers",
+						Scope:   []string{"channel-{id}"},
+					},
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{
