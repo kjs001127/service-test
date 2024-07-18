@@ -50,7 +50,7 @@ func (s *ManagerAwareInstallSvc) UnInstall(ctx context.Context, manager account.
 	defer func() {
 		if err == nil {
 			for _, listener := range s.postListeners {
-				_ = listener.OnInstall(ctx, manager, installID)
+				_ = listener.OnUnInstall(ctx, manager, installID)
 			}
 		}
 	}()
