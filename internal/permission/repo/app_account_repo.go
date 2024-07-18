@@ -75,3 +75,8 @@ func (a *AppAccountRepoImpl) FetchAllByAccountID(ctx context.Context, accountID 
 	}
 	return appAccounts, nil
 }
+
+func (a *AppAccountRepoImpl) DeleteByAppID(ctx context.Context, appID string) error {
+	_, err := models.AppAccounts(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
+	return errors.Wrap(err, "error while deleting appAccount")
+}

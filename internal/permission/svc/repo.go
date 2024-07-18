@@ -11,4 +11,5 @@ type AppAccountRepo interface {
 	Delete(ctx context.Context, appID, accountID string) error
 	Fetch(ctx context.Context, appID, accountID string) (*model.AppAccount, error)
 	FetchAllByAccountID(ctx context.Context, accountID string) ([]*model.AppAccount, error)
+	DeleteByAppID(ctx context.Context, appID string) error
 }

@@ -42,6 +42,11 @@ var PermissionSvc = fx.Options(
 		),
 		svc.NewAccountAuthPermissionSvc,
 		svc.NewPermissionUtil,
+		fx.Annotate(
+			svc.NewAppAccountClearHook,
+			fx.As(new(appsvc.AppLifeCycleHook)),
+			fx.ResultTags(appfx.LifecycleHookGroup),
+		),
 	),
 )
 
