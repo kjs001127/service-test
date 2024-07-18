@@ -36,34 +36,32 @@ func DoReturn[R any](
 		panic(errors.New("transactor is not configured"))
 	}
 
+	var txCtx context.Context
+
 	if hasTx(ctx) {
-		for _, opt := range opts {
-			if err := opt.onBegin(ctx); err != nil {
-				retErr = err
-				return
+		txCtx = ctx
+	} else {
+		tx, err := beginTx(ctx, opts...)
+		if err != nil {
+			retErr = err
+			return
+		}
+
+		txCtx = wrapContextWithTx(ctx, tx)
+
+		defer func() {
+			if err := recover(); err != nil {
+				_ = rollbackTx(tx, nil)
+				panic(err)
 			}
-		}
-		return body(ctx)
+
+			if retErr != nil {
+				retErr = rollbackTx(tx, retErr)
+			} else {
+				retErr = commitTx(tx)
+			}
+		}()
 	}
-
-	tx, txCtx, err := beginTx(ctx, opts...)
-	if err != nil {
-		var empty R
-		return empty, err
-	}
-
-	defer func() {
-		if err := recover(); err != nil {
-			_ = rollbackTx(tx, nil)
-			panic(err)
-		}
-
-		if retErr != nil {
-			retErr = rollbackTx(tx, retErr)
-		} else {
-			retErr = commitTx(tx)
-		}
-	}()
 
 	for _, opt := range opts {
 		if err := opt.onBegin(ctx); err != nil {
@@ -94,17 +92,21 @@ func rollbackTx(tx Tx, cause error) error {
 	return cause
 }
 
-func beginTx(ctx context.Context, options ...Option) (Tx, context.Context, error) {
+func beginTx(ctx context.Context, options ...Option) (Tx, error) {
 	txOptions := sql.TxOptions{Isolation: sql.LevelDefault, ReadOnly: false}
 	for _, opt := range options {
 		opt.apply(&txOptions)
 	}
 	tx, err := transactor.BeginTx(ctx, &txOptions)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return tx, context.WithValue(ctx, txKey, tx), nil
+	return tx, nil
+}
+
+func wrapContextWithTx(ctx context.Context, tx Tx) context.Context {
+	return context.WithValue(ctx, txKey, tx)
 }
 
 // Option is options for transaction
