@@ -23,6 +23,9 @@ COPY ./deploy/run.sh ./run.sh
 # Add configuration
 COPY ./config/*.yaml ./config/
 
+# Add i18n
+COPY ./i18n/ ./i18n/
+
 # front, genenral, desk 모두 하나의 포트만 사용 할 것이므로
 EXPOSE $TARGET_PUBLIC_PORT
 EXPOSE $TARGET_ADMIN_PORT
