@@ -23,9 +23,21 @@ type I18n interface {
 func NewI18nImpl() *I18nImpl {
 	bundle := goI18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
-	bundle.LoadMessageFile("./i18n/en.json")
-	bundle.LoadMessageFile("./i18n/ko.json")
-	bundle.LoadMessageFile("./i18n/ja.json")
+	_, err := bundle.LoadMessageFile("./i18n/en.json")
+	if err != nil {
+		fmt.Println("ted test 1")
+		fmt.Println(err)
+	}
+	_, err = bundle.LoadMessageFile("./i18n/ko.json")
+	if err != nil {
+		fmt.Println("ted test 2")
+		fmt.Println(err)
+	}
+	_, err = bundle.LoadMessageFile("./i18n/ja.json")
+	if err != nil {
+		fmt.Println("ted test 3")
+		fmt.Println(err)
+	}
 
 	return &I18nImpl{bundle: bundle}
 }
@@ -65,6 +77,8 @@ func Translate(context context.Context, key string, args ...any) string {
 	message, err := localizer.Localize(&goI18n.LocalizeConfig{MessageID: key[1 : len(key)-1]})
 
 	if err != nil {
+		fmt.Println("ted test 4")
+		fmt.Println(err)
 		return key
 	}
 	return fmt.Sprintf(message, args...)
