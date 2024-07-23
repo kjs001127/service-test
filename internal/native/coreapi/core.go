@@ -67,6 +67,7 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		// only for app messenger server
 		"findOrCreateContactAndUser": mediumBaseUri + "/findOrCreateContactAndUser",
 		"searchUserChatsByContact":   userChatBaseUri + "/searchUserChatsByContact",
+		"updateUserChatState":        userChatBaseUri + "/updateUserChatState",
 	}
 	return api
 }
