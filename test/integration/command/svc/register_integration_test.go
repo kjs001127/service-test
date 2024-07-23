@@ -58,6 +58,29 @@ func (c *CommandRegisterSvcTestSuite) TestRegister() {
 	c.Require().NotNil(err)
 }
 
+func (c *CommandRegisterSvcTestSuite) TestRegisterWhenCommandLengthIsOver30() {
+	ctx := context.Background()
+
+	commands := []*commandmodel.Command{}
+	for i := 0; i < 31; i++ {
+		commands = append(commands, &commandmodel.Command{
+			AppID:              appID,
+			Name:               "test command",
+			Scope:              "desk",
+			ActionFunctionName: "gif",
+		})
+	}
+
+	req := &svc.CommandRegisterRequest{
+		AppID:    appID,
+		Commands: commands,
+	}
+
+	err := c.registerSvc.Register(ctx, req)
+
+	c.Require().NotNil(err)
+}
+
 func (c *CommandRegisterSvcTestSuite) TestDeregisterAll() {
 	ctx := context.Background()
 
