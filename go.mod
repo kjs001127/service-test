@@ -20,6 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/lib/pq v1.10.9
+	github.com/nicksnyder/go-i18n/v2 v2.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.18.0
 	github.com/stretchr/testify v1.8.4

@@ -53,3 +53,22 @@ make docs
 ```
 - Run local server via `make dev`
 - Then you can access swaggo on http://localhost:3020/swagger/general/index.html
+
+### Download Lokalise
+- You can get the lokalise token from [lokalise](https://app.lokalise.com) - profile settings - API tokens
+```bash
+LOKALISE_TOKEN={lokalise token} make lokalise
+```
+- Alternatively, simply use `make lokalise` by editing the .zshrc file
+```bash
+vim ~/.zshrc
+```
+- Add the following export
+```bash
+# lokalise
+export LOKALISE_TOKEN={lokalise token}
+```
+- Reload .zshrc file
+```bash
+source ~/.zshrc
+```

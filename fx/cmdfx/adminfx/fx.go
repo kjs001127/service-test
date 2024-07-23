@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/i18nfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
@@ -54,4 +55,5 @@ var Admin = fx.Options(
 	configfx.Values,
 	logfx.Logger,
 	datadogfx.Datadog,
+	i18nfx.I18n,
 )

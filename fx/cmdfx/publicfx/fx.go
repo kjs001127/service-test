@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/i18nfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
@@ -53,6 +54,7 @@ var Public = fx.Options(
 	datadogfx.Datadog,
 	logfx.Logger,
 	ddbfx.DynamoDB,
+	i18nfx.I18n,
 )
 
 var PublicHttp = fx.Options(

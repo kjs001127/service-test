@@ -190,3 +190,13 @@ flyway-clean:
 
 migrate: flyway-migrate
 	@true
+
+lokalise:
+	@echo "Downloading files from Lokalise..."
+	@lokalise2 --token $(LOKALISE_TOKEN) --project-id 76772944668e1aafbbc730.23181651 file download \
+		--format json \
+		--bundle-structure "%LANG_ISO%.json" \
+		--original-filenames=false \
+		--unzip-to i18n \
+		--export-sort a_z \
+		--replace-breaks=false

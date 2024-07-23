@@ -12,6 +12,7 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
+	"github.com/channel-io/ch-app-store/fx/corefx/i18nfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
@@ -47,6 +48,7 @@ var httpModule = fx.Options(
 )
 
 var fullAppModule = fx.Options(
+	i18nfx.I18n,
 	datadogfx.Datadog,
 	systemlogfx.SystemLog,
 	ddbfx.DynamoDB,
