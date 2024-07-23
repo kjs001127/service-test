@@ -11,6 +11,8 @@ import (
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
+const maxAppCountPerAccount = 30
+
 type AppModifyRequest struct {
 	Title              string                         `json:"title"`
 	Description        *string                        `json:"description,omitempty"`
@@ -111,6 +113,15 @@ func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string,
 
 func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error) {
 	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
+		res, err := a.appAccountRepo.CountByAccountID(ctx, accountID)
+		if err != nil {
+			return nil, err
+		}
+
+		if res >= maxAppCountPerAccount {
+			return nil, errors.New("App count per account must be less than 30")
+		}
+
 		createApp := appmodel.App{
 			Title:     title,
 			IsBuiltIn: false,

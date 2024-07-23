@@ -42,6 +42,19 @@ func (a *AppAccountRepoTestSuite) TestDeleteByAppID() {
 	assert.Nil(a.T(), err)
 }
 
+func (a *AppAccountRepoTestSuite) TestCountByAccountID() {
+	appID := "test"
+	accountID := "test"
+
+	ctx := context.Background()
+	a.appAccountRepo.Save(ctx, appID, accountID)
+
+	count, err := a.appAccountRepo.CountByAccountID(ctx, accountID)
+
+	assert.Nil(a.T(), err)
+	assert.Equal(a.T(), int64(1), count)
+}
+
 func TestAppAccountSuite(t *testing.T) {
 	suite.Run(t, new(AppAccountRepoTestSuite))
 }

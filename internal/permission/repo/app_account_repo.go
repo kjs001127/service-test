@@ -76,6 +76,14 @@ func (a *AppAccountRepoImpl) FetchAllByAccountID(ctx context.Context, accountID 
 	return appAccounts, nil
 }
 
+func (a *AppAccountRepoImpl) CountByAccountID(ctx context.Context, accountID string) (int64, error) {
+	if res, err := models.AppAccounts(qm.Where("account_id = ?", accountID)).Count(ctx, a.db); err != nil {
+		return 0, errors.Wrap(err, "error while counting app account by accountID")
+	} else {
+		return res, nil
+	}
+}
+
 func (a *AppAccountRepoImpl) DeleteByAppID(ctx context.Context, appID string) error {
 	_, err := models.AppAccounts(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
 	return errors.Wrap(err, "error while deleting appAccount")
