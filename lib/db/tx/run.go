@@ -64,7 +64,7 @@ func DoReturn[R any](
 	}
 
 	for _, opt := range opts {
-		if err := opt.onBegin(ctx); err != nil {
+		if err := opt.onBegin(txCtx); err != nil {
 			retErr = err
 			return
 		}

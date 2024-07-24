@@ -16,12 +16,13 @@ func (l lockOption) apply(options *sql.TxOptions) {
 }
 
 func (l lockOption) onBegin(ctx context.Context) error {
+
 	if tx, ok := ctx.Value(txKey).(*sql.Tx); ok {
 		if l.isShared {
-			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock_shared($1, $2)", l.namespace, l.id)
+			_, err := tx.ExecContext(ctx, "SELECT pg_advisory_xact_lock($1, $2)", l.namespace, l.id)
 			return err
 		} else {
-			_, err := tx.QueryContext(ctx, "SELECT pg_advisory_xact_lock($1, $2)", l.namespace, l.id)
+			_, err := tx.ExecContext(ctx, "SELECT pg_advisory_xact_lock($1, $2)", l.namespace, l.id)
 			return err
 		}
 	}
