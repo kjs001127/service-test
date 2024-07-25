@@ -56,8 +56,11 @@ func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID
 
 	if apierr.IsNotFound(err) {
 		return s.InstallApp(ctx, channelID, app)
+	} else if err != nil {
+		return nil, err
 	}
-	return nil, err
+
+	return app, nil
 }
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
