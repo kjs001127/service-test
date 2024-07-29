@@ -19,9 +19,6 @@ type AppDTO struct {
 	Description *string               `json:"description,omitempty"`
 	I18nMap     map[string]AppDTOI18n `json:"i18NMap,omitempty"`
 	IsBuiltIn   bool                  `json:"isBuiltIn"`
-
-	// legacy fields
-	State string `json:"state"`
 }
 
 type AppDTOI18n struct {
@@ -37,9 +34,6 @@ func NewAppDTO(origin *model.App) *AppDTO {
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
 		I18nMap:     convertAppDTOI18n(origin),
-
-		// legacy fields
-		State: "",
 	}
 }
 

@@ -27,9 +27,15 @@ type AppView struct {
 	IsBuiltIn   bool                   `json:"isBuiltIn"`
 	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 	IsPrivate   bool                   `json:"isPrivate"`
+}
 
-	// legacy fields
-	State string `json:"state"`
+type AppViewForCommand struct {
+	ID          string                 `json:"id"`
+	Title       string                 `json:"title"`
+	AvatarURL   *string                `json:"avatarUrl,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	IsBuiltIn   bool                   `json:"isBuiltIn"`
+	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 }
 
 type AppViewI18n struct {
@@ -68,9 +74,6 @@ func NewAppWithDisplayView(origin *displaysvc.AppWithDisplay) *AppView {
 		IsBuiltIn:   origin.IsBuiltIn,
 		I18nMap:     convertAppWithDisplayViewI18n(origin),
 		IsPrivate:   origin.IsPrivate,
-
-		// legacy fields
-		State: "",
 	}
 }
 
@@ -82,23 +85,19 @@ func NewAppWithDisplayViews(origins []*displaysvc.AppWithDisplay) []*AppView {
 	return ret
 }
 
-func NewAppView(origin *appmodel.App) *AppView {
-	return &AppView{
+func NewAppView(origin *appmodel.App) *AppViewForCommand {
+	return &AppViewForCommand{
 		ID:          origin.ID,
 		Title:       origin.Title,
 		AvatarURL:   origin.AvatarURL,
 		Description: origin.Description,
 		IsBuiltIn:   origin.IsBuiltIn,
 		I18nMap:     convertAppViewI18n(origin),
-
-		// legacy fields
-		IsPrivate: true,
-		State:     "",
 	}
 }
 
-func NewAppViews(origins []*appmodel.App) []*AppView {
-	ret := make([]*AppView, 0, len(origins))
+func NewAppViews(origins []*appmodel.App) []*AppViewForCommand {
+	ret := make([]*AppViewForCommand, 0, len(origins))
 	for _, origin := range origins {
 		ret = append(ret, NewAppView(origin))
 	}
@@ -106,8 +105,8 @@ func NewAppViews(origins []*appmodel.App) []*AppView {
 }
 
 type WysiwygView struct {
-	Apps     []*AppView     `json:"apps"`
-	Commands []*CommandView `json:"commands"`
+	Apps     []*AppViewForCommand `json:"apps"`
+	Commands []*CommandView       `json:"commands"`
 }
 
 type AppDetailView struct {
