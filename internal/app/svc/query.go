@@ -61,7 +61,7 @@ func (s *InstalledAppQuerySvc) Query(ctx context.Context, install model.Installa
 	}
 
 	if app.IsBuiltIn {
-		if err := s.appInstallSvc.InstallBuiltInApp(ctx, install.ChannelID, app); err != nil {
+		if _, err := s.appInstallSvc.InstallAppIfNotExists(ctx, install.ChannelID, app); err != nil {
 			return nil, err
 		}
 	}
@@ -100,7 +100,7 @@ func (s *InstalledAppQuerySvc) installBuiltInApps(ctx context.Context, channelID
 	}
 
 	for _, builtIn := range builtInApps {
-		if err := s.appInstallSvc.InstallBuiltInApp(ctx, channelID, builtIn); err != nil {
+		if _, err := s.appInstallSvc.InstallAppIfNotExists(ctx, channelID, builtIn); err != nil {
 			return errors.Wrap(err, "install builtIn app fail")
 		}
 	}
