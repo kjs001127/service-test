@@ -243,7 +243,7 @@
       function loadWam() {
         const wamIframe = document.createElement('iframe')
         wamIframe.id = 'wam'
-        wamIframe.src = `${baseAppStoreUrl}/public/v1/apps/${wamData.appId}/wams/${wamData.wamName}/`
+        wamIframe.src = `${baseAppStoreUrl}/public/v1/apps/${wamData.appId}/wams/${wamData.wamName !== '' ? `${wamData.wamName}/` : ''}`
         document.body.appendChild(wamIframe)
 
         if (!wamIframe.contentWindow.ChannelIOWam) {
