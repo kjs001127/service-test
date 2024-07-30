@@ -24,7 +24,7 @@ func (h *Handler) downloadWAM(ctx *gin.Context) {
 	err := h.wamDownloader.Proxy(ctx, svc.WamProxyRequest{
 		AppID:  appID,
 		Writer: ctx.Writer,
-		Req:    ctx.Request,
+		Req:    reqCloned,
 	})
 
 	if err != nil {
