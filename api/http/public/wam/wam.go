@@ -19,12 +19,12 @@ import (
 func (h *Handler) downloadWAM(ctx *gin.Context) {
 	appID, path := ctx.Param("appID"), ctx.Param("path")
 
-	reqCloned := *ctx.Request
+	reqCloned := ctx.Request.Clone(ctx)
 	reqCloned.URL.Path = path
 	err := h.wamDownloader.Proxy(ctx, svc.WamProxyRequest{
 		AppID:  appID,
 		Writer: ctx.Writer,
-		Req:    ctx.Request,
+		Req:    reqCloned,
 	})
 
 	if err != nil {
