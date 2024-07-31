@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  test:
+  debug:
     docker:
       - image: alpine:3.15
     steps:
@@ -8,6 +8,10 @@ jobs:
           name: Debug
           command: echo "CircleCI workflow is disabled for this project"
 
+workflows:
+  do-not-use:
+    jobs:
+      - debug
 #version: 2.1
 #
 #orbs:
