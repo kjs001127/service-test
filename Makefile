@@ -31,6 +31,9 @@ PSQL_USER ?= app_store
 PSQL_PASSWORD ?= ""
 
 TEST_ENV = "test"
+ifeq (ci, $(STAGE))
+	TEST_ENV = $(STAGE)
+endif
 
 #----------------------------------- Delete 예정
 #Flyway

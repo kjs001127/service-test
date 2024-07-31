@@ -9,25 +9,19 @@ RUN apt-get update \
 ARG TARGETOS
 ARG TARGETARCH
 
-ARG TARGET_APP
-ARG TARGET_PUBLIC_PORT
-ARG TARGET_ADMIN_PORT
-
-WORKDIR /$TARGET_APP
+WORKDIR /ch-app-store
 
 # k8s 환경에서 환경변수 설정은 .env 파일이 아닌 configmap & secret 에서 가져옴.
-COPY ./target/bin/$TARGET_APP-general.$TARGETOS.$TARGETARCH ./general
-COPY ./target/bin/$TARGET_APP-admin.$TARGETOS.$TARGETARCH ./admin
+COPY ./target/bin/ch-app-store-general.$TARGETOS.$TARGETARCH ./general
+COPY ./target/bin/ch-app-store-admin.$TARGETOS.$TARGETARCH ./admin
 COPY ./deploy/run.sh ./run.sh
 
 # Add configuration
 COPY ./config/*.yaml ./config/
-
 # Add i18n
 COPY ./i18n/ ./i18n/
 
-# front, genenral, desk 모두 하나의 포트만 사용 할 것이므로
-EXPOSE $TARGET_PUBLIC_PORT
-EXPOSE $TARGET_ADMIN_PORT
+EXPOSE 3020
+EXPOSE 3021
 
 CMD ["./run.sh"]
