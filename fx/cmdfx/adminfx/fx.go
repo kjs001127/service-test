@@ -11,7 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
+	privateapprolefx "github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx/privatefx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
@@ -41,7 +41,7 @@ var Admin = fx.Options(
 	appdisplayfx.AppDisplay,
 	permissionfx.Permission,
 	commandfx.Command,
-	approlefx.AppRole,
+	privateapprolefx.AppRole,
 	apphttpfx.Function,
 	nativefx.Native,
 	brieffx.Brief,

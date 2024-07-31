@@ -1,4 +1,4 @@
-package approlefx
+package publicfx
 
 import (
 	"fmt"
@@ -11,7 +11,8 @@ import (
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	tpa "github.com/channel-io/ch-app-store/internal/native/coreapi/action/thirdparty"
+	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
+	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
@@ -38,11 +39,14 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
+				AvailableClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{}
+				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{
 						{
 							Service: config.Get().ServiceName,
-							Action:  "registerCommands",
+							Action:  publiccmd.RegisterCommands,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 					}
@@ -53,57 +57,59 @@ var RemoteAppDevSvcs = fx.Options(
 					protomodel.GrantType_GRANT_TYPE_CLIENT_CREDENTIALS,
 					protomodel.GrantType_GRANT_TYPE_REFRESH_TOKEN,
 				},
-				AvailableClaims: []*protomodel.Claim{
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteUserChatMessage,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteGroupMessage,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.GetUser,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.GetUserChat,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.GetManager,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.SearchManagers,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.GetChannel,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.ManageUserChat,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.GetGroup,
-						Scope:   []string{"channel-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.BatchGetManagers,
-						Scope:   []string{"channel-{id}"},
-					},
+				AvailableClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteUserChatMessage,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteGroupMessage,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.GetUser,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.GetUserChat,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.GetManager,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.SearchManagers,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.GetChannel,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.ManageUserChat,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.GetGroup,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.BatchGetManagers,
+							Scope:   []string{"channel-{id}"},
+						},
+					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{
@@ -131,12 +137,14 @@ var RemoteAppDevSvcs = fx.Options(
 						},
 					}
 				},
-				AvailableClaims: []*protomodel.Claim{
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteUserChatMessageAsUser,
-						Scope:   []string{"channel-{id}"},
-					},
+				AvailableClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteUserChatMessageAsUser,
+							Scope:   []string{"channel-{id}"},
+						},
+					}
 				},
 			},
 
@@ -155,22 +163,24 @@ var RemoteAppDevSvcs = fx.Options(
 						},
 					}
 				},
-				AvailableClaims: []*protomodel.Claim{
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteGroupMessageAsManager,
-						Scope:   []string{"channel-{id}", "manager-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteUserChatMessageAsManager,
-						Scope:   []string{"channel-{id}", "manager-{id}"},
-					},
-					{
-						Service: config.Get().ChannelServiceName,
-						Action:  tpa.WriteDirectChatMessageAsManager,
-						Scope:   []string{"channel-{id}", "manager-{id}"},
-					},
+				AvailableClaimsOf: func(appId string) []*protomodel.Claim {
+					return []*protomodel.Claim{
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteGroupMessageAsManager,
+							Scope:   []string{"channel-{id}", "manager-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteUserChatMessageAsManager,
+							Scope:   []string{"channel-{id}", "manager-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.WriteDirectChatMessageAsManager,
+							Scope:   []string{"channel-{id}", "manager-{id}"},
+						},
+					}
 				},
 			},
 		},

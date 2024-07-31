@@ -85,7 +85,7 @@ func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType mode
 		return err
 	}
 
-	nativeClaims, err := s.nativeClaimsToProto(roleType, request.NativeClaims)
+	nativeClaims, err := s.nativeClaimsToProto(appID, roleType, request.NativeClaims)
 	if err != nil {
 		return err
 	}
@@ -177,10 +177,10 @@ func (s *AppRoleSvc) fromProtoClaim(claim *protomodel.Claim) *model.Claim {
 	}
 }
 
-func (s *AppRoleSvc) nativeClaimsToProto(t model.RoleType, claims []*model.Claim) ([]*protomodel.Claim, error) {
+func (s *AppRoleSvc) nativeClaimsToProto(appID string, t model.RoleType, claims []*model.Claim) ([]*protomodel.Claim, error) {
 	ret := make([]*protomodel.Claim, 0, len(claims))
 	for _, claim := range claims {
-		protoClaim, found := s.findMatchingAvailableClaim(t, claim)
+		protoClaim, found := s.findMatchingAvailableClaim(appID, t, claim)
 		if !found {
 			return nil, apierr.Unauthorized(errors.New("contains claim that is not permitted"))
 		}
@@ -189,8 +189,8 @@ func (s *AppRoleSvc) nativeClaimsToProto(t model.RoleType, claims []*model.Claim
 	return ret, nil
 }
 
-func (s *AppRoleSvc) findMatchingAvailableClaim(t model.RoleType, claim *model.Claim) (*protomodel.Claim, bool) {
-	claims := s.typeRule[t].AvailableClaims
+func (s *AppRoleSvc) findMatchingAvailableClaim(appID string, t model.RoleType, claim *model.Claim) (*protomodel.Claim, bool) {
+	claims := s.typeRule[t].AvailableClaimsOf(appID)
 	for _, protoClaim := range claims {
 		if protoClaim.Service == claim.Service && protoClaim.Action == claim.Action {
 			return protoClaim, true
@@ -226,8 +226,8 @@ func (s *AppRoleSvc) appClaimsToProto(ctx context.Context, claims model.Claims) 
 	return ret, nil
 }
 
-func (s *AppRoleSvc) GetAvailableNativeClaims(ctx context.Context, roleType model.RoleType) ([]*model.Claim, error) {
-	claims := s.typeRule[roleType].AvailableClaims
+func (s *AppRoleSvc) GetAvailableNativeClaims(ctx context.Context, appID string, roleType model.RoleType) ([]*model.Claim, error) {
+	claims := s.typeRule[roleType].AvailableClaimsOf(appID)
 	ret := make([]*model.Claim, 0, len(claims))
 	for _, claim := range claims {
 		ret = append(ret, &model.Claim{

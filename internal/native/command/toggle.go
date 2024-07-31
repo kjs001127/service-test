@@ -11,6 +11,7 @@ import (
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/command/action/private"
 )
 
 func (r *Handler) ToggleCommand(
@@ -45,8 +46,7 @@ type ToggleCommandRequest struct {
 }
 
 const (
-	toggleCommand = "toggleCommand"
-	channelScope  = "channel"
+	channelScope = "channel"
 )
 
 func (r *Handler) authorizeToggle(ctx context.Context, token native.Token, req ToggleCommandRequest) error {
@@ -55,7 +55,7 @@ func (r *Handler) authorizeToggle(ctx context.Context, token native.Token, req T
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), toggleCommand) {
+	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), private.ToggleCommand) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

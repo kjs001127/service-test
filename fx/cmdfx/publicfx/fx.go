@@ -15,7 +15,7 @@ import (
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
+	publicapprolefx "github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/authfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
@@ -42,7 +42,7 @@ var Public = fx.Options(
 	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
-	approlefx.AppRole,
+	publicapprolefx.AppRole,
 	apphttpfx.Function,
 	hookfx.Hook,
 

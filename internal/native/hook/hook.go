@@ -8,6 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/hook/model"
 	"github.com/channel-io/ch-app-store/internal/hook/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/hook/action/private"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
@@ -31,8 +32,8 @@ func NewHook(serviceName string, svc *svc.InstallHookSvc, toggleSvc *svc.ToggleH
 }
 
 func (h *Hook) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register("registerInstallHook", h.RegisterInstallHook)
-	registry.Register("registerToggleHook", h.RegisterToggleHook)
+	registry.Register(private.RegisterInstallHook, h.RegisterInstallHook)
+	registry.Register(private.RegisterToggleHook, h.RegisterToggleHook)
 }
 
 func (h *Hook) RegisterInstallHook(ctx context.Context, token native.Token, req native.FunctionRequest) native.FunctionResponse {
@@ -81,9 +82,7 @@ func (h *Hook) RegisterToggleHook(ctx context.Context, token native.Token, req n
 }
 
 const (
-	installHookAction = "registerInstallHook"
-	toggleHookAction  = "registerToggleHook"
-	appScope          = "app"
+	appScope = "app"
 )
 
 func (h *Hook) authorizeInstallHook(ctx context.Context, token native.Token, installHook *model.AppInstallHooks) error {
@@ -92,7 +91,7 @@ func (h *Hook) authorizeInstallHook(ctx context.Context, token native.Token, ins
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), installHookAction) {
+	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), private.RegisterInstallHook) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
@@ -111,7 +110,7 @@ func (h *Hook) authorizeToggleHook(ctx context.Context, token native.Token, togg
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), toggleHookAction) {
+	if !parsedRbac.CheckAction(authgen.Service(h.serviceName), private.RegisterToggleHook) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

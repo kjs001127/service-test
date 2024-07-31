@@ -13,7 +13,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/i18nfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
+	publicapprolefx "github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx/publicfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
 	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
 
@@ -54,7 +54,7 @@ var fullAppModule = fx.Options(
 	ddbfx.DynamoDB,
 	configfx.Values,
 	httpModule,
-	approlefx.AppRole,
+	publicapprolefx.AppRole,
 	apphttpfx.Function,
 	brieffx.Brief,
 	appfx.App,

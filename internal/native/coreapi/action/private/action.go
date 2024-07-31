@@ -1,4 +1,4 @@
-package firstparty
+package private
 
 const (
 	CreateDirectChat           = "createDirectChat"

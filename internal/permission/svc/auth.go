@@ -62,8 +62,8 @@ func (s *AccountAuthPermissionSvc) FetchRole(ctx context.Context, appID string, 
 	return s.delegate.FetchRole(ctx, appID, roleType)
 }
 
-func (s *AccountAuthPermissionSvc) GetAvailableNativeClaims(ctx context.Context, roleType model.RoleType) ([]*model.Claim, error) {
-	return s.delegate.GetAvailableNativeClaims(ctx, roleType)
+func (s *AccountAuthPermissionSvc) GetAvailableNativeClaims(ctx context.Context, appID string, roleType model.RoleType) ([]*model.Claim, error) {
+	return s.delegate.GetAvailableNativeClaims(ctx, appID, roleType)
 }
 
 func (s *AccountAuthPermissionSvc) HasTokenIssuedBefore(ctx context.Context, appID string, accountID string) (bool, error) {

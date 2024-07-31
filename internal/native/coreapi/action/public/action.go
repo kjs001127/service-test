@@ -1,4 +1,4 @@
-package thirdparty
+package public
 
 const (
 	WriteGroupMessage    = "writeGroupMessage"

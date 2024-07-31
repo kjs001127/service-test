@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/install/action/private"
 )
 
 type Checker struct {
@@ -28,7 +29,7 @@ func NewChecker(serviceName string, svc *svc.InstalledAppQuerySvc, rbacParser au
 }
 
 func (c *Checker) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register("checkInstall", c.CheckInstall)
+	registry.Register(private.CheckInstall, c.CheckInstall)
 }
 
 func (c *Checker) CheckInstall(ctx context.Context, token native.Token, request native.FunctionRequest) native.FunctionResponse {
@@ -58,8 +59,6 @@ func (c *Checker) CheckInstall(ctx context.Context, token native.Token, request 
 }
 
 const (
-	checkInstallAction = "checkInstall"
-
 	channelScope = "channel"
 )
 
@@ -69,7 +68,7 @@ func (c *Checker) authorize(ctx context.Context, token native.Token, req CheckRe
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(c.serviceName), checkInstallAction) {
+	if !parsedRbac.CheckAction(authgen.Service(c.serviceName), private.CheckInstall) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
