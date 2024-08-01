@@ -1,9 +1,9 @@
 package main
 
 import (
-	"go.uber.org/fx"
+	"github.com/channel-io/ch-app-store/cmd/publicfx"
 
-	"github.com/channel-io/ch-app-store/fx/cmdfx/publicfx"
+	"go.uber.org/fx"
 )
 
 func main() {

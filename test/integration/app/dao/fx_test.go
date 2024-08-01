@@ -1,11 +1,11 @@
 package dao_test
 
 import (
-	"go.uber.org/fx"
+	"github.com/channel-io/ch-app-store/configfx"
+	"github.com/channel-io/ch-app-store/internal/appfx"
+	"github.com/channel-io/ch-app-store/lib/datadogfx"
 
-	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
+	"go.uber.org/fx"
 )
 
 var testOpts = fx.Options(
