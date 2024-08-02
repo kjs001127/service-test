@@ -1,12 +1,16 @@
 package gintoolfx
 
 import (
-	"go.uber.org/fx"
+	"context"
+	"log"
+	"time"
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
 	"github.com/channel-io/ch-app-store/api/http/util"
 	"github.com/channel-io/ch-app-store/config"
+
+	"go.uber.org/fx"
 )
 
 const (
@@ -53,16 +57,10 @@ var ApiServer = fx.Options(
 	fx.Provide(
 		AddTag(util.NewHandler),
 		fx.Annotate(
-			gintool.NewApiServer,
+			gintool.NewServer,
 			fx.ParamTags(port, GroupRoutes, MiddlewaresGroup),
 		),
 	),
-
-	fx.Invoke(func(svr *gintool.ApiServer) {
-		go func() {
-			panic(svr.Run())
-		}()
-	}),
 )
 
 func AddTag(handlerConstructor any) any {
@@ -71,4 +69,30 @@ func AddTag(handlerConstructor any) any {
 		fx.As(new(gintool.RouteRegistrant)),
 		fx.ResultTags(`group:"routes"`),
 	)
+}
+func StartServer(option fx.Option) {
+	app := fx.New(
+		option,
+		fx.Invoke(func(lifecycle fx.Lifecycle, s *gintool.Server) {
+			setupHook(lifecycle, s)
+			return
+		}),
+		fx.StopTimeout(100*time.Second),
+	)
+
+	app.Run()
+	log.Println("Shutdown server")
+}
+
+func setupHook(lifecycle fx.Lifecycle, s *gintool.Server) {
+	lifecycle.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go s.Run()
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			s.GracefulShutdown(ctx)
+			return nil
+		},
+	})
 }
