@@ -6,4 +6,5 @@ const (
 	FindOrCreateContactAndUser = "findOrCreateContactAndUser"
 	SearchUserChatsByContact   = "searchUserChatsByContact"
 	UpdateUserChatState        = "updateUserChatState"
+	CreateUserChat             = "createUserChat"
 )

@@ -170,6 +170,11 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatesystemlog.WriteSystemLog,
 							Scope:   []string{"channel-{id}"},
 						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  privatecore.CreateUserChat,
+							Scope:   []string{"channel-{id}"},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {

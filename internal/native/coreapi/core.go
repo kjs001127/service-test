@@ -69,6 +69,7 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 		pvt.FindOrCreateContactAndUser: mediumBaseUri + "/" + pvt.FindOrCreateContactAndUser,
 		pvt.SearchUserChatsByContact:   userChatBaseUri + "/" + pvt.SearchUserChatsByContact,
 		pvt.UpdateUserChatState:        userChatBaseUri + "/" + pvt.UpdateUserChatState,
+		pvt.CreateUserChat:             userChatBaseUri + "/" + pvt.CreateUserChat,
 	}
 	return api
 }
