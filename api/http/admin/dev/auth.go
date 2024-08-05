@@ -48,7 +48,7 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.R
 
 // modifyClaims godoc
 //
-//	@Summary	fetch App
+//	@Summary	overwrite claims of specific role type
 //	@Tags		Public
 //
 //	@Param		appId		path	string	true	"appId"
@@ -67,6 +67,35 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	}
 
 	err := h.roleSvc.UpdateRole(ctx, appID, roleType, &req)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
+// addClaims godoc
+//
+//	@Summary	add claims to specific role type
+//	@Tags		Public
+//
+//	@Param		appId		path	string	true	"appId"
+//	@Param		roleType	path	string	true	"roleType"
+//
+//	@Success	200			{array}	model.Claim
+//	@Router		/admin/apps/{appId}/auth/roles/{roleType}  [patch]
+func (h *Handler) addClaims(ctx *gin.Context) {
+	appID := ctx.Param("appID")
+	roleType := model.RoleType(ctx.Param("roleType"))
+
+	var req svc.ClaimsDTO
+	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	err := h.roleSvc.AddClaimsToRole(ctx, appID, roleType, &req)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

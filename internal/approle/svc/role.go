@@ -105,6 +105,47 @@ func (s *AppRoleSvc) UpdateRole(ctx context.Context, appID string, roleType mode
 	return nil
 }
 
+func (s *AppRoleSvc) AddClaimsToRole(ctx context.Context, appID string, roleType model.RoleType, request *ClaimsDTO) error {
+	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
+	if err != nil {
+		return err
+	}
+
+	role, err := s.roleCli.GetRole(ctx, appRole.RoleID)
+	if err != nil {
+		return err
+	}
+
+	if role == nil || role.Role == nil {
+		return errors.New("role does not exist")
+	}
+
+	allClaims := role.Role.Claims
+
+	appClaims, err := s.appClaimsToProto(ctx, request.AppClaims)
+	if err != nil {
+		return err
+	}
+
+	nativeClaims, err := s.nativeClaimsToProto(appID, roleType, request.NativeClaims)
+	if err != nil {
+		return err
+	}
+
+	allClaims = append(allClaims, appClaims...)
+	allClaims = append(allClaims, nativeClaims...)
+
+	_, err = s.roleCli.UpdateRole(ctx, &service.ReplaceRoleClaimsRequest{
+		RoleId: appRole.RoleID,
+		Claims: allClaims,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *AppRoleSvc) FetchRole(ctx context.Context, appID string, roleType model.RoleType) (*ClaimsDTO, error) {
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, appID, roleType)
 	if err != nil {
