@@ -1,0 +1,4 @@
+{
+    "app.title.invalid.length": "Title length should be between 2 and 20",
+    "auth.empty.header": "Authorization header is empty"
+}

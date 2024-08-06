@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/command/action/public"
 )
 
 type RegisterRequest struct {
@@ -89,8 +90,7 @@ func (r *Handler) RegisterCommand(
 }
 
 const (
-	registerCommands = "registerCommands"
-	appScope         = "app"
+	appScope = "app"
 )
 
 func (r *Handler) authorizeReg(ctx context.Context, token native.Token, req *RegisterRequest) error {
@@ -99,7 +99,7 @@ func (r *Handler) authorizeReg(ctx context.Context, token native.Token, req *Reg
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), registerCommands) {
+	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), public.RegisterCommands) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

@@ -3,11 +3,14 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/channel-io/ch-app-store/internal/auth/principal"
+	"github.com/channel-io/ch-app-store/lib/i18n"
+	"github.com/channel-io/ch-app-store/lib/log"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
-
-	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 type ErrHandler struct {
@@ -68,12 +71,12 @@ func errorsDTOFrom(ctx *gin.Context) *errorsDTO {
 	var httpErrorBuildable apierr.HTTPErrorBuildable
 	for _, err := range ctx.Errors {
 		if errors.As(err.Unwrap(), &httpErrorBuildable) {
-			dto := newErrorsDTOFromHTTPErrorBuildable(httpErrorBuildable)
+			dto := newErrorsDTOFromHTTPErrorBuildable(ctx, httpErrorBuildable)
 			return dto
 		}
-		return newErrorsDTO(http.StatusUnprocessableEntity, apierr.NewCause(err))
+		return newErrorsDTO(ctx, http.StatusUnprocessableEntity, apierr.NewCause(err))
 	}
-	return newErrorsDTO(http.StatusInternalServerError)
+	return newErrorsDTO(ctx, http.StatusInternalServerError)
 }
 
 type errorsDTO struct {
@@ -85,30 +88,34 @@ type errorsDTO struct {
 
 type errorDTO map[string]any
 
-func newErrorsDTO(statusCode int, causes ...*apierr.Cause) *errorsDTO {
+func newErrorsDTO(ctx *gin.Context, statusCode int, causes ...*apierr.Cause) *errorsDTO {
 	var errDTOs []errorDTO
 	for _, cause := range causes {
-		errDTOs = append(errDTOs, newErrorDTO(cause))
+		errDTOs = append(errDTOs, newErrorDTO(ctx, cause))
+	}
+
+	lang := i18n.DefaultLanguage.String()
+	rawRequester, _ := ctx.Get(RequesterKey)
+	requester := rawRequester.(principal.Requester)
+	if i18n.IsValid(requester.Language) {
+		lang = requester.Language
 	}
 
 	return &errorsDTO{
 		Status:   statusCode,
 		Type:     http.StatusText(statusCode),
-		Language: "ko", // TODO(billo): 언어 지원되면 DTO 고치기
+		Language: lang,
 		Errors:   errDTOs,
 	}
 }
 
-func newErrorsDTOFromHTTPErrorBuildable(buildable apierr.HTTPErrorBuildable) *errorsDTO {
-	return newErrorsDTO(
-		buildable.HTTPStatusCode(),
-		buildable.Causes()...,
-	)
+func newErrorsDTOFromHTTPErrorBuildable(ctx *gin.Context, buildable apierr.HTTPErrorBuildable) *errorsDTO {
+	return newErrorsDTO(ctx, buildable.HTTPStatusCode(), buildable.Causes()...)
 }
 
-func newErrorDTO(cause *apierr.Cause) errorDTO {
+func newErrorDTO(ctx *gin.Context, cause *apierr.Cause) errorDTO {
 	dto := make(map[string]any)
-	dto["message"] = cause.Message
+	dto["message"] = i18n.Translate(ctx, cause.Message)
 	for k, v := range cause.Detail {
 		dto[k] = v
 	}

@@ -2,7 +2,6 @@ package svc
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -50,16 +49,21 @@ func (s *RegisterSvc) Register(ctx context.Context, req *CommandRegisterRequest)
 		}
 
 		return updater.Update(ctx, oldbies, req.Commands)
-	}, tx.Isolation(sql.LevelSerializable))
+	}, tx.XLock(namespaceCommand, req.AppID))
 }
 
 func (s *RegisterSvc) validateRequest(appID string, cmds []*model.Command) error {
+	if len(cmds) > 30 {
+		return apierr.BadRequest(fmt.Errorf("you can only register up to 30 commands"))
+	}
+
 	for _, cmd := range cmds {
 		if len(cmd.AppID) <= 0 {
 			cmd.AppID = appID
 		} else if cmd.AppID != appID {
 			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", appID, cmd.AppID))
 		}
+
 		if err := cmd.Validate(); err != nil {
 			return apierr.BadRequest(err)
 		}

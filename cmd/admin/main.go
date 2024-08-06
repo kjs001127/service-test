@@ -1,13 +1,10 @@
 package main
 
 import (
-	"go.uber.org/fx"
-
-	"github.com/channel-io/ch-app-store/fx/cmdfx/adminfx"
+	"github.com/channel-io/ch-app-store/api/gintoolfx"
+	"github.com/channel-io/ch-app-store/cmd/adminfx"
 )
 
 func main() {
-	fx.New(adminfx.Admin)
-
-	select {}
+	gintoolfx.StartServer(adminfx.Admin)
 }

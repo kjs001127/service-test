@@ -11,6 +11,7 @@ import (
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/fx"
@@ -62,6 +63,18 @@ func (p *PermissionTestSuite) TestAppCreate() {
 	p.Require().NotNil(app)
 	p.Require().NotEmpty(app.ID)
 	p.Require().Equal(app.Title, testTitle)
+}
+
+func (p *PermissionTestSuite) TestCreatAppWhenOver30() {
+	ctx := context.Background()
+
+	for i := 1; i <= 30; i++ {
+		_, _ = p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
+	}
+
+	_, err := p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
+
+	assert.NotNil(p.T(), err)
 }
 
 func (p *PermissionTestSuite) TestDeleteApp() {

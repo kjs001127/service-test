@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal"
+	"github.com/channel-io/ch-app-store/lib/i18n"
 
 	"github.com/gin-gonic/gin"
 	languageUtil "golang.org/x/text/language"
@@ -12,10 +13,12 @@ const (
 	RequesterKey   = "Requester"
 )
 
-type Request struct{}
+type Request struct {
+	i18n i18n.I18n
+}
 
-func NewRequest() *Request {
-	return &Request{}
+func NewRequest(i18n i18n.I18n) *Request {
+	return &Request{i18n: i18n}
 }
 
 func (r *Request) Priority() int {
@@ -27,7 +30,7 @@ func (r *Request) Handle(ctx *gin.Context) {
 
 	tags, _, err := languageUtil.ParseAcceptLanguage(ctx.GetHeader(AcceptLanguage))
 	if err != nil {
-		language = "en"
+		language = i18n.DefaultLanguage.String()
 	}
 
 	for _, tag := range tags {
@@ -43,6 +46,7 @@ func (r *Request) Handle(ctx *gin.Context) {
 	}
 
 	ctx.Set(RequesterKey, requester)
+	ctx.Set(i18n.LocalizerKey, r.i18n.GetLocalizer(language))
 }
 
 func Requester(ctx *gin.Context) principal.Requester {

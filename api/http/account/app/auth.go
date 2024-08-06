@@ -42,7 +42,7 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, account account.
 	if err != nil {
 		return nil, err
 	}
-	availableClaims, err := h.authPermissionSvc.GetAvailableNativeClaims(ctx, roleType)
+	availableClaims, err := h.authPermissionSvc.GetAvailableNativeClaims(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
 	}

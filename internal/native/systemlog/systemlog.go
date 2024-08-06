@@ -9,6 +9,7 @@ import (
 
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/systemlog/action/private"
 	"github.com/channel-io/ch-app-store/internal/systemlog/model"
 	"github.com/channel-io/ch-app-store/internal/systemlog/svc"
 )
@@ -28,7 +29,7 @@ func NewSystemLog(serviceName string, svc *svc.SystemLogSvc, rbacParser authgen.
 }
 
 func (s *SystemLog) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register("writeSystemLog", s.WriteLog)
+	registry.Register(private.WriteSystemLog, s.WriteLog)
 }
 
 func (s *SystemLog) WriteLog(ctx context.Context, token native.Token, req native.FunctionRequest) native.FunctionResponse {
@@ -55,8 +56,6 @@ func (s *SystemLog) WriteLog(ctx context.Context, token native.Token, req native
 }
 
 const (
-	writeSystemLogAction = "writeSystemLog"
-
 	channelScope = "channel"
 	appScope     = "app"
 )
@@ -67,7 +66,7 @@ func (s *SystemLog) authorize(ctx context.Context, token native.Token, log *mode
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(s.serviceName), writeSystemLogAction) {
+	if !parsedRbac.CheckAction(authgen.Service(s.serviceName), private.WriteSystemLog) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

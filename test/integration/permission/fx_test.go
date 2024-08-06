@@ -1,11 +1,11 @@
 package permission_test
 
 import (
-	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/permissionfx"
+	"github.com/channel-io/ch-app-store/configfx"
+	"github.com/channel-io/ch-app-store/internal/appdisplayfx"
+	"github.com/channel-io/ch-app-store/internal/appfx"
+	"github.com/channel-io/ch-app-store/internal/permissionfx"
+	"github.com/channel-io/ch-app-store/lib/datadogfx"
 
 	"go.uber.org/fx"
 )

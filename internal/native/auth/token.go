@@ -7,6 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/auth/action/public"
 )
 
 type Request struct {
@@ -43,8 +44,8 @@ func NewTokenIssueHandler(svc svc.TokenSvc) *TokenIssueHandler {
 }
 
 func (c *TokenIssueHandler) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register("issueToken", c.IssueToken)
-	registry.Register("refreshToken", c.refreshToken)
+	registry.Register(public.IssueToken, c.IssueToken)
+	registry.Register(public.RefreshToken, c.refreshToken)
 }
 
 func (c *TokenIssueHandler) refreshToken(ctx context.Context, token native.Token, request native.FunctionRequest) native.FunctionResponse {

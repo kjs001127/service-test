@@ -8,6 +8,7 @@ import (
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/native"
+	"github.com/channel-io/ch-app-store/internal/native/command/action/private"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
@@ -21,10 +22,6 @@ type GetCommandChannelActivationsResponse struct {
 	Commands    []*model.Command  `json:"commands"`
 	Activations model.Activations `json:"activations"`
 }
-
-const (
-	getCommandChannelActivations = "getCommandChannelActivations"
-)
 
 func (r *Handler) GetCommandChannelActivations(
 	ctx context.Context,
@@ -72,7 +69,7 @@ func (r *Handler) authorizeGet(ctx context.Context, token native.Token, req GetC
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), getCommandChannelActivations) {
+	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), private.GetCommandChannelActivations) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

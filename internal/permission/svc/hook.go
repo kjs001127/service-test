@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+
 	"github.com/channel-io/ch-app-store/internal/app/model"
 )
 

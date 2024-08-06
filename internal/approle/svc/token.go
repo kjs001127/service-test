@@ -90,6 +90,9 @@ func (s *TokenSvcImpl) IssueChannelToken(ctx context.Context, channelID string, 
 
 func (s *TokenSvcImpl) IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error) {
 	token, err := s.tokenRepo.FetchBySecret(ctx, appToken)
+	if err != nil {
+		return general.IssueResponse{}, err
+	}
 	appRole, err := s.roleRepo.FetchRoleByAppIDAndType(ctx, token.AppID, model.RoleTypeApp)
 	if err != nil {
 		return general.IssueResponse{}, err

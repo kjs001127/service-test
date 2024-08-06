@@ -7,8 +7,8 @@ import (
 type ClaimsFactory func(string) []*protomodel.Claim
 
 type TypeRule struct {
-	AvailableClaims []*protomodel.Claim
-	GrantTypes      []protomodel.GrantType
-	PrincipalTypes  []string
-	DefaultClaimsOf ClaimsFactory
+	AvailableClaimsOf ClaimsFactory
+	GrantTypes        []protomodel.GrantType
+	PrincipalTypes    []string
+	DefaultClaimsOf   ClaimsFactory
 }

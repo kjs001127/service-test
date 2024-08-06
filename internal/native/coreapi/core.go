@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/go-resty/resty/v2"
-
 	"github.com/channel-io/ch-app-store/internal/native"
+	pvt "github.com/channel-io/ch-app-store/internal/native/coreapi/action/private"
+	pub "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
+
+	"github.com/go-resty/resty/v2"
 )
 
 const (
@@ -41,31 +43,33 @@ func (a *CoreApi) RegisterTo(registry native.FunctionRegistry) {
 func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 	api := &CoreApi{adminUrl: adminUrl, resty: resty}
 	api.urlRouter = map[string]string{
-		"writeGroupMessage":          messageBaseUri + "/writeGroupMessage",
-		"writeGroupMessageAsManager": messageBaseUri + "/writeGroupMessageAsManager",
+		pub.WriteGroupMessage:          messageBaseUri + "/" + pub.WriteGroupMessage,
+		pub.WriteGroupMessageAsManager: messageBaseUri + "/" + pub.WriteGroupMessageAsManager,
 
-		"writeUserChatMessage":            messageBaseUri + "/writeUserChatMessage",
-		"writeUserChatMessageAsManager":   messageBaseUri + "/writeUserChatMessageAsManager",
-		"writeUserChatMessageAsUser":      messageBaseUri + "/writeUserChatMessageAsUser",
-		"writeDirectChatMessageAsManager": messageBaseUri + "/writeDirectChatMessageAsManager",
+		pub.WriteUserChatMessage:            messageBaseUri + "/" + pub.WriteUserChatMessage,
+		pub.WriteUserChatMessageAsManager:   messageBaseUri + "/" + pub.WriteUserChatMessageAsManager,
+		pub.WriteUserChatMessageAsUser:      messageBaseUri + "/" + pub.WriteUserChatMessageAsUser,
+		pub.WriteDirectChatMessageAsManager: messageBaseUri + "/" + pub.WriteDirectChatMessageAsManager,
 
-		"createDirectChat": directChatBaseUri + "/createDirectChat",
+		pvt.CreateDirectChat: directChatBaseUri + "/" + pvt.CreateDirectChat,
 
-		"manageUserChat": userChatBaseUri + "/manageUserChat",
+		pub.ManageUserChat: userChatBaseUri + "/" + pub.ManageUserChat,
 
-		"getManager":       managerBaseUri + "/getManager",
-		"batchGetManagers": managerBaseUri + "/batchGetManagers",
-		"searchManagers":   managerBaseUri + "/searchManagers",
+		pub.GetManager:       managerBaseUri + "/" + pub.GetManager,
+		pub.BatchGetManagers: managerBaseUri + "/" + pub.BatchGetManagers,
+		pub.SearchManagers:   managerBaseUri + "/" + pub.SearchManagers,
 
-		"getUserChat": userChatBaseUri + "/getUserChat",
+		pub.GetUserChat: userChatBaseUri + "/" + pub.GetUserChat,
 
-		"getUser":    userBaseUri + "/getUser",
-		"getChannel": channelBaseUri + "/getChannel",
-		"getGroup":   groupBaseUri + "/getGroup",
+		pub.GetUser:    userBaseUri + "/" + pub.GetUser,
+		pub.GetChannel: channelBaseUri + "/" + pub.GetChannel,
+		pub.GetGroup:   groupBaseUri + "/" + pub.GetGroup,
+		pvt.SearchUser: userBaseUri + "/" + pvt.SearchUser,
 
-		// only for app messenger server
-		"findOrCreateContactAndUser": mediumBaseUri + "/findOrCreateContactAndUser",
-		"searchUserChatsByContact":   userChatBaseUri + "/searchUserChatsByContact",
+		pvt.FindOrCreateContactAndUser: mediumBaseUri + "/" + pvt.FindOrCreateContactAndUser,
+		pvt.SearchUserChatsByContact:   userChatBaseUri + "/" + pvt.SearchUserChatsByContact,
+		pvt.UpdateUserChatState:        userChatBaseUri + "/" + pvt.UpdateUserChatState,
+		pvt.CreateUserChat:             userChatBaseUri + "/" + pvt.CreateUserChat,
 	}
 	return api
 }

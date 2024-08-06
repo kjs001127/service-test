@@ -1,0 +1,28 @@
+stage: ci
+serviceName: app-store-api.exp.channel.io
+channelServiceName: api.exp.channel.io
+systemLogTableName: exp_app_system_logs
+auth:
+  authGeneralUrl: https://api.exp.channel.io
+  authAdminURL: https://admin-api.in.exp.channel.io
+  jwtServiceKey: test
+port: 3020
+psql:
+  schema: public
+  dbname: app_store_ci
+  host: postgres
+  port: 5432
+  user: app_store
+  password: abc
+  sslmode: disable
+  maxOpenConn: 50
+log:
+  console:
+    level: debug
+  sentry:
+    level: error
+    dsn:
+    tracesSampleRate: 0
+ddb:
+  endpoint: http://localhost:8000
+  region: ap-northeast-2

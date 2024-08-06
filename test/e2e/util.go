@@ -6,35 +6,36 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/channel-io/ch-app-store/api/gintoolfx"
+	adminhandlerfx "github.com/channel-io/ch-app-store/api/http/adminfx"
+	"github.com/channel-io/ch-app-store/api/http/deskfx"
+	"github.com/channel-io/ch-app-store/api/http/frontfx"
+	"github.com/channel-io/ch-app-store/api/http/generalfx"
+	publichandlerfx "github.com/channel-io/ch-app-store/api/http/publicfx"
+	"github.com/channel-io/ch-app-store/api/httpfx"
+	"github.com/channel-io/ch-app-store/config"
+	"github.com/channel-io/ch-app-store/configfx"
+	"github.com/channel-io/ch-app-store/internal/appdisplayfx"
+	"github.com/channel-io/ch-app-store/internal/appfx"
+	"github.com/channel-io/ch-app-store/internal/apphttpfx"
+	publicapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/publicfx"
+	"github.com/channel-io/ch-app-store/internal/brieffx"
+	"github.com/channel-io/ch-app-store/internal/commandfx"
+	"github.com/channel-io/ch-app-store/internal/hookfx"
+	"github.com/channel-io/ch-app-store/internal/invokelogfx"
+	"github.com/channel-io/ch-app-store/internal/nativefx"
+	"github.com/channel-io/ch-app-store/internal/systemlogfx"
+	"github.com/channel-io/ch-app-store/lib/datadogfx"
+	"github.com/channel-io/ch-app-store/lib/ddbfx"
+	"github.com/channel-io/ch-app-store/lib/i18nfx"
+	"github.com/channel-io/ch-app-store/lib/logfx"
+	"github.com/channel-io/ch-app-store/test/mockauth"
+
 	"github.com/channel-io/go-lib/pkg/log"
+
 	"github.com/go-resty/resty/v2"
 	"github.com/jarcoal/httpmock"
 	"go.uber.org/fx"
-
-	"github.com/channel-io/ch-app-store/fx/corefx/ddbfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/approlefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/systemlogfx"
-
-	"github.com/channel-io/ch-app-store/config"
-	"github.com/channel-io/ch-app-store/fx/corefx/apifx/gintoolfx"
-	adminhandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/adminfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/deskfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/frontfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/generalfx"
-	publichandlerfx "github.com/channel-io/ch-app-store/fx/corefx/apifx/httpfx/publicfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/httpfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appdisplayfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/appfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/apphttpfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/brieffx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/commandfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/invokelogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/nativefx"
-	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
-	"github.com/channel-io/ch-app-store/test/mockauth"
 )
 
 var httpModule = fx.Options(
@@ -47,12 +48,13 @@ var httpModule = fx.Options(
 )
 
 var fullAppModule = fx.Options(
+	i18nfx.I18n,
 	datadogfx.Datadog,
 	systemlogfx.SystemLog,
 	ddbfx.DynamoDB,
 	configfx.Values,
 	httpModule,
-	approlefx.AppRole,
+	publicapprolefx.AppRole,
 	apphttpfx.Function,
 	brieffx.Brief,
 	appfx.App,

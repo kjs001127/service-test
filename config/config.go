@@ -19,7 +19,7 @@ import (
 var (
 	cfg          *Config
 	cfgExtension = "yaml"
-	validStages  = []string{"development", "test", "exp", "production"}
+	validStages  = []string{"ci", "development", "test", "exp", "production"}
 )
 
 //

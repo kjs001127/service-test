@@ -1,12 +1,12 @@
 package svc_test
 
 import (
-	"go.uber.org/fx"
+	"github.com/channel-io/ch-app-store/configfx"
+	"github.com/channel-io/ch-app-store/internal/hookfx"
+	"github.com/channel-io/ch-app-store/lib/datadogfx"
+	"github.com/channel-io/ch-app-store/lib/logfx"
 
-	"github.com/channel-io/ch-app-store/fx/corefx/configfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/datadogfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/internalfx/hookfx"
-	"github.com/channel-io/ch-app-store/fx/corefx/logfx"
+	"go.uber.org/fx"
 )
 
 var testOpts = fx.Options(
