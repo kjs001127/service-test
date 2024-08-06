@@ -27,5 +27,5 @@ rateLimiter:
   url: https://rate-limiter.in.exp.channel.io
   appRuleId: 12
   managerRuleId: 11
-  userRoleId: 13
+  userRuleId: 13
 
