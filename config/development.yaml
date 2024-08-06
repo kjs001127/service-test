@@ -26,3 +26,8 @@ log:
 ddb:
   endpoint: http://localhost:8000
   region: ap-northeast-2
+rateLimiter:
+  url: http://localhost:3000
+  appRuleId: 1
+  managerRuleId: 2
+  userRuleId: 3

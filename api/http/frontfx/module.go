@@ -25,6 +25,11 @@ var FrontHandlers = fx.Options(
 			fx.As(new(gintool.Middleware)),
 			fx.ResultTags(gintoolfx.MiddlewaresGroup),
 		),
+		fx.Annotate(
+			middleware.NewXSessionKeyResolver,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(gintoolfx.MiddlewaresGroup),
+		),
 	),
 	fx.Supply(
 		fx.Annotate(

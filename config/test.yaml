@@ -23,3 +23,8 @@ log:
     level: error
     dsn:
     tracesSampleRate: 1.0
+rateLimiter:
+  url: http://localhost:3000
+  appRuleId: 1
+  managerRuleId: 2
+  userRuleId: 3

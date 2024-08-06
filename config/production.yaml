@@ -22,3 +22,7 @@ log:
     level: error
     dsn: https://b2a067b7a7320aa60be1f44b5cb36623@o104101.ingest.sentry.io/4506738092539904
     tracesSampleRate: 1.0
+rateLimiter:
+  url: https://rate-limiter.in.channel.io
+  appRuleId: xxx
+  channelRuleId: xxx

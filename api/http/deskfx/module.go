@@ -32,6 +32,11 @@ var DeskHandlers = fx.Options(
 			fx.As(new(gintool.Middleware)),
 			fx.ResultTags(gintoolfx.MiddlewaresGroup),
 		),
+		fx.Annotate(
+			middleware.NewXAccountKeyResolver,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(gintoolfx.MiddlewaresGroup),
+		),
 	),
 	fx.Supply(
 		fx.Annotate(

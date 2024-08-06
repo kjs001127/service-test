@@ -25,6 +25,7 @@ import (
 	"github.com/channel-io/ch-app-store/lib/ddbfx"
 	"github.com/channel-io/ch-app-store/lib/i18nfx"
 	"github.com/channel-io/ch-app-store/lib/logfx"
+	"github.com/channel-io/ch-app-store/lib/ratelimiterfx"
 
 	"go.uber.org/fx"
 )
@@ -55,6 +56,7 @@ var Public = fx.Options(
 	logfx.Logger,
 	ddbfx.DynamoDB,
 	i18nfx.I18n,
+	ratelimiterfx.RateLimiter,
 )
 
 var PublicHttp = fx.Options(

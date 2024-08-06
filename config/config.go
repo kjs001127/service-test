@@ -39,6 +39,12 @@ type Config struct {
 	Psql               db.Config
 	DDB                dynamodb.DDBConfig
 	SystemLogTableName string `required:"true"`
+	RateLimiter        struct {
+		URL           string `required:"true"`
+		AppRuleID     string `required:"true"`
+		ManagerRuleID string `required:"true"`
+		UserRuleID    string `required:"true"`
+	}
 }
 
 func init() {
