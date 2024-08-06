@@ -208,7 +208,7 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.WriteUserChatMessageAsUser,
-							Scope:   []string{"channel-{id}"},
+							Scope:   []string{"channel-{id}", "user-{id}"},
 						},
 					}
 				},
