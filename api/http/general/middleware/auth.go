@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	"github.com/gin-gonic/gin"
@@ -43,6 +44,7 @@ func (r *Auth) Handle(ctx *gin.Context) {
 
 func (r *Auth) rbacFrom(ctx *gin.Context) (genauth.ParsedRBACToken, error) {
 	token, exists := tokenFrom(ctx)
+
 	if !exists {
 		return genauth.ParsedRBACToken{}, apierr.Unauthorized(errors.New("token not found"))
 	}

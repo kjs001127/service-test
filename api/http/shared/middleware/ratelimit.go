@@ -40,7 +40,6 @@ func (r *RateLimiter) Handle(ctx *gin.Context) {
 
 	resolved, ok := key.(Key)
 	if !ok {
-		log.Printf("error occurred while resolving rate limit key")
 		return
 	}
 
