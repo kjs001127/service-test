@@ -61,10 +61,16 @@ func (f *ParserImpl) parseJWT(token string) (*RBACToken, error) {
 	})
 
 	if err != nil {
-		e, ok := err.(*jwt.ValidationError)
-		if !ok || ok && e.Errors&jwt.ValidationErrorIssuedAt == 0 { // Don't report error that token used before issued.
+		var e *jwt.ValidationError
+		ok := errors.As(err, &e)
+
+		if !ok || e.Errors != jwt.ValidationErrorIssuedAt { // Don't report error that token used before issued.
 			return &RBACToken{}, err
 		}
+	}
+
+	if parsed == nil || parsed.Claims == nil {
+		return &RBACToken{}, errors.New("cannot parse token")
 	}
 
 	return parsed.Claims.(*RBACToken), nil
