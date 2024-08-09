@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"log"
-	"net/http"
 	"strconv"
 
 	"github.com/channel-io/ch-app-store/lib/ratelimiter"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,13 +54,10 @@ func (r *RateLimiter) Handle(ctx *gin.Context) {
 
 		result := res.Results[0]
 
-		rateLimitResponse := make(map[string]interface{})
-		rateLimitResponse[XRateLimitLimit] = result.Limit
-		rateLimitResponse[XRateLimitRemaining] = result.Remaining
-		rateLimitResponse[XRateLimitReset] = result.ResetAt
-		rateLimitResponse[XRateLimitWillBeThrottled] = true
+		rateLimitErr := NewRateLimitError(result.Limit, result.Remaining, int(result.ResetAt.Unix()), true)
 
-		ctx.JSON(http.StatusTooManyRequests, rateLimitResponse)
+		ctx.Abort()
+		_ = ctx.Error(rateLimitErr)
 		return
 	} else if err != nil {
 		log.Printf("rate limit error occurred %v", err)
@@ -72,4 +70,48 @@ func (r *RateLimiter) Handle(ctx *gin.Context) {
 	ctx.Header(XRateLimitRemaining, strconv.Itoa(rateLimitResult.Remaining))
 	ctx.Header(XRateLimitLimit, strconv.Itoa(rateLimitResult.Limit))
 	ctx.Header(XRateLimitReset, strconv.FormatInt(rateLimitResult.ResetAt.Unix(), 10))
+}
+
+type RateLimitError struct {
+	apierr.HTTPErrorBuildable
+
+	XRateLimitLimit           int
+	XRateLimitRemaining       int
+	XRateLimitReset           int
+	XRateLimitWillBeThrottled bool
+}
+
+func (r *RateLimitError) HTTPStatusCode() int {
+	return 429
+}
+
+func (r *RateLimitError) ErrorName() string {
+	return "RateLimitError"
+}
+
+func (r *RateLimitError) Causes() []*apierr.Cause {
+	return []*apierr.Cause{
+		{
+			Message: "Rate limit exceeded",
+			Detail: map[string]interface{}{
+				XRateLimitLimit:           r.XRateLimitLimit,
+				XRateLimitRemaining:       r.XRateLimitRemaining,
+				XRateLimitReset:           r.XRateLimitReset,
+				XRateLimitWillBeThrottled: r.XRateLimitWillBeThrottled,
+			},
+		},
+	}
+}
+
+func (r *RateLimitError) Error() string {
+	return r.ErrorName()
+}
+
+func NewRateLimitError(limit, remaining, reset int, willBeThrottled bool) *RateLimitError {
+	return &RateLimitError{
+		XRateLimitLimit:           limit,
+		XRateLimitRemaining:       remaining,
+		XRateLimitReset:           reset,
+		XRateLimitWillBeThrottled: willBeThrottled,
+	}
 }

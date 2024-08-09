@@ -46,6 +46,8 @@ func (l *ErrHandler) propagateStatusToErr(ctx *gin.Context) {
 
 	if ctx.Writer.Status() >= http.StatusInternalServerError {
 		_ = ctx.Error(errors.New("unknown internal error"))
+	} else if ctx.Writer.Status() == http.StatusTooManyRequests {
+		return
 	} else if ctx.Writer.Status() >= http.StatusBadRequest {
 		_ = ctx.Error(apierr.BadRequest(errors.New("unknown bad request error")))
 	}
