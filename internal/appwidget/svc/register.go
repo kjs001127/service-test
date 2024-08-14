@@ -60,7 +60,7 @@ func (s *RegisterSvcImpl) registerWithTx(ctx context.Context, req *AppWidgetRegi
 			return nil, errors.WithStack(err)
 		}
 
-		res := newUpdateResult()
+		res := newUpdateResult(s.repo)
 		updater := util.DeltaUpdater[*model.AppWidget, string]{
 			IDOf:     res.updateKey,
 			DoInsert: res.insertResource,
@@ -114,11 +114,12 @@ type UpdateResult struct {
 	repo AppWidgetRepository
 }
 
-func newUpdateResult() *UpdateResult {
+func newUpdateResult(repo AppWidgetRepository) *UpdateResult {
 	return &UpdateResult{
 		updated:  make([]*model.AppWidget, 0),
 		deleted:  make([]*model.AppWidget, 0),
 		inserted: make([]*model.AppWidget, 0),
+		repo:     repo,
 	}
 }
 func (s *UpdateResult) updateKey(resource *model.AppWidget) string {
