@@ -13,6 +13,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appfx"
 	"github.com/channel-io/ch-app-store/internal/apphttpfx"
 	publicapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/publicfx"
+	"github.com/channel-io/ch-app-store/internal/appwidgetfx"
 	"github.com/channel-io/ch-app-store/internal/authfx"
 	"github.com/channel-io/ch-app-store/internal/brieffx"
 	"github.com/channel-io/ch-app-store/internal/commandfx"
@@ -46,7 +47,7 @@ var Public = fx.Options(
 	publicapprolefx.AppRole,
 	apphttpfx.Function,
 	hookfx.Hook,
-
+	appwidgetfx.AppWidget,
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,
 

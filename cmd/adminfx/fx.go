@@ -9,6 +9,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appfx"
 	"github.com/channel-io/ch-app-store/internal/apphttpfx"
 	privateapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/privatefx"
+	"github.com/channel-io/ch-app-store/internal/appwidgetfx"
 	"github.com/channel-io/ch-app-store/internal/authfx"
 	"github.com/channel-io/ch-app-store/internal/brieffx"
 	"github.com/channel-io/ch-app-store/internal/commandfx"
@@ -46,6 +47,7 @@ var Admin = fx.Options(
 	nativefx.Native,
 	brieffx.Brief,
 	hookfx.Hook,
+	appwidgetfx.AppWidget,
 
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,

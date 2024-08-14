@@ -4,13 +4,14 @@ import (
 	"context"
 	"testing"
 
-	mocksvc "github.com/channel-io/ch-app-store/generated/mock/app/svc"
-	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/internal/app/svc"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+
+	mocksvc "github.com/channel-io/ch-app-store/generated/mock/app/svc"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/internal/app/svc"
+	"github.com/channel-io/ch-app-store/lib/log"
 )
 
 const (
@@ -23,7 +24,9 @@ type AppCrudSvcTestSuite struct {
 	crudSvc             svc.AppLifecycleSvc
 	querySvc            svc.AppQuerySvc
 	appRepo             *mocksvc.AppRepository
+	installQuerySvc     *svc.InstalledAppQuerySvc
 	appInstallationRepo *mocksvc.AppInstallationRepository
+	installSvc          svc.AppInstallSvc
 }
 
 func (a *AppCrudSvcTestSuite) SetupTest() {
@@ -31,7 +34,9 @@ func (a *AppCrudSvcTestSuite) SetupTest() {
 	a.appInstallationRepo = mocksvc.NewAppInstallationRepository(a.T())
 
 	a.querySvc = svc.NewAppQuerySvcImpl(a.appRepo)
-	a.crudSvc = svc.NewAppLifecycleSvc(a.appRepo, a.appInstallationRepo, nil)
+	a.installSvc = svc.NewAppInstallSvc(log.NewNoOpLogger(), a.appInstallationRepo, a.appRepo, nil, nil)
+	a.installQuerySvc = svc.NewInstallQuerySvc(a.appInstallationRepo, a.appRepo, a.installSvc)
+	a.crudSvc = svc.NewAppLifecycleSvcImpl(a.appRepo, a.installSvc, a.installQuerySvc, nil)
 }
 
 func (a *AppCrudSvcTestSuite) TestCreate() {
@@ -77,14 +82,20 @@ func (a *AppCrudSvcTestSuite) TestDelete() {
 		ID:    appID,
 		Title: "test",
 	}
+	installations := []*appmodel.AppInstallation{
+		{AppID: appID, ChannelID: "testChannel1"},
+		{AppID: appID, ChannelID: "testChannel2"},
+		{AppID: appID, ChannelID: "testChannel3"},
+	}
 
 	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(app, nil)
-	a.appInstallationRepo.EXPECT().DeleteByAppID(mock.Anything, appID).Return(nil)
+	a.appInstallationRepo.EXPECT().FetchAllByAppID(mock.Anything, appID).Return(installations, nil)
+	for _, i := range installations {
+		a.appInstallationRepo.EXPECT().Delete(mock.Anything, i.ID()).Return(nil)
+	}
 	a.appRepo.EXPECT().Delete(mock.Anything, appID).Return(nil)
 
-	ctx := context.Background()
-
-	err := a.crudSvc.Delete(ctx, appID)
+	err := a.crudSvc.Delete(context.Background(), appID)
 
 	assert.Nil(a.T(), err)
 }

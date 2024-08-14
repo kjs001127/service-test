@@ -38,7 +38,20 @@ func (a *AppInstallationDao) Fetch(ctx context.Context, identifier model.Install
 	return unmarshal(appInstallation)
 }
 
-func (a *AppInstallationDao) FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
+func (a *AppInstallationDao) FetchAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
+	appInstallation, err := models.AppInstallations(
+		qm.Select("*"),
+		qm.Where("app_id = $1", appID),
+	).All(ctx, a.db)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "error while querying appInstallation")
+	}
+
+	return unmarshalAll(appInstallation)
+}
+
+func (a *AppInstallationDao) FetchAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
 	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),

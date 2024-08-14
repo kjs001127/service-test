@@ -2,9 +2,11 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
+	"github.com/channel-io/ch-app-store/lib/log"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
@@ -19,6 +21,8 @@ type AppInstallSvc interface {
 }
 
 type AppInstallSvcImpl struct {
+	logger log.ContextAwareLogger
+
 	appInstallationRepo AppInstallationRepository
 	appRepo             AppRepository
 	preInstallHandlers  []InstallHandler
@@ -26,12 +30,14 @@ type AppInstallSvcImpl struct {
 }
 
 func NewAppInstallSvc(
+	logger log.ContextAwareLogger,
 	appInstallationRepo AppInstallationRepository,
 	appRepo AppRepository,
 	preInstallHandlers []InstallHandler,
 	postInstallHandlers []InstallHandler,
 ) *AppInstallSvcImpl {
 	return &AppInstallSvcImpl{
+		logger:              logger,
 		appInstallationRepo: appInstallationRepo,
 		appRepo:             appRepo,
 		preInstallHandlers:  preInstallHandlers,
@@ -76,7 +82,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			return errors.WithStack(err)
 		}
 
-		if err := callOnInstall(ctx, s.preInstallHandlers, app, channelID); err != nil {
+		if err := s.callPreInstallHandlers(ctx, app, channelID); err != nil {
 			return errors.Wrap(err, "error while handling onInstall")
 		}
 		return nil
@@ -84,9 +90,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 		return nil, err
 	}
 
-	if err := callOnInstall(ctx, s.postInstallHandlers, app, channelID); err != nil {
-		return nil, errors.Wrap(err, "error while handling post install")
-	}
+	go s.callPostInstallHandlers(app, channelID)
 
 	return app, nil
 }
@@ -105,7 +109,7 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 			return errors.WithStack(err)
 		}
 
-		if err := callOnUnInstall(ctx, s.preInstallHandlers, app, req.ChannelID); err != nil {
+		if err := s.callPreUnInstallHandlers(ctx, app, req.ChannelID); err != nil {
 			return errors.Wrap(err, "error while uninstalling app")
 		}
 
@@ -114,15 +118,13 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 		return err
 	}
 
-	if err := callOnUnInstall(ctx, s.postInstallHandlers, app, req.ChannelID); err != nil {
-		return err
-	}
+	go s.callPostUnInstallHandlers(app, req.ChannelID)
 
 	return nil
 }
 
-func callOnInstall(ctx context.Context, handlers []InstallHandler, app *model.App, channelID string) error {
-	for _, handler := range handlers {
+func (s *AppInstallSvcImpl) callPreInstallHandlers(ctx context.Context, app *model.App, channelID string) error {
+	for _, handler := range s.preInstallHandlers {
 		if err := handler.OnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
@@ -130,13 +132,35 @@ func callOnInstall(ctx context.Context, handlers []InstallHandler, app *model.Ap
 	return nil
 }
 
-func callOnUnInstall(ctx context.Context, handlers []InstallHandler, app *model.App, channelID string) error {
-	for _, handler := range handlers {
+func (s *AppInstallSvcImpl) callPreUnInstallHandlers(ctx context.Context, app *model.App, channelID string) error {
+	for _, handler := range s.preInstallHandlers {
 		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (s *AppInstallSvcImpl) callPostUnInstallHandlers(app *model.App, channelID string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	for _, handler := range s.postInstallHandlers {
+		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
+			s.logger.Errorw(ctx, "uninstall post install handler failed", "appID", app.ID, "channelID", channelID, "err", err)
+		}
+	}
+}
+
+func (s *AppInstallSvcImpl) callPostInstallHandlers(app *model.App, channelID string) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	for _, handler := range s.postInstallHandlers {
+		if err := handler.OnInstall(ctx, app, channelID); err != nil {
+			s.logger.Errorw(ctx, "install post install handler failed", "appID", app.ID, "channelID", channelID, "err", err)
+		}
+	}
 }
 
 type InstallHandler interface {

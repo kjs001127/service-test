@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/desk/commercehub"
 	"github.com/channel-io/ch-app-store/api/http/desk/install"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/desk/widget"
 	"github.com/channel-io/ch-app-store/api/http/doc"
 )
 
@@ -22,6 +23,7 @@ var DeskHandlers = fx.Options(
 		gintoolfx.AddTag(command.NewHandler),
 		gintoolfx.AddTag(commercehub.NewHandler),
 		gintoolfx.AddTag(auth.NewHandler),
+		gintoolfx.AddTag(widget.NewHandler),
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),

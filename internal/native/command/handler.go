@@ -35,7 +35,7 @@ func NewHandler(
 	}
 }
 
-func (r Handler) RegisterTo(registry native.FunctionRegistry) {
+func (r *Handler) RegisterTo(registry native.FunctionRegistry) {
 	registry.Register(public.RegisterCommands, r.RegisterCommand)
 	registry.Register(private.GetCommandChannelActivations, r.GetCommandChannelActivations)
 	registry.Register(private.ToggleCommand, r.ToggleCommand)

@@ -16,7 +16,8 @@ type AppRepository interface {
 
 type AppInstallationRepository interface {
 	Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error)
-	FindAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error)
+	FetchAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error)
+	FetchAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error)
 	Save(ctx context.Context, appInstallation *model.AppInstallation) error
 	SaveIfNotExists(ctx context.Context, install *model.AppInstallation) error
 	Delete(ctx context.Context, identifier model.InstallationID) error

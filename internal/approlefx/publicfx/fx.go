@@ -13,6 +13,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
 	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/widget/action/public"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
@@ -47,6 +48,11 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ServiceName,
 							Action:  publiccmd.RegisterCommands,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 					}
