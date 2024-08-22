@@ -226,7 +226,8 @@ type AppsWithWidgetsView struct {
 }
 
 type AppWidgetView struct {
-	ID string `json:"id"`
+	ID    string `json:"id"`
+	AppID string `json:"appId"`
 
 	Name            string              `json:"name"`
 	Description     *string             `json:"description,omitempty"`
@@ -248,6 +249,7 @@ func NewAppWidgetViews(origins []*model.AppWidget) []*AppWidgetView {
 		ret = append(ret, &AppWidgetView{
 			ID:                     origin.ID,
 			Name:                   origin.Name,
+			AppID:                  origin.AppID,
 			Description:            origin.Description,
 			NameDescI18nMap:        nameDescI18nMap(origin.NameDescI18nMap),
 			DefaultDescription:     origin.DefaultDescription,
