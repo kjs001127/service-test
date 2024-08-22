@@ -67,6 +67,11 @@ var RemoteAppDevSvcs = fx.Options(
 					return []*protomodel.Claim{
 						{
 							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.SearchGroups,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.WriteUserChatMessage,
 							Scope:   []string{"channel-{id}"},
 						},

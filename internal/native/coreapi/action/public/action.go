@@ -11,6 +11,7 @@ const (
 	GetChannel           = "getChannel"
 	ManageUserChat       = "manageUserChat"
 	GetGroup             = "getGroup"
+	SearchGroups         = "searchGroups"
 
 	WriteGroupMessageAsManager      = "writeGroupMessageAsManager"
 	WriteUserChatMessageAsManager   = "writeUserChatMessageAsManager"

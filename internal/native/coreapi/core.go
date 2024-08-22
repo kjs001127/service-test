@@ -61,10 +61,11 @@ func NewCoreApi(adminUrl string, resty *resty.Client) *CoreApi {
 
 		pub.GetUserChat: userChatBaseUri + "/" + pub.GetUserChat,
 
-		pub.GetUser:    userBaseUri + "/" + pub.GetUser,
-		pub.GetChannel: channelBaseUri + "/" + pub.GetChannel,
-		pub.GetGroup:   groupBaseUri + "/" + pub.GetGroup,
-		pvt.SearchUser: userBaseUri + "/" + pvt.SearchUser,
+		pub.GetUser:      userBaseUri + "/" + pub.GetUser,
+		pub.GetChannel:   channelBaseUri + "/" + pub.GetChannel,
+		pub.GetGroup:     groupBaseUri + "/" + pub.GetGroup,
+		pub.SearchGroups: groupBaseUri + "/" + pub.SearchGroups,
+		pvt.SearchUser:   userBaseUri + "/" + pvt.SearchUser,
 
 		pvt.FindOrCreateContactAndUser: mediumBaseUri + "/" + pvt.FindOrCreateContactAndUser,
 		pvt.SearchUserChatsByContact:   userChatBaseUri + "/" + pvt.SearchUserChatsByContact,
