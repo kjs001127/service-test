@@ -17,6 +17,10 @@ type AppWidgetInvoker interface {
 	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error)
 }
 
+type AppWidgetRequest struct {
+	Language string `json:"language"`
+}
+
 type Action struct {
 	Type       string         `json:"type"`
 	Attributes map[string]any `json:"attributes"`
@@ -25,14 +29,14 @@ type Action struct {
 type AppWidgetInvokerImpl struct {
 	repo            AppWidgetRepository
 	installQuerySvc *svc.InstalledAppQuerySvc
-	delegate        svc.TypedInvoker[*svc.EmptyRequest, *Action]
+	delegate        svc.TypedInvoker[*AppWidgetRequest, *Action]
 }
 
 func NewAppWidgetInvokerImpl(repo AppWidgetRepository, installQuerySvc *svc.InstalledAppQuerySvc, delegate svc.Invoker) *AppWidgetInvokerImpl {
 	return &AppWidgetInvokerImpl{
 		repo:            repo,
 		installQuerySvc: installQuerySvc,
-		delegate:        svc.NewTypedInvoker[*svc.EmptyRequest, *Action](delegate),
+		delegate:        svc.NewTypedInvoker[*AppWidgetRequest, *Action](delegate),
 	}
 }
 
@@ -42,7 +46,7 @@ func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.User
 		return nil, err
 	}
 
-	resp := i.delegate.Invoke(ctx, widget.AppID, svc.TypedRequest[*svc.EmptyRequest]{
+	resp := i.delegate.Invoke(ctx, widget.AppID, svc.TypedRequest[*AppWidgetRequest]{
 		FunctionName: widget.ActionFunctionName,
 		Context: svc.ChannelContext{
 			Channel: svc.Channel{
@@ -52,6 +56,9 @@ func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.User
 				ID:   invoker.ID,
 				Type: svc.CallerTypeUser,
 			},
+		},
+		Params: &AppWidgetRequest{
+			Language: invoker.Language,
 		},
 	})
 
