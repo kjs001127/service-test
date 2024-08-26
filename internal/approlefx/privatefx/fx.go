@@ -183,7 +183,7 @@ var RemoteAppDevSvcs = fx.Options(
 						},
 												{
 							Service: config.Get().ChannelServiceName,
-							Action:  privatecore.SearchGroups,
+							Action:  publiccore.SearchGroups,
 							Scope:   []string{"channel-{id}"},
 						},
 					}
