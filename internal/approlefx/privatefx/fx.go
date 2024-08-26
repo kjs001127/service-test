@@ -181,6 +181,11 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatecore.CreateUserChat,
 							Scope:   []string{"channel-{id}"},
 						},
+												{
+							Service: config.Get().ChannelServiceName,
+							Action:  privatecore.SearchGroups,
+							Scope:   []string{"channel-{id}"},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
