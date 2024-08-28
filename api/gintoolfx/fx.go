@@ -91,6 +91,7 @@ func setupHook(lifecycle fx.Lifecycle, s *gintool.Server) {
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
+			time.Sleep(time.Second * 30)
 			s.GracefulShutdown(ctx)
 			return nil
 		},
