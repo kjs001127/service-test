@@ -57,6 +57,11 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatehook.RegisterToggleHook,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  public.RegisterAppWidgets,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
@@ -64,6 +69,11 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ServiceName,
 							Action:  publiccmd.RegisterCommands,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 						{
@@ -181,7 +191,7 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatecore.CreateUserChat,
 							Scope:   []string{"channel-{id}"},
 						},
-												{
+						{
 							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.SearchGroups,
 							Scope:   []string{"channel-{id}"},
