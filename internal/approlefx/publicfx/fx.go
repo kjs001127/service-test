@@ -121,6 +121,21 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  publiccore.BatchGetManagers,
 							Scope:   []string{"channel-{id}"},
 						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.SearchArticles,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetRevision,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetArticle,
+							Scope:   []string{"channel-{id}"},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
