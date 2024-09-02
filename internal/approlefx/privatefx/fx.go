@@ -59,6 +59,11 @@ var RemoteAppDevSvcs = fx.Options(
 						},
 						{
 							Service: config.Get().ServiceName,
+							Action:  privateinstall.CheckInstall,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+            },
+            {
+              Service:  config.Get().ServiceName,
 							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
@@ -69,11 +74,6 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ServiceName,
 							Action:  publiccmd.RegisterCommands,
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
-						},
-						{
-							Service: config.Get().ServiceName,
-							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 						{

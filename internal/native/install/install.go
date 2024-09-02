@@ -60,6 +60,7 @@ func (c *Checker) CheckInstall(ctx context.Context, token native.Token, request 
 
 const (
 	channelScope = "channel"
+	appScope     = "app"
 )
 
 func (c *Checker) authorize(ctx context.Context, token native.Token, req CheckRequest) error {
@@ -74,6 +75,7 @@ func (c *Checker) authorize(ctx context.Context, token native.Token, req CheckRe
 
 	if !parsedRbac.CheckScopes(authgen.Scopes{
 		channelScope: {req.ChannelID},
+		appScope:     {req.AppID},
 	}) {
 		return apierr.Unauthorized(errors.New("scope check fail"))
 	}
