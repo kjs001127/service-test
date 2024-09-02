@@ -53,6 +53,7 @@ var Values = fx.Options(
 			config.Get().RateLimiter.AppRuleID,
 			fx.ResultTags(AppBoundRuleID),
 		),
+		config.Get().Services,
 		config.Get().Log,
 		config.Get().DDB,
 		config.Get().Psql,

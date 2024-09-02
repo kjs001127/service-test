@@ -9,7 +9,7 @@ import (
 
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/systemlog/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/systemlog/action/private"
 	"github.com/channel-io/ch-app-store/internal/systemlog/model"
 	"github.com/channel-io/ch-app-store/internal/systemlog/svc"
 )

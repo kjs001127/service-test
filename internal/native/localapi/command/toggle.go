@@ -11,7 +11,7 @@ import (
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/command/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/command/action/private"
 )
 
 func (r *Handler) ToggleCommand(

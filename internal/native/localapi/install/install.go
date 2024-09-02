@@ -11,7 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/install/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/install/action/private"
 )
 
 type Checker struct {

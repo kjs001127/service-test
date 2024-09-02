@@ -3,6 +3,14 @@ package privatefx
 import (
 	"fmt"
 
+	privatecmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/private"
+	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
+	privatehook "github.com/channel-io/ch-app-store/internal/native/localapi/hook/action/private"
+	privateinstall "github.com/channel-io/ch-app-store/internal/native/localapi/install/action/private"
+	privatesystemlog "github.com/channel-io/ch-app-store/internal/native/localapi/systemlog/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
+	"github.com/channel-io/ch-app-store/internal/util"
+
 	"github.com/channel-io/ch-app-store/config"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/appfx"
@@ -11,14 +19,8 @@ import (
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	privatecmd "github.com/channel-io/ch-app-store/internal/native/command/action/private"
-	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
-	privatecore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/private"
-	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
-	privatehook "github.com/channel-io/ch-app-store/internal/native/hook/action/private"
-	privateinstall "github.com/channel-io/ch-app-store/internal/native/install/action/private"
-	privatesystemlog "github.com/channel-io/ch-app-store/internal/native/systemlog/action/private"
-	"github.com/channel-io/ch-app-store/internal/native/widget/action/public"
+	privatecore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/private"
+	publiccore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/public"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
@@ -194,6 +196,21 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.SearchGroups,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.SearchArticles,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetRevision,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetArticle,
 							Scope:   []string{"channel-{id}"},
 						},
 					}

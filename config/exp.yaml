@@ -28,4 +28,8 @@ rateLimiter:
   appRuleId: 12
   managerRuleId: 11
   userRuleId: 13
-
+services:
+  CHANNEL-ADMIN-API: "admin-api.in.exp.channel.io"
+  CHANNEL-API: "api.exp.channel.io"
+  DOCUMENT-API: "document-api.exp.channel.io"
+  APP-STORE-API: "app-store-api.exp.channel.io"

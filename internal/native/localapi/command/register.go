@@ -11,7 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/command/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
 )
 
 type RegisterRequest struct {

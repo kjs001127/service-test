@@ -4,8 +4,8 @@ import (
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/command/action/private"
-	"github.com/channel-io/ch-app-store/internal/native/command/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/command/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
 )
 
 type Handler struct {

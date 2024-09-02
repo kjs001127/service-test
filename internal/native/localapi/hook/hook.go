@@ -8,7 +8,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/hook/model"
 	"github.com/channel-io/ch-app-store/internal/hook/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/hook/action/private"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/hook/action/private"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 

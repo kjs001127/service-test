@@ -11,15 +11,27 @@ import (
 
 	"github.com/spf13/viper"
 
+	"github.com/channel-io/ch-app-store/internal/util"
 	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/dynamodb"
 	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
+type Stage string
+
+const (
+	EXP        = Stage("exp")
+	PRODUCTION = Stage("production")
+	FEATURE    = Stage("feature")
+	TEST       = Stage("test")
+	DEV        = Stage("development")
+	CI         = Stage("ci")
+)
+
 var (
 	cfg          *Config
 	cfgExtension = "yaml"
-	validStages  = []string{"ci", "development", "test", "exp", "production"}
+	validStages  = []Stage{EXP, PRODUCTION, FEATURE, TEST, DEV, CI}
 )
 
 //
@@ -45,6 +57,7 @@ type Config struct {
 		ManagerRuleID string `required:"true"`
 		UserRuleID    string `required:"true"`
 	}
+	Services util.ServiceMap `required:"true"`
 }
 
 func init() {
@@ -115,8 +128,7 @@ func replaceEnvVars(c string) string {
 	})
 }
 
-/// Validation
-
+// / Validation
 func validate(c *Config) {
 	if err := validateStage(c); err != nil {
 		panic(err)
@@ -129,7 +141,7 @@ func validate(c *Config) {
 
 func validateStage(cfg *Config) error {
 	for _, validStage := range validStages {
-		if validStage == cfg.Stage {
+		if validStage == Stage(cfg.Stage) {
 			return nil
 		}
 	}

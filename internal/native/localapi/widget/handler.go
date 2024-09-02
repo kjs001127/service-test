@@ -4,7 +4,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appwidget/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/widget/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
 )
 
 type Handler struct {

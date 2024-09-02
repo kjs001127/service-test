@@ -7,7 +7,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/approle/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/auth/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/auth/action/public"
 )
 
 type Request struct {

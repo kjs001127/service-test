@@ -18,4 +18,8 @@ const (
 	WriteDirectChatMessageAsManager = "writeDirectChatMessageAsManager"
 
 	WriteUserChatMessageAsUser = "writeUserChatMessageAsUser"
+
+	GetArticle     = "getArticle"
+	GetRevision    = "getRevision"
+	SearchArticles = "searchArticles"
 )

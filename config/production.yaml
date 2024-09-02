@@ -26,3 +26,8 @@ rateLimiter:
   url: https://rate-limiter.in.channel.io
   appRuleId: xxx
   channelRuleId: xxx
+services:
+  CHANNEL-ADMIN-API: "admin-api.in.channel.io"
+  CHANNEL-API: "api.channel.io"
+  DOCUMENT-API: "document-api.channel.io"
+  APP-STORE-API: "app-store-api.channel.io"

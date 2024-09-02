@@ -3,6 +3,9 @@ package publicfx
 import (
 	"fmt"
 
+	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
+
 	"github.com/channel-io/ch-app-store/config"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/appfx"
@@ -11,9 +14,7 @@ import (
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
-	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
-	"github.com/channel-io/ch-app-store/internal/native/widget/action/public"
+	publiccore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/public"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
