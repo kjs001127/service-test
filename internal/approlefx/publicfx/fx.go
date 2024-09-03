@@ -6,7 +6,7 @@ import (
 	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
 	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
 	"github.com/channel-io/ch-app-store/internal/util"
-	
+
 	"github.com/channel-io/ch-app-store/config"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/appfx"
@@ -35,7 +35,6 @@ func services() []string {
 	}
 	return ret
 }
-
 
 var RemoteAppDevSvcs = fx.Options(
 	fx.Supply(

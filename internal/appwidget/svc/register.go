@@ -44,7 +44,9 @@ func (s *RegisterSvcImpl) Register(ctx context.Context, req *AppWidgetRegisterRe
 		return err
 	}
 
-	go s.publishDeletedEvent(res.deleted)
+	if len(res.deleted) > 0 {
+		go s.publishDeletedEvent(res.deleted)
+	}
 
 	return nil
 }
@@ -140,7 +142,7 @@ func (s *UpdateResult) updateResource(ctx context.Context, oldbie *model.AppWidg
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save widget fail. widget: %v, cause: %w", newbie, err)
 	}
-	s.updated = append(s.inserted)
+	s.updated = append(s.updated)
 	return nil
 }
 
@@ -148,6 +150,6 @@ func (s *UpdateResult) deleteResource(ctx context.Context, oldbie *model.AppWidg
 	if err := s.repo.Delete(ctx, oldbie.ID); err != nil {
 		return fmt.Errorf("delete widget fail. widget: %v, cause: %w", oldbie, err)
 	}
-	s.deleted = append(s.inserted)
+	s.deleted = append(s.deleted)
 	return nil
 }
