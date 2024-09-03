@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
-	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
 	"github.com/channel-io/ch-app-store/internal/util"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -58,11 +57,6 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ServiceName,
 							Action:  publiccmd.RegisterCommands,
-							Scope:   []string{fmt.Sprintf("app-%s", appId)},
-						},
-						{
-							Service: config.Get().ServiceName,
-							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 					}

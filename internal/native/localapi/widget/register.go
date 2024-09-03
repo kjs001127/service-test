@@ -10,7 +10,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appwidget/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/private"
 )
 
 func (r *Handler) RegisterAppWidgets(
@@ -44,7 +44,7 @@ func (r *Handler) authorizeReg(ctx context.Context, token native.Token, req *svc
 		return err
 	}
 
-	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), public.RegisterAppWidgets) {
+	if !parsedRbac.CheckAction(authgen.Service(r.serviceName), private.RegisterAppWidgets) {
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 

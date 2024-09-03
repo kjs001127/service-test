@@ -1,4 +1,4 @@
-package public
+package private
 
 const (
 	RegisterAppWidgets = "registerAppWidgets"

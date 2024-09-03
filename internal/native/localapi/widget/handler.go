@@ -4,7 +4,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appwidget/svc"
 	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
 	"github.com/channel-io/ch-app-store/internal/native"
-	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/public"
+	"github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/private"
 )
 
 type Handler struct {
@@ -18,5 +18,5 @@ func NewHandler(serviceName string, registerSvc svc.RegisterSvc, parser authgen.
 }
 
 func (r *Handler) RegisterTo(registry native.FunctionRegistry) {
-	registry.Register(public.RegisterAppWidgets, r.RegisterAppWidgets)
+	registry.Register(private.RegisterAppWidgets, r.RegisterAppWidgets)
 }
