@@ -220,6 +220,11 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  publiccore.GetArticle,
 							Scope:   []string{"channel-{id}"},
 						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  privatecore.GetPlugin,
+							Scope:   []string{"channel-{id}"},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {

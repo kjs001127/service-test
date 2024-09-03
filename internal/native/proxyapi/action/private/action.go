@@ -7,4 +7,5 @@ const (
 	SearchUserChatsByContact   = "searchUserChatsByContact"
 	UpdateUserChatState        = "updateUserChatState"
 	CreateUserChat             = "createUserChat"
+	GetPlugin                  = "getPlugin"
 )

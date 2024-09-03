@@ -40,6 +40,9 @@ var CHANNEL_API_ROUTES = toService(util.CHANNEL_ADMIN_API).withRule(rule{
 				pub.BatchGetManagers,
 				pub.SearchManagers,
 			},
+			path("plugins"): hasFunctions{
+				pvt.GetPlugin,
+			},
 		},
 	},
 })
