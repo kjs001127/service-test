@@ -90,5 +90,9 @@ func (a *AppWidget) Validate() error {
 			}
 		}
 	}
+
+	if len(a.ActionFunctionName) == 0 {
+		return apierr.BadRequest(fmt.Errorf("actionFunctionName is required"))
+	}
 	return nil
 }
