@@ -33,10 +33,18 @@ var AppRole = fx.Options(
 	AppRoleDaos,
 )
 
+func services() []string {
+	var ret []string
+	for _, service := range config.Get().Services {
+		ret = append(ret, service.String())
+	}
+	return ret
+}
+
 var RemoteAppDevSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
-			[]string{config.Get().ServiceName, config.Get().ChannelServiceName},
+			services(),
 			fx.ResultTags(serviceNameGroup),
 		),
 	),
@@ -63,9 +71,9 @@ var RemoteAppDevSvcs = fx.Options(
 							Service: config.Get().ServiceName,
 							Action:  privateinstall.CheckInstall,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
-            },
-            {
-              Service:  config.Get().ServiceName,
+						},
+						{
+							Service: config.Get().ServiceName,
 							Action:  public.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
