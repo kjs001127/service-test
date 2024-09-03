@@ -11,8 +11,11 @@ var CHANNEL_API_ROUTES = toService(util.CHANNEL_ADMIN_API).withRule(rule{
 		version("v1"): hasSubPaths{
 			path("channels"):     hasFunctions{pub.GetChannel},
 			path("mediums"):      hasFunctions{pvt.FindOrCreateContactAndUser},
-			path("groups"):       hasFunctions{pub.GetGroup},
 			path("direct-chats"): hasFunctions{pvt.CreateDirectChat},
+			path("groups"): hasFunctions{
+				pub.GetGroup,
+				pub.SearchGroups,
+			},
 			path("users"): hasFunctions{
 				pub.GetUser,
 				pvt.SearchUser,
