@@ -133,7 +133,7 @@ func (s *UpdateResult) insertResource(ctx context.Context, newbie *model.AppWidg
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save widget fail. widget: %v, cause: %w", newbie, err)
 	}
-	s.inserted = append(s.inserted)
+	s.inserted = append(s.inserted, newbie)
 	return nil
 }
 
@@ -142,7 +142,7 @@ func (s *UpdateResult) updateResource(ctx context.Context, oldbie *model.AppWidg
 	if _, err := s.repo.Save(ctx, newbie); err != nil {
 		return fmt.Errorf("save widget fail. widget: %v, cause: %w", newbie, err)
 	}
-	s.updated = append(s.updated)
+	s.updated = append(s.updated, newbie)
 	return nil
 }
 
