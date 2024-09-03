@@ -150,6 +150,6 @@ func (s *UpdateResult) deleteResource(ctx context.Context, oldbie *model.AppWidg
 	if err := s.repo.Delete(ctx, oldbie.ID); err != nil {
 		return fmt.Errorf("delete widget fail. widget: %v, cause: %w", oldbie, err)
 	}
-	s.deleted = append(s.deleted)
+	s.deleted = append(s.deleted, oldbie)
 	return nil
 }
