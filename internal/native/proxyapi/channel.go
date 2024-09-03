@@ -6,35 +6,37 @@ import (
 	"github.com/channel-io/ch-app-store/internal/util"
 )
 
-var CHANNEL_API_ROUTES = toService(util.CHANNEL_API).withRule(rule{
-	version("v1"): hasSubPaths{
-		path("channels"):     hasFunctions{pub.GetChannel},
-		path("mediums"):      hasFunctions{pvt.FindOrCreateContactAndUser},
-		path("groups"):       hasFunctions{pub.GetGroup},
-		path("direct-chats"): hasFunctions{pvt.CreateDirectChat},
-		path("users"): hasFunctions{
-			pub.GetUser,
-			pvt.SearchUser,
-		},
-		path("user-chats"): hasFunctions{
-			pub.ManageUserChat,
-			pub.GetUserChat,
-			pvt.SearchUserChatsByContact,
-			pvt.UpdateUserChatState,
-			pvt.CreateUserChat,
-		},
-		path("messages"): hasFunctions{
-			pub.WriteGroupMessage,
-			pub.WriteGroupMessageAsManager,
-			pub.WriteUserChatMessage,
-			pub.WriteUserChatMessageAsManager,
-			pub.WriteUserChatMessageAsUser,
-			pub.WriteDirectChatMessageAsManager,
-		},
-		path("managers"): hasFunctions{
-			pub.GetManager,
-			pub.BatchGetManagers,
-			pub.SearchManagers,
+var CHANNEL_API_ROUTES = toService(util.CHANNEL_ADMIN_API).withRule(rule{
+	path("api/admin/core"): hasSubPaths{
+		version("v1"): hasSubPaths{
+			path("channels"):     hasFunctions{pub.GetChannel},
+			path("mediums"):      hasFunctions{pvt.FindOrCreateContactAndUser},
+			path("groups"):       hasFunctions{pub.GetGroup},
+			path("direct-chats"): hasFunctions{pvt.CreateDirectChat},
+			path("users"): hasFunctions{
+				pub.GetUser,
+				pvt.SearchUser,
+			},
+			path("user-chats"): hasFunctions{
+				pub.ManageUserChat,
+				pub.GetUserChat,
+				pvt.SearchUserChatsByContact,
+				pvt.UpdateUserChatState,
+				pvt.CreateUserChat,
+			},
+			path("messages"): hasFunctions{
+				pub.WriteGroupMessage,
+				pub.WriteGroupMessageAsManager,
+				pub.WriteUserChatMessage,
+				pub.WriteUserChatMessageAsManager,
+				pub.WriteUserChatMessageAsUser,
+				pub.WriteDirectChatMessageAsManager,
+			},
+			path("managers"): hasFunctions{
+				pub.GetManager,
+				pub.BatchGetManagers,
+				pub.SearchManagers,
+			},
 		},
 	},
 })
