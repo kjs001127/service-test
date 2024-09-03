@@ -28,10 +28,19 @@ var AppRole = fx.Options(
 	AppRoleDaos,
 )
 
+func services() []string {
+	var ret []string
+	for _, service := range config.Get().Services {
+		ret = append(ret, service.String())
+	}
+	return ret
+}
+
+
 var RemoteAppDevSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
-			[]string{config.Get().ServiceName, config.Get().ChannelServiceName},
+			services(),
 			fx.ResultTags(serviceNameGroup),
 		),
 	),
