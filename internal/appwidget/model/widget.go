@@ -44,7 +44,7 @@ func (a *AppWidget) Validate() error {
 	}
 
 	if !nameRegex.MatchString(a.Name) {
-		return apierr.BadRequest(errors.New("name must be less than 30 letters with only alphabet and numbers"))
+		return apierr.BadRequest(errors.New("name must be less than 30 letters with only alphabet"))
 	}
 
 	if a.Description != nil && utf8.RuneCountInString(*a.Description) > maxDescriptionLength {
