@@ -11,11 +11,14 @@ import (
 )
 
 var (
-	nameRegex                   = regexp.MustCompile(`^[a-zA-Z_-]{1,30}$`)
-	i18nNameRegex               = regexp.MustCompile(`^[^\s]{1,30}$`)
-	maxDescriptionLength        = 100
+	nameRegex     = regexp.MustCompile(`^[a-zA-Z_-]{1,20}$`)
+	i18nNameRegex = regexp.MustCompile(`^[^@#$%:/\\\\]{1,20}$`)
+
+	defaultNameRegex     = regexp.MustCompile(`^[^@#$%:/\\\\]{0,20}$`)
+	i18nDefaultNameRegex = regexp.MustCompile(`^[^@#$%:/\\\\]{0,20}$`)
+
+	maxDescriptionLength        = 40
 	maxDefaultDescriptionLength = 40
-	maxDefaultNameLength        = 20
 )
 
 type AppWidget struct {
@@ -43,45 +46,39 @@ func (a *AppWidget) Validate() error {
 		return apierr.BadRequest(fmt.Errorf("appId is must not be empty"))
 	}
 
+	// check name & description
 	if !nameRegex.MatchString(a.Name) {
-		return apierr.BadRequest(errors.New("name must be less than 30 letters with only alphabet"))
+		return apierr.BadRequest(errors.New("name must be less than 20 letters with only alphabet"))
 	}
-
 	if a.Description != nil && utf8.RuneCountInString(*a.Description) > maxDescriptionLength {
-		return apierr.BadRequest(errors.New("description length should be less than 100"))
+		return apierr.BadRequest(errors.New("description length should be less than 40"))
 	}
 
-	if a.DefaultName != nil && utf8.RuneCountInString(*a.DefaultName) > maxDefaultNameLength {
+	// check defaultName & description
+	if a.DefaultName != nil && !defaultNameRegex.MatchString(*a.DefaultName) {
 		return apierr.BadRequest(errors.New("defaultName length should be less than 20"))
 	}
-
 	if a.DefaultDescription != nil && utf8.RuneCountInString(*a.DefaultDescription) > maxDefaultDescriptionLength {
 		return apierr.BadRequest(errors.New("defaultDescription length should be less than 40"))
 	}
 
+	// check nameDescI18nMap
 	if a.NameDescI18nMap != nil {
 		for _, v := range a.NameDescI18nMap {
-			if len(v.Name) <= 0 {
-				return apierr.BadRequest(errors.New("name is required"))
-			}
-
 			if !i18nNameRegex.MatchString(v.Name) {
-				return apierr.BadRequest(errors.New("name length should be less than 30"))
+				return apierr.BadRequest(errors.New("name length should be less than 20"))
 			}
 
 			if utf8.RuneCountInString(v.Description) > maxDescriptionLength {
-				return apierr.BadRequest(errors.New("description length should be less than 100"))
+				return apierr.BadRequest(errors.New("description length should be less than 40"))
 			}
 		}
 	}
 
+	// check defaultNameDescI18nMap
 	if a.DefaultNameDescI18nMap != nil {
 		for _, v := range a.DefaultNameDescI18nMap {
-			if len(v.Name) <= 0 {
-				return apierr.BadRequest(errors.New("default name is required"))
-			}
-
-			if !i18nNameRegex.MatchString(v.Name) {
+			if !i18nDefaultNameRegex.MatchString(v.Name) {
 				return apierr.BadRequest(errors.New("default name length should be less than 20"))
 			}
 

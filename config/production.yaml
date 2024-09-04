@@ -24,8 +24,9 @@ log:
     tracesSampleRate: 1.0
 rateLimiter:
   url: https://rate-limiter.in.channel.io
-  appRuleId: xxx
-  channelRuleId: xxx
+  appRuleId: 9
+  userRuleId: 10
+  managerRuleId: 11
 services:
   CHANNEL-ADMIN-API: "admin-api.in.channel.io"
   CHANNEL-API: "api.channel.io"
