@@ -55,7 +55,7 @@ func (a *AppWidget) Validate() error {
 	}
 
 	// check defaultName & description
-	if a.DefaultName != nil && defaultNameRegex.MatchString(*a.DefaultName) {
+	if a.DefaultName != nil && !defaultNameRegex.MatchString(*a.DefaultName) {
 		return apierr.BadRequest(errors.New("defaultName length should be less than 20"))
 	}
 	if a.DefaultDescription != nil && utf8.RuneCountInString(*a.DefaultDescription) > maxDefaultDescriptionLength {
