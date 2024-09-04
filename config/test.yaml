@@ -23,3 +23,13 @@ log:
     level: error
     dsn:
     tracesSampleRate: 1.0
+rateLimiter:
+  url: http://localhost:3000
+  appRuleId: 1
+  managerRuleId: 2
+  userRuleId: 3
+services:
+  CHANNEL-ADMIN-API: "admin-api.in.exp.channel.io"
+  CHANNEL-API: "api.exp.channel.io"
+  DOCUMENT-API: "document-api.exp.channel.io"
+  APP-STORE-API: "app-store-api.exp.channel.io"

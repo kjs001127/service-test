@@ -24,7 +24,7 @@ func (h *Handler) checkInstall(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 	appID := ctx.Param("appID")
 
-	_, err := h.querySvc.Query(ctx, app.InstallationID{
+	_, err := h.querySvc.QueryInstalledApp(ctx, app.InstallationID{
 		AppID:     appID,
 		ChannelID: channelID,
 	})

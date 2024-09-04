@@ -11,6 +11,7 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/admin/install"
 	"github.com/channel-io/ch-app-store/api/http/admin/media"
 	"github.com/channel-io/ch-app-store/api/http/admin/role"
+	"github.com/channel-io/ch-app-store/api/http/admin/widget"
 
 	"github.com/channel-io/ch-app-store/api/http/doc"
 )
@@ -23,6 +24,7 @@ var AdminHandlers = fx.Options(
 		gintoolfx.AddTag(role.NewHandler),
 		gintoolfx.AddTag(media.NewHandler),
 		gintoolfx.AddTag(dev.NewHandler),
+		gintoolfx.AddTag(widget.NewHandler),
 	),
 
 	fx.Supply(

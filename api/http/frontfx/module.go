@@ -9,12 +9,14 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/front/auth"
 	"github.com/channel-io/ch-app-store/api/http/front/command"
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
+	"github.com/channel-io/ch-app-store/api/http/front/widget"
 )
 
 var FrontHandlers = fx.Options(
 	fx.Provide(
 		gintoolfx.AddTag(command.NewHandler),
 		gintoolfx.AddTag(auth.NewHandler),
+		gintoolfx.AddTag(widget.NewHandler),
 		fx.Annotate(
 			middleware.NewAuth,
 			fx.As(new(gintool.Middleware)),
@@ -22,6 +24,11 @@ var FrontHandlers = fx.Options(
 		),
 		fx.Annotate(
 			middleware.NewUserRequest,
+			fx.As(new(gintool.Middleware)),
+			fx.ResultTags(gintoolfx.MiddlewaresGroup),
+		),
+		fx.Annotate(
+			middleware.NewXSessionKeyResolver,
 			fx.As(new(gintool.Middleware)),
 			fx.ResultTags(gintoolfx.MiddlewaresGroup),
 		),

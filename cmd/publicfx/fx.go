@@ -13,6 +13,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appfx"
 	"github.com/channel-io/ch-app-store/internal/apphttpfx"
 	publicapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/publicfx"
+	"github.com/channel-io/ch-app-store/internal/appwidgetfx"
 	"github.com/channel-io/ch-app-store/internal/authfx"
 	"github.com/channel-io/ch-app-store/internal/brieffx"
 	"github.com/channel-io/ch-app-store/internal/commandfx"
@@ -25,6 +26,7 @@ import (
 	"github.com/channel-io/ch-app-store/lib/ddbfx"
 	"github.com/channel-io/ch-app-store/lib/i18nfx"
 	"github.com/channel-io/ch-app-store/lib/logfx"
+	"github.com/channel-io/ch-app-store/lib/ratelimiterfx"
 
 	"go.uber.org/fx"
 )
@@ -45,7 +47,7 @@ var Public = fx.Options(
 	publicapprolefx.AppRole,
 	apphttpfx.Function,
 	hookfx.Hook,
-
+	appwidgetfx.AppWidget,
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,
 
@@ -55,6 +57,7 @@ var Public = fx.Options(
 	logfx.Logger,
 	ddbfx.DynamoDB,
 	i18nfx.I18n,
+	ratelimiterfx.RateLimiter,
 )
 
 var PublicHttp = fx.Options(

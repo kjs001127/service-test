@@ -71,3 +71,6 @@ func (r *TypedResponse[REQ]) IsError() bool {
 	}
 	return true
 }
+
+type EmptyRequest struct {
+}

@@ -29,7 +29,7 @@ func NewInvoker(
 }
 
 func (i *InvokerImpl) Invoke(ctx context.Context, appID string, req JsonFunctionRequest) JsonFunctionResponse {
-	app, err := i.querySvc.Query(ctx, model.InstallationID{
+	app, err := i.querySvc.QueryInstalledApp(ctx, model.InstallationID{
 		AppID:     appID,
 		ChannelID: req.Context.Channel.ID,
 	})

@@ -44,17 +44,14 @@ func (a *AppQuerySvcImpl) ReadAllByAppIDs(ctx context.Context, appIDs []string) 
 }
 
 type AppLifecycleSvcImpl struct {
-	appRepo             AppRepository
-	appInstallationRepo AppInstallationRepository
-	lifecycleHooks      []AppLifeCycleHook
+	appRepo        AppRepository
+	installSvc     AppInstallSvc
+	querySvc       *InstalledAppQuerySvc
+	lifecycleHooks []AppLifeCycleHook
 }
 
-func NewAppLifecycleSvc(
-	appRepo AppRepository,
-	repo AppInstallationRepository,
-	lifecycleHooks []AppLifeCycleHook,
-) *AppLifecycleSvcImpl {
-	return &AppLifecycleSvcImpl{appRepo: appRepo, appInstallationRepo: repo, lifecycleHooks: lifecycleHooks}
+func NewAppLifecycleSvcImpl(appRepo AppRepository, installSvc AppInstallSvc, querySvc *InstalledAppQuerySvc, lifecycleHooks []AppLifeCycleHook) *AppLifecycleSvcImpl {
+	return &AppLifecycleSvcImpl{appRepo: appRepo, installSvc: installSvc, querySvc: querySvc, lifecycleHooks: lifecycleHooks}
 }
 
 func (a *AppLifecycleSvcImpl) Create(ctx context.Context, app *model.App) (*model.App, error) {
@@ -97,22 +94,38 @@ func (a *AppLifecycleSvcImpl) Update(ctx context.Context, app *model.App) (*mode
 func (a *AppLifecycleSvcImpl) Delete(ctx context.Context, appID string) error {
 	return tx.Do(ctx, func(ctx context.Context) error {
 
+		if err := a.uninstallAll(ctx, appID); err != nil {
+			return err
+		}
+
 		app, err := a.appRepo.FindApp(ctx, appID)
 		if err != nil {
 			return err
 		}
-
-		if err := a.appInstallationRepo.DeleteByAppID(ctx, appID); err != nil {
-			return errors.WithStack(err)
-		}
 		if err := a.appRepo.Delete(ctx, appID); err != nil {
 			return errors.WithStack(err)
 		}
+
 		if err := a.callDeleteHooks(ctx, app); err != nil {
 			return err
 		}
 		return nil
 	}, tx.XLock(namespaceApp, appID))
+}
+
+func (a *AppLifecycleSvcImpl) uninstallAll(ctx context.Context, appID string) error {
+	installations, err := a.querySvc.QueryInstallationsByAppID(ctx, appID)
+	if err != nil {
+		return err
+	}
+
+	for _, installation := range installations {
+		if err := a.installSvc.UnInstallApp(ctx, installation.ID()); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (a *AppLifecycleSvcImpl) callDeleteHooks(ctx context.Context, app *model.App) error {

@@ -3,6 +3,9 @@ package publicfx
 import (
 	"fmt"
 
+	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
+	"github.com/channel-io/ch-app-store/internal/util"
+
 	"github.com/channel-io/ch-app-store/config"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/appfx"
@@ -11,8 +14,7 @@ import (
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
-	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
+	publiccore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/public"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
@@ -25,10 +27,18 @@ var AppRole = fx.Options(
 	AppRoleDaos,
 )
 
+func services() []string {
+	var ret []string
+	for _, service := range config.Get().Services {
+		ret = append(ret, service.String())
+	}
+	return ret
+}
+
 var RemoteAppDevSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
-			[]string{config.Get().ServiceName, config.Get().ChannelServiceName},
+			services(),
 			fx.ResultTags(serviceNameGroup),
 		),
 	),
@@ -59,6 +69,11 @@ var RemoteAppDevSvcs = fx.Options(
 				},
 				AvailableClaimsOf: func(appId string) []*protomodel.Claim {
 					return []*protomodel.Claim{
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.SearchGroups,
+							Scope:   []string{"channel-{id}"},
+						},
 						{
 							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.WriteUserChatMessage,
@@ -107,6 +122,21 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ChannelServiceName,
 							Action:  publiccore.BatchGetManagers,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.SearchArticles,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetRevision,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetArticle,
 							Scope:   []string{"channel-{id}"},
 						},
 					}

@@ -6,6 +6,7 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appfx"
 	"github.com/channel-io/ch-app-store/internal/permissionfx"
 	"github.com/channel-io/ch-app-store/lib/datadogfx"
+	"github.com/channel-io/ch-app-store/lib/logfx"
 
 	"go.uber.org/fx"
 )
@@ -15,5 +16,6 @@ var testOpts = fx.Options(
 	datadogfx.Datadog,
 	permissionfx.Permission,
 	appfx.App,
+	logfx.Logger,
 	appdisplayfx.AppDisplay,
 )

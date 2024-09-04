@@ -5,6 +5,7 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
+	"github.com/channel-io/ch-app-store/internal/appwidget/model"
 	cmd "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 )
@@ -19,7 +20,7 @@ type AppStoreDetailView struct {
 	Commands []*CommandView `json:"commands"`
 }
 
-type AppView struct {
+type AppStoreAppView struct {
 	ID          string                 `json:"id"`
 	Title       string                 `json:"title"`
 	AvatarURL   *string                `json:"avatarUrl,omitempty"`
@@ -29,7 +30,7 @@ type AppView struct {
 	IsPrivate   bool                   `json:"isPrivate"`
 }
 
-type AppViewForCommand struct {
+type SimpleAppView struct {
 	ID          string                 `json:"id"`
 	Title       string                 `json:"title"`
 	AvatarURL   *string                `json:"avatarUrl,omitempty"`
@@ -65,8 +66,8 @@ func convertAppWithDisplayViewI18n(app *displaysvc.AppWithDisplay) map[string]Ap
 	return ret
 }
 
-func NewAppWithDisplayView(origin *displaysvc.AppWithDisplay) *AppView {
-	return &AppView{
+func NewAppWithDisplayView(origin *displaysvc.AppWithDisplay) *AppStoreAppView {
+	return &AppStoreAppView{
 		ID:          origin.ID,
 		Title:       origin.Title,
 		AvatarURL:   origin.AvatarURL,
@@ -77,16 +78,16 @@ func NewAppWithDisplayView(origin *displaysvc.AppWithDisplay) *AppView {
 	}
 }
 
-func NewAppWithDisplayViews(origins []*displaysvc.AppWithDisplay) []*AppView {
-	ret := make([]*AppView, 0, len(origins))
+func NewAppWithDisplayViews(origins []*displaysvc.AppWithDisplay) []*AppStoreAppView {
+	ret := make([]*AppStoreAppView, 0, len(origins))
 	for _, origin := range origins {
 		ret = append(ret, NewAppWithDisplayView(origin))
 	}
 	return ret
 }
 
-func NewAppView(origin *appmodel.App) *AppViewForCommand {
-	return &AppViewForCommand{
+func NewAppView(origin *appmodel.App) *SimpleAppView {
+	return &SimpleAppView{
 		ID:          origin.ID,
 		Title:       origin.Title,
 		AvatarURL:   origin.AvatarURL,
@@ -96,8 +97,8 @@ func NewAppView(origin *appmodel.App) *AppViewForCommand {
 	}
 }
 
-func NewAppViews(origins []*appmodel.App) []*AppViewForCommand {
-	ret := make([]*AppViewForCommand, 0, len(origins))
+func NewAppViews(origins []*appmodel.App) []*SimpleAppView {
+	ret := make([]*SimpleAppView, 0, len(origins))
 	for _, origin := range origins {
 		ret = append(ret, NewAppView(origin))
 	}
@@ -105,8 +106,8 @@ func NewAppViews(origins []*appmodel.App) []*AppViewForCommand {
 }
 
 type WysiwygView struct {
-	Apps     []*AppViewForCommand `json:"apps"`
-	Commands []*CommandView       `json:"commands"`
+	Apps     []*SimpleAppView `json:"apps"`
+	Commands []*CommandView   `json:"commands"`
 }
 
 type AppDetailView struct {
@@ -217,4 +218,55 @@ type CommandToggleRequest struct {
 	Name     string    `json:"name"`
 	Enabled  bool      `json:"enabled"`
 	Language string    `json:"language"`
+}
+
+type AppsWithWidgetsView struct {
+	Apps       []*SimpleAppView `json:"apps"`
+	AppWidgets []*AppWidgetView `json:"appWidgets"`
+}
+
+type AppWidgetView struct {
+	ID    string `json:"id"`
+	AppID string `json:"appId"`
+
+	Name            string              `json:"name"`
+	Description     *string             `json:"description,omitempty"`
+	NameDescI18nMap map[string]*I18nMap `json:"nameDescI18nMap,omitempty"`
+
+	DefaultName            *string             `json:"defaultName,omitempty"`
+	DefaultDescription     *string             `json:"defaultDescription,omitempty"`
+	DefaultNameDescI18nMap map[string]*I18nMap `json:"defaultNameDescI18nMap,omitempty"`
+}
+
+type I18nMap struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+func NewAppWidgetViews(origins []*model.AppWidget) []*AppWidgetView {
+	ret := make([]*AppWidgetView, 0, len(origins))
+	for _, origin := range origins {
+		ret = append(ret, &AppWidgetView{
+			ID:                     origin.ID,
+			Name:                   origin.Name,
+			AppID:                  origin.AppID,
+			Description:            origin.Description,
+			NameDescI18nMap:        nameDescI18nMap(origin.NameDescI18nMap),
+			DefaultDescription:     origin.DefaultDescription,
+			DefaultName:            origin.DefaultName,
+			DefaultNameDescI18nMap: nameDescI18nMap(origin.DefaultNameDescI18nMap),
+		})
+	}
+	return ret
+}
+
+func nameDescI18nMap(origin map[string]*model.I18nMap) map[string]*I18nMap {
+	ret := make(map[string]*I18nMap)
+	for key, val := range origin {
+		ret[key] = &I18nMap{
+			Name:        val.Name,
+			Description: val.Description,
+		}
+	}
+	return ret
 }

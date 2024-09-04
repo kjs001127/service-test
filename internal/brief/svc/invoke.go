@@ -41,7 +41,7 @@ func NewInvoker(
 }
 
 func (i *Invoker) Invoke(ctx context.Context, chCtx app.ChannelContext, req BriefRequest) (BriefResponses, error) {
-	apps, err := i.querySvc.QueryAll(ctx, chCtx.Channel.ID)
+	apps, err := i.querySvc.QueryInstalledAppsByChannelID(ctx, chCtx.Channel.ID)
 	if err != nil {
 		return BriefResponses{}, errors.WithStack(err)
 	}

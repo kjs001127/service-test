@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/internal/command/model"
-	"github.com/channel-io/ch-app-store/internal/command/util"
+	"github.com/channel-io/ch-app-store/internal/util"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 

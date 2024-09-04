@@ -66,7 +66,7 @@ func (h *Handler) roleViewsOf(ctx context.Context, appID string) (dto.DeskRoleVi
 //	@Param		limit		query	string	true	"max count of return data"
 //	@Param		channelID	path	string	true	"channelID"
 //
-//	@Success	200			{array}	dto.AppView
+//	@Success	200			{array}	dto.AppStoreAppView
 //	@Router		/desk/v1/channels/{channelID}/app-store/apps  [get]
 func (h *Handler) getApps(ctx *gin.Context) {
 	appsWithDisplay, err := h.findAppsWithDisplay(ctx)

@@ -24,7 +24,7 @@ jobs:
       PSQL_USER: app_store
     services:
       postgres:
-        image: postgres:14.5
+        image: public.ecr.aws/docker/library/postgres:14.5
         env:
           POSTGRES_USER: app_store
           POSTGRES_DB: app_store_ci

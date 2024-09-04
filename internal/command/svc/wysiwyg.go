@@ -19,7 +19,7 @@ func NewWysiwygQuerySvc(querySvc *app.InstalledAppQuerySvc, cmdRepo CommandRepos
 }
 
 func (s *WysiwygQuerySvc) Query(ctx context.Context, channelID string, scope cmdmodel.Scope) ([]*appmodel.App, []*cmdmodel.Command, error) {
-	apps, err := s.querySvc.QueryAll(ctx, channelID)
+	apps, err := s.querySvc.QueryInstalledAppsByChannelID(ctx, channelID)
 	if err != nil {
 		return nil, nil, err
 	}

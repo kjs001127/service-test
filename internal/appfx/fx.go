@@ -26,7 +26,7 @@ var AppSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			app.NewAppInstallSvc,
-			fx.ParamTags(``, ``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+			fx.ParamTags(``, ``, ``, PreInstallHandlerGroup, PostInstallHandlerGroup),
 			fx.As(new(app.AppInstallSvc)),
 		),
 
@@ -36,9 +36,9 @@ var AppSvcs = fx.Options(
 			fx.As(new(app.AppQuerySvc)),
 		),
 		fx.Annotate(
-			app.NewAppLifecycleSvc,
+			app.NewAppLifecycleSvcImpl,
 			fx.As(new(app.AppLifecycleSvc)),
-			fx.ParamTags(``, ``, LifecycleHookGroup),
+			fx.ParamTags(``, ``, ``, LifecycleHookGroup),
 		),
 		fx.Annotate(
 			app.NewInvoker,

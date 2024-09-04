@@ -10,7 +10,6 @@ import (
 	"github.com/channel-io/ch-app-store/internal/apphttp/model"
 	"github.com/channel-io/ch-app-store/internal/apphttp/repo"
 	"github.com/channel-io/ch-app-store/internal/apphttp/svc"
-
 	"go.uber.org/fx"
 )
 
@@ -65,7 +64,6 @@ var FunctionHttps = fx.Options(
 			},
 			fx.ParamTags(httpfx.InternalApp, httpfx.ExternalApp),
 		),
-
 		fx.Annotate(
 			func(internal http.RoundTripper, external http.RoundTripper) svc.RoundTripperMap {
 				return svc.RoundTripperMap{

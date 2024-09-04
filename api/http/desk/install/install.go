@@ -90,7 +90,7 @@ func (h *Handler) query(ctx *gin.Context) {
 		AppID:     appID,
 	}
 
-	appFound, err := h.appQuerySvc.Query(ctx, installID)
+	appFound, err := h.appQuerySvc.QueryInstalledApp(ctx, installID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -123,12 +123,12 @@ func (h *Handler) query(ctx *gin.Context) {
 //	@Param			x-account	header	string	true	"access token"
 //	@Param			channelID	path	string	true	"id of Channel"
 //
-//	@Success		200			{array}	dto.AppView
+//	@Success		200			{array}	dto.AppStoreAppView
 //	@Router			/desk/v1/channels/{channelID}/installed-apps [get]
 func (h *Handler) queryAll(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
 
-	apps, err := h.appQuerySvc.QueryAll(ctx, channelID)
+	apps, err := h.appQuerySvc.QueryInstalledAppsByChannelID(ctx, channelID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

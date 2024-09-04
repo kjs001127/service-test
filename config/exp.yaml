@@ -23,3 +23,13 @@ log:
     level: error
     dsn: https://94086f3f685212aaeed799d618411501@o104101.ingest.sentry.io/4506738076418048
     tracesSampleRate: 1.0
+rateLimiter:
+  url: https://rate-limiter.in.exp.channel.io
+  appRuleId: 12
+  managerRuleId: 11
+  userRuleId: 13
+services:
+  CHANNEL-ADMIN-API: "admin-api.in.exp.channel.io"
+  CHANNEL-API: "api.exp.channel.io"
+  DOCUMENT-API: "document-api.exp.channel.io"
+  APP-STORE-API: "app-store-api.exp.channel.io"

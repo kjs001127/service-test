@@ -16,10 +16,13 @@ const (
 	DW          = `name:"dw"`
 	InternalApp = `name:"internalApp"`
 	ExternalApp = `name:"externalApp"`
+	RateLimiter = `name:"rateLimiter"`
 )
+
 const (
-	dwTimeout  = time.Second * 30
-	appTimeout = time.Second * 30
+	dwTimeout          = time.Second * 30
+	appTimeout         = time.Second * 30
+	rateLimiterTimeout = time.Second * 5
 )
 
 var dialer = &net.Dialer{
@@ -59,6 +62,14 @@ var dwTransport = &http.Transport{
 	ExpectContinueTimeout: 1 * time.Second,
 }
 
+var rateLimiterTransport = &http.Transport{
+	DialContext:           dialer.DialContext,
+	MaxIdleConns:          runtime.GOMAXPROCS(0) * 5,
+	MaxConnsPerHost:       runtime.GOMAXPROCS(0) * 5,
+	IdleConnTimeout:       30 * time.Minute,
+	ExpectContinueTimeout: 1 * time.Second,
+}
+
 var Clients = fx.Options(
 	fx.Supply(
 		fx.Annotate(
@@ -74,6 +85,11 @@ var Clients = fx.Options(
 		fx.Annotate(
 			externalAppTransport,
 			fx.ResultTags(ExternalApp),
+			fx.As(new(http.RoundTripper)),
+		),
+		fx.Annotate(
+			rateLimiterTransport,
+			fx.ResultTags(RateLimiter),
 			fx.As(new(http.RoundTripper)),
 		),
 	),
@@ -109,6 +125,16 @@ var Clients = fx.Options(
 			},
 			fx.ParamTags(InternalApp),
 			fx.ResultTags(InternalApp),
+		),
+		fx.Annotate(
+			func(tripper http.RoundTripper) *resty.Client {
+				ret := resty.New()
+				ret.SetTimeout(rateLimiterTimeout)
+				ret.SetTransport(tripper)
+				return ret
+			},
+			fx.ParamTags(RateLimiter),
+			fx.ResultTags(RateLimiter),
 		),
 	),
 )

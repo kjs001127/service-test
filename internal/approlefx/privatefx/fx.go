@@ -11,13 +11,15 @@ import (
 	devsvc "github.com/channel-io/ch-app-store/internal/approle/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
-	privatecmd "github.com/channel-io/ch-app-store/internal/native/command/action/private"
-	publiccmd "github.com/channel-io/ch-app-store/internal/native/command/action/public"
-	privatecore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/private"
-	publiccore "github.com/channel-io/ch-app-store/internal/native/coreapi/action/public"
-	privatehook "github.com/channel-io/ch-app-store/internal/native/hook/action/private"
-	privateinstall "github.com/channel-io/ch-app-store/internal/native/install/action/private"
-	privatesystemlog "github.com/channel-io/ch-app-store/internal/native/systemlog/action/private"
+	privatecmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/private"
+	publiccmd "github.com/channel-io/ch-app-store/internal/native/localapi/command/action/public"
+	privatehook "github.com/channel-io/ch-app-store/internal/native/localapi/hook/action/private"
+	privateinstall "github.com/channel-io/ch-app-store/internal/native/localapi/install/action/private"
+	privatesystemlog "github.com/channel-io/ch-app-store/internal/native/localapi/systemlog/action/private"
+	privatewidget "github.com/channel-io/ch-app-store/internal/native/localapi/widget/action/private"
+	privatecore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/private"
+	publiccore "github.com/channel-io/ch-app-store/internal/native/proxyapi/action/public"
+	"github.com/channel-io/ch-app-store/internal/util"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 
 	"go.uber.org/fx"
@@ -30,10 +32,18 @@ var AppRole = fx.Options(
 	AppRoleDaos,
 )
 
+func services() []string {
+	var ret []string
+	for _, service := range config.Get().Services {
+		ret = append(ret, service.String())
+	}
+	return ret
+}
+
 var RemoteAppDevSvcs = fx.Options(
 	fx.Supply(
 		fx.Annotate(
-			[]string{config.Get().ServiceName, config.Get().ChannelServiceName},
+			services(),
 			fx.ResultTags(serviceNameGroup),
 		),
 	),
@@ -56,6 +66,16 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatehook.RegisterToggleHook,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  privateinstall.CheckInstall,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  privatewidget.RegisterAppWidgets,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
@@ -63,6 +83,11 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ServiceName,
 							Action:  publiccmd.RegisterCommands,
+							Scope:   []string{fmt.Sprintf("app-%s", appId)},
+						},
+						{
+							Service: config.Get().ServiceName,
+							Action:  privatewidget.RegisterAppWidgets,
 							Scope:   []string{fmt.Sprintf("app-%s", appId)},
 						},
 					}
@@ -173,6 +198,31 @@ var RemoteAppDevSvcs = fx.Options(
 						{
 							Service: config.Get().ChannelServiceName,
 							Action:  privatecore.CreateUserChat,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  publiccore.SearchGroups,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.SearchArticles,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetRevision,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().Services[util.DOCUMENT_API].String(),
+							Action:  publiccore.GetArticle,
+							Scope:   []string{"channel-{id}"},
+						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  privatecore.GetPlugin,
 							Scope:   []string{"channel-{id}"},
 						},
 					}
