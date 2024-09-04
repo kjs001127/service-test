@@ -73,10 +73,7 @@ func (c *Checker) authorize(ctx context.Context, token native.Token, req CheckRe
 		return apierr.Unauthorized(errors.New("service, action check fail"))
 	}
 
-	if !parsedRbac.CheckScopes(authgen.Scopes{
-		channelScope: {req.ChannelID},
-		appScope:     {req.AppID},
-	}) {
+	if !parsedRbac.CheckScope(channelScope, req.ChannelID) && !parsedRbac.CheckScope(appScope, req.AppID) {
 		return apierr.Unauthorized(errors.New("scope check fail"))
 	}
 
