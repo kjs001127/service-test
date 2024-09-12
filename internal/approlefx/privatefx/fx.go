@@ -230,6 +230,11 @@ var RemoteAppDevSvcs = fx.Options(
 							Action:  privatecore.PatchUser,
 							Scope:   []string{"channel-{id}"},
 						},
+						{
+							Service: config.Get().ChannelServiceName,
+							Action:  privatecore.DeleteUser,
+							Scope:   []string{"channel-{id}"},
+						},
 					}
 				},
 				DefaultClaimsOf: func(appId string) []*protomodel.Claim {
