@@ -19,6 +19,7 @@ var CHANNEL_API_ROUTES = toService(util.CHANNEL_ADMIN_API).withRule(rule{
 			path("users"): hasFunctions{
 				pub.GetUser,
 				pvt.SearchUser,
+				pvt.PatchUser,
 			},
 			path("user-chats"): hasFunctions{
 				pub.ManageUserChat,
