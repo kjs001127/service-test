@@ -49,8 +49,11 @@ type Command struct {
 	Name  string `json:"name"`
 	Scope Scope  `json:"scope"`
 
-	Description     *string            `json:"description"`
-	NameDescI18NMap map[string]I18nMap `json:"nameDescI18nMap"`
+	ButtonName        *string                `json:"buttonName"`
+	ButtonNameI18nMap map[string]NameI18nMap `json:"buttonNameI18nMap"`
+	
+	Description     *string                    `json:"description"`
+	NameDescI18NMap map[string]NameDescI18nMap `json:"nameDescI18nMap"`
 
 	AlfDescription *string `json:"alfDescription"`
 	AlfMode        AlfMode `json:"alfMode"`
@@ -67,7 +70,11 @@ type Command struct {
 	CreatedAt time.Time `json:"-"`
 }
 
-type I18nMap struct {
+type NameI18nMap struct {
+	Name string `json:"name"`
+}
+
+type NameDescI18nMap struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }

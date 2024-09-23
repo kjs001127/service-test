@@ -172,7 +172,7 @@ func marshal(c *models.Command) (*model.Command, error) {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
 	}
 
-	nameDescriptionI18nMap := make(map[string]model.I18nMap)
+	nameDescriptionI18nMap := make(map[string]model.NameDescI18nMap)
 	if err := c.NameDescI18nMap.Unmarshal(&nameDescriptionI18nMap); err != nil {
 		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err)
 	}
