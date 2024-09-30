@@ -13,7 +13,7 @@ import (
 )
 
 type AppWidgetInvoker interface {
-	Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error)
+	Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string, scope model.Scope) (*Action, error)
 	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error)
 }
 
@@ -40,8 +40,8 @@ func NewAppWidgetInvokerImpl(repo AppWidgetRepository, installQuerySvc *svc.Inst
 	}
 }
 
-func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error) {
-	widget, err := i.repo.Fetch(ctx, appWidgetID)
+func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string, scope model.Scope) (*Action, error) {
+	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, scope)
 	if err != nil {
 		return nil, err
 	}

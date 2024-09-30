@@ -8,4 +8,6 @@ const (
 	UpdateUserChatState        = "updateUserChatState"
 	CreateUserChat             = "createUserChat"
 	GetPlugin                  = "getPlugin"
+	PatchUser                  = "patchUser"
+	DeleteUser                 = "deleteUser"
 )

@@ -14,7 +14,7 @@ psql:
   port: 5432
   user: app_store
   password: ${PSQL_PASSWORD}
-  sslmode: disable
+  sslmode: require
   maxOpenConn: 50
 log:
   console:

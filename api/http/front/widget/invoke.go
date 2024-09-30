@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/api/http/front/middleware"
+	"github.com/channel-io/ch-app-store/internal/appwidget/model"
 )
 
 // triggerAppWidget godoc
@@ -29,7 +30,7 @@ func (h *Handler) triggerAppWidget(ctx *gin.Context) {
 		return
 	}
 
-	action, err := h.invoker.Invoke(ctx, &user, appWidgetID)
+	action, err := h.invoker.Invoke(ctx, &user, appWidgetID, model.ScopeFront)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

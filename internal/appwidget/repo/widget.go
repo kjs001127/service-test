@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
@@ -36,7 +35,7 @@ func (c *AppWidgetDao) Save(ctx context.Context, appWidget *model.AppWidget) (*m
 		c.db,
 		true,
 		[]string{"id"},
-		boil.Blacklist("id"),
+		boil.Blacklist("id", "scope"),
 		boil.Infer(),
 	); err != nil {
 		return nil, errors.Wrap(err, "error while upserting widget")
@@ -86,6 +85,22 @@ func (c *AppWidgetDao) Fetch(ctx context.Context, appWidgetID string) (*model.Ap
 	return marshal(widget)
 }
 
+func (c *AppWidgetDao) FetchByIDAndScope(ctx context.Context, appWidgetID string, scope model.Scope) (*model.AppWidget, error) {
+	widget, err := models.AppWidgets(
+		qm.Select("*"),
+		qm.Where("id = $1", appWidgetID),
+		qm.Where("scope = $2", scope),
+	).One(ctx, c.db)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(err)
+	} else if err != nil {
+		return nil, errors.Wrap(err, "error while querying widget")
+	}
+
+	return marshal(widget)
+}
+
 func (c *AppWidgetDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*model.AppWidget, error) {
 	slice := make([]interface{}, len(appIDs))
 	for i, v := range appIDs {
@@ -94,6 +109,24 @@ func (c *AppWidgetDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([
 
 	appWidgets, err := models.AppWidgets(
 		qm.Select("*"),
+		qm.WhereIn("app_id IN ?", slice...),
+	).All(ctx, c.db)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while querying widget")
+	}
+
+	return marshalAll(appWidgets)
+}
+
+func (c *AppWidgetDao) FetchAllByAppIDsAndScope(ctx context.Context, appIDs []string, scope model.Scope) ([]*model.AppWidget, error) {
+	slice := make([]interface{}, len(appIDs))
+	for i, v := range appIDs {
+		slice[i] = v
+	}
+
+	appWidgets, err := models.AppWidgets(
+		qm.Select("*"),
+		qm.Where("scope = ?", scope),
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
@@ -118,6 +151,7 @@ func unmarshal(widget *model.AppWidget) (*models.AppWidget, error) {
 		ID:    widget.ID,
 		Name:  widget.Name,
 		AppID: widget.AppID,
+		Scope: string(widget.Scope),
 
 		ActionFunctionName: widget.ActionFunctionName,
 		NameDescI18nMap:    null.JSONFrom(nameDescriptionMap),
@@ -143,6 +177,7 @@ func marshal(c *models.AppWidget) (*model.AppWidget, error) {
 	return &model.AppWidget{
 		ID:                 c.ID,
 		AppID:              c.AppID,
+		Scope:              model.Scope(c.Scope),
 		ActionFunctionName: c.ActionFunctionName,
 
 		Name:            c.Name,
