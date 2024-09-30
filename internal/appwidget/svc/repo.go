@@ -12,5 +12,7 @@ type AppWidgetRepository interface {
 	DeleteAllByAppID(ctx context.Context, appID string) error
 
 	Fetch(ctx context.Context, appWidgetID string) (*model.AppWidget, error)
+	FetchByIDAndScope(ctx context.Context, appWidgetID string, scope model.Scope) (*model.AppWidget, error)
 	FetchAllByAppIDs(ctx context.Context, appID []string) ([]*model.AppWidget, error)
+	FetchAllByAppIDsAndScope(ctx context.Context, appIDs []string, scope model.Scope) ([]*model.AppWidget, error)
 }

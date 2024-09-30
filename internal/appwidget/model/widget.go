@@ -24,6 +24,7 @@ var (
 type AppWidget struct {
 	ID    string `json:"id"`
 	AppID string `json:"appId"`
+	Scope Scope  `json:"scope"`
 
 	Name            string              `json:"name"`
 	Description     *string             `json:"description,omitempty"`
@@ -36,6 +37,24 @@ type AppWidget struct {
 	ActionFunctionName string `json:"actionFunctionName"`
 }
 
+type Scope string
+
+const (
+	ScopeFront = Scope("front")
+	ScopeDesk  = Scope("desk")
+)
+
+var validScopes = []Scope{ScopeFront, ScopeDesk}
+
+func (s Scope) IsDefined() bool {
+	for _, validScope := range validScopes {
+		if validScope == s {
+			return true
+		}
+	}
+	return false
+}
+
 type I18nMap struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -44,6 +63,10 @@ type I18nMap struct {
 func (a *AppWidget) Validate() error {
 	if len(a.AppID) == 0 {
 		return apierr.BadRequest(fmt.Errorf("appId is must not be empty"))
+	}
+
+	if !a.Scope.IsDefined() {
+		return apierr.BadRequest(fmt.Errorf("scope %s is not defined", a.Scope))
 	}
 
 	// check name & description

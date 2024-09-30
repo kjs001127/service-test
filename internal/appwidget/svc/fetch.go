@@ -9,7 +9,7 @@ import (
 )
 
 type AppWidgetFetcher interface {
-	FetchAppWidgets(ctx context.Context, channelID string) ([]*appmodel.App, []*model.AppWidget, error)
+	FetchAppWidgets(ctx context.Context, channelID string, scope model.Scope) ([]*appmodel.App, []*model.AppWidget, error)
 }
 
 type AppWidgetFetcherImpl struct {
@@ -21,13 +21,13 @@ func NewAppWidgetFetcherImpl(installQuerySvc *svc.InstalledAppQuerySvc, repo App
 	return &AppWidgetFetcherImpl{installQuerySvc: installQuerySvc, repo: repo}
 }
 
-func (f *AppWidgetFetcherImpl) FetchAppWidgets(ctx context.Context, channelID string) ([]*appmodel.App, []*model.AppWidget, error) {
+func (f *AppWidgetFetcherImpl) FetchAppWidgets(ctx context.Context, channelID string, scope model.Scope) ([]*appmodel.App, []*model.AppWidget, error) {
 	apps, err := f.installQuerySvc.QueryInstalledAppsByChannelID(ctx, channelID)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	widgets, err := f.repo.FetchAllByAppIDs(ctx, svc.AppIDsOf(apps))
+	widgets, err := f.repo.FetchAllByAppIDsAndScope(ctx, svc.AppIDsOf(apps), scope)
 	if err != nil {
 		return nil, nil, err
 	}
