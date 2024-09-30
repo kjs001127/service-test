@@ -80,6 +80,7 @@ func (s *RegisterSvcImpl) validateRequest(appID string, appWidgets []*model.AppW
 	}
 
 	for _, appWidget := range appWidgets {
+		appWidget.Scope = model.ScopeFront
 		if len(appWidget.AppID) <= 0 {
 			appWidget.AppID = appID
 		} else if appWidget.AppID != appID {
