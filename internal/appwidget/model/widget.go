@@ -65,9 +65,9 @@ func (a *AppWidget) Validate() error {
 		return apierr.BadRequest(fmt.Errorf("appId is must not be empty"))
 	}
 
-	//if !a.Scope.IsDefined() {
-	//	return apierr.BadRequest(fmt.Errorf("scope %s is not defined", a.Scope))
-	//}
+	if !a.Scope.IsDefined() {
+		return apierr.BadRequest(fmt.Errorf("scope %s is not defined", a.Scope))
+	}
 
 	// check name & description
 	if !nameRegex.MatchString(a.Name) {
