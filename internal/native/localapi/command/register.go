@@ -24,8 +24,11 @@ type CmdDTO struct {
 	Name  string      `json:"name"`
 	Scope model.Scope `json:"scope"`
 
-	Description     *string                  `json:"description"`
-	NameDescI18NMap map[string]model.I18nMap `json:"nameDescI18nMap"`
+	ButtonName        *string                      `json:"buttonName"`
+	ButtonNameI18nMap map[string]model.NameI18nMap `json:"nameI18nMap"`
+
+	Description     *string                          `json:"description"`
+	NameDescI18NMap map[string]model.NameDescI18nMap `json:"nameDescI18nMap"`
 
 	ActionFunctionName       string  `json:"actionFunctionName"`
 	AutoCompleteFunctionName *string `json:"autoCompleteFunctionName"`
@@ -54,6 +57,8 @@ func (d *CmdDTO) toCmd() *model.Command {
 		AlfMode:                  d.AlfMode,
 		AlfDescription:           d.AlfDescription,
 		EnabledByDefault:         *d.EnabledByDefault,
+		ButtonName:               d.ButtonName,
+		ButtonNameI18nMap:        d.ButtonNameI18nMap,
 	}
 }
 
