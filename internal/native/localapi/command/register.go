@@ -25,7 +25,7 @@ type CmdDTO struct {
 	Scope model.Scope `json:"scope"`
 
 	ButtonName        *string                      `json:"buttonName"`
-	ButtonNameI18nMap map[string]model.NameI18nMap `json:"nameI18nMap"`
+	ButtonNameI18nMap map[string]model.NameI18nMap `json:"buttonNameI18nMap"`
 
 	Description     *string                          `json:"description"`
 	NameDescI18NMap map[string]model.NameDescI18nMap `json:"nameDescI18nMap"`
