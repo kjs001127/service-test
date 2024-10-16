@@ -16,7 +16,7 @@ func testCommand() *model.Command {
 		Description: null.StringFrom("한글 설명입니다").Ptr(),
 		Scope:       model.ScopeDesk,
 		AlfMode:     model.AlfModeDisable,
-		NameDescI18NMap: map[string]model.I18nMap{
+		NameDescI18NMap: map[string]model.NameDescI18nMap{
 			"ko": {
 				Name:        "한글커맨드12",
 				Description: "한글 설명입니다!!",
@@ -62,7 +62,7 @@ func TestInvalidI18nName(t *testing.T) {
 	}
 	for _, invalidName := range invalidI18nNames {
 		command := testCommand()
-		command.NameDescI18NMap["ko"] = model.I18nMap{
+		command.NameDescI18NMap["ko"] = model.NameDescI18nMap{
 			Name: invalidName,
 		}
 		assert.Error(t, command.Validate())
@@ -77,7 +77,7 @@ func TestValidI18nName(t *testing.T) {
 	}
 	for _, validName := range validI18nNames {
 		command := testCommand()
-		command.NameDescI18NMap["ko"] = model.I18nMap{
+		command.NameDescI18NMap["ko"] = model.NameDescI18nMap{
 			Name: validName,
 		}
 		assert.NoError(t, command.Validate())

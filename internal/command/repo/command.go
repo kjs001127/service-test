@@ -149,6 +149,10 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
 	}
+	buttonNameI18nMap, err := json.Marshal(cmd.ButtonNameI18nMap)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
+	}
 
 	return &models.Command{
 		ID:                       cmd.ID,
@@ -162,7 +166,10 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 		AlfDescription:           null.StringFromPtr(cmd.AlfDescription),
 		AlfMode:                  string(cmd.AlfMode),
 		ParamDefinitions:         paramDef,
-		EnabledByDefault:         cmd.EnabledByDefault,
+		ButtonName:               null.StringFromPtr(cmd.ButtonName),
+		ButtonNameI18nMap:        null.JSONFrom(buttonNameI18nMap),
+
+		EnabledByDefault: cmd.EnabledByDefault,
 	}, nil
 }
 
@@ -172,9 +179,14 @@ func marshal(c *models.Command) (*model.Command, error) {
 		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
 	}
 
-	nameDescriptionI18nMap := make(map[string]model.I18nMap)
+	nameDescriptionI18nMap := make(map[string]model.NameDescI18nMap)
 	if err := c.NameDescI18nMap.Unmarshal(&nameDescriptionI18nMap); err != nil {
 		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err)
+	}
+
+	buttonNameI18nMap := make(map[string]model.NameI18nMap)
+	if err := c.ButtonNameI18nMap.Unmarshal(&buttonNameI18nMap); err != nil {
+		return nil, fmt.Errorf("parsing buttonI18n, cmd: %v, cause: %w", c, err)
 	}
 
 	return &model.Command{
@@ -192,6 +204,8 @@ func marshal(c *models.Command) (*model.Command, error) {
 		CreatedAt:                c.CreatedAt,
 		EnabledByDefault:         c.EnabledByDefault,
 		AlfMode:                  model.AlfMode(c.AlfMode),
+		ButtonName:               c.ButtonName.Ptr(),
+		ButtonNameI18nMap:        buttonNameI18nMap,
 	}, nil
 }
 

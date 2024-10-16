@@ -40,8 +40,10 @@ type AppWidget struct {
 type Scope string
 
 const (
-	ScopeFront = Scope("front")
-	ScopeDesk  = Scope("desk")
+	Front      = "front"
+	Desk       = "desk"
+	ScopeFront = Scope(Front)
+	ScopeDesk  = Scope(Desk)
 )
 
 var validScopes = []Scope{ScopeFront, ScopeDesk}

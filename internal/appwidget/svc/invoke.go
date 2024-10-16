@@ -9,16 +9,24 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/appwidget/model"
+	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
 )
 
 type AppWidgetInvoker interface {
-	Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string, scope model.Scope) (*Action, error)
-	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error)
+	InvokeFrontWidget(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error)
+	InvokeDeskWidget(ctx context.Context, invoker *account.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error)
+	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string, scope model.Scope) (*model.AppWidget, error)
 }
 
 type AppWidgetRequest struct {
+	Chat     Chat   `json:"chat"`
 	Language string `json:"language"`
+}
+
+type Chat struct {
+	Type string `json:"type"`
+	ID   string `json:"id"`
 }
 
 type Action struct {
@@ -40,8 +48,8 @@ func NewAppWidgetInvokerImpl(repo AppWidgetRepository, installQuerySvc *svc.Inst
 	}
 }
 
-func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.UserRequester, appWidgetID string, scope model.Scope) (*Action, error) {
-	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, scope)
+func (i *AppWidgetInvokerImpl) InvokeFrontWidget(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error) {
+	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, model.ScopeFront)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +77,37 @@ func (i *AppWidgetInvokerImpl) Invoke(ctx context.Context, invoker *session.User
 	return resp.Result, nil
 }
 
-func (i *AppWidgetInvokerImpl) IsInvocable(ctx context.Context, install appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error) {
-	widget, err := i.repo.Fetch(ctx, appWidgetID)
+func (i *AppWidgetInvokerImpl) InvokeDeskWidget(ctx context.Context, invoker *account.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error) {
+	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, model.ScopeDesk)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Language = invoker.Language
+
+	resp := i.delegate.Invoke(ctx, widget.AppID, svc.TypedRequest[*AppWidgetRequest]{
+		FunctionName: widget.ActionFunctionName,
+		Context: svc.ChannelContext{
+			Channel: svc.Channel{
+				ID: invoker.ChannelID,
+			},
+			Caller: svc.Caller{
+				ID:   invoker.ID,
+				Type: svc.CallerTypeManager,
+			},
+		},
+		Params: &request,
+	})
+
+	if resp.IsError() {
+		return nil, resp.Error
+	}
+
+	return resp.Result, nil
+}
+
+func (i *AppWidgetInvokerImpl) IsInvocable(ctx context.Context, install appmodel.InstallationID, appWidgetID string, scope model.Scope) (*model.AppWidget, error) {
+	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, scope)
 	if err != nil {
 		return nil, err
 	}

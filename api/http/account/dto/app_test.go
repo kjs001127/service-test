@@ -42,12 +42,12 @@ func TestAppModifyValidate(t *testing.T) {
 		assert.Nil(t, req.Validate())
 	})
 
-	t.Run("Test description over length 100", func(t *testing.T) {
+	t.Run("Test description over length 200", func(t *testing.T) {
 		req := svc.AppModifyRequest{
 			Title:       "정상적인 타이틀20글자보다 적음",
 			Description: new(string),
 		}
-		*req.Description = "이건100글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이이건100글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이12312312312312af123afasdfasd3asdfasdfadfa"
+		*req.Description = "이건200글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이이건200글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이12312312312312af123afasdfasd3asdfasdfadfa이건200글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이이건200글자가넘는타이틀이다한글로해도넘어야함동해물과백두산이12312312312312af123afasdfasd3asd"
 		assert.NotNil(t, req.Validate())
 	})
 }
