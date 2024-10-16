@@ -60,8 +60,8 @@ func validateTitle(title string) error {
 }
 
 func validateDescription(description *string) error {
-	if description != nil && utf8.RuneCountInString(*description) > 100 {
-		return errors.New("Description length should be less than 100")
+	if description != nil && utf8.RuneCountInString(*description) > 200 {
+		return errors.New("Description length should be less than 200")
 	}
 	return nil
 }
