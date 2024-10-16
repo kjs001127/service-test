@@ -16,7 +16,7 @@ import (
 type AppWidgetInvoker interface {
 	InvokeFrontWidget(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error)
 	InvokeDeskWidget(ctx context.Context, invoker *account.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error)
-	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error)
+	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string, scope model.Scope) (*model.AppWidget, error)
 }
 
 type AppWidgetRequest struct {
@@ -106,8 +106,8 @@ func (i *AppWidgetInvokerImpl) InvokeDeskWidget(ctx context.Context, invoker *ac
 	return resp.Result, nil
 }
 
-func (i *AppWidgetInvokerImpl) IsInvocable(ctx context.Context, install appmodel.InstallationID, appWidgetID string) (*model.AppWidget, error) {
-	widget, err := i.repo.Fetch(ctx, appWidgetID)
+func (i *AppWidgetInvokerImpl) IsInvocable(ctx context.Context, install appmodel.InstallationID, appWidgetID string, scope model.Scope) (*model.AppWidget, error) {
+	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, scope)
 	if err != nil {
 		return nil, err
 	}
