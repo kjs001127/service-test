@@ -20,7 +20,7 @@ import (
 //	@Param		channelId	path	string	true	"channelID"
 //	@Param		appWidgetId	path	string	true	"appWidgetID"
 //	@Param		appId		path	string	true	"appID"
-//	@Param 		scope 		query 	string 	false 	"scope of widget"
+//	@Param		scope		query	string	false	"scope of widget"
 //
 //	@Success	200
 //	@Router		/admin/channels/:channelID/apps/:appID/app-widgets/:appWidgetId

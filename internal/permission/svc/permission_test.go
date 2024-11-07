@@ -43,9 +43,10 @@ func (p *PermissionUtilSuite) TestIsOwner() {
 		RoleID:    roleID,
 		ChannelID: channelID,
 	}
-	res := p.permissionUtil.isOwner(ctx, manager)
+	roleType, res := p.permissionUtil.isOwner(ctx, manager)
 
 	assert.True(p.T(), res)
+	assert.Equal(p.T(), roleType, "owner")
 }
 
 func TestPermissionUtilSuite(t *testing.T) {

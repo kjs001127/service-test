@@ -21,34 +21,34 @@ func NewPermissionUtil(roleFetcher account.ManagerRoleFetcher) PermissionUtil {
 	return PermissionUtil{roleFetcher: roleFetcher}
 }
 
-func (a PermissionUtil) isOwner(ctx context.Context, manager account.Manager) bool {
+func (a PermissionUtil) isOwner(ctx context.Context, manager account.Manager) (string, bool) {
 	role, err := a.roleFetcher.FetchRole(ctx, manager.ChannelID, manager.RoleID)
 	if err != nil {
 		a.logger.Error(ctx, "error while fetching role", err)
-		return false
+		return role.RoleType, false
 	}
 	if role.RoleType == ownerType {
-		return true
+		return role.RoleType, true
 	}
 
-	return false
+	return role.RoleType, false
 }
 
-func (a PermissionUtil) hasGeneralSettings(ctx context.Context, manager account.Manager) bool {
+func (a PermissionUtil) hasGeneralSettings(ctx context.Context, manager account.Manager) (string, bool) {
 	role, err := a.roleFetcher.FetchRole(ctx, manager.ChannelID, manager.RoleID)
 	if err != nil {
-		return false
+		return role.RoleType, false
 	}
 
 	if len(role.Permissions) <= 0 {
-		return false
+		return role.RoleType, false
 	}
 
 	for _, perm := range role.Permissions {
 		if perm.Action == permission {
-			return true
+			return role.RoleType, true
 		}
 	}
 
-	return false
+	return role.RoleType, false
 }

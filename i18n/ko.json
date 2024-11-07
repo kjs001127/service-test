@@ -1,4 +1,6 @@
 {
     "app.title.invalid.length": "이름은 2자에서 20자 사이여야 합니다.",
-    "auth.empty.header": "Authorization header가 비어 있습니다."
+    "auth.empty.header": "Authorization header가 비어 있습니다.",
+    "unauthorized.access": "권한이 없습니다",
+    "unauthorized.access.owner": "소유자 권한이 필요합니다."
 }

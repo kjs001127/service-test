@@ -6,6 +6,7 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	permissionerror "github.com/channel-io/ch-app-store/internal/error/model"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
@@ -43,14 +44,15 @@ func (a *ManagerInstallPermissionSvcImpl) OnInstall(ctx context.Context, manager
 		if err != nil {
 			return apierr.Unauthorized(errors.New("manager is not the developer of the private app"))
 		}
-		if !a.permissionUtil.isOwner(ctx, manager) {
-			return apierr.Unauthorized(errors.New("manager is not owner of the channel"))
+		roleType, res := a.permissionUtil.isOwner(ctx, manager)
+		if !res {
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
-
-	if !a.permissionUtil.hasGeneralSettings(ctx, manager) {
-		return apierr.Unauthorized(errors.New("manager does not have general settings permission"))
+	roleType, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
+	if !res {
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }
@@ -64,14 +66,16 @@ func (a *ManagerInstallPermissionSvcImpl) OnUnInstall(ctx context.Context, manag
 		return err
 	}
 	if appDisplay.IsPrivate {
-		if !a.permissionUtil.isOwner(ctx, manager) {
-			return apierr.Unauthorized(errors.New("manager is not owner of the channel"))
+		roleType, res := a.permissionUtil.isOwner(ctx, manager)
+		if !res {
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
 
-	if !a.permissionUtil.hasGeneralSettings(ctx, manager) {
-		return apierr.Unauthorized(errors.New("manager does not have general settings permission"))
+	roleType, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
+	if !res {
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }

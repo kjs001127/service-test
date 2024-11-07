@@ -1,4 +1,6 @@
 {
     "app.title.invalid.length": "名前は2文字から20文字の間でなければなりません。",
-    "auth.empty.header": "Authorization headerが空です"
+    "auth.empty.header": "Authorization headerが空です",
+    "unauthorized.access": "権限がありません",
+    "unauthorized.access.owner": "オーナー権限が必要です"
 }
