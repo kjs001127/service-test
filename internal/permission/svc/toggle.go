@@ -43,7 +43,7 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 		return nil
 	}
 
-	roleType, res := c.permissionUtil.isOwner(ctx, manager.Manager)
+	roleType, res := c.permissionUtil.hasGeneralSettings(ctx, manager.Manager)
 	if !res {
 		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
