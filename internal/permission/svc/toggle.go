@@ -6,10 +6,7 @@ import (
 	display "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
-
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	"github.com/pkg/errors"
+	permissionerror "github.com/channel-io/ch-app-store/internal/error/model"
 )
 
 type ManagerCommandTogglePermissionSvcImpl struct {
@@ -39,14 +36,16 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 		return err
 	}
 	if appDisplay.IsPrivate {
-		if !c.permissionUtil.isOwner(ctx, manager.Manager) {
-			return apierr.Unauthorized(errors.New("manager is not owner of the channel"))
+		roleType, res := c.permissionUtil.isOwner(ctx, manager.Manager)
+		if !res {
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
 
-	if !c.permissionUtil.hasGeneralSettings(ctx, manager.Manager) {
-		return apierr.Unauthorized(errors.New("manager does not have general settings permission"))
+	roleType, res := c.permissionUtil.hasGeneralSettings(ctx, manager.Manager)
+	if !res {
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }

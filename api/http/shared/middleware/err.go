@@ -75,10 +75,11 @@ func errorsDTOFrom(ctx *gin.Context) *errorsDTO {
 		if errors.As(err.Unwrap(), &httpErrorBuildable) {
 			dto := newErrorsDTOFromHTTPErrorBuildable(ctx, httpErrorBuildable)
 			return dto
+		} else {
+			return newErrorsDTO(ctx, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity, apierr.NewCause(err))
 		}
-		return newErrorsDTO(ctx, http.StatusUnprocessableEntity, apierr.NewCause(err))
 	}
-	return newErrorsDTO(ctx, http.StatusInternalServerError)
+	return newErrorsDTO(ctx, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
 type errorsDTO struct {
@@ -90,7 +91,7 @@ type errorsDTO struct {
 
 type errorDTO map[string]any
 
-func newErrorsDTO(ctx *gin.Context, statusCode int, causes ...*apierr.Cause) *errorsDTO {
+func newErrorsDTO(ctx *gin.Context, errType string, statusCode int, causes ...*apierr.Cause) *errorsDTO {
 	var errDTOs []errorDTO
 	for _, cause := range causes {
 		errDTOs = append(errDTOs, newErrorDTO(ctx, cause))
@@ -105,14 +106,14 @@ func newErrorsDTO(ctx *gin.Context, statusCode int, causes ...*apierr.Cause) *er
 
 	return &errorsDTO{
 		Status:   statusCode,
-		Type:     http.StatusText(statusCode),
+		Type:     errType,
 		Language: lang,
 		Errors:   errDTOs,
 	}
 }
 
 func newErrorsDTOFromHTTPErrorBuildable(ctx *gin.Context, buildable apierr.HTTPErrorBuildable) *errorsDTO {
-	return newErrorsDTO(ctx, buildable.HTTPStatusCode(), buildable.Causes()...)
+	return newErrorsDTO(ctx, buildable.ErrorName(), buildable.HTTPStatusCode(), buildable.Causes()...)
 }
 
 func newErrorDTO(ctx *gin.Context, cause *apierr.Cause) errorDTO {

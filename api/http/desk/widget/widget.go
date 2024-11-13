@@ -22,7 +22,7 @@ import (
 //
 //	@Param		x-account	header	string	true	"access token"
 //	@Param		channelID	path	string	true	"id of Channel"
-//	@Param 		scope 		query 	string 	false 	"scope of widget"
+//	@Param		scope		query	string	false	"scope of widget"
 //	@Success	200			object	AppsWithWidgetsView
 //	@Router		/desk/v1/channels/{channelID}/app-widgets [get]
 func (h *Handler) fetchAppWidgets(ctx *gin.Context) {
