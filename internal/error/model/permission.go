@@ -5,6 +5,8 @@ import "github.com/channel-io/go-lib/pkg/errors/apierr"
 const (
 	youAre   = "youAre"
 	required = "required"
+	action   = "action"
+	scope    = "scope"
 )
 
 type roleType string
@@ -16,7 +18,14 @@ const (
 	GeneralSettingsErrMessage          = "{unauthorized.access}"
 )
 
-type UnauthorizedRoleError struct {
+type UnauthorizedRoleError interface {
+	HTTPStatusCode() int
+	ErrorName() string
+	Causes() []*apierr.Cause
+	Error() string
+}
+
+type OwnerRoleError struct {
 	apierr.HTTPErrorBuildable
 
 	youAre   string
@@ -24,15 +33,23 @@ type UnauthorizedRoleError struct {
 	message  string
 }
 
-func (u *UnauthorizedRoleError) HTTPStatusCode() int {
+func NewOwnerRoleError(youAre string, required roleType, message string) UnauthorizedRoleError {
+	return &OwnerRoleError{
+		message:  message,
+		youAre:   youAre,
+		required: required,
+	}
+}
+
+func (u *OwnerRoleError) HTTPStatusCode() int {
 	return 403
 }
 
-func (u *UnauthorizedRoleError) ErrorName() string {
+func (u *OwnerRoleError) ErrorName() string {
 	return "unauthorizedRoleError"
 }
 
-func (u *UnauthorizedRoleError) Causes() []*apierr.Cause {
+func (u *OwnerRoleError) Causes() []*apierr.Cause {
 	return []*apierr.Cause{
 		{
 			Message: u.message,
@@ -44,14 +61,46 @@ func (u *UnauthorizedRoleError) Causes() []*apierr.Cause {
 	}
 }
 
-func (u *UnauthorizedRoleError) Error() string {
+func (u *OwnerRoleError) Error() string {
 	return u.ErrorName()
 }
 
-func NewUnauthorizedRoleError(youAre string, required roleType, message string) *UnauthorizedRoleError {
-	return &UnauthorizedRoleError{
-		message:  message,
-		youAre:   youAre,
-		required: required,
+type GeneralSettingsRoleError struct {
+	apierr.HTTPErrorBuildable
+
+	action  roleType
+	message string
+	scope   string
+}
+
+func NewGeneralSettingsRoleError(action roleType, message string, scope string) UnauthorizedRoleError {
+	return &GeneralSettingsRoleError{
+		action:  action,
+		message: message,
+		scope:   scope,
 	}
+}
+
+func (g *GeneralSettingsRoleError) HTTPStatusCode() int {
+	return 403
+}
+
+func (g *GeneralSettingsRoleError) ErrorName() string {
+	return "unauthorizedPermissionError"
+}
+
+func (g *GeneralSettingsRoleError) Causes() []*apierr.Cause {
+	return []*apierr.Cause{
+		{
+			Message: g.message,
+			Detail: map[string]interface{}{
+				action: g.action,
+				scope:  g.scope,
+			},
+		},
+	}
+}
+
+func (g *GeneralSettingsRoleError) Error() string {
+	return g.ErrorName()
 }
