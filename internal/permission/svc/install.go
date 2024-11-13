@@ -46,13 +46,13 @@ func (a *ManagerInstallPermissionSvcImpl) OnInstall(ctx context.Context, manager
 		}
 		roleType, res := a.permissionUtil.isOwner(ctx, manager)
 		if !res {
-			return permissionerror.NewOwnerRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
-	_, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
+	roleType, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
 	if !res {
-		return permissionerror.NewGeneralSettingsRoleError(permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage, "none")
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }
@@ -68,14 +68,14 @@ func (a *ManagerInstallPermissionSvcImpl) OnUnInstall(ctx context.Context, manag
 	if appDisplay.IsPrivate {
 		roleType, res := a.permissionUtil.isOwner(ctx, manager)
 		if !res {
-			return permissionerror.NewOwnerRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
 
-	_, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
+	roleType, res := a.permissionUtil.hasGeneralSettings(ctx, manager)
 	if !res {
-		return permissionerror.NewGeneralSettingsRoleError(permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage, "none")
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }

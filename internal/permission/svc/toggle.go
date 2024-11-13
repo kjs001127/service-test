@@ -38,14 +38,14 @@ func (c *ManagerCommandTogglePermissionSvcImpl) OnToggle(ctx context.Context, ma
 	if appDisplay.IsPrivate {
 		roleType, res := c.permissionUtil.isOwner(ctx, manager.Manager)
 		if !res {
-			return permissionerror.NewOwnerRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
+			return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeOwner, permissionerror.OwnerErrMessage)
 		}
 		return nil
 	}
 
-	_, res := c.permissionUtil.hasGeneralSettings(ctx, manager.Manager)
+	roleType, res := c.permissionUtil.hasGeneralSettings(ctx, manager.Manager)
 	if !res {
-		return permissionerror.NewGeneralSettingsRoleError(permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage, "none")
+		return permissionerror.NewUnauthorizedRoleError(roleType, permissionerror.RoleTypeGeneralSettings, permissionerror.GeneralSettingsErrMessage)
 	}
 	return nil
 }
