@@ -51,7 +51,7 @@ func (a *AppDAOTestSuite) TestAppSave() {
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
 
-	res, err = a.appRepository.FindApp(ctx, appID)
+	res, err = a.appRepository.Find(ctx, appID)
 
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
@@ -65,7 +65,7 @@ func (a *AppDAOTestSuite) TestAppFind() {
 	ctx := context.Background()
 
 	_, _ = a.appRepository.Save(ctx, app)
-	res, err := a.appRepository.FindApp(ctx, appID)
+	res, err := a.appRepository.Find(ctx, appID)
 
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
@@ -144,7 +144,7 @@ func (a *AppDAOTestSuite) TestAppInstallationFind() {
 	err = a.appInstallationRepository.Save(ctx, appChannel)
 	a.Require().NoError(err)
 
-	res, err := a.appInstallationRepository.Fetch(ctx, installationID)
+	res, err := a.appInstallationRepository.Find(ctx, installationID)
 
 	a.Require().NoError(err)
 	a.Require().NotNil(res)

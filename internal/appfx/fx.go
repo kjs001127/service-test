@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	FunctionListenersGroup  = `group:"functionListeners"`
-	LifecycleHookGroup      = `group:"lifecycle"`
-	PreInstallHandlerGroup  = `group:"preInstallHandlers"`
-	PostInstallHandlerGroup = `group:"postInstallHandlers"`
+	FunctionListener     = `group:"functionListeners"`
+	LifecycleListener    = `group:"lifecycle"`
+	InTrxEventListener   = `group:"preInstallHandlers"`
+	PostTrxEventListener = `group:"postInstallHandlers"`
 )
 
 var App = fx.Options(
@@ -26,7 +26,7 @@ var AppSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			app.NewAppInstallSvc,
-			fx.ParamTags(``, ``, ``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+			fx.ParamTags(``, ``, ``, InTrxEventListener, PostTrxEventListener),
 			fx.As(new(app.AppInstallSvc)),
 		),
 
@@ -38,16 +38,16 @@ var AppSvcs = fx.Options(
 		fx.Annotate(
 			app.NewAppLifecycleSvcImpl,
 			fx.As(new(app.AppLifecycleSvc)),
-			fx.ParamTags(``, ``, ``, LifecycleHookGroup),
+			fx.ParamTags(``, ``, ``, ``, LifecycleListener),
 		),
 		fx.Annotate(
 			app.NewInvoker,
 			fx.As(new(app.Invoker)),
-			fx.ParamTags(``, ``, ``, FunctionListenersGroup),
+			fx.ParamTags(``, ``, ``, FunctionListener),
 		),
 		fx.Annotate(
 			app.NewManagerAwareInstallSvc,
-			fx.ParamTags(``, PreInstallHandlerGroup, PostInstallHandlerGroup),
+			fx.ParamTags(``, InTrxEventListener, PostTrxEventListener),
 		),
 
 		app.NewTypedInvoker[json.RawMessage, json.RawMessage],
@@ -64,6 +64,10 @@ var AppDAOs = fx.Options(
 		fx.Annotate(
 			repo.NewAppDAO,
 			fx.As(new(app.AppRepository)),
+		),
+		fx.Annotate(
+			repo.NewAppDisplayDAO,
+			fx.As(new(app.AppDisplayRepository)),
 		),
 	),
 )

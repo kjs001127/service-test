@@ -52,7 +52,7 @@ var Datadog = fx.Options(
 		fx.Annotate(
 			datadog.NewMethodSpanTagger,
 			fx.As(new(app.FunctionRequestListener)),
-			fx.ResultTags(appfx.FunctionListenersGroup),
+			fx.ResultTags(appfx.FunctionListener),
 		),
 		fx.Annotate(
 			datadog.NewGinMiddleware,

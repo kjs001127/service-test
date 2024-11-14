@@ -13,7 +13,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/internal/util"
 	"github.com/channel-io/ch-app-store/lib/db"
-	"github.com/channel-io/ch-app-store/lib/dynamodb"
+	"github.com/channel-io/ch-app-store/lib/ddb"
 	chlog "github.com/channel-io/ch-app-store/lib/log/channel"
 )
 
@@ -49,7 +49,7 @@ type Config struct {
 	}
 	Log                chlog.Config
 	Psql               db.Config
-	DDB                dynamodb.DDBConfig
+	DDB                ddb.DDBConfig
 	SystemLogTableName string `required:"true"`
 	RateLimiter        struct {
 		URL           string `required:"true"`

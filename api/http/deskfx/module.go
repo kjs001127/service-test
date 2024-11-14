@@ -5,12 +5,12 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	"github.com/channel-io/ch-app-store/api/gintoolfx"
-	"github.com/channel-io/ch-app-store/api/http/desk/appstore"
 	"github.com/channel-io/ch-app-store/api/http/desk/auth"
 	"github.com/channel-io/ch-app-store/api/http/desk/command"
 	"github.com/channel-io/ch-app-store/api/http/desk/commercehub"
-	"github.com/channel-io/ch-app-store/api/http/desk/install"
+	"github.com/channel-io/ch-app-store/api/http/desk/installedapp"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/desk/store"
 	"github.com/channel-io/ch-app-store/api/http/desk/widget"
 	"github.com/channel-io/ch-app-store/api/http/doc"
 )
@@ -18,8 +18,8 @@ import (
 var DeskHandlers = fx.Options(
 	fx.Provide(
 
-		gintoolfx.AddTag(appstore.NewHandler),
-		gintoolfx.AddTag(install.NewHandler),
+		gintoolfx.AddTag(store.NewHandler),
+		gintoolfx.AddTag(installedapp.NewHandler),
 		gintoolfx.AddTag(command.NewHandler),
 		gintoolfx.AddTag(commercehub.NewHandler),
 		gintoolfx.AddTag(auth.NewHandler),

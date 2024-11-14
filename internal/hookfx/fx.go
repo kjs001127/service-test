@@ -35,13 +35,13 @@ var InstallHookSvc = fx.Options(
 		svc.NewInstallHookSvc,
 		fx.Annotate(
 			svc.NewPostInstallHandler,
-			fx.As(new(appsvc.InstallListener)),
-			fx.ResultTags(appfx.PostInstallHandlerGroup),
+			fx.As(new(appsvc.ManagerInstallFilter)),
+			fx.ResultTags(appfx.PostTrxEventListener),
 		),
 		fx.Annotate(
 			svc.NewToggleHookSvc,
-			fx.As(new(commandsvc.ToggleListener)),
-			fx.ResultTags(commandfx.PreToggleHandlerGroup),
+			fx.As(new(commandsvc.ToggleEventListener)),
+			fx.ResultTags(commandfx.InTrxToggleListenerGroup),
 		),
 		svc.NewToggleHookSvc,
 	),
@@ -51,8 +51,8 @@ var InstallHookClearHook = fx.Options(
 	fx.Provide(
 		fx.Annotate(
 			svc.NewClearHook,
-			fx.As(new(appsvc.AppLifeCycleHook)),
-			fx.ResultTags(appfx.LifecycleHookGroup),
+			fx.As(new(appsvc.AppLifeCycleEventListener)),
+			fx.ResultTags(appfx.LifecycleListener),
 		),
 	),
 )

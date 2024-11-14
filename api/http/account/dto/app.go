@@ -1,7 +1,8 @@
 package dto
 
 import (
-	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
+	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
 )
 
 type AppView struct {
@@ -13,7 +14,7 @@ type AppView struct {
 	I18nMap     map[string]AppViewI18n `json:"i18nMap"`
 }
 
-func AppWithDisplayViewFrom(app *displaysvc.AppWithDisplay) *AppView {
+func FromApp(app *appmodel.App) *AppView {
 	return &AppView{
 		ID:          app.ID,
 		Title:       app.Title,
@@ -24,15 +25,15 @@ func AppWithDisplayViewFrom(app *displaysvc.AppWithDisplay) *AppView {
 	}
 }
 
-func AppWithDisplayViewsFrom(apps []*displaysvc.AppWithDisplay) []*AppView {
+func FromApps(apps []*appmodel.App) []*AppView {
 	ret := make([]*AppView, 0, len(apps))
 	for _, app := range apps {
-		ret = append(ret, AppWithDisplayViewFrom(app))
+		ret = append(ret, FromApp(app))
 	}
 	return ret
 }
 
-func convertAppWithDisplayViewI18n(app *displaysvc.AppWithDisplay) map[string]AppViewI18n {
+func convertAppWithDisplayViewI18n(app *appmodel.App) map[string]AppViewI18n {
 	ret := make(map[string]AppViewI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppViewI18n{
@@ -65,10 +66,10 @@ type AppGeneralI18n struct {
 	Description        string           `json:"description"`
 	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
 	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
-	ManualURL          string           `json:"manualUrl,omitempty"`
+	ManualURL          *string          `json:"manualUrl,omitempty"`
 }
 
-func convertAppWithDisplayI18n(app *displaysvc.AppWithDisplay) map[string]AppGeneralI18n {
+func convertDetailI18n(app *appsvc.AppDetail) map[string]AppGeneralI18n {
 	ret := make(map[string]AppGeneralI18n)
 	for lang, i18n := range app.I18nMap {
 		ret[lang] = AppGeneralI18n{
@@ -82,24 +83,16 @@ func convertAppWithDisplayI18n(app *displaysvc.AppWithDisplay) map[string]AppGen
 	return ret
 }
 
-func FromAppWithDisplay(model *displaysvc.AppWithDisplay) *AppGeneral {
+func FromDetail(model *appsvc.AppDetail) *AppGeneral {
 	return &AppGeneral{
 		ID:                 model.ID,
 		Title:              model.Title,
 		Description:        model.Description,
-		I18nMap:            convertAppWithDisplayI18n(model),
+		I18nMap:            convertDetailI18n(model),
 		DetailDescriptions: model.DetailDescriptions,
 		DetailImageURLs:    model.DetailImageURLs,
 		ManualURL:          model.ManualURL,
 		IsPrivate:          model.IsPrivate,
 		AvatarURL:          model.AvatarURL,
 	}
-}
-
-func FromAppsWithDisplay(models []*displaysvc.AppWithDisplay) []*AppGeneral {
-	ret := make([]*AppGeneral, 0, len(models))
-	for _, m := range models {
-		ret = append(ret, FromAppWithDisplay(m))
-	}
-	return ret
 }

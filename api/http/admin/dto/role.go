@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/channel-io/ch-app-store/internal/approle/model"
+	"github.com/channel-io/ch-app-store/internal/role/model"
 )
 
 type RoleViews map[model.RoleType]AdminRoleView

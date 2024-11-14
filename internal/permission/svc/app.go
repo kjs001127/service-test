@@ -14,13 +14,15 @@ import (
 const maxAppCountPerAccount = 30
 
 type AppModifyRequest struct {
-	Title              string                         `json:"title"`
-	Description        *string                        `json:"description,omitempty"`
-	DetailImageURLs    []string                       `json:"detailImageUrls,omitempty"`
-	DetailDescriptions []map[string]any               `json:"detailDescriptions,omitempty"`
-	ManualURL          *string                        `json:"manualUrl,omitempty"`
-	AvatarUrl          *string                        `json:"avatarUrl,omitempty"`
-	I18nMap            map[string]appmodel.I18nFields `json:"i18nMap,omitempty"`
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
+	AvatarUrl   *string `json:"avatarUrl,omitempty"`
+
+	DetailImageURLs    []string         `json:"detailImageUrls,omitempty"`
+	DetailDescriptions []map[string]any `json:"detailDescriptions,omitempty"`
+	ManualURL          *string          `json:"manualUrl,omitempty"`
+
+	I18nMap map[string]*appsvc.DetailI18n `json:"i18nMap,omitempty"`
 }
 
 func (r *AppModifyRequest) Validate() error {
@@ -66,18 +68,23 @@ func validateDescription(description *string) error {
 	return nil
 }
 
-func (r *AppModifyRequest) applyTo(target *appmodel.App) *appmodel.App {
-	target.Title = r.Title
-	target.I18nMap = r.I18nMap
-	target.Description = r.Description
-	target.AvatarURL = r.AvatarUrl
-	return target
+func (r *AppModifyRequest) applyTo(detail *appsvc.AppDetail) *appsvc.AppDetail {
+	detail.Title = r.Title
+	detail.I18nMap = r.I18nMap
+	detail.Description = r.Description
+	detail.DetailDescriptions = r.DetailDescriptions
+	detail.DetailImageURLs = r.DetailImageURLs
+	detail.ManualURL = r.ManualURL
+	detail.AvatarURL = r.AvatarUrl
+
+	return detail
 }
 
 type AccountAppPermissionSvc interface {
-	ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error)
+	ListApps(ctx context.Context, accountID string) ([]*appmodel.App, error)
+	ReadApp(ctx context.Context, appID string, accountID string) (*appsvc.AppDetail, error)
 	CreateApp(ctx context.Context, title string, accountID string) (*appmodel.App, error)
-	ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appmodel.App, error)
+	ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appsvc.AppDetail, error)
 	DeleteApp(ctx context.Context, appID string, accountID string) error
 }
 
@@ -99,12 +106,26 @@ func NewAccountAppPermissionSvc(
 	}
 }
 
-func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) ListApps(ctx context.Context, accountID string) ([]*appmodel.App, error) {
+	appAccounts, err := a.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	var appIDs []string
+	for _, appAccount := range appAccounts {
+		appIDs = append(appIDs, appAccount.AppID)
+	}
+
+	return a.appCrudSvc.ReadAllByAppIDs(ctx, appIDs)
+}
+
+func (a *AccountAppPermissionSvcImpl) ReadApp(ctx context.Context, appID string, accountID string) (*appsvc.AppDetail, error) {
 	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return nil, err
 	}
 
-	ret, err := a.appCrudSvc.Read(ctx, appID)
+	ret, err := a.appCrudSvc.ReadDetail(ctx, appID)
 	if err != nil {
 		return nil, err
 	}
@@ -140,29 +161,24 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 	})
 }
 
-func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appmodel.App, error) {
+func (a *AccountAppPermissionSvcImpl) ModifyApp(ctx context.Context, modifyRequest *AppModifyRequest, appID string, accountID string) (*appsvc.AppDetail, error) {
 	if err := modifyRequest.Validate(); err != nil {
 		return nil, err
 	}
-	return tx.DoReturn(ctx, func(ctx context.Context) (*appmodel.App, error) {
+	return tx.DoReturn(ctx, func(ctx context.Context) (*appsvc.AppDetail, error) {
 		_, err := a.appAccountRepo.Fetch(ctx, appID, accountID)
 		if err != nil {
 			return nil, err
 		}
 
-		oldbie, err := a.appCrudSvc.Read(ctx, appID)
+		oldbie, err := a.appCrudSvc.ReadDetail(ctx, appID)
 		if err != nil {
 			return nil, err
 		}
 
 		newbie := modifyRequest.applyTo(oldbie)
 
-		ret, err := a.appLifeCycleSvc.Update(ctx, newbie)
-		if err != nil {
-			return nil, err
-		}
-
-		return ret, nil
+		return a.appLifeCycleSvc.UpdateDetail(ctx, newbie)
 	})
 }
 

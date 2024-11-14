@@ -1,7 +1,7 @@
 package command
 
 import (
-	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	command "github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/native"
 	"github.com/channel-io/ch-app-store/internal/native/localapi/command/action/private"

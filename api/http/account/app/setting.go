@@ -8,7 +8,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
-	settingsvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
+	settingsvc "github.com/channel-io/ch-app-store/internal/httpfn/svc"
 )
 
 // fetchEndpoints godoc

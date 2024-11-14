@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/channel-io/ch-app-store/internal/auth/principal"
+	"github.com/channel-io/ch-app-store/internal/shared/principal"
 	"github.com/channel-io/ch-app-store/lib/i18n"
 	"github.com/channel-io/ch-app-store/lib/log"
 

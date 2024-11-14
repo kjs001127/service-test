@@ -44,7 +44,7 @@ func (i *InvokerImpl) Invoke(ctx context.Context, appID string, req JsonFunction
 		Response: res,
 		AppID:    appID,
 	}
-	i.callListeners(ctx, event)
+	i.publishInvokeEvent(ctx, event)
 
 	return res
 }
@@ -122,7 +122,7 @@ type FunctionRequestListener interface {
 	OnInvoke(ctx context.Context, event FunctionInvokeEvent)
 }
 
-func (i *InvokerImpl) callListeners(ctx context.Context, event FunctionInvokeEvent) {
+func (i *InvokerImpl) publishInvokeEvent(ctx context.Context, event FunctionInvokeEvent) {
 	for _, listener := range i.listeners {
 		listener.OnInvoke(ctx, event)
 	}

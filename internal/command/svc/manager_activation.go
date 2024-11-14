@@ -3,42 +3,62 @@ package svc
 import (
 	"context"
 
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	app "github.com/channel-io/ch-app-store/internal/app/model"
+	"github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/model"
+	"github.com/channel-io/ch-app-store/internal/shared/errmodel"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
-type ToggleListener interface {
+type ToggleEventListener interface {
 	OnToggle(ctx context.Context, manager account.ManagerRequester, request ToggleCommandRequest) error
 }
 
-type ManagerAwareActivationSvc struct {
-	toggleSvc     ActivationSvc
-	cmdRepo       CommandRepository
-	listeners     []ToggleListener
-	postListeners []ToggleListener
+type ManagerCommandActivationSvc struct {
+	toggleSvc        ActivationSvc
+	cmdRepo          CommandRepository
+	querySvc         svc.AppQuerySvc
+	inTrxListeners   []ToggleEventListener
+	postTrxListeners []ToggleEventListener
 }
 
 func NewManagerAwareToggleSvc(
 	toggleSvc ActivationSvc,
-	listeners []ToggleListener,
-	postListeners []ToggleListener,
+	listeners []ToggleEventListener,
+	postListeners []ToggleEventListener,
 	cmdRepo CommandRepository,
-) *ManagerAwareActivationSvc {
-	return &ManagerAwareActivationSvc{toggleSvc: toggleSvc, listeners: listeners, postListeners: postListeners, cmdRepo: cmdRepo}
+	querySvc svc.AppQuerySvc,
+) *ManagerCommandActivationSvc {
+	return &ManagerCommandActivationSvc{
+		toggleSvc:        toggleSvc,
+		inTrxListeners:   listeners,
+		postTrxListeners: postListeners,
+		cmdRepo:          cmdRepo,
+		querySvc:         querySvc,
+	}
 }
 
-func (s *ManagerAwareActivationSvc) Toggle(ctx context.Context, manager account.ManagerRequester, req ToggleCommandRequest) (err error) {
+func (s *ManagerCommandActivationSvc) Toggle(ctx context.Context, manager account.ManagerRequester, req ToggleCommandRequest) (err error) {
+	found, err := s.querySvc.Read(ctx, req.Command.AppID)
+	if err != nil {
+		return err
+	}
+
+	if err := checkPermission(ctx, found, manager.Manager); err != nil {
+		return err
+	}
+
 	defer func() {
 		if err == nil {
-			for _, listener := range s.postListeners {
+			for _, listener := range s.postTrxListeners {
 				_ = listener.OnToggle(ctx, manager, req)
 			}
 		}
 	}()
 
 	return tx.Do(ctx, func(ctx context.Context) error {
-		for _, listener := range s.listeners {
+		for _, listener := range s.inTrxListeners {
 			if toggleErr := listener.OnToggle(ctx, manager, req); toggleErr != nil {
 				return toggleErr
 			}
@@ -48,7 +68,7 @@ func (s *ManagerAwareActivationSvc) Toggle(ctx context.Context, manager account.
 
 }
 
-func (s *ManagerAwareActivationSvc) ToggleByKey(ctx context.Context, manager account.ManagerRequester, req ToggleRequest) (err error) {
+func (s *ManagerCommandActivationSvc) ToggleByKey(ctx context.Context, manager account.ManagerRequester, req ToggleRequest) (err error) {
 	cmd, err := s.cmdRepo.Fetch(ctx, req.Command)
 	if err != nil {
 		return err
@@ -61,6 +81,23 @@ func (s *ManagerAwareActivationSvc) ToggleByKey(ctx context.Context, manager acc
 	})
 }
 
-func (s *ManagerAwareActivationSvc) Check(ctx context.Context, manager account.Manager, command model.CommandKey, channelID string) (bool, error) {
+func (s *ManagerCommandActivationSvc) Check(ctx context.Context, manager account.Manager, command model.CommandKey, channelID string) (bool, error) {
 	return s.toggleSvc.Check(ctx, command, channelID)
+}
+
+func checkPermission(ctx context.Context, appTarget *app.App, manager account.Manager) error {
+	role, err := manager.Role(ctx)
+	if err != nil {
+		return err
+	}
+
+	if appTarget.IsPrivate && !role.IsOwner() {
+		return errmodel.NewOwnerRoleError(role.RoleType, errmodel.RoleTypeOwner, errmodel.OwnerErrMessage)
+	}
+
+	if !role.HasGeneralSettings() {
+		return errmodel.NewGeneralSettingsRoleError(errmodel.RoleTypeGeneralSettings, errmodel.GeneralSettingsErrMessage, "none")
+	}
+
+	return nil
 }

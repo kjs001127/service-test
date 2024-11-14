@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/hook/model"
 	"github.com/channel-io/ch-app-store/internal/hook/svc"
 	"github.com/channel-io/ch-app-store/internal/native"

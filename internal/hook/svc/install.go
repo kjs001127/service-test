@@ -10,8 +10,8 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/model"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	"github.com/channel-io/ch-app-store/internal/hook/model"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -42,8 +42,8 @@ func NewPostInstallHandler(invoker svc.Invoker, hookRepo InstallHookRepository, 
 	return &PostInstallHandler{invoker: invoker, hookRepo: hookRepo, logger: logger}
 }
 
-func (i *PostInstallHandler) OnInstall(ctx context.Context, manager account.Manager, installID app.InstallationID) error {
-	installHook, err := i.hookRepo.Fetch(ctx, installID.AppID)
+func (i *PostInstallHandler) OnInstall(ctx context.Context, manager account.Manager, target *app.App) error {
+	installHook, err := i.hookRepo.Fetch(ctx, target.ID)
 	if apierr.IsNotFound(err) {
 		return nil
 	} else if err != nil {
@@ -54,25 +54,15 @@ func (i *PostInstallHandler) OnInstall(ctx context.Context, manager account.Mana
 		return nil
 	}
 
-	go i.trySendHook(context.Background(), manager, installID, *installHook.InstallFunctionName)
+	go i.trySendHook(context.Background(), manager, appmodel.InstallationID{
+		AppID:     target.ID,
+		ChannelID: manager.ChannelID,
+	}, *installHook.InstallFunctionName)
 
 	return nil
 }
 
-func (i PostInstallHandler) OnUnInstall(ctx context.Context, manager account.Manager, installID app.InstallationID) error {
-	hooks, err := i.hookRepo.Fetch(ctx, installID.AppID)
-	if apierr.IsNotFound(err) {
-		return nil
-	} else if err != nil {
-		return errors.Wrap(err, "while fetching hooks OnInstall")
-	}
-
-	if hooks.UninstallFunctionName == nil {
-		return nil
-	}
-
-	go i.trySendHook(context.Background(), manager, installID, *hooks.UninstallFunctionName)
-
+func (i *PostInstallHandler) OnUnInstall(ctx context.Context, manager account.Manager, target *app.App) error {
 	return nil
 }
 

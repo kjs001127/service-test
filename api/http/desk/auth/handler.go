@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
+	"github.com/channel-io/ch-app-store/internal/role/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)

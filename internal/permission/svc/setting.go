@@ -4,7 +4,7 @@ import (
 	"context"
 
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
-	serverSettingSvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
+	serverSettingSvc "github.com/channel-io/ch-app-store/internal/httpfn/svc"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 

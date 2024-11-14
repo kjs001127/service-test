@@ -7,7 +7,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 
-	_ "github.com/channel-io/ch-app-store/internal/auth/general"
+	_ "github.com/channel-io/ch-app-store/internal/shared/general"
 )
 
 // issueToken godoc

@@ -8,11 +8,13 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
+	"github.com/channel-io/ch-app-store/api/http/desk/widget/dto"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
-	"github.com/channel-io/ch-app-store/internal/appwidget/model"
-	widget "github.com/channel-io/ch-app-store/internal/appwidget/svc"
+	"github.com/channel-io/ch-app-store/internal/widget/model"
+	widget "github.com/channel-io/ch-app-store/internal/widget/svc"
 )
 
 // fetchAppWidgets godoc
@@ -35,9 +37,9 @@ func (h *Handler) fetchAppWidgets(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, deskdto.AppsWithWidgetsView{
+	ctx.JSON(http.StatusOK, dto.AppsWithWidgetsView{
 		Apps:       deskdto.NewAppViews(apps),
-		AppWidgets: deskdto.NewAppWidgetViews(widgets),
+		AppWidgets: dto.NewAppWidgetViews(widgets),
 	})
 }
 

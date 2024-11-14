@@ -20,7 +20,7 @@ var functionLogger = fx.Options(
 		fx.Annotate(
 			invokelog.NewFunctionDBLogger,
 			fx.As(new(app.FunctionRequestListener)),
-			fx.ResultTags(appfx.FunctionListenersGroup),
+			fx.ResultTags(appfx.FunctionListener),
 		),
 	),
 )

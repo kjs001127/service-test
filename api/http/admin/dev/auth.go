@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-	"github.com/channel-io/ch-app-store/internal/approle/model"
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
+	"github.com/channel-io/ch-app-store/internal/role/model"
+	"github.com/channel-io/ch-app-store/internal/role/svc"
 )
 
 // fetchRole godoc
 //
 //	@Summary	fetch App
-//	@Tags		Public
+//	@Tags		PublicNativeClaims
 //
 //	@Param		appId		path		string	true	"appId"
 //	@Param		roleType	path		string	true	"roleType"
@@ -35,7 +35,7 @@ func (h *Handler) fetchRole(ctx *gin.Context) {
 }
 
 func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.RoleType) (*dto.AdminRoleView, error) {
-	claims, err := h.roleSvc.FetchRole(ctx, appID, roleType)
+	claims, err := h.roleSvc.FetchLatestRole(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (h *Handler) roleViewOf(ctx context.Context, appID string, roleType model.R
 // modifyClaims godoc
 //
 //	@Summary	overwrite claims of specific role type
-//	@Tags		Public
+//	@Tags		PublicNativeClaims
 //
 //	@Param		appId		path	string	true	"appId"
 //	@Param		roleType	path	string	true	"roleType"
@@ -60,25 +60,28 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
 
-	var req svc.ClaimsDTO
+	var req svc.ClaimsRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	err := h.roleSvc.UpdateRole(ctx, appID, roleType, &req)
+	req.AppID = appID
+	req.Type = roleType
+
+	resp, err := h.roleSvc.CreateRole(ctx, &req)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.Status(http.StatusOK)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // addClaims godoc
 //
 //	@Summary	add claims to specific role type
-//	@Tags		Public
+//	@Tags		PublicNativeClaims
 //
 //	@Param		appId		path	string	true	"appId"
 //	@Param		roleType	path	string	true	"roleType"
@@ -89,14 +92,22 @@ func (h *Handler) addClaims(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 	roleType := model.RoleType(ctx.Param("roleType"))
 
-	var req svc.ClaimsDTO
+	var req svc.ClaimsRequestWithID
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	err := h.roleSvc.AddClaimsToRole(ctx, appID, roleType, &req)
+	role, err := h.roleSvc.FetchLatestRole(ctx, appID, roleType)
 	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	req.AppID = appID
+	req.ID = role.ID
+
+	if err := h.roleSvc.AppendClaimsToRole(ctx, &req); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
@@ -107,7 +118,7 @@ func (h *Handler) addClaims(ctx *gin.Context) {
 // refreshSecret godoc
 //
 //	@Summary	refresh signing key
-//	@Tags		Public
+//	@Tags		PublicNativeClaims
 //
 //	@Param		appId	path		string	true	"appId"
 //
@@ -116,7 +127,7 @@ func (h *Handler) addClaims(ctx *gin.Context) {
 func (h *Handler) refreshSecret(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
-	token, err := h.roleSvc.RefreshAppSecret(ctx, appID)
+	token, err := h.secretSvc.RefreshAppSecret(ctx, appID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

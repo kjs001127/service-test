@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 )
 
 // checkOwner godoc

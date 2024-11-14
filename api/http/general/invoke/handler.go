@@ -5,7 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/native"
 )
 

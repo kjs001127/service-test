@@ -22,7 +22,7 @@ func NewAppInstallationDao(db db.DB) *AppInstallationDao {
 	return &AppInstallationDao{db: db}
 }
 
-func (a *AppInstallationDao) Fetch(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
+func (a *AppInstallationDao) Find(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
 	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", identifier.AppID),
@@ -38,7 +38,7 @@ func (a *AppInstallationDao) Fetch(ctx context.Context, identifier model.Install
 	return unmarshal(appInstallation)
 }
 
-func (a *AppInstallationDao) FetchAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
+func (a *AppInstallationDao) FindAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
 	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
@@ -51,7 +51,7 @@ func (a *AppInstallationDao) FetchAllByAppID(ctx context.Context, appID string) 
 	return unmarshalAll(appInstallation)
 }
 
-func (a *AppInstallationDao) FetchAllByChannel(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
+func (a *AppInstallationDao) FindAllByChannelID(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
 	appInstallation, err := models.AppInstallations(
 		qm.Select("*"),
 		qm.Where("channel_id = $1", channelID),

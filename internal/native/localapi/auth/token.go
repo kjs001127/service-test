@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
-	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/native"
 	"github.com/channel-io/ch-app-store/internal/native/localapi/auth/action/public"
+	"github.com/channel-io/ch-app-store/internal/role/svc"
 )
 
 type Request struct {

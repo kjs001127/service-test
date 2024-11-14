@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	wraperr "github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 

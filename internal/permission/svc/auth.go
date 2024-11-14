@@ -3,79 +3,113 @@ package svc
 import (
 	"context"
 
-	display "github.com/channel-io/ch-app-store/internal/appdisplay/model"
-	"github.com/channel-io/ch-app-store/internal/approle/model"
-	"github.com/channel-io/ch-app-store/internal/approle/svc"
-
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
 	"github.com/pkg/errors"
+
+	"github.com/channel-io/ch-app-store/internal/app/model"
+	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
+	role "github.com/channel-io/ch-app-store/internal/role/model"
+	"github.com/channel-io/ch-app-store/internal/role/svc"
 )
 
 type AccountAuthPermissionSvc struct {
 	appAccountRepo AppAccountRepo
-	displaySvc     AccountDisplayPermissionSvc
-	delegate       *svc.AppRoleSvc
+	appQuerySvc    appsvc.AppQuerySvc
+	roleSvc        *svc.AppRoleSvc
+	secretSvc      *svc.AppSecretSvc
 }
 
 func NewAccountAuthPermissionSvc(
 	appAccountRepo AppAccountRepo,
-	displaySvc AccountDisplayPermissionSvc,
-	delegate *svc.AppRoleSvc,
+	roleSvc *svc.AppRoleSvc,
+	secretSvc *svc.AppSecretSvc,
+	appQuerySvc appsvc.AppQuerySvc,
 ) *AccountAuthPermissionSvc {
-	return &AccountAuthPermissionSvc{appAccountRepo: appAccountRepo, delegate: delegate, displaySvc: displaySvc}
+	return &AccountAuthPermissionSvc{
+		appAccountRepo: appAccountRepo,
+		roleSvc:        roleSvc,
+		secretSvc:      secretSvc,
+		appQuerySvc:    appQuerySvc,
+	}
 }
 
-func (s *AccountAuthPermissionSvc) UpdateRole(ctx context.Context, appID string, roleType model.RoleType, claims *svc.ClaimsDTO, accountID string) error {
-	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
-		return err
+func (s *AccountAuthPermissionSvc) CreateRole(ctx context.Context, claims *svc.ClaimsRequest, accountID string) (*svc.ClaimsResponse, error) {
+	if _, err := s.appAccountRepo.Fetch(ctx, claims.AppID, accountID); err != nil {
+		return nil, err
 	}
 
-	callables, err := s.displaySvc.GetCallableDisplays(ctx, accountID)
-	if err != nil {
-		return err
+	if err := s.hasPermission(ctx, accountID, claims.AppClaims); err != nil {
+		return nil, err
 	}
 
-	for _, appClaim := range claims.AppClaims {
-		if !s.isCallable(callables, appClaim.Service) {
-			return apierr.Unauthorized(errors.New("app is not callable"))
-		}
-	}
-
-	return s.delegate.UpdateRole(ctx, appID, roleType, claims)
+	return s.roleSvc.CreateRole(ctx, claims)
 }
 
-func (s *AccountAuthPermissionSvc) isCallable(callables []*display.AppDisplay, targetAppID string) bool {
-	for _, callable := range callables {
-		if callable.AppID == targetAppID {
-			return true
-		}
-	}
-	return false
-}
-
-func (s *AccountAuthPermissionSvc) FetchRole(ctx context.Context, appID string, roleType model.RoleType, accountID string) (*svc.ClaimsDTO, error) {
+func (s *AccountAuthPermissionSvc) FetchLatestRole(ctx context.Context, appID string, roleType role.RoleType, accountID string) (*svc.ClaimsResponse, error) {
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return nil, err
 	}
 
-	return s.delegate.FetchRole(ctx, appID, roleType)
+	return s.roleSvc.FetchLatestRole(ctx, appID, roleType)
 }
 
-func (s *AccountAuthPermissionSvc) GetAvailableNativeClaims(ctx context.Context, appID string, roleType model.RoleType) ([]*model.Claim, error) {
-	return s.delegate.GetAvailableNativeClaims(ctx, appID, roleType)
+func (s *AccountAuthPermissionSvc) GetAvailableApps(ctx context.Context, accountID string) ([]*model.App, error) {
+	ownerships, err := s.appAccountRepo.FetchAllByAccountID(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	var appIDs []string
+	for _, ownership := range ownerships {
+		appIDs = append(appIDs, ownership.AppID)
+	}
+
+	publics, err := s.appQuerySvc.ListPublicApps(ctx, "", 500)
+	if err != nil {
+		return nil, err
+	}
+
+	ownApps, err := s.appQuerySvc.ReadAllByAppIDs(ctx, appIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return append(ownApps, publics...), nil
+}
+
+func (s *AccountAuthPermissionSvc) GetAvailableNativeClaims(ctx context.Context, appID string, roleType role.RoleType) ([]*role.Claim, error) {
+	return s.roleSvc.FetchAvailableNativeClaims(ctx, appID, roleType)
 }
 
 func (s *AccountAuthPermissionSvc) HasTokenIssuedBefore(ctx context.Context, appID string, accountID string) (bool, error) {
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return false, err
 	}
-	return s.delegate.HasIssuedBefore(ctx, appID)
+	return s.secretSvc.HasIssuedBefore(ctx, appID)
 }
 
 func (s *AccountAuthPermissionSvc) RefreshToken(ctx context.Context, appID string, accountID string) (string, error) {
 	if _, err := s.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return "", err
 	}
-	return s.delegate.RefreshAppSecret(ctx, appID)
+	return s.secretSvc.RefreshAppSecret(ctx, appID)
+}
+
+func (s *AccountAuthPermissionSvc) hasPermission(ctx context.Context, accountID string, claims role.Claims) error {
+	callables, err := s.GetAvailableApps(ctx, accountID)
+	if err != nil {
+		return err
+	}
+
+claimLoop:
+	for _, claim := range claims {
+		for _, callable := range callables {
+			if callable.ID == claim.Service {
+				continue claimLoop
+			}
+			return apierr.Unauthorized(errors.New("claim rejected"))
+		}
+	}
+
+	return nil
 }

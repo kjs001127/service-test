@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
-	settingsvc "github.com/channel-io/ch-app-store/internal/apphttp/svc"
+	settingsvc "github.com/channel-io/ch-app-store/internal/httpfn/svc"
 )
 
 // fetchEndpoints godoc

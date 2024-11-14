@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	CommandListenersGroup  = `group:"commandListeners"`
-	PreToggleHandlerGroup  = `group:"managerPreToggle"`
-	PostToggleHandlerGroup = `group:"managerPostToggle"`
+	CommandListenersGroup      = `group:"commandListeners"`
+	InTrxToggleListenerGroup   = `group:"managerPreToggle"`
+	PostTrxToggleListenerGroup = `group:"managerPostToggle"`
 )
 
 var Command = fx.Options(
@@ -22,9 +22,9 @@ var Command = fx.Options(
 var CommandSvcs = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			svc.NewAppLifecycleHook,
-			fx.As(new(app.AppLifeCycleHook)),
-			fx.ResultTags(appfx.LifecycleHookGroup),
+			svc.NewLifecycleListener,
+			fx.As(new(app.AppLifeCycleEventListener)),
+			fx.ResultTags(appfx.LifecycleListener),
 		),
 		svc.NewRegisterSvc,
 		svc.NewAutoCompleteInvoker,
@@ -37,12 +37,12 @@ var CommandSvcs = fx.Options(
 		),
 		fx.Annotate(
 			svc.NewPreInstallHandler,
-			fx.As(new(app.InstallHandler)),
-			fx.ResultTags(appfx.PreInstallHandlerGroup),
+			fx.As(new(app.InstallEventListener)),
+			fx.ResultTags(appfx.InTrxEventListener),
 		),
 		fx.Annotate(
 			svc.NewManagerAwareToggleSvc,
-			fx.ParamTags(``, PreToggleHandlerGroup, PostToggleHandlerGroup),
+			fx.ParamTags(``, InTrxToggleListenerGroup, PostTrxToggleListenerGroup),
 		),
 		svc.NewInstalledCommandQuerySvc,
 	),

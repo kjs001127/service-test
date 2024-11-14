@@ -15,15 +15,14 @@ import (
 	"github.com/channel-io/ch-app-store/api/httpfx"
 	"github.com/channel-io/ch-app-store/config"
 	"github.com/channel-io/ch-app-store/configfx"
-	"github.com/channel-io/ch-app-store/internal/appdisplayfx"
 	"github.com/channel-io/ch-app-store/internal/appfx"
-	"github.com/channel-io/ch-app-store/internal/apphttpfx"
-	publicapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/publicfx"
 	"github.com/channel-io/ch-app-store/internal/brieffx"
 	"github.com/channel-io/ch-app-store/internal/commandfx"
 	"github.com/channel-io/ch-app-store/internal/hookfx"
+	"github.com/channel-io/ch-app-store/internal/httpfnfx"
 	"github.com/channel-io/ch-app-store/internal/invokelogfx"
 	"github.com/channel-io/ch-app-store/internal/nativefx"
+	publicapprolefx "github.com/channel-io/ch-app-store/internal/rolefx/publicfx"
 	"github.com/channel-io/ch-app-store/internal/systemlogfx"
 	"github.com/channel-io/ch-app-store/lib/datadogfx"
 	"github.com/channel-io/ch-app-store/lib/ddbfx"
@@ -55,10 +54,9 @@ var fullAppModule = fx.Options(
 	configfx.Values,
 	httpModule,
 	publicapprolefx.AppRole,
-	apphttpfx.Function,
+	httpfnfx.Function,
 	brieffx.Brief,
 	appfx.App,
-	appdisplayfx.AppDisplay,
 	invokelogfx.Loggers,
 	logfx.Logger,
 	mockauth.Module,

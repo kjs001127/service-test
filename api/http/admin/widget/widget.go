@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/model"
-	widget "github.com/channel-io/ch-app-store/internal/appwidget/model"
+	widget "github.com/channel-io/ch-app-store/internal/widget/model"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
@@ -23,7 +23,7 @@ import (
 //	@Param		scope		query	string	false	"scope of widget"
 //
 //	@Success	200
-//	@Router		/admin/channels/:channelID/apps/:appID/app-widgets/:appWidgetId
+//	@Router		/admin/channels/:channelID/apps/:appID/app-widgets/:appWidgetID [get]
 func (h *Handler) checkAppWidget(ctx *gin.Context) {
 	appID, channelID, widgetID := ctx.Param("appID"), ctx.Param("channelID"), ctx.Param("appWidgetID")
 	scope := ctx.DefaultQuery("scope", "front")

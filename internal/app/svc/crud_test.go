@@ -24,6 +24,7 @@ type AppCrudSvcTestSuite struct {
 	crudSvc             svc.AppLifecycleSvc
 	querySvc            svc.AppQuerySvc
 	appRepo             *mocksvc.AppRepository
+	displayRepo         *mocksvc.AppDisplayRepository
 	installQuerySvc     *svc.InstalledAppQuerySvc
 	appInstallationRepo *mocksvc.AppInstallationRepository
 	installSvc          svc.AppInstallSvc
@@ -31,12 +32,14 @@ type AppCrudSvcTestSuite struct {
 
 func (a *AppCrudSvcTestSuite) SetupTest() {
 	a.appRepo = mocksvc.NewAppRepository(a.T())
+	a.displayRepo = mocksvc.NewAppDisplayRepository(a.T())
+
 	a.appInstallationRepo = mocksvc.NewAppInstallationRepository(a.T())
 
 	a.querySvc = svc.NewAppQuerySvcImpl(a.appRepo)
 	a.installSvc = svc.NewAppInstallSvc(log.NewNoOpLogger(), a.appInstallationRepo, a.appRepo, nil, nil)
 	a.installQuerySvc = svc.NewInstallQuerySvc(a.appInstallationRepo, a.appRepo, a.installSvc)
-	a.crudSvc = svc.NewAppLifecycleSvcImpl(a.appRepo, a.installSvc, a.installQuerySvc, nil)
+	a.crudSvc = svc.NewAppLifecycleSvcImpl(a.appRepo, a.displayRepo, a.installSvc, a.installQuerySvc, nil)
 }
 
 func (a *AppCrudSvcTestSuite) TestCreate() {
@@ -66,7 +69,7 @@ func (a *AppCrudSvcTestSuite) TestUpdate() {
 		Title: "newTitle",
 	}
 
-	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(before, nil)
+	a.appRepo.EXPECT().Find(mock.Anything, appID).Return(before, nil)
 	a.appRepo.EXPECT().Save(mock.Anything, update).Return(update, nil)
 
 	ctx := context.Background()
@@ -88,13 +91,14 @@ func (a *AppCrudSvcTestSuite) TestDelete() {
 		{AppID: appID, ChannelID: "testChannel3"},
 	}
 
-	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(app, nil)
-	a.appInstallationRepo.EXPECT().FetchAllByAppID(mock.Anything, appID).Return(installations, nil)
+	a.appRepo.EXPECT().Find(mock.Anything, appID).Return(app, nil)
+	a.appInstallationRepo.EXPECT().FindAllByAppID(mock.Anything, appID).Return(installations, nil)
 	for _, i := range installations {
 		a.appInstallationRepo.EXPECT().Delete(mock.Anything, i.ID()).Return(nil)
 	}
-	a.appRepo.EXPECT().Delete(mock.Anything, appID).Return(nil)
 
+	a.appRepo.EXPECT().Delete(mock.Anything, appID).Return(nil)
+	a.displayRepo.EXPECT().Delete(mock.Anything, appID).Return(nil)
 	err := a.crudSvc.Delete(context.Background(), appID)
 
 	assert.Nil(a.T(), err)
@@ -106,7 +110,7 @@ func (a *AppCrudSvcTestSuite) TestRead() {
 		Title: "test",
 	}
 
-	a.appRepo.EXPECT().FindApp(mock.Anything, appID).Return(app, nil)
+	a.appRepo.EXPECT().Find(mock.Anything, appID).Return(app, nil)
 
 	ctx := context.Background()
 
@@ -163,7 +167,7 @@ func (a *AppCrudSvcTestSuite) TestReadAllByAppIDs() {
 		},
 	}
 
-	a.appRepo.EXPECT().FindApps(mock.Anything, []string{"1", "3", "4"}).Return(apps, nil)
+	a.appRepo.EXPECT().FindAll(mock.Anything, []string{"1", "3", "4"}).Return(apps, nil)
 
 	ctx := context.Background()
 	res, err := a.querySvc.ReadAllByAppIDs(ctx, []string{"1", "3", "4"})

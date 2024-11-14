@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
 
 	"github.com/gin-gonic/gin"
 )

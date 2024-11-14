@@ -7,7 +7,7 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	authgen "github.com/channel-io/ch-app-store/internal/auth/general"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/native"
 	"github.com/channel-io/ch-app-store/internal/native/localapi/systemlog/action/private"
 	"github.com/channel-io/ch-app-store/internal/systemlog/model"

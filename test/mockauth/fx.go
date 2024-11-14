@@ -6,15 +6,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"go.uber.org/fx"
 
-	mockgeneral "github.com/channel-io/ch-app-store/generated/mock/auth/general"
-	mockprincipal "github.com/channel-io/ch-app-store/generated/mock/auth/principal"
-	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
-	mocksession "github.com/channel-io/ch-app-store/generated/mock/auth/principal/session"
+	mockgeneral "github.com/channel-io/ch-app-store/generated/mock/shared/general"
+	mockprincipal "github.com/channel-io/ch-app-store/generated/mock/shared/principal"
+	mockaccount "github.com/channel-io/ch-app-store/generated/mock/shared/principal/account"
+	mocksession "github.com/channel-io/ch-app-store/generated/mock/shared/principal/session"
 
-	"github.com/channel-io/ch-app-store/internal/auth/general"
-	"github.com/channel-io/ch-app-store/internal/auth/principal"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/general"
+	"github.com/channel-io/ch-app-store/internal/shared/principal"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
 )
 
 var mockedManager = account.Manager{

@@ -45,13 +45,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 		return
 	}
 
-	appWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApp(ctx, created)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, dto.FromAppWithDisplay(appWithDisplay))
+	ctx.JSON(http.StatusCreated, dto.FromApp(created))
 }
 
 // deleteApp godoc
@@ -89,32 +83,11 @@ func (h *Handler) deleteApp(ctx *gin.Context) {
 func (h *Handler) listApps(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 
-	appsWithDisplay, err := h.displayPermissionSvc.GetAppsWithDisplayByAccount(ctx, account.ID)
+	apps, err := h.appPermissionSvc.ListApps(ctx, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AppWithDisplayViewsFrom(appsWithDisplay))
-}
-
-// getCallableApps godoc
-//
-//	@Summary	get callable apps
-//	@Tags		Public
-//
-//	@Param		x-account	header		string	true	"token"
-//
-//	@Success	200			{object}	[]dto.AppGeneral
-//	@Router		/desk/account/auth/apps  [get]
-func (h *Handler) getCallableApps(ctx *gin.Context) {
-	account := middleware.Account(ctx)
-
-	appsWithDisplay, err := h.displayPermissionSvc.GetCallableAppsWithDisplay(ctx, account.ID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.FromAppsWithDisplay(appsWithDisplay))
+	ctx.JSON(http.StatusOK, dto.FromApps(apps))
 }

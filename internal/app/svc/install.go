@@ -25,28 +25,28 @@ type AppInstallSvcImpl struct {
 
 	appInstallationRepo AppInstallationRepository
 	appRepo             AppRepository
-	preInstallHandlers  []InstallHandler
-	postInstallHandlers []InstallHandler
+	inTrxListeners      []InstallEventListener
+	postTrxListeners    []InstallEventListener
 }
 
 func NewAppInstallSvc(
 	logger log.ContextAwareLogger,
 	appInstallationRepo AppInstallationRepository,
 	appRepo AppRepository,
-	preInstallHandlers []InstallHandler,
-	postInstallHandlers []InstallHandler,
+	preInstallHandlers []InstallEventListener,
+	postInstallHandlers []InstallEventListener,
 ) *AppInstallSvcImpl {
 	return &AppInstallSvcImpl{
 		logger:              logger,
 		appInstallationRepo: appInstallationRepo,
 		appRepo:             appRepo,
-		preInstallHandlers:  preInstallHandlers,
-		postInstallHandlers: postInstallHandlers,
+		inTrxListeners:      preInstallHandlers,
+		postTrxListeners:    postInstallHandlers,
 	}
 }
 
 func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.InstallationID) (*model.App, error) {
-	app, err := s.appRepo.FindApp(ctx, req.AppID)
+	app, err := s.appRepo.Find(ctx, req.AppID)
 	if err != nil {
 		return nil, errors.WithStack(err) // @TODO camel check if returning stack trace is ok
 	}
@@ -55,7 +55,7 @@ func (s *AppInstallSvcImpl) InstallAppById(ctx context.Context, req model.Instal
 }
 
 func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
-	_, err := s.appInstallationRepo.Fetch(ctx, model.InstallationID{
+	_, err := s.appInstallationRepo.Find(ctx, model.InstallationID{
 		AppID:     app.ID,
 		ChannelID: channelID,
 	})
@@ -82,7 +82,7 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			return errors.WithStack(err)
 		}
 
-		if err := s.callPreInstallHandlers(ctx, app, channelID); err != nil {
+		if err := s.publishTrxInstallEvent(ctx, app, channelID); err != nil {
 			return errors.Wrap(err, "error while handling onInstall")
 		}
 		return nil
@@ -90,13 +90,13 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 		return nil, err
 	}
 
-	go s.callPostInstallHandlers(app, channelID)
+	go s.publishPostInstallEvent(app, channelID)
 
 	return app, nil
 }
 
 func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.InstallationID) error {
-	app, err := s.appRepo.FindApp(ctx, req.AppID)
+	app, err := s.appRepo.Find(ctx, req.AppID)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -109,7 +109,7 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 			return errors.WithStack(err)
 		}
 
-		if err := s.callPreUnInstallHandlers(ctx, app, req.ChannelID); err != nil {
+		if err := s.publishTrxUninstallEvent(ctx, app, req.ChannelID); err != nil {
 			return errors.Wrap(err, "error while uninstalling app")
 		}
 
@@ -118,13 +118,13 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 		return err
 	}
 
-	go s.callPostUnInstallHandlers(app, req.ChannelID)
+	go s.publishPostUninstallEvent(app, req.ChannelID)
 
 	return nil
 }
 
-func (s *AppInstallSvcImpl) callPreInstallHandlers(ctx context.Context, app *model.App, channelID string) error {
-	for _, handler := range s.preInstallHandlers {
+func (s *AppInstallSvcImpl) publishTrxUninstallEvent(ctx context.Context, app *model.App, channelID string) error {
+	for _, handler := range s.inTrxListeners {
 		if err := handler.OnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
@@ -132,8 +132,8 @@ func (s *AppInstallSvcImpl) callPreInstallHandlers(ctx context.Context, app *mod
 	return nil
 }
 
-func (s *AppInstallSvcImpl) callPreUnInstallHandlers(ctx context.Context, app *model.App, channelID string) error {
-	for _, handler := range s.preInstallHandlers {
+func (s *AppInstallSvcImpl) publishTrxInstallEvent(ctx context.Context, app *model.App, channelID string) error {
+	for _, handler := range s.inTrxListeners {
 		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
@@ -141,29 +141,29 @@ func (s *AppInstallSvcImpl) callPreUnInstallHandlers(ctx context.Context, app *m
 	return nil
 }
 
-func (s *AppInstallSvcImpl) callPostUnInstallHandlers(app *model.App, channelID string) {
+func (s *AppInstallSvcImpl) publishPostUninstallEvent(app *model.App, channelID string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
-	for _, handler := range s.postInstallHandlers {
+	for _, handler := range s.postTrxListeners {
 		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
 			s.logger.Errorw(ctx, "uninstall post install handler failed", "appID", app.ID, "channelID", channelID, "err", err)
 		}
 	}
 }
 
-func (s *AppInstallSvcImpl) callPostInstallHandlers(app *model.App, channelID string) {
+func (s *AppInstallSvcImpl) publishPostInstallEvent(app *model.App, channelID string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 
-	for _, handler := range s.postInstallHandlers {
+	for _, handler := range s.postTrxListeners {
 		if err := handler.OnInstall(ctx, app, channelID); err != nil {
 			s.logger.Errorw(ctx, "install post install handler failed", "appID", app.ID, "channelID", channelID, "err", err)
 		}
 	}
 }
 
-type InstallHandler interface {
+type InstallEventListener interface {
 	OnInstall(ctx context.Context, app *model.App, channelID string) error
 	OnUnInstall(ctx context.Context, app *model.App, channelID string) error
 }

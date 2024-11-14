@@ -33,12 +33,12 @@ func (s *InstalledAppQuerySvc) QueryInstalledAppsByChannelID(ctx context.Context
 		return nil, err
 	}
 
-	appInstallations, err := s.appInstallationRepo.FetchAllByChannel(ctx, channelID)
+	appInstallations, err := s.appInstallationRepo.FindAllByChannelID(ctx, channelID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	apps, err := s.appRepo.FindApps(ctx, appIDsOf(appInstallations))
+	apps, err := s.appRepo.FindAll(ctx, appIDsOf(appInstallations))
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -55,7 +55,7 @@ func appIDsOf(installations []*model.AppInstallation) []string {
 }
 
 func (s *InstalledAppQuerySvc) QueryInstalledApp(ctx context.Context, install model.InstallationID) (*model.App, error) {
-	app, err := s.appRepo.FindApp(ctx, install.AppID)
+	app, err := s.appRepo.Find(ctx, install.AppID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -66,7 +66,7 @@ func (s *InstalledAppQuerySvc) QueryInstalledApp(ctx context.Context, install mo
 		}
 	}
 
-	_, err = s.appInstallationRepo.Fetch(ctx, install)
+	_, err = s.appInstallationRepo.Find(ctx, install)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (s *InstalledAppQuerySvc) QueryInstalledApp(ctx context.Context, install mo
 }
 
 func (s *InstalledAppQuerySvc) QueryInstallationsByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
-	return s.appInstallationRepo.FetchAllByAppID(ctx, appID)
+	return s.appInstallationRepo.FindAllByAppID(ctx, appID)
 }
 
 func (s *InstalledAppQuerySvc) CheckInstall(ctx context.Context, install model.InstallationID) (bool, error) {

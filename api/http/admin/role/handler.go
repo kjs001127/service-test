@@ -2,7 +2,7 @@ package role
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	rolesvc "github.com/channel-io/ch-app-store/internal/approle/svc"
+	rolesvc "github.com/channel-io/ch-app-store/internal/role/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)

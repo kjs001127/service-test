@@ -3,14 +3,10 @@ package dev
 import (
 	"net/http"
 
-	"github.com/channel-io/ch-app-store/api/http/admin/dto"
-
-	_ "github.com/channel-io/ch-app-store/internal/app/model"
-	_ "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
-	_ "github.com/channel-io/ch-app-store/internal/permission/svc"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
+	"github.com/channel-io/ch-app-store/api/http/admin/dto"
 )
 
 // createApp godoc
@@ -20,7 +16,7 @@ import (
 //
 //	@Param		app.AppCreateRequest	body		dto.AppCreateRequest	true	"App title to create"
 //
-//	@Success	201						{object}	svc.AppWithDisplay
+//	@Success	201						{object}	model.App
 //	@Router		/admin/apps [post]
 func (h *Handler) createApp(ctx *gin.Context) {
 	var request dto.AppCreateRequest
@@ -35,13 +31,7 @@ func (h *Handler) createApp(ctx *gin.Context) {
 		return
 	}
 
-	appWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApp(ctx, created)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, appWithDisplay)
+	ctx.JSON(http.StatusCreated, created)
 }
 
 // deleteApp godoc

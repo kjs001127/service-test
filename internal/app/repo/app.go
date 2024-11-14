@@ -24,6 +24,20 @@ func NewAppDAO(db db.DB) *AppDAO {
 	return &AppDAO{db: db}
 }
 
+func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([]*app.App, error) {
+	apps, err := models.Apps(
+		qm.Select("*"),
+		qm.Where("is_private = $1", false),
+		qm.Where("id > $2", since),
+		qm.Limit(limit),
+	).All(ctx, a.db)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while querying app")
+	}
+
+	return a.unmarshalAll(apps)
+}
+
 func (a *AppDAO) FindBuiltInApps(ctx context.Context) ([]*app.App, error) {
 	apps, err := models.Apps(
 		qm.Select("*"),
@@ -36,7 +50,7 @@ func (a *AppDAO) FindBuiltInApps(ctx context.Context) ([]*app.App, error) {
 	return a.unmarshalAll(apps)
 }
 
-func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
+func (a *AppDAO) Find(ctx context.Context, appID string) (*app.App, error) {
 	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
@@ -47,7 +61,7 @@ func (a *AppDAO) FindApp(ctx context.Context, appID string) (*app.App, error) {
 	return a.unmarshal(appTarget)
 }
 
-func (a *AppDAO) FindApps(ctx context.Context, appIDs []string) ([]*app.App, error) {
+func (a *AppDAO) FindAll(ctx context.Context, appIDs []string) ([]*app.App, error) {
 	slice := make([]interface{}, len(appIDs))
 	for i, v := range appIDs {
 		slice[i] = v
@@ -100,6 +114,7 @@ func (a *AppDAO) marshal(appTarget *app.App) (*models.App, error) {
 		AvatarURL:   null.StringFromPtr(appTarget.AvatarURL),
 		IsBuiltIn:   null.BoolFrom(appTarget.IsBuiltIn),
 		I18nMap:     null.JSONFrom(i18nMap),
+		IsPrivate:   appTarget.IsPrivate,
 	}, nil
 }
 
@@ -116,6 +131,7 @@ func (a *AppDAO) unmarshal(rawApp *models.App) (*app.App, error) {
 		Description: rawApp.Description.Ptr(),
 		IsBuiltIn:   rawApp.IsBuiltIn.Bool,
 		I18nMap:     i18nMap,
+		IsPrivate:   rawApp.IsPrivate,
 	}, nil
 }
 

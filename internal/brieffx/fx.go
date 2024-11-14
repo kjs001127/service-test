@@ -20,8 +20,8 @@ var BriefSvcs = fx.Options(
 		app.NewTypedInvoker[svc.BriefRequest, svc.BriefResponse],
 		fx.Annotate(
 			svc.NewBriefClearHook,
-			fx.As(new(app.AppLifeCycleHook)),
-			fx.ResultTags(appfx.LifecycleHookGroup),
+			fx.As(new(app.AppLifeCycleEventListener)),
+			fx.ResultTags(appfx.LifecycleListener),
 		),
 	),
 )

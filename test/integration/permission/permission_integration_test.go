@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	mockaccount "github.com/channel-io/ch-app-store/generated/mock/auth/principal/account"
+	mockaccount "github.com/channel-io/ch-app-store/generated/mock/shared/principal/account"
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	appsvc "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	. "github.com/channel-io/ch-app-store/test/integration"
 
 	"github.com/stretchr/testify/assert"
@@ -36,7 +36,7 @@ type PermissionTestSuite struct {
 	helper *TestHelper
 
 	appSvc             permission.AccountAppPermissionSvc
-	installSvc         *appsvc.ManagerAwareInstallSvc
+	installSvc         *appsvc.ManagerAppInstallSvc
 	lifecycleSvc       appsvc.AppLifecycleSvc
 	managerRoleFetcher mockaccount.ManagerRoleFetcher
 }
@@ -92,19 +92,20 @@ func (p *PermissionTestSuite) TestDeleteApp() {
 func (p *PermissionTestSuite) TestInstallPrivateAppByOwner() {
 	ctx := context.Background()
 
-	manager := account.Manager{
-		ID:        ownerManagerID,
-		RoleID:    ownerRoleID,
-		AccountID: ownerAccountID,
-		ChannelID: channelID,
-	}
-
 	managerRole := account.ManagerRole{
 		ID:          ownerRoleID,
 		RoleType:    ownerType,
 		Permissions: []account.Permission{{Action: channelPermission}},
 	}
 	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, channelID, ownerRoleID).Return(managerRole, nil)
+
+	manager := account.Manager{
+		ID:          ownerManagerID,
+		RoleID:      ownerRoleID,
+		AccountID:   ownerAccountID,
+		ChannelID:   channelID,
+		RoleFetcher: &p.managerRoleFetcher,
+	}
 
 	app, err := p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 	p.Require().NotNil(app)
@@ -123,19 +124,20 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByOwner() {
 func (p *PermissionTestSuite) TestInstallPrivateAppByNonOwner() {
 	ctx := context.Background()
 
-	manager := account.Manager{
-		ID:        ownerManagerID,
-		RoleID:    nonOwnerRoleID,
-		AccountID: nonOwnerAccountID,
-		ChannelID: channelID,
-	}
-
 	managerRole := account.ManagerRole{
 		ID:          nonOwnerRoleID,
 		RoleType:    nonOwnerType,
 		Permissions: []account.Permission{{Action: channelPermission}},
 	}
 	p.managerRoleFetcher.EXPECT().FetchRole(mock.Anything, channelID, nonOwnerRoleID).Return(managerRole, nil)
+
+	manager := account.Manager{
+		ID:          ownerManagerID,
+		RoleID:      nonOwnerRoleID,
+		AccountID:   nonOwnerAccountID,
+		ChannelID:   channelID,
+		RoleFetcher: &p.managerRoleFetcher,
+	}
 
 	app, err := p.appSvc.CreateApp(ctx, testTitle, ownerAccountID)
 	p.Require().NotNil(app)

@@ -9,19 +9,18 @@ import (
 	"github.com/channel-io/ch-app-store/api/http/publicfx"
 	"github.com/channel-io/ch-app-store/api/httpfx"
 	"github.com/channel-io/ch-app-store/configfx"
-	"github.com/channel-io/ch-app-store/internal/appdisplayfx"
 	"github.com/channel-io/ch-app-store/internal/appfx"
-	"github.com/channel-io/ch-app-store/internal/apphttpfx"
-	publicapprolefx "github.com/channel-io/ch-app-store/internal/approlefx/publicfx"
-	"github.com/channel-io/ch-app-store/internal/appwidgetfx"
-	"github.com/channel-io/ch-app-store/internal/authfx"
 	"github.com/channel-io/ch-app-store/internal/brieffx"
 	"github.com/channel-io/ch-app-store/internal/commandfx"
 	"github.com/channel-io/ch-app-store/internal/hookfx"
+	"github.com/channel-io/ch-app-store/internal/httpfnfx"
 	"github.com/channel-io/ch-app-store/internal/invokelogfx"
 	"github.com/channel-io/ch-app-store/internal/nativefx"
 	"github.com/channel-io/ch-app-store/internal/permissionfx"
+	publicapprolefx "github.com/channel-io/ch-app-store/internal/rolefx/publicfx"
+	"github.com/channel-io/ch-app-store/internal/sharedfx"
 	"github.com/channel-io/ch-app-store/internal/systemlogfx"
+	"github.com/channel-io/ch-app-store/internal/widgetfx"
 	"github.com/channel-io/ch-app-store/lib/datadogfx"
 	"github.com/channel-io/ch-app-store/lib/ddbfx"
 	"github.com/channel-io/ch-app-store/lib/i18nfx"
@@ -35,19 +34,18 @@ var Public = fx.Options(
 
 	PublicHttp,
 
-	authfx.GeneralAuth,
-	authfx.PrincipalAuth,
+	sharedfx.GeneralAuth,
+	sharedfx.PrincipalAuth,
 
 	appfx.App,
-	appdisplayfx.AppDisplay,
 	permissionfx.Permission,
 	brieffx.Brief,
 	commandfx.Command,
 	nativefx.Native,
 	publicapprolefx.AppRole,
-	apphttpfx.Function,
+	httpfnfx.Function,
 	hookfx.Hook,
-	appwidgetfx.AppWidget,
+	widgetfx.AppWidget,
 	invokelogfx.Loggers,
 	systemlogfx.SystemLog,
 

@@ -3,11 +3,9 @@ package install
 import (
 	"net/http"
 
-	app "github.com/channel-io/ch-app-store/internal/app/model"
-
-	_ "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
-
 	"github.com/gin-gonic/gin"
+
+	app "github.com/channel-io/ch-app-store/internal/app/model"
 )
 
 // checkInstall godoc
@@ -45,7 +43,7 @@ func (h *Handler) checkInstall(ctx *gin.Context) {
 //	@Param		channelID	path		string	true	"id of Channel"
 //	@Param		appID		path		string	true	"id of App to install"
 //
-//	@Success	200			{object}	svc.AppWithDisplay
+//	@Success	200			{object}	model.App
 //	@Router		/admin/channels/{channelID}/installed-apps/{appID} [put]
 func (h *Handler) install(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
@@ -61,14 +59,7 @@ func (h *Handler) install(ctx *gin.Context) {
 		return
 	}
 
-	appWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApp(ctx, appInstalled)
-
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, appWithDisplay)
+	ctx.JSON(http.StatusOK, appInstalled)
 }
 
 // uninstall godoc

@@ -2,7 +2,7 @@ package media
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
 )
 

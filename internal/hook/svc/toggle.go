@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/auth/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/hook/model"

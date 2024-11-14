@@ -1,7 +1,7 @@
 package general
 
 import (
-	"github.com/channel-io/ch-app-store/internal/auth/general"
+	"github.com/channel-io/ch-app-store/internal/shared/general"
 )
 
 // TODO @Camel Scope, Service const 정의 위치 고민

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/channel-io/ch-app-store/internal/auth/principal"
+	"github.com/channel-io/ch-app-store/internal/shared/principal"
 	"github.com/channel-io/ch-app-store/lib/i18n"
 
 	"github.com/gin-gonic/gin"

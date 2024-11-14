@@ -2,7 +2,7 @@ package widget
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/appwidget/svc"
+	"github.com/channel-io/ch-app-store/internal/widget/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)

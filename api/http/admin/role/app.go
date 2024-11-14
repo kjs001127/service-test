@@ -22,13 +22,13 @@ import (
 func (h *Handler) queryByRoleID(ctx *gin.Context) {
 	roleID := ctx.Query("roleId")
 
-	role, err := h.roleRepo.FetchByRoleID(ctx, roleID)
+	role, err := h.roleRepo.FindByRoleID(ctx, roleID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	fullRoles, err := h.roleRepo.FetchByAppID(ctx, role.AppID)
+	fullRoles, err := h.roleRepo.FindAllByAppID(ctx, role.AppID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
@@ -49,7 +49,7 @@ func (h *Handler) queryByRoleID(ctx *gin.Context) {
 func (h *Handler) queryByAppID(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
-	appRoles, err := h.roleRepo.FetchByAppID(ctx, appID)
+	appRoles, err := h.roleRepo.FindAllByAppID(ctx, appID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return

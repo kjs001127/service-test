@@ -3,6 +3,7 @@ package command
 import (
 	"net/http"
 
+	"github.com/channel-io/ch-app-store/api/http/desk/command/dto"
 	deskdto "github.com/channel-io/ch-app-store/api/http/desk/dto"
 	"github.com/channel-io/ch-app-store/api/http/desk/middleware"
 	"github.com/channel-io/ch-app-store/internal/command/model"
@@ -113,7 +114,7 @@ func (h *Handler) autoComplete(ctx *gin.Context) {
 //	@Param		x-account	header		string	true	"access token"
 //	@Param		channelID	path		string	true	"channelID to query"
 //
-//	@Success	200			{object}	deskdto.WysiwygView
+//	@Success	200			{object}	dto.WysiwygView
 //	@Router		/desk/v1/channels/{channelID}/apps [get]
 func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 	channelID := ctx.Param("channelID")
@@ -124,7 +125,7 @@ func (h *Handler) getAppsAndCommands(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, deskdto.WysiwygView{
+	ctx.JSON(http.StatusOK, dto.WysiwygView{
 		Apps:     deskdto.NewAppViews(apps),
 		Commands: deskdto.NewCommandViews(cmds),
 	})

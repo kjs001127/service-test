@@ -10,6 +10,7 @@ type App struct {
 	I18nMap map[string]I18nFields `json:"i18NMap,omitempty"`
 
 	IsBuiltIn bool `json:"isBuiltIn"`
+	IsPrivate bool `json:"isPrivate"`
 }
 
 type I18nFields struct {

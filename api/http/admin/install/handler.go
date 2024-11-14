@@ -3,23 +3,20 @@ package install
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	display "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	installer              app.AppInstallSvc
-	querySvc               *app.InstalledAppQuerySvc
-	appWithDisplayQuerySvc display.AppWithDisplayQuerySvc
+	installer app.AppInstallSvc
+	querySvc  *app.InstalledAppQuerySvc
 }
 
 func NewHandler(
 	installer app.AppInstallSvc,
 	querySvc *app.InstalledAppQuerySvc,
-	appWithDisplayQuerySvc display.AppWithDisplayQuerySvc,
 ) *Handler {
-	return &Handler{installer: installer, querySvc: querySvc, appWithDisplayQuerySvc: appWithDisplayQuerySvc}
+	return &Handler{installer: installer, querySvc: querySvc}
 }
 
 func (h *Handler) RegisterRoutes(router gintool.Router) {

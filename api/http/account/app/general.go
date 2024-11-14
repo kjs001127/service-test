@@ -5,8 +5,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/account/dto"
 	"github.com/channel-io/ch-app-store/api/http/account/middleware"
-
-	displaysvc "github.com/channel-io/ch-app-store/internal/appdisplay/svc"
+	permissionsvc "github.com/channel-io/ch-app-store/internal/permission/svc"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -31,14 +30,7 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
-
-	appWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApp(ctx, app)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	ctx.JSON(http.StatusOK, dto.FromAppWithDisplay(appWithDisplay))
+	ctx.JSON(http.StatusOK, dto.FromDetail(app))
 }
 
 // modifyGeneral godoc
@@ -46,34 +38,26 @@ func (h *Handler) readGeneral(ctx *gin.Context) {
 //	@Summary	modify App general
 //	@Tags		Public
 //
-//	@Param		appID					path		string							true	"appID"
-//	@Param		x-account				header		string							true	"token"
-//	@Param		svc.AppModifyRequest	body		dto.AppWithDisplayModifyRequest	true	"dto"
+//	@Param		appID							path		string							true	"appID"
+//	@Param		x-account						header		string							true	"token"
+//	@Param		permissionsvc.AppModifyRequest	body		permissionsvc.AppModifyRequest	true	"dto"
 //
-//	@Success	200						{object}	svc.AppWithDisplay
+//	@Success	200								{object}	dto.AppGeneral
 //	@Router		/desk/account/apps/{appID}/general  [put]
 func (h *Handler) modifyGeneral(ctx *gin.Context) {
 	account := middleware.Account(ctx)
 	appID := ctx.Param("appID")
-	var request dto.AppWithDisplayModifyRequest
+	var request *permissionsvc.AppModifyRequest
 	if err := ctx.ShouldBindBodyWith(&request, binding.JSON); err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	app, err := h.appPermissionSvc.ModifyApp(ctx, request.ToAppModifyRequest(), appID, account.ID)
+	app, err := h.appPermissionSvc.ModifyApp(ctx, request, appID, account.ID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
 	}
 
-	display, err := h.displayPermissionSvc.ModifyDisplay(ctx, request.ToDisplayModifyRequest(), appID, account.ID)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
-	appWithDisplay := displaysvc.MergeAppAndDisplay(app, display)
-
-	ctx.JSON(http.StatusOK, appWithDisplay)
+	ctx.JSON(http.StatusOK, dto.FromDetail(app))
 }

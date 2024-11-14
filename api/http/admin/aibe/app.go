@@ -33,14 +33,8 @@ func (h *Handler) query(ctx *gin.Context) {
 		return
 	}
 
-	appsWithDisplay, err := h.appWithDisplayQuerySvc.AddDisplayToApps(ctx, appsInstalled)
-	if err != nil {
-		_ = ctx.Error(err)
-		return
-	}
-
 	ctx.JSON(http.StatusOK, dto.AppsAndFullCommands{
-		Apps:     appsWithDisplay,
+		Apps:     appsInstalled,
 		Commands: cmds,
 	})
 }

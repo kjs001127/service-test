@@ -8,7 +8,7 @@ import (
 
 	"github.com/channel-io/ch-app-store/api/http/general/auth/dto"
 
-	_ "github.com/channel-io/ch-app-store/internal/auth/general"
+	_ "github.com/channel-io/ch-app-store/internal/shared/general"
 )
 
 // refreshToken godoc

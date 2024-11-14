@@ -52,7 +52,7 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 
 	ret := r.requester.Invoke(ctx, cmd.AppID, cmdReq)
 
-	// call command invoke event listeners
+	// call command invoke event inTrxListeners
 	event := CommandInvokeEvent{
 		Request: request,
 		Result:  ret.Result,

@@ -3,7 +3,7 @@ package middleware
 import (
 	"strings"
 
-	genauth "github.com/channel-io/ch-app-store/internal/auth/general"
+	genauth "github.com/channel-io/ch-app-store/internal/shared/general"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
