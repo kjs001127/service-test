@@ -8,14 +8,14 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 	"github.com/channel-io/ch-app-store/internal/widget/model"
 )
 
 type AppWidgetInvoker interface {
-	InvokeFrontWidget(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error)
-	InvokeDeskWidget(ctx context.Context, invoker *account.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error)
+	InvokeFrontWidget(ctx context.Context, invoker *front.UserRequester, appWidgetID string) (*Action, error)
+	InvokeDeskWidget(ctx context.Context, invoker *desk.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error)
 	IsInvocable(ctx context.Context, installation appmodel.InstallationID, appWidgetID string, scope model.Scope) (*model.AppWidget, error)
 }
 
@@ -48,7 +48,7 @@ func NewAppWidgetInvokerImpl(repo AppWidgetRepository, installQuerySvc *svc.Inst
 	}
 }
 
-func (i *AppWidgetInvokerImpl) InvokeFrontWidget(ctx context.Context, invoker *session.UserRequester, appWidgetID string) (*Action, error) {
+func (i *AppWidgetInvokerImpl) InvokeFrontWidget(ctx context.Context, invoker *front.UserRequester, appWidgetID string) (*Action, error) {
 	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, model.ScopeFront)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (i *AppWidgetInvokerImpl) InvokeFrontWidget(ctx context.Context, invoker *s
 	return resp.Result, nil
 }
 
-func (i *AppWidgetInvokerImpl) InvokeDeskWidget(ctx context.Context, invoker *account.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error) {
+func (i *AppWidgetInvokerImpl) InvokeDeskWidget(ctx context.Context, invoker *desk.ManagerRequester, appWidgetID string, request AppWidgetRequest) (*Action, error) {
 	widget, err := i.repo.FetchByIDAndScope(ctx, appWidgetID, model.ScopeDesk)
 	if err != nil {
 		return nil, err

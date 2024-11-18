@@ -2,18 +2,18 @@ package media
 
 import (
 	"github.com/channel-io/ch-app-store/api/gintool"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	permission "github.com/channel-io/ch-app-store/internal/permission/svc"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 )
 
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
 	repo   permission.AppAccountRepo
-	parser account.Parser
+	parser desk.Parser
 }
 
-func NewHandler(repo permission.AppAccountRepo, parser account.Parser) *Handler {
+func NewHandler(repo permission.AppAccountRepo, parser desk.Parser) *Handler {
 	return &Handler{repo: repo, parser: parser}
 }
 

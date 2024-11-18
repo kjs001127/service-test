@@ -7,12 +7,12 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/shared/errmodel"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type ToggleEventListener interface {
-	OnToggle(ctx context.Context, manager account.ManagerRequester, request ToggleCommandRequest) error
+	OnToggle(ctx context.Context, manager desk.ManagerRequester, request ToggleCommandRequest) error
 }
 
 type ManagerCommandActivationSvc struct {
@@ -39,7 +39,7 @@ func NewManagerAwareToggleSvc(
 	}
 }
 
-func (s *ManagerCommandActivationSvc) Toggle(ctx context.Context, manager account.ManagerRequester, req ToggleCommandRequest) (err error) {
+func (s *ManagerCommandActivationSvc) Toggle(ctx context.Context, manager desk.ManagerRequester, req ToggleCommandRequest) (err error) {
 	found, err := s.querySvc.Read(ctx, req.Command.AppID)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (s *ManagerCommandActivationSvc) Toggle(ctx context.Context, manager accoun
 
 }
 
-func (s *ManagerCommandActivationSvc) ToggleByKey(ctx context.Context, manager account.ManagerRequester, req ToggleRequest) (err error) {
+func (s *ManagerCommandActivationSvc) ToggleByKey(ctx context.Context, manager desk.ManagerRequester, req ToggleRequest) (err error) {
 	cmd, err := s.cmdRepo.Fetch(ctx, req.Command)
 	if err != nil {
 		return err
@@ -81,11 +81,11 @@ func (s *ManagerCommandActivationSvc) ToggleByKey(ctx context.Context, manager a
 	})
 }
 
-func (s *ManagerCommandActivationSvc) Check(ctx context.Context, manager account.Manager, command model.CommandKey, channelID string) (bool, error) {
+func (s *ManagerCommandActivationSvc) Check(ctx context.Context, manager desk.Manager, command model.CommandKey, channelID string) (bool, error) {
 	return s.toggleSvc.Check(ctx, command, channelID)
 }
 
-func checkPermission(ctx context.Context, appTarget *app.App, manager account.Manager) error {
+func checkPermission(ctx context.Context, appTarget *app.App, manager desk.Manager) error {
 	role, err := manager.Role(ctx)
 	if err != nil {
 		return err

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/channel-io/ch-app-store/internal/shared/general"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 )
 
 type Parser struct {
@@ -29,10 +29,10 @@ func (p *Parser) Parse(ctx context.Context, token string) (general.ParsedRBACTok
 type ManagerFetcher struct {
 }
 
-func (m *ManagerFetcher) FetchManager(ctx context.Context, channelID string, token string) (account.ManagerPrincipal, error) {
-	return account.ManagerPrincipal{
+func (m *ManagerFetcher) FetchManager(ctx context.Context, channelID string, token string) (desk.ManagerPrincipal, error) {
+	return desk.ManagerPrincipal{
 		Token: "",
-		Manager: account.Manager{
+		Manager: desk.Manager{
 			ID:        "1",
 			ChannelID: "1",
 			AccountID: "1",
@@ -45,10 +45,10 @@ func (m *ManagerFetcher) FetchManager(ctx context.Context, channelID string, tok
 type UserFetcher struct {
 }
 
-func (u *UserFetcher) FetchUser(ctx context.Context, token string) (session.UserPrincipal, error) {
-	return session.UserPrincipal{
+func (u *UserFetcher) FetchUser(ctx context.Context, token string) (front.UserPrincipal, error) {
+	return front.UserPrincipal{
 		Token: "",
-		User: session.User{
+		User: front.User{
 			ID:        "1",
 			ChannelID: "1",
 		},

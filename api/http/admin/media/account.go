@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 )
 
 // checkOwner godoc
@@ -20,7 +20,7 @@ import (
 //	@Router		/admin/media/apps/{appID} [get]
 func (h *Handler) checkOwner(ctx *gin.Context) {
 	appID := ctx.Param("appID")
-	acc, err := h.parser.ParseAccount(ctx, ctx.GetHeader(account.XAccountHeader))
+	acc, err := h.parser.ParseAccount(ctx, ctx.GetHeader(desk.XAccountHeader))
 	if err != nil {
 		_ = ctx.Error(err)
 		return

@@ -6,7 +6,7 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 
 	"github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 )
 
 type ManagerAccountCheckFilter struct {
@@ -17,7 +17,7 @@ func NewManagerAccountCheckFilter(repo AppAccountRepo) *ManagerAccountCheckFilte
 	return &ManagerAccountCheckFilter{repo: repo}
 }
 
-func (m ManagerAccountCheckFilter) OnInstall(ctx context.Context, manager account.Manager, target *model.App) error {
+func (m ManagerAccountCheckFilter) OnInstall(ctx context.Context, manager desk.Manager, target *model.App) error {
 	if !target.IsPrivate {
 		return nil
 	}
@@ -29,6 +29,6 @@ func (m ManagerAccountCheckFilter) OnInstall(ctx context.Context, manager accoun
 	return nil
 }
 
-func (m ManagerAccountCheckFilter) OnUnInstall(ctx context.Context, manager account.Manager, target *model.App) error {
+func (m ManagerAccountCheckFilter) OnUnInstall(ctx context.Context, manager desk.Manager, target *model.App) error {
 	return nil
 }

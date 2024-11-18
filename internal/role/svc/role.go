@@ -10,8 +10,8 @@ import (
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/role/model"
 	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 	protomodel "github.com/channel-io/ch-proto/auth/v1/go/model"
 	"github.com/channel-io/ch-proto/auth/v1/go/service"
 )
@@ -231,9 +231,9 @@ func scope(t model.RoleType, appID string) []string {
 func principalTypes(t model.RoleType) []string {
 	switch t {
 	case model.RoleTypeUser:
-		return []string{session.XSessionHeader}
+		return []string{front.XSessionHeader}
 	case model.RoleTypeManager:
-		return []string{account.XAccountHeader}
+		return []string{desk.XAccountHeader}
 	}
 	return nil
 }

@@ -5,13 +5,13 @@ import (
 
 	app "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/shared/errmodel"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type ManagerInstallFilter interface {
-	OnInstall(ctx context.Context, manager account.Manager, target *app.App) error
-	OnUnInstall(ctx context.Context, manager account.Manager, target *app.App) error
+	OnInstall(ctx context.Context, manager desk.Manager, target *app.App) error
+	OnUnInstall(ctx context.Context, manager desk.Manager, target *app.App) error
 }
 
 type ManagerAppInstallSvc struct {
@@ -35,7 +35,7 @@ func NewManagerAwareInstallSvc(
 	}
 }
 
-func (s *ManagerAppInstallSvc) Install(ctx context.Context, manager account.Manager, installID app.InstallationID) (ret *app.App, err error) {
+func (s *ManagerAppInstallSvc) Install(ctx context.Context, manager desk.Manager, installID app.InstallationID) (ret *app.App, err error) {
 	found, err := s.querySvc.Read(ctx, installID.AppID)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (s *ManagerAppInstallSvc) Install(ctx context.Context, manager account.Mana
 	})
 }
 
-func checkPermission(ctx context.Context, appTarget *app.App, manager account.Manager) error {
+func checkPermission(ctx context.Context, appTarget *app.App, manager desk.Manager) error {
 	role, err := manager.Role(ctx)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func checkPermission(ctx context.Context, appTarget *app.App, manager account.Ma
 	return nil
 }
 
-func (s *ManagerAppInstallSvc) UnInstall(ctx context.Context, manager account.Manager, installID app.InstallationID) (err error) {
+func (s *ManagerAppInstallSvc) UnInstall(ctx context.Context, manager desk.Manager, installID app.InstallationID) (err error) {
 	found, err := s.querySvc.Read(ctx, installID.AppID)
 	if err != nil {
 		return err

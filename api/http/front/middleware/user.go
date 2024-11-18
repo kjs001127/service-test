@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,7 +30,7 @@ func (r *UserRequest) Handle(ctx *gin.Context) {
 	requester := middleware.Requester(ctx)
 	user := User(ctx)
 
-	userRequester := session.UserRequester{
+	userRequester := front.UserRequester{
 		Requester:     requester,
 		UserPrincipal: user,
 	}
@@ -38,8 +38,8 @@ func (r *UserRequest) Handle(ctx *gin.Context) {
 	ctx.Set(UserRequesterKey, userRequester)
 }
 
-func UserRequester(ctx *gin.Context) session.UserRequester {
+func UserRequester(ctx *gin.Context) front.UserRequester {
 	rawRequester, _ := ctx.Get(UserRequesterKey)
 
-	return rawRequester.(session.UserRequester)
+	return rawRequester.(front.UserRequester)
 }

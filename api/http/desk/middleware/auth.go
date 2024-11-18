@@ -7,7 +7,7 @@ import (
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/gin-gonic/gin"
 
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -19,11 +19,11 @@ const (
 var regex = regexp.MustCompile(`^/desk/v(\d+)/channels/.*`)
 
 type Auth struct {
-	managerSvc account.ManagerFetcher
+	managerSvc desk.ManagerFetcher
 	logger     log.ContextAwareLogger
 }
 
-func NewAuth(managerSvc account.ManagerFetcher, logger log.ContextAwareLogger) *Auth {
+func NewAuth(managerSvc desk.ManagerFetcher, logger log.ContextAwareLogger) *Auth {
 	return &Auth{managerSvc: managerSvc, logger: logger}
 }
 
@@ -36,7 +36,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	xAccount := ctx.GetHeader(account.XAccountHeader)
+	xAccount := ctx.GetHeader(desk.XAccountHeader)
 	if len(xAccount) <= 0 {
 		ctx.Abort()
 		_ = ctx.Error(
@@ -66,7 +66,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 	ctx.Set(ManagerKey, authenticatedManager)
 }
 
-func Manager(ctx *gin.Context) account.ManagerPrincipal {
+func Manager(ctx *gin.Context) desk.ManagerPrincipal {
 	rawManager, _ := ctx.Get(ManagerKey)
-	return rawManager.(account.ManagerPrincipal)
+	return rawManager.(desk.ManagerPrincipal)
 }

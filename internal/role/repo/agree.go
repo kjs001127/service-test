@@ -2,7 +2,9 @@ package repo
 
 import (
 	"context"
+	"strconv"
 
+	"github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -22,7 +24,12 @@ func NewChannelRoleAgreementDAO(db db.DB) *ChannelRoleAgreementDAO {
 }
 
 func (c *ChannelRoleAgreementDAO) Save(ctx context.Context, agreement *model.ChannelRoleAgreement) error {
-	return marshalAgreement(agreement).Insert(ctx, c.db, boil.Infer())
+	marshaled, err := marshalAgreement(agreement)
+	if err != nil {
+		return err
+	}
+
+	return marshaled.Insert(ctx, c.db, boil.Infer())
 }
 
 func (c *ChannelRoleAgreementDAO) DeleteAllByInstallID(ctx context.Context, id app.InstallationID) error {
@@ -41,11 +48,11 @@ SELECT
 FROM
 	app_roles r
 JOIN
-	channel_agreement a
+	channel_agreements a
 ON
 	r.id = a.app_role_id
 WHERE 
-    r.app_id = ?  AND a.channel_id = ? AND  r.type = ?
+    r.app_id = $1  AND a.channel_id = $2 AND r.type = $3
 ORDER BY 
     r.version DESC
 LIMIT 1
@@ -61,23 +68,30 @@ LIMIT 1
 
 func (c *ChannelRoleAgreementDAO) FindLatestUnAgreedRoles(ctx context.Context, channelID string, appIDs []string, types []model.RoleType) ([]*model.AppRole, error) {
 	query := `
-SELECT
-	*
-FROM
-	app_roles r
-JOIN
-	(SELECT app_id,  type, MAX(version) AS max_version FROM app_roles WHERE app_id IN (?) AND type IN (?) GROUP BY (app_id, type)) as max_versions
-ON
-	r.app_id = max_versions.app_id AND r.version = max_versions.max_version
-LEFT OUTER JOIN
-	channel_agreement a
-ON
-	r.id = a.app_role_id
-WHERE a.channel_id = ?
+SELECT 
+    r.*
+FROM 
+    app_roles r
+JOIN 
+    (
+        SELECT app_id, type, MAX(version) AS max_version
+        FROM app_roles
+        WHERE app_id = ANY($1) AND type = ANY($2)
+        GROUP BY app_id, type
+    ) AS max_versions 
+ON 
+    r.app_id = max_versions.app_id 
+    AND r.version = max_versions.max_version 
+    AND r.type = max_versions.type
+LEFT JOIN 
+	(SELECT * FROM channel_agreements WHERE channel_id = $3) as agreements
+ON 
+	agreements.app_role_id = r.id
+WHERE channel_id IS NULL
 `
 
 	var ret models.AppRoleSlice
-	err := queries.Raw(query, placeholderStr(appIDs), placeholderType(types), channelID).Bind(ctx, c.db, &ret)
+	err := queries.Raw(query, pq.Array(appIDs), pq.Array(types), channelID).Bind(ctx, c.db, &ret)
 	if err != nil {
 		return nil, err
 	}
@@ -85,9 +99,14 @@ WHERE a.channel_id = ?
 	return unmarshalAll(ret), nil
 }
 
-func marshalAgreement(agreement *model.ChannelRoleAgreement) *models.ChannelAgreement {
-	return &models.ChannelAgreement{
-		AppRoleID: agreement.AppRoleID,
-		ChannelID: agreement.ChannelID,
+func marshalAgreement(agreement *model.ChannelRoleAgreement) (*models.ChannelAgreement, error) {
+	conv, err := strconv.Atoi(agreement.AppRoleID)
+	if err != nil {
+		return nil, err
 	}
+
+	return &models.ChannelAgreement{
+		AppRoleID: conv,
+		ChannelID: agreement.ChannelID,
+	}, nil
 }

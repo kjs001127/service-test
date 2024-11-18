@@ -7,8 +7,8 @@ import (
 	"github.com/channel-io/ch-app-store/configfx"
 	"github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/shared/principal"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 )
 
 var RoleClientOnly = fx.Options(
@@ -24,18 +24,18 @@ var RoleClientOnly = fx.Options(
 var PrincipalAuth = fx.Options(
 	fx.Provide(
 		fx.Annotate(
-			account.NewParserImpl,
-			fx.As(new(account.Parser)),
+			desk.NewParserImpl,
+			fx.As(new(desk.Parser)),
 			fx.ParamTags(httpfx.DW, configfx.DWAdmin),
 		),
 		fx.Annotate(
-			account.NewManagerFetcherImpl,
-			fx.As(new(account.ManagerFetcher)),
+			desk.NewManagerFetcherImpl,
+			fx.As(new(desk.ManagerFetcher)),
 			fx.ParamTags(httpfx.DW, configfx.DWAdmin),
 		),
 		fx.Annotate(
-			session.NewUserFetcherImpl,
-			fx.As(new(session.UserFetcher)),
+			front.NewUserFetcherImpl,
+			fx.As(new(front.UserFetcher)),
 			fx.ParamTags(configfx.JwtServiceKey),
 		),
 		fx.Annotate(
@@ -44,8 +44,8 @@ var PrincipalAuth = fx.Options(
 			fx.ParamTags(httpfx.DW, configfx.DWAdmin),
 		),
 		fx.Annotate(
-			account.NewManagerRoleFetcher,
-			fx.As(new(account.ManagerRoleFetcher)),
+			desk.NewManagerRoleFetcher,
+			fx.As(new(desk.ManagerRoleFetcher)),
 			fx.ParamTags(httpfx.DW, configfx.DWAdmin),
 		),
 	),

@@ -3,10 +3,11 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/lib/pq"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
@@ -26,18 +27,27 @@ func NewAppRoleDao(db db.DB) *AppRoleDao {
 }
 
 func (a *AppRoleDao) FindLatestRoles(ctx context.Context, appIDs []string, types []model.RoleType) ([]*model.AppRole, error) {
-	query := `
-SELECT 
-    *
-FROM 
-    app_roles r 
-JOIN 
-    (SELECT app_id,  type, MAX(version) AS max_version FROM app_roles WHERE app_id IN (?) AND type IN (?) GROUP BY (app_id, type)) as max_versions 
-ON 
-    r.app_id = max_versions.app_id AND r.version = max_versions.max_version;`
+
+	query := fmt.Sprintf(`
+SELECT
+    r.*
+FROM
+    app_roles r
+        JOIN
+    (
+        SELECT app_id, type, MAX(version) AS max_version
+        FROM app_roles
+        WHERE app_id = ANY($1) AND type = ANY($2)
+        GROUP BY (app_id, type)
+    ) AS max_versions
+    ON
+        r.app_id = max_versions.app_id
+            AND r.version = max_versions.max_version
+            AND r.type = max_versions.type;
+`)
 
 	var ret models.AppRoleSlice
-	err := queries.Raw(query, placeholderStr(appIDs), placeholderType(types)).Bind(ctx, a.db, &ret)
+	err := queries.Raw(query, pq.Array(appIDs), pq.Array(types)).Bind(ctx, a.db, &ret)
 	if err != nil {
 		return nil, err
 	}
@@ -47,43 +57,33 @@ ON
 }
 
 func (a *AppRoleDao) FindLatestRole(ctx context.Context, appID string, roleType model.RoleType) (*model.AppRole, error) {
-	query := `
+	query := fmt.Sprintf(`
 SELECT 
-    *
+    r.*
 FROM 
-    app_roles r 
+    app_roles r
 JOIN 
-    (SELECT app_id,  type, MAX(version) AS max_version FROM app_roles WHERE app_id = ? AND type = ? GROUP BY (app_id, type)) as max_versions 
+    (
+        SELECT app_id, type, MAX(version) AS max_version
+        FROM app_roles
+        WHERE app_id = $1 AND type = $2
+        GROUP BY app_id, type
+    ) AS max_versions 
 ON 
-    r.app_id = max_versions.app_id AND r.version = max_versions.max_version;`
+    r.app_id = max_versions.app_id 
+    AND r.version = max_versions.max_version 
+    AND r.type = max_versions.type;
+`)
 
-	var ret *models.AppRole
-	err := queries.Raw(query, appID, string(roleType)).Bind(ctx, a.db, &ret)
+	var ret models.AppRole
+	built := queries.Raw(query, appID, string(roleType))
+
+	err := built.Bind(ctx, a.db, &ret)
 	if err != nil {
 		return nil, err
 	}
 
-	return unmarshal(ret), nil
-}
-
-func placeholderStr(ids []string) string {
-	placeholders := make([]string, len(ids))
-	for i := range placeholders {
-		placeholders[i] = ids[i]
-	}
-
-	result := strings.Join(placeholders, ", ")
-	return result
-}
-
-func placeholderType(ids []model.RoleType) string {
-	placeholders := make([]string, len(ids))
-	for i := range placeholders {
-		placeholders[i] = string(ids[i])
-	}
-
-	result := strings.Join(placeholders, ", ")
-	return result
+	return unmarshal(&ret), nil
 }
 
 func (a *AppRoleDao) FindAllByAppID(ctx context.Context, appID string) ([]*model.AppRole, error) {
@@ -150,6 +150,7 @@ func (a *AppRoleDao) marshal(role *model.AppRole) (*models.AppRole, error) {
 		RoleID:   role.RoleID,
 		ClientID: role.Credentials.ClientID,
 		Secret:   role.Credentials.ClientSecret,
+		Version:  role.Version,
 		Type:     string(role.Type),
 	}
 

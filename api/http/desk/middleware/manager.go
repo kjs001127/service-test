@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/channel-io/ch-app-store/api/http/shared/middleware"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +28,7 @@ func (r *ManagerRequest) Handle(ctx *gin.Context) {
 	requester := middleware.Requester(ctx)
 	manager := Manager(ctx)
 
-	managerRequester := account.ManagerRequester{
+	managerRequester := desk.ManagerRequester{
 		Requester:        requester,
 		ManagerPrincipal: manager,
 	}
@@ -36,8 +36,8 @@ func (r *ManagerRequest) Handle(ctx *gin.Context) {
 	ctx.Set(ManagerRequesterKey, managerRequester)
 }
 
-func ManagerRequester(ctx *gin.Context) account.ManagerRequester {
+func ManagerRequester(ctx *gin.Context) desk.ManagerRequester {
 	rawRequester, _ := ctx.Get(ManagerRequesterKey)
 
-	return rawRequester.(account.ManagerRequester)
+	return rawRequester.(desk.ManagerRequester)
 }

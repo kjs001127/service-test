@@ -2,13 +2,14 @@ package svc
 
 import (
 	"context"
+
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
 	cmdmodel "github.com/channel-io/ch-app-store/internal/command/model"
 	"github.com/channel-io/ch-app-store/internal/command/svc"
 	"github.com/channel-io/ch-app-store/internal/hook/model"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 )
@@ -25,7 +26,7 @@ func NewToggleHookSvc(
 	return &ToggleHookSvc{repo: repo, invoker: invoker}
 }
 
-func (s *ToggleHookSvc) OnToggle(ctx context.Context, manager account.ManagerRequester, request svc.ToggleCommandRequest) error {
+func (s *ToggleHookSvc) OnToggle(ctx context.Context, manager desk.ManagerRequester, request svc.ToggleCommandRequest) error {
 	hooks, err := s.repo.Fetch(ctx, request.Command.AppID)
 	if apierr.IsNotFound(err) {
 		return nil

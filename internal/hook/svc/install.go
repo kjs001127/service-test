@@ -11,7 +11,7 @@ import (
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/hook/model"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -42,7 +42,7 @@ func NewPostInstallHandler(invoker svc.Invoker, hookRepo InstallHookRepository, 
 	return &PostInstallHandler{invoker: invoker, hookRepo: hookRepo, logger: logger}
 }
 
-func (i *PostInstallHandler) OnInstall(ctx context.Context, manager account.Manager, target *app.App) error {
+func (i *PostInstallHandler) OnInstall(ctx context.Context, manager desk.Manager, target *app.App) error {
 	installHook, err := i.hookRepo.Fetch(ctx, target.ID)
 	if apierr.IsNotFound(err) {
 		return nil
@@ -62,11 +62,11 @@ func (i *PostInstallHandler) OnInstall(ctx context.Context, manager account.Mana
 	return nil
 }
 
-func (i *PostInstallHandler) OnUnInstall(ctx context.Context, manager account.Manager, target *app.App) error {
+func (i *PostInstallHandler) OnUnInstall(ctx context.Context, manager desk.Manager, target *app.App) error {
 	return nil
 }
 
-func (i *PostInstallHandler) trySendHook(ctx context.Context, manager account.Manager, installID appmodel.InstallationID, hookFunctionName string) {
+func (i *PostInstallHandler) trySendHook(ctx context.Context, manager desk.Manager, installID appmodel.InstallationID, hookFunctionName string) {
 	params, err := json.Marshal(installID)
 	if err != nil {
 		i.logger.Errorw(ctx, "while marshalling InstallationID", "err", err)

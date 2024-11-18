@@ -9,13 +9,13 @@ import (
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/role/model"
 	"github.com/channel-io/ch-app-store/internal/shared/general"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 )
 
 type TokenSvc interface {
-	IssueManagerToken(ctx context.Context, appID string, manager account.ManagerPrincipal) (general.IssueResponse, error)
-	IssueUserToken(ctx context.Context, appID string, user session.UserPrincipal) (general.IssueResponse, error)
+	IssueManagerToken(ctx context.Context, appID string, manager desk.ManagerPrincipal) (general.IssueResponse, error)
+	IssueUserToken(ctx context.Context, appID string, user front.UserPrincipal) (general.IssueResponse, error)
 	IssueChannelToken(ctx context.Context, channelID string, appToken string) (general.IssueResponse, error)
 	IssueAppToken(ctx context.Context, appToken string) (general.IssueResponse, error)
 	RefreshToken(ctx context.Context, refreshToken string) (general.IssueResponse, error)
@@ -45,7 +45,7 @@ func NewTokenSvc(
 	}
 }
 
-func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, manager account.ManagerPrincipal) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, manager desk.ManagerPrincipal) (general.IssueResponse, error) {
 	installID := appmodel.InstallationID{AppID: appID, ChannelID: manager.ChannelID}
 	appRole, err := s.roleRepo.FindLatestRole(ctx, installID.AppID, model.RoleTypeManager)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, mana
 	return s.rbacExchanger.ExchangeWithPrincipal(ctx, manager.Token, scopes, appRole.Credentials.ClientID)
 }
 
-func (s *TokenSvcImpl) IssueUserToken(ctx context.Context, appID string, user session.UserPrincipal) (general.IssueResponse, error) {
+func (s *TokenSvcImpl) IssueUserToken(ctx context.Context, appID string, user front.UserPrincipal) (general.IssueResponse, error) {
 	installID := appmodel.InstallationID{AppID: appID, ChannelID: user.ChannelID}
 	appRole, err := s.roleRepo.FindLatestRole(ctx, installID.AppID, model.RoleTypeUser)
 	if err != nil {

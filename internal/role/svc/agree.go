@@ -5,7 +5,7 @@ import (
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/role/model"
-	"github.com/channel-io/ch-app-store/internal/shared/principal/account"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
@@ -17,7 +17,7 @@ func NewManagerChannelAgreementSvc(svc *ChannelAgreementSvc) *ManagerChannelAgre
 	return &ManagerChannelAgreementSvc{svc: svc}
 }
 
-func (m *ManagerChannelAgreementSvc) Agree(ctx context.Context, manager account.Manager, channelID string, appRoleIDs []string) error {
+func (m *ManagerChannelAgreementSvc) Agree(ctx context.Context, manager desk.Manager, channelID string, appRoleIDs []string) error {
 	role, err := manager.Role(ctx)
 	if err != nil {
 		return err

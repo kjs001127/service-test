@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	wraperr "github.com/pkg/errors"
 
-	"github.com/channel-io/ch-app-store/internal/shared/principal/session"
+	"github.com/channel-io/ch-app-store/internal/shared/principal/front"
 	"github.com/channel-io/ch-app-store/lib/log"
 )
 
@@ -20,11 +20,11 @@ const (
 )
 
 type Auth struct {
-	userSvc session.UserFetcher
+	userSvc front.UserFetcher
 	logger  log.ContextAwareLogger
 }
 
-func NewAuth(managerSvc session.UserFetcher, logger log.ContextAwareLogger) *Auth {
+func NewAuth(managerSvc front.UserFetcher, logger log.ContextAwareLogger) *Auth {
 	return &Auth{userSvc: managerSvc, logger: logger}
 }
 
@@ -37,7 +37,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 		return
 	}
 
-	xSession := ctx.GetHeader(session.XSessionHeader)
+	xSession := ctx.GetHeader(front.XSessionHeader)
 	if len(xSession) <= 0 {
 		ctx.Abort()
 		_ = ctx.Error(apierr.Unauthorized(errors.New("x-session header not found")))
@@ -64,7 +64,7 @@ func (a *Auth) Handle(ctx *gin.Context) {
 	ctx.Set(UserKey, user)
 }
 
-func User(ctx *gin.Context) session.UserPrincipal {
+func User(ctx *gin.Context) front.UserPrincipal {
 	rawUser, _ := ctx.Get(UserKey)
-	return rawUser.(session.UserPrincipal)
+	return rawUser.(front.UserPrincipal)
 }
