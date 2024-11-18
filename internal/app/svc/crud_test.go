@@ -36,7 +36,7 @@ func (a *AppCrudSvcTestSuite) SetupTest() {
 
 	a.appInstallationRepo = mocksvc.NewAppInstallationRepository(a.T())
 
-	a.querySvc = svc.NewAppQuerySvcImpl(a.appRepo)
+	a.querySvc = svc.NewAppQuerySvcImpl(a.appRepo, a.displayRepo )
 	a.installSvc = svc.NewAppInstallSvc(log.NewNoOpLogger(), a.appInstallationRepo, a.appRepo, nil, nil)
 	a.installQuerySvc = svc.NewInstallQuerySvc(a.appInstallationRepo, a.appRepo, a.installSvc)
 	a.crudSvc = svc.NewAppLifecycleSvcImpl(a.appRepo, a.displayRepo, a.installSvc, a.installQuerySvc, nil)
