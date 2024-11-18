@@ -77,7 +77,7 @@ func (h *Handler) roleViewOf(resp *svc.ClaimsResponse) *dto.RoleView {
 //	@Router		/desk/account/apps/{appId}/auth/roles/{roleType}  [put]
 func (h *Handler) modifyClaims(ctx *gin.Context) {
 	account := middleware.Account(ctx)
-	appID := ctx.Param("appID")
+	appID, roleType := ctx.Param("appID"), ctx.Param("roleType")
 
 	var req svc.ClaimsRequest
 	if err := ctx.ShouldBindBodyWith(&req, binding.JSON); err != nil {
@@ -86,6 +86,7 @@ func (h *Handler) modifyClaims(ctx *gin.Context) {
 	}
 
 	req.AppID = appID
+	req.Type = model.RoleType(roleType)
 
 	resp, err := h.authPermissionSvc.CreateRole(ctx, &req, account.ID)
 	if err != nil {
