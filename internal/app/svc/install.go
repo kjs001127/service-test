@@ -125,7 +125,7 @@ func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.Installa
 
 func (s *AppInstallSvcImpl) publishTrxUninstallEvent(ctx context.Context, app *model.App, channelID string) error {
 	for _, handler := range s.inTrxListeners {
-		if err := handler.OnInstall(ctx, app, channelID); err != nil {
+		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
 	}
@@ -134,7 +134,7 @@ func (s *AppInstallSvcImpl) publishTrxUninstallEvent(ctx context.Context, app *m
 
 func (s *AppInstallSvcImpl) publishTrxInstallEvent(ctx context.Context, app *model.App, channelID string) error {
 	for _, handler := range s.inTrxListeners {
-		if err := handler.OnUnInstall(ctx, app, channelID); err != nil {
+		if err := handler.OnInstall(ctx, app, channelID); err != nil {
 			return err
 		}
 	}
