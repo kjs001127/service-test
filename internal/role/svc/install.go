@@ -19,8 +19,12 @@ func (i InstallHandler) OnInstall(ctx context.Context, app *model.App, channelID
 }
 
 func (i InstallHandler) OnUnInstall(ctx context.Context, app *model.App, channelID string) error {
-	return i.agreementRepo.DeleteAllByInstallID(ctx, model.InstallationID{
+	return nil
+
+	/*i.agreementRepo.DeleteAllByInstallID(ctx, model.InstallationID{
 		AppID:     app.ID,
 		ChannelID: channelID,
 	})
+
+	*/
 }
