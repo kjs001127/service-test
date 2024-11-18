@@ -37,8 +37,8 @@ type AppQuerySvcImpl struct {
 	displayRepo AppDisplayRepository
 }
 
-func NewAppQuerySvcImpl(appRepo AppRepository) *AppQuerySvcImpl {
-	return &AppQuerySvcImpl{appRepo: appRepo}
+func NewAppQuerySvcImpl(appRepo AppRepository, displayRepo AppDisplayRepository) *AppQuerySvcImpl {
+	return &AppQuerySvcImpl{appRepo: appRepo, displayRepo: displayRepo}
 }
 
 func (a *AppQuerySvcImpl) Read(ctx context.Context, appID string) (*model.App, error) {
