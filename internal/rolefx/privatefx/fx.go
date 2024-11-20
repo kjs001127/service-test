@@ -1,6 +1,8 @@
 package privatefx
 
 import (
+	"fmt"
+
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/config"
@@ -67,177 +69,211 @@ var AppRoleDAOs = fx.Options(
 
 var PrivateNativeClaims rolesvc.ClaimManager = rolesvc.StaticClaimManager{
 	model.RoleTypeApp: {
-		AvailableClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
+		AvailableClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{
 				{
 					Service: config.Get().ServiceName,
 					Action:  private.RegisterInstallHook,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  private.RegisterToggleHook,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privateinstall.CheckInstall,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privatewidget.RegisterAppWidgets,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 			}
 		},
-		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
+		DefaultClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{
 				{
 					Service: config.Get().ServiceName,
 					Action:  publiccmd.RegisterCommands,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privatewidget.RegisterAppWidgets,
+					Scope:   []string{fmt.Sprintf("app-%s", appId)},
 				},
 			}
 		},
 	},
 	model.RoleTypeChannel: {
-		AvailableClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
+		AvailableClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.WriteUserChatMessage,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.WriteGroupMessage,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.GetUser,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.GetUserChat,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.GetManager,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.SearchManagers,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.GetChannel,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.ManageUserChat,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.GetGroup,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.BatchGetManagers,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.CreateDirectChat,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.SearchUser,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.FindOrCreateContactAndUser,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.SearchUserChatsByContact,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.UpdateUserChatState,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privatecmd.GetCommandChannelActivations,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privatecmd.ToggleCommand,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privateinstall.CheckInstall,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ServiceName,
 					Action:  privatesyslog.WriteSystemLog,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.CreateUserChat,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.SearchGroups,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().Services[util.DOCUMENT_API].String(),
 					Action:  publiccore.SearchArticles,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().Services[util.DOCUMENT_API].String(),
 					Action:  publiccore.GetRevision,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().Services[util.DOCUMENT_API].String(),
 					Action:  publiccore.GetArticle,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.GetPlugin,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.PatchUser,
+					Scope:   []string{"channel-{id}"},
 				},
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  privatecore.DeleteUser,
+					Scope:   []string{"channel-{id}"},
 				},
 			}
 		},
-		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{}
+		DefaultClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{}
 		},
 	},
 
 	model.RoleTypeUser: {
-		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{}
+		DefaultClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{}
 		},
-		AvailableClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
+		AvailableClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.WriteUserChatMessageAsUser,
+					Scope:   []string{"channel-{id}", "user-{id}"},
 				},
 			}
 		},
 	},
 
 	model.RoleTypeManager: {
-		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{}
+		DefaultClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{}
 		},
-		AvailableClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
+		AvailableClaimsOf: func(appId string) rolesvc.AvailableClaims {
+			return rolesvc.AvailableClaims{
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.WriteGroupMessageAsManager,
@@ -249,6 +285,7 @@ var PrivateNativeClaims rolesvc.ClaimManager = rolesvc.StaticClaimManager{
 				{
 					Service: config.Get().ChannelServiceName,
 					Action:  publiccore.WriteDirectChatMessageAsManager,
+					Scope:   []string{"channel-{id}", "manager-{id}"},
 				},
 			}
 		},

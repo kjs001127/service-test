@@ -44,8 +44,8 @@ type AppRoleID struct {
 }
 
 type ClaimManager interface {
-	DefaultClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error)
-	AvailableClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error)
+	DefaultClaims(ctx context.Context, appID string, roleType model.RoleType) (AvailableClaims, error)
+	AvailableClaims(ctx context.Context, appID string, roleType model.RoleType) (AvailableClaims, error)
 }
 
 type AppRoleSvc struct {
@@ -93,7 +93,7 @@ func (s *AppRoleSvc) CreateRole(ctx context.Context, request *ClaimsRequest) (*C
 	claims = append(claims, defaults...)
 
 	res, err := s.roleCli.CreateRole(ctx, &service.CreateRoleRequest{
-		Claims:                toProtoClaims(request.Type, request.AppID, claims),
+		Claims:                claims.toProtoClaims(),
 		AllowedPrincipalTypes: principalTypes(request.Type),
 		AllowedGrantTypes:     grantTypes(request.Type),
 	})
@@ -130,23 +130,28 @@ func (s *AppRoleSvc) CreateRole(ctx context.Context, request *ClaimsRequest) (*C
 	}, nil
 }
 
-func (s *AppRoleSvc) checkAndMergeClaims(ctx context.Context, set *ClaimsRequest) (model.Claims, error) {
+func (s *AppRoleSvc) checkAndMergeClaims(ctx context.Context, set *ClaimsRequest) (AvailableClaims, error) {
 	availableNativeClaims, err := s.nativeClaimManager.AvailableClaims(ctx, set.AppID, set.Type)
 	if err != nil {
 		return nil, err
 	}
 
-	if denied := s.sub(set.NativeClaims, availableNativeClaims); len(denied) > 0 {
-		return nil, apierr.Unauthorized(errors.New("claim denied"))
+	var nativeClaims AvailableClaims
+	for _, nativeClaim := range set.NativeClaims {
+		if found := availableNativeClaims.find(nativeClaim); found != nil {
+			nativeClaims = append(nativeClaims, found)
+		} else {
+			return nil, apierr.Unauthorized(errors.New("claim denied"))
+		}
 	}
 
-	var allClaims []*model.Claim
-	allClaims = append(allClaims, set.NativeClaims...)
-	allClaims = append(allClaims, set.AppClaims...)
+	var allClaims AvailableClaims
+	allClaims = append(allClaims, nativeClaims...)
+	allClaims = append(allClaims, convertAppClaims(set.AppID, set.AppClaims)...)
 	return allClaims, nil
 }
 
-func (s *AppRoleSvc) defaultClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error) {
+func (s *AppRoleSvc) defaultClaims(ctx context.Context, appID string, roleType model.RoleType) (AvailableClaims, error) {
 	defaultNativeClaims, err := s.nativeClaimManager.DefaultClaims(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
@@ -154,14 +159,14 @@ func (s *AppRoleSvc) defaultClaims(ctx context.Context, appID string, roleType m
 
 	defaultAppClaims := s.appDefaultClaim(appID)
 
-	ret := make(model.Claims, 0, len(defaultAppClaims)+len(defaultNativeClaims))
+	ret := make(AvailableClaims, 0, len(defaultAppClaims)+len(defaultNativeClaims))
 	ret = append(ret, defaultNativeClaims...)
 	ret = append(ret, defaultAppClaims...)
 
 	return ret, nil
 }
 
-func (s *AppRoleSvc) pickAppClaims(ctx context.Context, claims model.Claims) (model.Claims, error) {
+func (s *AppRoleSvc) pickAppClaims(ctx context.Context, claims AvailableClaims) (AvailableClaims, error) {
 	var appIDs []string
 	for _, claim := range claims {
 		appIDs = append(appIDs, claim.Service)
@@ -172,59 +177,41 @@ func (s *AppRoleSvc) pickAppClaims(ctx context.Context, claims model.Claims) (mo
 		return nil, err
 	}
 
-	var ret model.Claims
+	var ret AvailableClaims
 	for _, app := range apps {
-		ret = append(ret, &model.Claim{Service: app.ID, Action: "*"})
+		ret = append(ret, &AvailableClaim{
+			Service: app.ID,
+			Action:  "*",
+			Scope:   []string{"app-" + app.ID}},
+		)
 	}
 
 	return ret, nil
 }
 
-func (s *AppRoleSvc) pickNativeClaims(ctx context.Context, appID string, roleType model.RoleType, claims model.Claims) (model.Claims, error) {
+func (s *AppRoleSvc) pickNativeClaims(ctx context.Context, appID string, roleType model.RoleType, claims AvailableClaims) (AvailableClaims, error) {
 	availableNativeClaims, err := s.nativeClaimManager.AvailableClaims(ctx, appID, roleType)
 	if err != nil {
 		return nil, err
 	}
 
-	var ret model.Claims
+	var ret AvailableClaims
 	for _, claim := range claims {
-		if s.contains(claim, availableNativeClaims) {
-			ret = append(ret, claim)
+		if found := availableNativeClaims.find(claim.toClaim()); found != nil {
+			ret = append(ret, found)
 		}
 	}
 
 	return ret, nil
 }
 
-func (s *AppRoleSvc) appDefaultClaim(appID string) model.Claims {
-	return model.Claims{{Service: appID, Action: "*"}}
-}
-
-func toProtoClaims(t model.RoleType, appID string, claims model.Claims) []*protomodel.Claim {
-	var ret []*protomodel.Claim
-	for _, claim := range claims {
-		ret = append(ret, &protomodel.Claim{
-			Service: claim.Service,
-			Action:  claim.Action,
-			Scope:   scope(t, appID),
-		})
-	}
-
-	return ret
-}
-
-func scope(t model.RoleType, appID string) []string {
-	switch t {
-	case model.RoleTypeChannel:
-		return []string{fmt.Sprintf("app-%s", appID), "channel-{id}"}
-	case model.RoleTypeUser:
-		return []string{fmt.Sprintf("app-%s", appID), "user-{id}", "channel-{id}"}
-	case model.RoleTypeManager:
-		return []string{fmt.Sprintf("app-%s", appID), "manager-{id}", "channel-{id}"}
-	case model.RoleTypeApp:
-		fallthrough
-	default:
-		return []string{fmt.Sprintf("app-%s", appID)}
+func (s *AppRoleSvc) appDefaultClaim(appID string) AvailableClaims {
+	return AvailableClaims{
+		{
+			Service: appID,
+			Action:  "*",
+			Scope:   []string{fmt.Sprintf("app-%s", appID)},
+		},
 	}
 }
 
@@ -279,7 +266,7 @@ func (s *AppRoleSvc) UpdateRole(ctx context.Context, request *ClaimsRequestWithI
 
 	_, err = s.roleCli.UpdateRole(ctx, &service.ReplaceRoleClaimsRequest{
 		RoleId: appRole.RoleID,
-		Claims: toProtoClaims(appRole.Type, appRole.AppID, claims),
+		Claims: claims.toProtoClaims(),
 	})
 	if err != nil {
 		return err
@@ -289,7 +276,12 @@ func (s *AppRoleSvc) UpdateRole(ctx context.Context, request *ClaimsRequestWithI
 }
 
 func (s *AppRoleSvc) FetchAvailableNativeClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error) {
-	return s.nativeClaimManager.AvailableClaims(ctx, appID, roleType)
+	ret, err := s.nativeClaimManager.AvailableClaims(ctx, appID, roleType)
+	if err != nil {
+		return nil, err
+	}
+
+	return ret.toClaims(), nil
 }
 
 func (s *AppRoleSvc) AppendClaimsToRole(ctx context.Context, request *ClaimsRequestWithID) error {
@@ -316,7 +308,7 @@ func (s *AppRoleSvc) AppendClaimsToRole(ctx context.Context, request *ClaimsRequ
 		return errors.New("role does not exist")
 	}
 
-	allClaims := append(role.Role.Claims, toProtoClaims(appRole.Type, appRole.AppID, claimsToAdd)...)
+	allClaims := append(role.Role.Claims, claimsToAdd.toProtoClaims()...)
 
 	_, err = s.roleCli.UpdateRole(ctx, &service.ReplaceRoleClaimsRequest{
 		RoleId: appRole.RoleID,
@@ -339,7 +331,7 @@ func (s *AppRoleSvc) FetchClaims(ctx context.Context, appRole *model.AppRole) (*
 		return nil, apierr.NotFound(errors.New("role cli response is emtpy"))
 	}
 
-	allClaims := s.fromProtoClaims(role.Role.Claims)
+	allClaims := fromProtoClaims(role.Role.Claims)
 	return s.classifyClaims(ctx, appRole, allClaims)
 }
 
@@ -371,9 +363,9 @@ func (s *AppRoleSvc) roleWithMaxVersion(roles []*model.AppRole) *model.AppRole {
 	return ret
 }
 
-func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, claims model.Claims) (*ClaimsResponse, error) {
-	nativeCh := make(chan model.Claims)
-	appCh := make(chan model.Claims)
+func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, claims AvailableClaims) (*ClaimsResponse, error) {
+	nativeCh := make(chan AvailableClaims)
+	appCh := make(chan AvailableClaims)
 
 	go func() {
 		natives, err := s.pickNativeClaims(ctx, role.AppID, role.Type, claims)
@@ -412,13 +404,13 @@ func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, cl
 	return &ClaimsResponse{
 		Type:         role.Type,
 		AppID:        role.AppID,
-		NativeClaims: natives,
-		AppClaims:    apps,
+		NativeClaims: natives.toClaims(),
+		AppClaims:    apps.toClaims(),
 	}, nil
 }
 
-func (s *AppRoleSvc) sub(claims model.Claims, excludes model.Claims) model.Claims {
-	var ret model.Claims
+func (s *AppRoleSvc) sub(claims AvailableClaims, excludes AvailableClaims) AvailableClaims {
+	var ret AvailableClaims
 	for _, claim := range claims {
 		if !s.contains(claim, excludes) {
 			ret = append(ret, claim)
@@ -428,9 +420,9 @@ func (s *AppRoleSvc) sub(claims model.Claims, excludes model.Claims) model.Claim
 	return ret
 }
 
-func (s *AppRoleSvc) contains(check *model.Claim, targets model.Claims) bool {
+func (s *AppRoleSvc) contains(check *AvailableClaim, targets AvailableClaims) bool {
 	for _, target := range targets {
-		if target.Equal(check) {
+		if target.toClaim().Equal(check.toClaim()) {
 			return true
 		}
 	}
@@ -458,34 +450,93 @@ func (s *AppRoleSvc) DeleteRoles(ctx context.Context, appID string) error {
 	return nil
 }
 
-func (s *AppRoleSvc) fromProtoClaims(claims []*protomodel.Claim) []*model.Claim {
-	ret := make([]*model.Claim, 0, len(claims))
+func convertAppClaims(appID string, claims model.Claims) AvailableClaims {
+	ret := make(AvailableClaims, 0, len(claims))
 	for _, claim := range claims {
-		ret = append(ret, s.fromProtoClaim(claim))
+		ret = append(ret, &AvailableClaim{
+			Service: claim.Service,
+			Action:  claim.Action,
+			Scope:   []string{"app-" + appID},
+		})
 	}
 	return ret
 }
 
-func (s *AppRoleSvc) fromProtoClaim(claim *protomodel.Claim) *model.Claim {
+func fromProtoClaims(claims []*protomodel.Claim) AvailableClaims {
+	var ret AvailableClaims
+	for _, claim := range claims {
+		ret = append(ret, &AvailableClaim{
+			Service: claim.Service,
+			Action:  claim.Action,
+			Scope:   claim.Scope,
+		})
+	}
+	return ret
+}
+
+type AvailableClaim struct {
+	Service string
+	Action  string
+	Scope   []string
+}
+
+type AvailableClaims []*AvailableClaim
+
+func (c AvailableClaims) find(target *model.Claim) *AvailableClaim {
+	for _, claim := range c {
+		if claim.toClaim().Equal(target) {
+			return claim
+		}
+	}
+	return nil
+}
+
+func (c AvailableClaims) toProtoClaims() []*protomodel.Claim {
+	ret := make([]*protomodel.Claim, 0, len(c))
+	for _, claim := range c {
+		ret = append(ret, claim.toProtoClaim())
+	}
+
+	return ret
+}
+
+func (c AvailableClaims) toClaims() model.Claims {
+	ret := make(model.Claims, 0, len(c))
+	for _, claim := range c {
+		ret = append(ret, claim.toClaim())
+	}
+
+	return ret
+}
+
+func (s *AvailableClaim) toClaim() *model.Claim {
 	return &model.Claim{
-		Service: claim.Service,
-		Action:  claim.Action,
+		Service: s.Service,
+		Action:  s.Action,
 	}
 }
 
-type ClaimsFactory func(string) model.Claims
+func (s *AvailableClaim) toProtoClaim() *protomodel.Claim {
+	return &protomodel.Claim{
+		Service: s.Service,
+		Scope:   s.Scope,
+		Action:  s.Action,
+	}
+}
 
-type StaticClaimManager map[model.RoleType]Claims
+type ClaimsFactory func(string) AvailableClaims
 
-type Claims struct {
+type StaticClaimManager map[model.RoleType]ClaimResolver
+
+type ClaimResolver struct {
 	DefaultClaimsOf   ClaimsFactory
 	AvailableClaimsOf ClaimsFactory
 }
 
-func (s StaticClaimManager) DefaultClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error) {
+func (s StaticClaimManager) DefaultClaims(ctx context.Context, appID string, roleType model.RoleType) (AvailableClaims, error) {
 	return s[roleType].DefaultClaimsOf(appID), nil
 }
 
-func (s StaticClaimManager) AvailableClaims(ctx context.Context, appID string, roleType model.RoleType) (model.Claims, error) {
+func (s StaticClaimManager) AvailableClaims(ctx context.Context, appID string, roleType model.RoleType) (AvailableClaims, error) {
 	return s[roleType].AvailableClaimsOf(appID), nil
 }
