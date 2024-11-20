@@ -214,23 +214,13 @@ var PrivateNativeClaims rolesvc.ClaimManager = rolesvc.StaticClaimManager{
 			}
 		},
 		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
-				{
-					Service: appId,
-					Action:  "*",
-				},
-			}
+			return model.Claims{}
 		},
 	},
 
 	model.RoleTypeUser: {
 		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
-				{
-					Service: appId,
-					Action:  "*",
-				},
-			}
+			return model.Claims{}
 		},
 		AvailableClaimsOf: func(appId string) model.Claims {
 			return model.Claims{
@@ -244,12 +234,7 @@ var PrivateNativeClaims rolesvc.ClaimManager = rolesvc.StaticClaimManager{
 
 	model.RoleTypeManager: {
 		DefaultClaimsOf: func(appId string) model.Claims {
-			return model.Claims{
-				{
-					Service: appId,
-					Action:  "*",
-				},
-			}
+			return model.Claims{}
 		},
 		AvailableClaimsOf: func(appId string) model.Claims {
 			return model.Claims{
