@@ -101,15 +101,19 @@ func (s *AccountAuthPermissionSvc) hasPermission(ctx context.Context, accountID 
 		return err
 	}
 
-claimLoop:
 	for _, claim := range claims {
-		for _, callable := range callables {
-			if callable.ID == claim.Service {
-				continue claimLoop
-			}
+		if !contains(claim, callables) {
 			return apierr.Unauthorized(errors.New("claim rejected"))
 		}
 	}
-
 	return nil
+}
+
+func contains(claim *role.Claim, apps []*model.App) bool {
+	for _, callable := range apps {
+		if callable.ID == claim.Service {
+			return true
+		}
+	}
+	return false
 }
