@@ -363,42 +363,24 @@ func (s *AppRoleSvc) roleWithMaxVersion(roles []*model.AppRole) *model.AppRole {
 	return ret
 }
 
+
 func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, claims AvailableClaims) (*ClaimsResponse, error) {
-	nativeCh := make(chan AvailableClaims)
-	appCh := make(chan AvailableClaims)
 
-	go func() {
-		natives, err := s.pickNativeClaims(ctx, role.AppID, role.Type, claims)
-		if err != nil {
-			close(nativeCh)
-		}
-
-		nativeDefaults, err := s.nativeClaimManager.DefaultClaims(ctx, role.AppID, role.Type)
-		if err != nil {
-			close(nativeCh)
-		}
-
-		nativeCh <- s.sub(natives, nativeDefaults)
-	}()
-
-	go func() {
-		apps, err := s.pickAppClaims(ctx, claims)
-		if err != nil {
-			close(appCh)
-		}
-
-		appDefaults := s.appDefaultClaim(role.AppID)
-		appCh <- s.sub(apps, appDefaults)
-	}()
-
-	apps, ok := <-appCh
-	if !ok {
-		return nil, errors.New("app claim fetch failed")
+	natives, err := s.pickNativeClaims(ctx, role.AppID, role.Type, claims)
+	if err != nil {
+		return nil, err
 	}
 
-	natives, ok := <-nativeCh
-	if !ok {
-		return nil, errors.New("native claim fetch failed")
+	nativeDefaults, err := s.nativeClaimManager.DefaultClaims(ctx, role.AppID, role.Type)
+	if err != nil {
+		return nil, err
+	}
+
+	natives = s.sub(natives, nativeDefaults)
+
+	apps, err := s.pickAppClaims(ctx, claims)
+	if err != nil {
+		return nil, err
 	}
 
 	return &ClaimsResponse{

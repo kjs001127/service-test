@@ -74,7 +74,20 @@ func (s *AccountAuthPermissionSvc) GetAvailableApps(ctx context.Context, account
 		return nil, err
 	}
 
-	return append(ownApps, publics...), nil
+	return filterDuplicate(append(ownApps, publics...)), nil
+}
+
+func filterDuplicate(list []*model.App) []*model.App {
+	duplicateMap := make(map[string]bool)
+	ret := make([]*model.App, 0, len(list)-1)
+
+	for _, appToCheck := range list {
+		if !duplicateMap[appToCheck.ID] {
+			ret = append(ret, appToCheck)
+			duplicateMap[appToCheck.ID] = true
+		}
+	}
+	return ret
 }
 
 func (s *AccountAuthPermissionSvc) GetAvailableNativeClaims(ctx context.Context, appID string, roleType role.RoleType) ([]*role.Claim, error) {
