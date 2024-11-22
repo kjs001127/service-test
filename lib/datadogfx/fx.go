@@ -38,6 +38,13 @@ var Datadog = fx.Options(
 			fx.ResultTags(httpfx.InternalApp),
 			fx.ParamTags(httpfx.InternalApp),
 		),
+		fx.Annotate(
+			func(client *resty.Client) *resty.Client {
+				return datadog.DecorateResty(client)
+			},
+			fx.ResultTags(httpfx.RateLimiter),
+			fx.ParamTags(httpfx.RateLimiter),
+		),
 		datadog.DecorateLogger,
 	),
 
