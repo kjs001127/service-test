@@ -30,5 +30,9 @@ var Postgres = fx.Module(
 
 	fx.Provide(
 		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
+		fx.Annotate(
+			db.BuildDataSource,
+			fx.ParamTags(driverName),
+		),
 	),
 )

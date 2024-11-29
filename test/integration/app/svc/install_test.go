@@ -4,119 +4,39 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/suite"
+	"go.uber.org/fx"
+
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
-
-	"github.com/stretchr/testify/suite"
-	"go.uber.org/fx"
 )
 
-const (
-	channelID = "1"
-)
-
-type AppIntegrationTestSuite struct {
+type InstallTestSuite struct {
 	suite.Suite
 
 	testHelper *TestHelper
 
 	appLifecycleSvc      svc.AppLifecycleSvc
-	appQuerySvc          svc.AppQuerySvc
 	appInstallSvc        svc.AppInstallSvc
 	installedAppQuerySvc *svc.InstalledAppQuerySvc
 }
 
-func (a *AppIntegrationTestSuite) SetupTest() {
+func (a *InstallTestSuite) SetupTest() {
 	a.testHelper = NewTestHelper(
 		testOpts,
 		fx.Populate(&a.appLifecycleSvc),
-		fx.Populate(&a.appQuerySvc),
 		fx.Populate(&a.appInstallSvc),
 		fx.Populate(&a.installedAppQuerySvc),
 	)
 	a.testHelper.TruncateAll()
 }
 
-func (a *AppIntegrationTestSuite) TearDownSuite() {
+func (a *InstallTestSuite) TearDownSuite() {
 	a.testHelper.Stop()
 }
 
-func (a *AppIntegrationTestSuite) TestAppCreate() {
-	app, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-
-	a.Require().NoError(err)
-	a.Require().NotNil(app)
-	a.Require().NotEmpty(app.ID)
-	a.Require().Equal(app.Title, "test app")
-}
-
-func (a *AppIntegrationTestSuite) TestAppRead() {
-	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	app, err := a.appQuerySvc.Read(context.Background(), created.ID)
-
-	a.Require().NoError(err)
-	a.Require().NotNil(app)
-	a.Require().NotEmpty(app.ID)
-	a.Require().Equal(app.Title, "test app")
-}
-
-func (a *AppIntegrationTestSuite) TestAppUpdate() {
-	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	app, err := a.appLifecycleSvc.Update(context.Background(), &appmodel.App{
-		ID:    created.ID,
-		Title: "new title",
-	})
-
-	a.Require().NoError(err)
-	a.Require().NotNil(app)
-	a.Require().NotEmpty(app.ID)
-	a.Require().Equal(app.Title, "new title")
-}
-
-func (a *AppIntegrationTestSuite) TestAppDelete() {
-	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-	if err != nil {
-		panic(err)
-	}
-	err = a.appLifecycleSvc.Delete(context.Background(), created.ID)
-
-	a.Require().NoError(err)
-}
-
-func (a *AppIntegrationTestSuite) TestReadAllByAppIDs() {
-	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
-		Title: "test app",
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	apps, err := a.appQuerySvc.ReadAllByAppIDs(context.Background(), []string{created.ID})
-
-	a.Require().NoError(err)
-	a.Require().NotEmpty(apps)
-	a.Require().Len(apps, 1)
-	a.Require().Equal(apps[0].Title, "test app")
-}
-
-func (a *AppIntegrationTestSuite) TestInstallApp() {
+func (a *InstallTestSuite) TestInstallApp() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
@@ -133,7 +53,7 @@ func (a *AppIntegrationTestSuite) TestInstallApp() {
 	a.Require().Equal(app.Title, "test app")
 }
 
-func (a *AppIntegrationTestSuite) TestInstallAppById() {
+func (a *InstallTestSuite) TestInstallAppById() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
@@ -155,7 +75,7 @@ func (a *AppIntegrationTestSuite) TestInstallAppById() {
 	a.Require().Equal(app.Title, "test app")
 }
 
-func (a *AppIntegrationTestSuite) TestUninstallApp() {
+func (a *InstallTestSuite) TestUninstallApp() {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
@@ -177,7 +97,7 @@ func (a *AppIntegrationTestSuite) TestUninstallApp() {
 	a.Require().NoError(err)
 }
 
-func (a *AppIntegrationTestSuite) TestReadInstalledApp() {
+func (a *InstallTestSuite) TestReadInstalledApp() {
 
 	installed, err := a.createAndInstall()
 	a.Require().NoError(err)
@@ -191,7 +111,7 @@ func (a *AppIntegrationTestSuite) TestReadInstalledApp() {
 	a.Require().Equal(installed.ID, app.ID)
 }
 
-func (a *AppIntegrationTestSuite) TestReadInstalledApps() {
+func (a *InstallTestSuite) TestReadInstalledApps() {
 	ctx := context.Background()
 
 	installCnt := 10
@@ -207,7 +127,7 @@ func (a *AppIntegrationTestSuite) TestReadInstalledApps() {
 	a.Require().Equal(installCnt, len(installedApps))
 }
 
-func (a *AppIntegrationTestSuite) TestReadInstalledAppsEmpty() {
+func (a *InstallTestSuite) TestReadInstalledAppsEmpty() {
 	ctx := context.Background()
 
 	installedApps, err := a.installedAppQuerySvc.QueryInstalledAppsByChannelID(ctx, channelID)
@@ -215,7 +135,7 @@ func (a *AppIntegrationTestSuite) TestReadInstalledAppsEmpty() {
 	a.Require().Equal(0, len(installedApps))
 }
 
-func (a *AppIntegrationTestSuite) createAndInstall() (*appmodel.App, error) {
+func (a *InstallTestSuite) createAndInstall() (*appmodel.App, error) {
 	ctx := context.Background()
 
 	created, err := a.appLifecycleSvc.Create(context.Background(), &appmodel.App{
@@ -233,6 +153,6 @@ func (a *AppIntegrationTestSuite) createAndInstall() (*appmodel.App, error) {
 	return created, nil
 }
 
-func TestAppIntegrationSuite(t *testing.T) {
-	suite.Run(t, new(AppIntegrationTestSuite))
+func TestAppInstall(t *testing.T) {
+	suite.Run(t, new(InstallTestSuite))
 }
