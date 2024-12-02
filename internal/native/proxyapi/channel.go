@@ -45,6 +45,9 @@ var CHANNEL_API_ROUTES = toService(util.CHANNEL_ADMIN_API).withRule(rule{
 			path("plugins"): hasFunctions{
 				pvt.GetPlugin,
 			},
+			path("commerce"): hasFunctions{
+				pvt.RegisterCommerce,
+			},
 		},
 	},
 })

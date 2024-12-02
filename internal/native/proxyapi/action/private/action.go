@@ -10,4 +10,5 @@ const (
 	GetPlugin                  = "getPlugin"
 	PatchUser                  = "patchUser"
 	DeleteUser                 = "deleteUser"
+	RegisterCommerce           = "registerCommerce"
 )
