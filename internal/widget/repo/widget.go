@@ -2,9 +2,8 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
-	"fmt"
+
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
@@ -38,7 +37,7 @@ func (c *AppWidgetDao) Save(ctx context.Context, appWidget *model.AppWidget) (*m
 		boil.Blacklist("id", "scope"),
 		boil.Infer(),
 	); err != nil {
-		return nil, errors.Wrap(err, "error while upserting widget")
+		return nil, err
 	}
 
 	return appWidget, nil
@@ -50,10 +49,8 @@ func (c *AppWidgetDao) Delete(ctx context.Context, id string) error {
 		qm.Where("id = $1", id),
 	).One(ctx, c.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(err)
-	} else if err != nil {
-		return errors.Wrap(err, "error while deleting widget")
+	if err != nil {
+		return err
 	}
 
 	if _, err = widgets.Delete(ctx, c.db); err != nil {
@@ -76,12 +73,9 @@ func (c *AppWidgetDao) Fetch(ctx context.Context, appWidgetID string) (*model.Ap
 		qm.Where("id = $1", appWidgetID),
 	).One(ctx, c.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying widget")
+	if err != nil {
+		return nil, err
 	}
-
 	return marshal(widget)
 }
 
@@ -92,10 +86,8 @@ func (c *AppWidgetDao) FetchByIDAndScope(ctx context.Context, appWidgetID string
 		qm.Where("scope = $2", scope),
 	).One(ctx, c.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying widget")
+	if err != nil {
+		return nil, err
 	}
 
 	return marshal(widget)
@@ -112,7 +104,7 @@ func (c *AppWidgetDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying widget")
+		return nil, err
 	}
 
 	return marshalAll(appWidgets)
@@ -130,7 +122,7 @@ func (c *AppWidgetDao) FetchAllByAppIDsAndScope(ctx context.Context, appIDs []st
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying widget")
+		return nil, err
 	}
 
 	return marshalAll(appWidgets)
@@ -139,12 +131,12 @@ func (c *AppWidgetDao) FetchAllByAppIDsAndScope(ctx context.Context, appIDs []st
 func unmarshal(widget *model.AppWidget) (*models.AppWidget, error) {
 	nameDescriptionMap, err := json.Marshal(widget.NameDescI18nMap)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
+		return nil, apierr.BadRequest(err)
 	}
 
 	defaultNameDescriptionMap, err := json.Marshal(widget.DefaultNameDescI18nMap)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
+		return nil, apierr.BadRequest(err)
 	}
 
 	return &models.AppWidget{
@@ -166,12 +158,12 @@ func unmarshal(widget *model.AppWidget) (*models.AppWidget, error) {
 func marshal(c *models.AppWidget) (*model.AppWidget, error) {
 	defaultNameDescriptionI18nMap := make(map[string]*model.I18nMap)
 	if err := c.DefaultNameDescI18nMap.Unmarshal(&defaultNameDescriptionI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing nameDescriptionI18nMap fail, widget: %v, cause: %w", c, err)
+		return nil, apierr.BadRequest(err)
 	}
 
 	nameDescriptionI18nMap := make(map[string]*model.I18nMap)
 	if err := c.NameDescI18nMap.Unmarshal(&nameDescriptionI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, widget: %v, cause: %w", c, err)
+		return nil, apierr.BadRequest(err)
 	}
 
 	return &model.AppWidget{
@@ -195,7 +187,7 @@ func marshalAll(widgets models.AppWidgetSlice) ([]*model.AppWidget, error) {
 	for _, model := range widgets {
 		res, err := marshal(model)
 		if err != nil {
-			return nil, errors.Wrap(err, "error while marshaling widget")
+			return nil, err
 		}
 		ret = append(ret, res)
 	}

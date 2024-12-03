@@ -10,7 +10,7 @@ import (
 )
 
 var testOpts = fx.Options(
-	dbfx.Postgres,
+	dbfx.DB,
 	configfx.Values,
 	appfx.App,
 	logfx.Logger,

@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 	"github.com/channel-io/ch-app-store/internal/native"
 	"github.com/channel-io/ch-app-store/internal/native/localapi/auth/action/public"
 	"github.com/channel-io/ch-app-store/internal/role/svc"
+	authgen "github.com/channel-io/ch-app-store/internal/shared/general"
 )
 
 type Request struct {
@@ -55,6 +55,9 @@ func (c *TokenIssueHandler) refreshToken(ctx context.Context, token native.Token
 	}
 
 	resp, err := c.svc.RefreshToken(ctx, req.RefreshToken)
+	if err != nil {
+		return native.WrapCommonErr(err)
+	}
 
 	marshaled, err := json.Marshal(fromIssueResponse(resp))
 	if err != nil {

@@ -57,8 +57,7 @@ func (s *TokenSvcImpl) IssueManagerToken(ctx context.Context, appID string, mana
 }
 
 func (s *TokenSvcImpl) IssueUserToken(ctx context.Context, appID string, user front.UserPrincipal) (general.IssueResponse, error) {
-	installID := appmodel.InstallationID{AppID: appID, ChannelID: user.ChannelID}
-	appRole, err := s.roleRepo.FindLatestRole(ctx, installID.AppID, model.RoleTypeUser)
+	appRole, err := s.roleRepo.FindLatestRole(ctx, appID, model.RoleTypeUser)
 	if err != nil {
 		return general.IssueResponse{}, err
 	}

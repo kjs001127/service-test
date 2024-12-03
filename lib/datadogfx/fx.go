@@ -10,16 +10,12 @@ import (
 	"github.com/channel-io/ch-app-store/internal/appfx"
 	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
+	"github.com/channel-io/ch-app-store/lib/dbfx"
 
 	"github.com/channel-io/ch-app-store/lib/datadog"
 
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/fx"
-)
-
-const (
-	postgres   = "postgres"
-	driverName = `name:"postgres"`
 )
 
 var Datadog = fx.Options(
@@ -48,12 +44,14 @@ var Datadog = fx.Options(
 		datadog.DecorateLogger,
 	),
 
+	dbfx.Postgres,
+
 	fx.Provide(
 		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
 
 		fx.Annotate(
 			datadog.NewDataSource,
-			fx.ParamTags(driverName, ``),
+			fx.ParamTags(dbfx.DriverName, ``),
 		),
 
 		fx.Annotate(
@@ -65,13 +63,6 @@ var Datadog = fx.Options(
 			datadog.NewGinMiddleware,
 			fx.As(new(gintool.Middleware)),
 			fx.ResultTags(gintoolfx.MiddlewaresGroup),
-		),
-	),
-
-	fx.Supply(
-		fx.Annotate(
-			postgres,
-			fx.ResultTags(driverName),
 		),
 	),
 

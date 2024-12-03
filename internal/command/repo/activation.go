@@ -2,10 +2,7 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -51,9 +48,7 @@ func (a *ActivationRepository) Fetch(ctx context.Context, key model.ActivationID
 		qm.Where("channel_id = $2", key.ChannelID),
 	).One(ctx, a.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -65,6 +60,7 @@ func (a *ActivationRepository) Delete(ctx context.Context, key model.ActivationI
 		qm.Where("command_id = $1", key.CommandID),
 		qm.Where("channel_id = $2", key.ChannelID),
 	).DeleteAll(ctx, a.db)
+
 	return err
 }
 
@@ -78,6 +74,7 @@ func (a *ActivationRepository) DeleteAllBy(ctx context.Context, channelID string
 		qm.WhereIn("command_id IN ?", slice...),
 		qm.Where("channel_id = ?", channelID),
 	).DeleteAll(ctx, a.db)
+
 	return err
 }
 
@@ -107,7 +104,6 @@ func (a *ActivationRepository) FetchByChannelIDAndCmdIDs(ctx context.Context, ch
 	if err != nil {
 		return nil, err
 	}
-
 	return unmarshalAllActivations(ret), nil
 }
 

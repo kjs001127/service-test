@@ -25,7 +25,7 @@ type APIRouter struct {
 
 func (a *APIRouter) RegisterTo(registry native.FunctionRegistry) {
 	// @TODO camel add version support for native fn, omit version for now
-	for fnName, _ := range a.router {
+	for fnName := range a.router {
 		registry.Register(string(fnName), a.Handle)
 	}
 }

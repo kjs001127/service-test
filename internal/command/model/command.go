@@ -51,7 +51,7 @@ type Command struct {
 
 	ButtonName        *string                `json:"buttonName"`
 	ButtonNameI18nMap map[string]NameI18nMap `json:"buttonNameI18nMap"`
-	
+
 	Description     *string                    `json:"description"`
 	NameDescI18NMap map[string]NameDescI18nMap `json:"nameDescI18nMap"`
 
@@ -88,11 +88,11 @@ func (c *Command) Key() CommandKey {
 }
 func (c *Command) Validate() error {
 	if len(c.AppID) == 0 {
-		return apierr.BadRequest(fmt.Errorf("appID must not be empty"))
+		return apierr.UnprocessableEntity(fmt.Errorf("appID must not be empty"))
 	}
 
 	if !c.Scope.isDefined() {
-		return apierr.BadRequest(fmt.Errorf("scope %s is not defined", c.Scope))
+		return apierr.UnprocessableEntity(fmt.Errorf("scope %s is not defined", c.Scope))
 	}
 
 	if err := c.ParamDefinitions.validate(); err != nil {
@@ -100,19 +100,19 @@ func (c *Command) Validate() error {
 	}
 
 	if !nameRegex.MatchString(c.Name) {
-		return apierr.BadRequest(errors.New("name must be less than 20 letters with only alphabet and numbers"))
+		return apierr.UnprocessableEntity(errors.New("name must be less than 20 letters with only alphabet and numbers"))
 	}
 
 	if c.Description != nil && utf8.RuneCountInString(*c.Description) > maxDescriptionLength {
-		return apierr.BadRequest(fmt.Errorf("max description length is %d", maxDescriptionLength))
+		return apierr.UnprocessableEntity(fmt.Errorf("max description length is %d", maxDescriptionLength))
 	}
 
 	for _, i18n := range c.NameDescI18NMap {
 		if !i18nNameRegex.MatchString(i18n.Name) {
-			return apierr.BadRequest(errors.New("i18n name must be less than 20 letters without space"))
+			return apierr.UnprocessableEntity(errors.New("i18n name must be less than 20 letters without space"))
 		}
 		if utf8.RuneCountInString(i18n.Description) > maxDescriptionLength {
-			return apierr.BadRequest(fmt.Errorf("max i18n description length is %d", maxDescriptionLength))
+			return apierr.UnprocessableEntity(fmt.Errorf("max i18n description length is %d", maxDescriptionLength))
 		}
 	}
 
@@ -131,7 +131,7 @@ func (c *Command) validateAlf() error {
 	}
 
 	if c.AlfDescription != nil && utf8.RuneCountInString(*c.AlfDescription) > maxAlfDescriptionLength {
-		return apierr.BadRequest(fmt.Errorf("alfDescription max length is %d", maxAlfDescriptionLength))
+		return apierr.UnprocessableEntity(fmt.Errorf("alfDescription max length is %d", maxAlfDescriptionLength))
 	}
 
 	return fmt.Errorf("alfMode %s is not valid mode", c.AlfMode)

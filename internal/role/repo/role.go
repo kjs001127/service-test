@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -23,7 +22,9 @@ type AppRoleDao struct {
 }
 
 func NewAppRoleDao(db db.DB) *AppRoleDao {
-	return &AppRoleDao{db: db}
+	return &AppRoleDao{
+		db: db,
+	}
 }
 
 func (a *AppRoleDao) FindLatestRoles(ctx context.Context, appIDs []string, types []model.RoleType) ([]*model.AppRole, error) {
@@ -57,7 +58,8 @@ FROM
 }
 
 func (a *AppRoleDao) FindLatestRole(ctx context.Context, appID string, roleType model.RoleType) (*model.AppRole, error) {
-	query := fmt.Sprintf(`
+
+	query := `
 SELECT 
     r.*
 FROM 
@@ -73,7 +75,7 @@ ON
     r.app_id = max_versions.app_id 
     AND r.version = max_versions.max_version 
     AND r.type = max_versions.type;
-`)
+`
 
 	var ret models.AppRole
 	built := queries.Raw(query, appID, string(roleType))
@@ -92,7 +94,7 @@ func (a *AppRoleDao) FindAllByAppID(ctx context.Context, appID string) ([]*model
 		qm.Where("app_id = $1", appID),
 	).All(ctx, a.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying appRole")
+		return nil, err
 	}
 	return unmarshalAll(appRoles), nil
 }
@@ -103,10 +105,8 @@ func (a *AppRoleDao) Find(ctx context.Context, id string) (*model.AppRole, error
 		qm.Where("id = $1", id),
 	).One(ctx, a.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying appRole")
+	if err != nil {
+		return nil, err
 	}
 
 	return unmarshal(appRole), nil
@@ -130,10 +130,8 @@ func (a *AppRoleDao) FindByRoleID(ctx context.Context, roleID string) (*model.Ap
 		qm.Where("role_id = $1", roleID),
 	).One(ctx, a.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying appRole")
+	if err != nil {
+		return nil, err
 	}
 
 	return unmarshal(appRole), nil
@@ -157,7 +155,7 @@ func (a *AppRoleDao) marshal(role *model.AppRole) (*models.AppRole, error) {
 	if len(role.ID) > 0 {
 		id, err := strconv.Atoi(role.ID)
 		if err != nil {
-			return nil, err
+			return nil, apierr.BadRequest(err)
 		}
 
 		ret.ID = id

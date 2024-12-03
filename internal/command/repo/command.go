@@ -2,20 +2,18 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/channel-io/ch-app-store/generated/models"
 	"github.com/channel-io/ch-app-store/internal/command/model"
-
 	"github.com/channel-io/ch-app-store/lib/db"
 )
 
@@ -40,7 +38,7 @@ func (c *CommandDao) FetchByAppIDsAndScope(ctx context.Context, appIDs []string,
 		qm.WhereIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying command")
+		return nil, err
 	}
 
 	return marshalAll(cmds)
@@ -54,10 +52,8 @@ func (c *CommandDao) Fetch(ctx context.Context, key model.CommandKey) (*model.Co
 		qm.Where("name = $3", key.Name),
 	).One(ctx, c.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying command")
+	if err != nil {
+		return nil, err
 	}
 
 	return marshal(cmd)
@@ -69,7 +65,7 @@ func (c *CommandDao) FetchAllByAppID(ctx context.Context, appID string) ([]*mode
 		qm.Where("app_id = $1", appID),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying command")
+		return nil, err
 	}
 
 	return marshalAll(cmds)
@@ -83,10 +79,8 @@ func (c *CommandDao) Delete(ctx context.Context, key model.CommandKey) error {
 		qm.Where("name = $3", key.Name),
 	).One(ctx, c.db)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(err)
-	} else if err != nil {
-		return errors.Wrap(err, "error while deleting command")
+	if err != nil {
+		return err
 	}
 
 	if _, err = cmd.Delete(ctx, c.db); err != nil {
@@ -117,7 +111,7 @@ func (c *CommandDao) Save(ctx context.Context, resource *model.Command) (*model.
 		boil.Blacklist("id", "app_id", "scope", "name"),
 		boil.Infer(),
 	); err != nil {
-		return nil, errors.Wrap(err, "error while upserting command")
+		return nil, err
 	}
 
 	return resource, nil
@@ -134,7 +128,7 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 		qm.AndIn("app_id IN ?", slice...),
 	).All(ctx, c.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying command")
+		return nil, err
 	}
 
 	return marshalAll(cmds)
@@ -143,15 +137,15 @@ func (c *CommandDao) FetchAllByAppIDs(ctx context.Context, appIDs []string) ([]*
 func unmarshal(cmd *model.Command) (*models.Command, error) {
 	paramDef, err := json.Marshal(cmd.ParamDefinitions)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling paramDef")
+		return nil, apierr.UnprocessableEntity(errors.Wrap(err, "error while marshaling paramDef"))
 	}
 	nameDescriptionMap, err := json.Marshal(cmd.NameDescI18NMap)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
+		return nil, apierr.UnprocessableEntity(errors.Wrap(err, "error while marshaling nameI18nMap"))
 	}
 	buttonNameI18nMap, err := json.Marshal(cmd.ButtonNameI18nMap)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling nameI18nMap")
+		return nil, apierr.UnprocessableEntity(errors.Wrap(err, "error while marshaling nameI18nMap"))
 	}
 
 	return &models.Command{
@@ -176,17 +170,17 @@ func unmarshal(cmd *model.Command) (*models.Command, error) {
 func marshal(c *models.Command) (*model.Command, error) {
 	var paramDefs model.ParamDefinitions
 	if err := c.ParamDefinitions.Unmarshal(&paramDefs); err != nil {
-		return nil, fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err)
+		return nil, apierr.BadRequest(fmt.Errorf("parsing param definitions fail, cmd: %v, cause: %w", c, err))
 	}
 
 	nameDescriptionI18nMap := make(map[string]model.NameDescI18nMap)
 	if err := c.NameDescI18nMap.Unmarshal(&nameDescriptionI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err)
+		return nil, apierr.BadRequest(fmt.Errorf("parsing nameDescriptionI18nMap, cmd: %v, cause: %w", c, err))
 	}
 
 	buttonNameI18nMap := make(map[string]model.NameI18nMap)
 	if err := c.ButtonNameI18nMap.Unmarshal(&buttonNameI18nMap); err != nil {
-		return nil, fmt.Errorf("parsing buttonI18n, cmd: %v, cause: %w", c, err)
+		return nil, apierr.BadRequest(fmt.Errorf("parsing buttonI18n, cmd: %v, cause: %w", c, err))
 	}
 
 	return &model.Command{

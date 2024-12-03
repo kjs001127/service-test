@@ -36,16 +36,16 @@ type WamProxyRequest struct {
 func (a *AppHttpProxy) Proxy(ctx context.Context, req WamProxyRequest) error {
 	serverSetting, err := a.repo.Fetch(ctx, req.AppID)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	if serverSetting.WamURL == nil {
-		return apierr.BadRequest(fmt.Errorf("wam url invalid for appID: %s", req.AppID))
+		return apierr.NotFound(fmt.Errorf("wam url invalid for appID: %s", req.AppID))
 	}
 
 	wamUrl, err := url.Parse(*serverSetting.WamURL)
 	if err != nil {
-		return errors.Wrap(err, "error while parsing wamURL")
+		return apierr.BadRequest(err)
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(wamUrl)

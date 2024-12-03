@@ -6,23 +6,18 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/channel-io/ch-app-store/lib/db"
+	"github.com/channel-io/ch-app-store/lib/db/pq"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 const (
 	postgres   = "postgres"
-	driverName = `name:"postgres"`
+	DriverName = `name:"postgres"`
 )
 
-var Postgres = fx.Module(
-	"postgres",
+var DB = fx.Options(
 
-	fx.Supply(
-		fx.Annotate(
-			postgres,
-			fx.ResultTags(driverName),
-		),
-	),
+	Postgres,
 
 	fx.Invoke(func(db *sql.DB) {
 		tx.EnableDatabase(db)
@@ -32,7 +27,22 @@ var Postgres = fx.Module(
 		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
 		fx.Annotate(
 			db.BuildDataSource,
-			fx.ParamTags(driverName),
+			fx.ParamTags(DriverName),
 		),
 	),
+)
+
+var Postgres = fx.Options(
+	fx.Supply(
+		fx.Annotate(
+			postgres,
+			fx.ResultTags(DriverName),
+		),
+	),
+
+	fx.Decorate(pq.Wrap),
+
+	fx.Invoke(func() {
+		tx.EnableLock(pq.Lock)
+	}),
 )

@@ -2,16 +2,12 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/channel-io/ch-app-store/generated/models"
 
 	"github.com/channel-io/ch-app-store/internal/permission/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
@@ -21,7 +17,9 @@ type AppAccountRepoImpl struct {
 }
 
 func NewAppAccountRepo(db db.DB) *AppAccountRepoImpl {
-	return &AppAccountRepoImpl{db: db}
+	return &AppAccountRepoImpl{
+		db: db,
+	}
 }
 
 func (a *AppAccountRepoImpl) Save(ctx context.Context, appID, accountID string) error {
@@ -30,7 +28,11 @@ func (a *AppAccountRepoImpl) Save(ctx context.Context, appID, accountID string) 
 		AccountID: accountID,
 	}
 
-	return appAccount.Insert(ctx, a.db, boil.Infer())
+	if err := appAccount.Insert(ctx, a.db, boil.Infer()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *AppAccountRepoImpl) Delete(ctx context.Context, appID, accountID string) error {
@@ -48,10 +50,8 @@ func (a *AppAccountRepoImpl) Delete(ctx context.Context, appID, accountID string
 
 func (a *AppAccountRepoImpl) Fetch(ctx context.Context, appID, accountID string) (*model.AppPermission, error) {
 	res, err := models.AppAccounts(qm.Where("app_id = $1", appID), qm.Where("account_id = $2", accountID)).One(ctx, a.db)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(errors.Wrap(err, "app account not found"))
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying app account")
+	if err != nil {
+		return nil, err
 	}
 
 	return &model.AppPermission{
@@ -63,7 +63,7 @@ func (a *AppAccountRepoImpl) Fetch(ctx context.Context, appID, accountID string)
 func (a *AppAccountRepoImpl) FetchAllByAccountID(ctx context.Context, accountID string) ([]*model.AppPermission, error) {
 	res, err := models.AppAccounts(qm.Where("account_id = ?", accountID)).All(ctx, a.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying app account by accountID")
+		return nil, err
 	}
 
 	var appAccounts []*model.AppPermission
@@ -79,7 +79,7 @@ func (a *AppAccountRepoImpl) FetchAllByAccountID(ctx context.Context, accountID 
 
 func (a *AppAccountRepoImpl) CountByAccountID(ctx context.Context, accountID string) (int64, error) {
 	if res, err := models.AppAccounts(qm.Where("account_id = ?", accountID)).Count(ctx, a.db); err != nil {
-		return 0, errors.Wrap(err, "error while counting app account by accountID")
+		return 0, err
 	} else {
 		return res, nil
 	}
@@ -87,5 +87,5 @@ func (a *AppAccountRepoImpl) CountByAccountID(ctx context.Context, accountID str
 
 func (a *AppAccountRepoImpl) DeleteByAppID(ctx context.Context, appID string) error {
 	_, err := models.AppAccounts(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	return errors.Wrap(err, "error while deleting appAccount")
+	return err
 }

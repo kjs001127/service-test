@@ -97,7 +97,11 @@ func (s *InstalledCommandQuerySvc) FetchAllWithActivation(ctx context.Context, i
 	if err != nil {
 		return nil, err
 	}
+
 	activations, err := s.activationRepo.FetchByChannelIDAndCmdIDs(ctx, installID.ChannelID, idsOfCmds(cmds))
+	if err != nil {
+		return nil, err
+	}
 	activationMap := activations.ToMap()
 
 	ret := make([]*CommandWithActivation, 0, len(cmds))

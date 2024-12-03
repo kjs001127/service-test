@@ -64,38 +64,38 @@ type I18nMap struct {
 
 func (a *AppWidget) Validate() error {
 	if len(a.AppID) == 0 {
-		return apierr.BadRequest(fmt.Errorf("appId is must not be empty"))
+		return apierr.UnprocessableEntity(fmt.Errorf("appId is must not be empty"))
 	}
 
 	if !a.Scope.IsDefined() {
-		return apierr.BadRequest(fmt.Errorf("scope %s is not defined", a.Scope))
+		return apierr.UnprocessableEntity(fmt.Errorf("scope %s is not defined", a.Scope))
 	}
 
 	// check name & description
 	if !nameRegex.MatchString(a.Name) {
-		return apierr.BadRequest(errors.New("name must be less than 20 letters with only alphabet"))
+		return apierr.UnprocessableEntity(errors.New("name must be less than 20 letters with only alphabet"))
 	}
 	if a.Description != nil && utf8.RuneCountInString(*a.Description) > maxDescriptionLength {
-		return apierr.BadRequest(errors.New("description length should be less than 40"))
+		return apierr.UnprocessableEntity(errors.New("description length should be less than 40"))
 	}
 
 	// check defaultName & description
 	if a.DefaultName != nil && !defaultNameRegex.MatchString(*a.DefaultName) {
-		return apierr.BadRequest(errors.New("defaultName length should be less than 20"))
+		return apierr.UnprocessableEntity(errors.New("defaultName length should be less than 20"))
 	}
 	if a.DefaultDescription != nil && utf8.RuneCountInString(*a.DefaultDescription) > maxDefaultDescriptionLength {
-		return apierr.BadRequest(errors.New("defaultDescription length should be less than 40"))
+		return apierr.UnprocessableEntity(errors.New("defaultDescription length should be less than 40"))
 	}
 
 	// check nameDescI18nMap
 	if a.NameDescI18nMap != nil {
 		for _, v := range a.NameDescI18nMap {
 			if !i18nNameRegex.MatchString(v.Name) {
-				return apierr.BadRequest(errors.New("name length should be less than 20"))
+				return apierr.UnprocessableEntity(errors.New("name length should be less than 20"))
 			}
 
 			if utf8.RuneCountInString(v.Description) > maxDescriptionLength {
-				return apierr.BadRequest(errors.New("description length should be less than 40"))
+				return apierr.UnprocessableEntity(errors.New("description length should be less than 40"))
 			}
 		}
 	}
@@ -104,17 +104,17 @@ func (a *AppWidget) Validate() error {
 	if a.DefaultNameDescI18nMap != nil {
 		for _, v := range a.DefaultNameDescI18nMap {
 			if !i18nDefaultNameRegex.MatchString(v.Name) {
-				return apierr.BadRequest(errors.New("default name length should be less than 20"))
+				return apierr.UnprocessableEntity(errors.New("default name length should be less than 20"))
 			}
 
 			if utf8.RuneCountInString(v.Description) > maxDefaultDescriptionLength {
-				return apierr.BadRequest(errors.New("default description length should be less than 40"))
+				return apierr.UnprocessableEntity(errors.New("default description length should be less than 40"))
 			}
 		}
 	}
 
 	if len(a.ActionFunctionName) == 0 {
-		return apierr.BadRequest(fmt.Errorf("actionFunctionName is required"))
+		return apierr.UnprocessableEntity(fmt.Errorf("actionFunctionName is required"))
 	}
 	return nil
 }

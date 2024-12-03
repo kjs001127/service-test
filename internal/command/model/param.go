@@ -65,28 +65,28 @@ type ParamDefI18ns struct {
 
 func (d *ParamDefinition) validate() error {
 	if !d.isValidType() {
-		return apierr.BadRequest(errors.Errorf("param name %s has invalid type %s", d.Name, d.Type))
+		return apierr.UnprocessableEntity(errors.Errorf("param name %s has invalid type %s", d.Name, d.Type))
 	}
 
 	if !paramNameRegex.MatchString(string(d.Name)) {
-		return apierr.BadRequest(errors.Errorf("param name %s must only have alphabet and numbers with letters below 20", d.Name))
+		return apierr.UnprocessableEntity(errors.Errorf("param name %s must only have alphabet and numbers with letters below 20", d.Name))
 	}
 
 	if utf8.RuneCountInString(d.Description) > maxParamDescriptionLength {
-		return apierr.BadRequest(fmt.Errorf("max param description length is %d", maxParamDescriptionLength))
+		return apierr.UnprocessableEntity(fmt.Errorf("max param description length is %d", maxParamDescriptionLength))
 	}
 
 	for _, i18n := range d.NameDescI18nMap {
 		if !paramNameI18nRegex.MatchString(i18n.Name) {
-			return apierr.BadRequest(errors.Errorf("i18n param name %s must only have letters without space below 20", d.Name))
+			return apierr.UnprocessableEntity(errors.Errorf("i18n param name %s must only have letters without space below 20", d.Name))
 		}
 		if utf8.RuneCountInString(i18n.Description) > maxParamDescriptionLength {
-			return apierr.BadRequest(fmt.Errorf("max i18n param description length is %d", maxParamDescriptionLength))
+			return apierr.UnprocessableEntity(fmt.Errorf("max i18n param description length is %d", maxParamDescriptionLength))
 		}
 	}
 
 	if utf8.RuneCountInString(d.AlfDescription) > maxAlfDescriptionLength {
-		return apierr.BadRequest(fmt.Errorf("alfDescription max length is %d", maxAlfDescriptionLength))
+		return apierr.UnprocessableEntity(fmt.Errorf("alfDescription max length is %d", maxAlfDescriptionLength))
 	}
 
 	if err := d.Choices.validate(); err != nil {

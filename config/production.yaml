@@ -17,7 +17,7 @@ psql:
   maxOpenConn: 50
 log:
   console:
-    level: debug
+    level: info
   sentry:
     level: error
     dsn: https://b2a067b7a7320aa60be1f44b5cb36623@o104101.ingest.sentry.io/4506738092539904

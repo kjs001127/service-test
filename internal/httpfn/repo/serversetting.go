@@ -2,15 +2,11 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/channel-io/ch-app-store/generated/models"
 	"github.com/channel-io/ch-app-store/internal/httpfn/model"
 	"github.com/channel-io/ch-app-store/lib/db"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-
-	"github.com/pkg/errors"
 	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -26,10 +22,8 @@ func NewAppServerSettingDao(db db.DB) *AppServerSettingDao {
 
 func (a *AppServerSettingDao) Fetch(ctx context.Context, appID string) (model.ServerSetting, error) {
 	res, err := models.AppServerSettings(qm.Where("app_id = $1", appID)).One(ctx, a.db)
-	if errors.Is(err, sql.ErrNoRows) {
-		return model.ServerSetting{}, apierr.NotFound(err)
-	} else if err != nil {
-		return model.ServerSetting{}, errors.Wrap(err, "error while querying Url")
+	if err != nil {
+		return model.ServerSetting{}, err
 	}
 
 	return model.ServerSetting{
@@ -57,12 +51,12 @@ func (a *AppServerSettingDao) Save(ctx context.Context, appID string, serverSett
 		boil.Infer(),
 	)
 	if err != nil {
-		return model.ServerSetting{}, errors.Wrap(err, "error while saving app server setting")
+		return model.ServerSetting{}, err
 	}
 	return serverSetting, nil
 }
 
 func (a *AppServerSettingDao) Delete(ctx context.Context, appID string) error {
 	_, err := models.AppServerSettings(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	return errors.WithStack(err)
+	return err
 }

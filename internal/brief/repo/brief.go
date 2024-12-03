@@ -2,9 +2,7 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -26,12 +24,9 @@ func (b BriefDao) Fetch(ctx context.Context, appID string) (*model.Brief, error)
 		qm.Select("*"),
 		qm.Where("app_id = $1", appID),
 	).One(ctx, b.db)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(err)
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying brief")
+	if err != nil {
+		return nil, err
 	}
-
 	return unmarshal(one), nil
 }
 
@@ -47,7 +42,7 @@ func (b BriefDao) FetchAll(ctx context.Context, appIDs []string) ([]*model.Brief
 	).All(ctx, b.db)
 
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying brief")
+		return nil, err
 	}
 
 	return unmarshalAll(all), nil

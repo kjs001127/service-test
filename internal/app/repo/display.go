@@ -36,7 +36,7 @@ func (a *AppDisplayDAO) FindPublicDisplays(ctx context.Context, since string, li
 
 	displays, err := models.AppDisplays(queries...).All(ctx, a.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying app displays")
+		return nil, err
 	}
 
 	return a.unmarshalAll(displays)
@@ -47,7 +47,7 @@ func (a *AppDisplayDAO) Find(ctx context.Context, appID string) (*model.AppDispl
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, apierr.NotFound(errors.Wrap(err, "app display not found"))
 	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying app display")
+		return nil, err
 	}
 
 	return a.unmarshal(displayTarget)
@@ -61,7 +61,7 @@ func (a *AppDisplayDAO) FindAll(ctx context.Context, appIDs []string) ([]*model.
 
 	displays, err := models.AppDisplays(qm.WhereIn("app_id IN ?", slice...)).All(ctx, a.db)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while querying app displays")
+		return nil, err
 	}
 
 	return a.unmarshalAll(displays)
@@ -71,7 +71,7 @@ func (a *AppDisplayDAO) Save(ctx context.Context, display *model.AppDisplay) (*m
 
 	model, err := a.marshal(display)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling app display")
+		return nil, err
 	}
 
 	if err := model.Upsert(
@@ -90,17 +90,17 @@ func (a *AppDisplayDAO) Save(ctx context.Context, display *model.AppDisplay) (*m
 
 func (a *AppDisplayDAO) Delete(ctx context.Context, appID string) error {
 	_, err := models.AppDisplays(qm.Where("app_id = ?", appID)).DeleteAll(ctx, a.db)
-	return errors.Wrap(err, "error while deleting app display")
+	return err
 }
 
 func (a *AppDisplayDAO) marshal(displayTarget *model.AppDisplay) (*models.AppDisplay, error) {
 	detailDescriptions, err := json.Marshal(displayTarget.DetailDescriptions)
 	if err != nil {
-		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
+		return nil, apierr.BadRequest(err)
 	}
 	i18nMap, err := json.Marshal(displayTarget.I18nMap)
 	if err != nil {
-		return nil, errors.Wrap(err, "while marshaling i18nMap")
+		return nil, apierr.BadRequest(err)
 	}
 
 	return &models.AppDisplay{
@@ -115,12 +115,12 @@ func (a *AppDisplayDAO) marshal(displayTarget *model.AppDisplay) (*models.AppDis
 func (a *AppDisplayDAO) unmarshal(rawDisplay *models.AppDisplay) (*model.AppDisplay, error) {
 	var detailDescriptions []map[string]any
 	if err := rawDisplay.DetailDescriptions.Unmarshal(&detailDescriptions); err != nil {
-		return nil, errors.Wrap(err, "error while marshaling detailDescriptions")
+		return nil, apierr.BadRequest(err)
 	}
 
 	var i18nMap map[string]model.DisplayI18n
 	if err := rawDisplay.I18nMap.Unmarshal(&i18nMap); err != nil {
-		return nil, errors.Wrap(err, "error while marshaling i18nMap")
+		return nil, apierr.BadRequest(err)
 	}
 
 	return &model.AppDisplay{
@@ -137,7 +137,7 @@ func (a *AppDisplayDAO) unmarshalAll(rawDisplays []*models.AppDisplay) ([]*model
 	for _, _display := range rawDisplays {
 		unmarshalled, err := a.unmarshal(_display)
 		if err != nil {
-			return nil, errors.Wrap(err, "error while unmarshaling app display")
+			return nil, err
 		}
 		ret = append(ret, unmarshalled)
 	}

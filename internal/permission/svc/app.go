@@ -4,6 +4,7 @@ import (
 	"context"
 	"unicode/utf8"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
@@ -140,7 +141,7 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 		}
 
 		if res >= maxAppCountPerAccount {
-			return nil, errors.New("App count per account must be less than 30")
+			return nil, apierr.Conflict(errors.New("App count per account must be less than 30"))
 		}
 
 		createApp := appmodel.App{

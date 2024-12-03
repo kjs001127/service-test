@@ -28,8 +28,6 @@ func NewErrHandler(logger log.ContextAwareLogger) *ErrHandler {
 func (l *ErrHandler) Handle(ctx *gin.Context) {
 	ctx.Next()
 
-	l.propagateStatusToErr(ctx)
-
 	if len(ctx.Errors) <= 0 {
 		return
 	}
@@ -37,20 +35,6 @@ func (l *ErrHandler) Handle(ctx *gin.Context) {
 	dto := errorsDTOFrom(ctx)
 	l.log(ctx, dto)
 	ctx.JSON(dto.Status, dto)
-}
-
-func (l *ErrHandler) propagateStatusToErr(ctx *gin.Context) {
-	if len(ctx.Errors) > 0 {
-		return
-	}
-
-	if ctx.Writer.Status() >= http.StatusInternalServerError {
-		_ = ctx.Error(errors.New("unknown internal error"))
-	} else if ctx.Writer.Status() == http.StatusTooManyRequests {
-		return
-	} else if ctx.Writer.Status() >= http.StatusBadRequest {
-		_ = ctx.Error(apierr.BadRequest(errors.New("unknown bad request error")))
-	}
 }
 
 func (l *ErrHandler) log(ctx *gin.Context, dto *errorsDTO) {
@@ -76,7 +60,7 @@ func errorsDTOFrom(ctx *gin.Context) *errorsDTO {
 			dto := newErrorsDTOFromHTTPErrorBuildable(ctx, httpErrorBuildable)
 			return dto
 		} else {
-			return newErrorsDTO(ctx, http.StatusText(http.StatusUnprocessableEntity), http.StatusUnprocessableEntity, apierr.NewCause(err))
+			return newErrorsDTO(ctx, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError, apierr.NewCause(err))
 		}
 	}
 	return newErrorsDTO(ctx, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

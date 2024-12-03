@@ -3,26 +3,34 @@ package tx
 import (
 	"context"
 	"database/sql"
-	"hash/fnv"
 )
 
+type LockFn func(ctx context.Context, tx *sql.Tx, lock Lock) error
+type Lock struct {
+	Namespace string
+	Id        string
+	IsShared  bool
+}
+
+var lockFn LockFn = func(ctx context.Context, tx *sql.Tx, lock Lock) error {
+	return nil
+}
+
+func EnableLock(fn LockFn) {
+	lockFn = fn
+}
+
 type lockOption struct {
-	isShared  bool
-	namespace int32
-	id        int32
+	lock Lock
 }
 
 func (l lockOption) apply(options *sql.TxOptions) {
 }
 
 func (l lockOption) onBegin(ctx context.Context) error {
-
 	if tx, ok := ctx.Value(txKey).(*sql.Tx); ok {
-		if l.isShared {
-			_, err := tx.ExecContext(ctx, "SELECT pg_advisory_xact_lock_shared($1, $2)", l.namespace, l.id)
-			return err
-		} else {
-			_, err := tx.ExecContext(ctx, "SELECT pg_advisory_xact_lock($1, $2)", l.namespace, l.id)
+
+		if err := lockFn(ctx, tx, l.lock); err != nil {
 			return err
 		}
 	}
@@ -31,22 +39,20 @@ func (l lockOption) onBegin(ctx context.Context) error {
 
 func XLock(namespace string, id string) Option {
 	return lockOption{
-		namespace: hash(namespace),
-		id:        hash(id),
-		isShared:  false,
+		lock: Lock{
+			Namespace: namespace,
+			Id:        id,
+			IsShared:  false,
+		},
 	}
 }
 
 func SLock(namespace string, id string) Option {
 	return lockOption{
-		namespace: hash(namespace),
-		id:        hash(id),
-		isShared:  true,
+		lock: Lock{
+			Namespace: namespace,
+			Id:        id,
+			IsShared:  true,
+		},
 	}
-}
-
-func hash(s string) int32 {
-	h := fnv.New32a()
-	_, _ = h.Write([]byte(s))
-	return int32(h.Sum32())
 }

@@ -76,7 +76,7 @@ func (s *RegisterSvcImpl) registerWithTx(ctx context.Context, req *AppWidgetRegi
 
 func (s *RegisterSvcImpl) validateRequest(appID string, appWidgets []*model.AppWidget) error {
 	if len(appWidgets) > 10 {
-		return apierr.BadRequest(fmt.Errorf("you can only register up to 10 appWidgets"))
+		return apierr.UnprocessableEntity(fmt.Errorf("you can only register up to 10 appWidgets"))
 	}
 
 	for _, appWidget := range appWidgets {
@@ -86,11 +86,11 @@ func (s *RegisterSvcImpl) validateRequest(appID string, appWidgets []*model.AppW
 		if len(appWidget.AppID) <= 0 {
 			appWidget.AppID = appID
 		} else if appWidget.AppID != appID {
-			return apierr.BadRequest(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", appID, appWidget.AppID))
+			return apierr.UnprocessableEntity(fmt.Errorf("request AppID: %s doesn't match AppID of cmd: %s", appID, appWidget.AppID))
 		}
 
 		if err := appWidget.Validate(); err != nil {
-			return apierr.BadRequest(err)
+			return apierr.UnprocessableEntity(err)
 		}
 	}
 

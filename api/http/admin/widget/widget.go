@@ -29,7 +29,7 @@ func (h *Handler) checkAppWidget(ctx *gin.Context) {
 	scope := ctx.DefaultQuery("scope", "front")
 
 	if scope != widget.Front && scope != widget.Desk {
-		_ = ctx.Error(apierr.BadRequest(errors.New("scope should be front or desk")))
+		_ = ctx.Error(apierr.UnprocessableEntity(errors.New("scope should be front or desk")))
 		return
 	}
 
