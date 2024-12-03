@@ -363,7 +363,6 @@ func (s *AppRoleSvc) roleWithMaxVersion(roles []*model.AppRole) *model.AppRole {
 	return ret
 }
 
-
 func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, claims AvailableClaims) (*ClaimsResponse, error) {
 
 	natives, err := s.pickNativeClaims(ctx, role.AppID, role.Type, claims)
@@ -384,6 +383,7 @@ func (s *AppRoleSvc) classifyClaims(ctx context.Context, role *model.AppRole, cl
 	}
 
 	return &ClaimsResponse{
+		ID:           role.ID,
 		Type:         role.Type,
 		AppID:        role.AppID,
 		NativeClaims: natives.toClaims(),
