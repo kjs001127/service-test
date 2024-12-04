@@ -17,17 +17,20 @@ type AccountServerSettingPermissionSvc interface {
 
 type AccountServerSettingPermissionSvcImpl struct {
 	serverSettingSvc serverSettingSvc.ServerSettingSvc
+	signingKeySvc    serverSettingSvc.SigningKeySvc
 	appCrudSvc       appsvc.AppQuerySvc
 	appAccountRepo   AppAccountRepo
 }
 
 func NewAccountServerSettingPermissionSvc(
 	urlCrudSvc serverSettingSvc.ServerSettingSvc,
+	signingKeySvc serverSettingSvc.SigningKeySvc,
 	appCrudSvc appsvc.AppQuerySvc,
 	appAccountRepo AppAccountRepo,
 ) *AccountServerSettingPermissionSvcImpl {
 	return &AccountServerSettingPermissionSvcImpl{
 		serverSettingSvc: urlCrudSvc,
+		signingKeySvc:    signingKeySvc,
 		appCrudSvc:       appCrudSvc,
 		appAccountRepo:   appAccountRepo,
 	}
@@ -64,7 +67,7 @@ func (a *AccountServerSettingPermissionSvcImpl) HasIssuedBefore(ctx context.Cont
 	if _, err := a.appAccountRepo.Fetch(ctx, appID, accountID); err != nil {
 		return false, err
 	}
-	return a.serverSettingSvc.HasIssuedBefore(ctx, appID)
+	return a.signingKeySvc.HasIssuedBefore(ctx, appID)
 }
 
 func (a *AccountServerSettingPermissionSvcImpl) RefreshSigningKey(ctx context.Context, appID string, accountID string) (string, error) {
@@ -78,7 +81,7 @@ func (a *AccountServerSettingPermissionSvcImpl) RefreshSigningKey(ctx context.Co
 			return "", err
 		}
 
-		signingKey, err := a.serverSettingSvc.RefreshSigningKey(ctx, appID)
+		signingKey, err := a.signingKeySvc.RefreshSigningKey(ctx, appID)
 		if err != nil {
 			return "", err
 		}

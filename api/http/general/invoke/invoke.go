@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	_ "encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -119,10 +120,10 @@ func (h *Handler) rbacFrom(ctx *gin.Context) (genauth.ParsedRBACToken, error) {
 
 func authFnCall(rbac genauth.ParsedRBACToken, appID string, channelID string, fn string) error {
 	if ok := rbac.CheckAction(genauth.Service(appID), genauth.Action(fn)); !ok {
-		return errors.New("function call unauthorized")
+		return apierr.Unauthorized(fmt.Errorf("service: %s, action: %s", appID, fn))
 	}
 	if ok := rbac.CheckScope(general.ChannelScope, channelID); !ok {
-		return errors.New("function call unauthorized")
+		return apierr.Unauthorized(fmt.Errorf("service: %s, action: %s, scope: %s", appID, fn, channelID))
 	}
 	return nil
 }

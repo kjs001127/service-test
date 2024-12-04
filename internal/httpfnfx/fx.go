@@ -32,6 +32,14 @@ var FunctionSvcs = fx.Options(
 			fx.As(new(svc.ServerSettingSvc)),
 		),
 		fx.Annotate(
+			svc.NewServerSettingSvcImpl,
+			fx.As(new(svc.SigningKeySvc)),
+		),
+		fx.Annotate(
+			svc.NewServerSettingSvcImpl,
+			fx.As(new(svc.AccessTypeSvc)),
+		),
+		fx.Annotate(
 			svc.NewLifecycleListener,
 			fx.As(new(app.AppLifeCycleEventListener)),
 			fx.ResultTags(appfx.LifecycleListener),

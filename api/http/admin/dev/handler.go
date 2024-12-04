@@ -10,11 +10,12 @@ import (
 var _ gintool.RouteRegistrant = (*Handler)(nil)
 
 type Handler struct {
-	querySvc   app.AppQuerySvc
-	modifySvc  app.AppLifecycleSvc
-	settingSvc settingsvc.ServerSettingSvc
-	roleSvc    *rolesvc.AppRoleSvc
-	secretSvc  *rolesvc.AppSecretSvc
+	querySvc      app.AppQuerySvc
+	modifySvc     app.AppLifecycleSvc
+	settingSvc    settingsvc.ServerSettingSvc
+	signingKeySvc settingsvc.SigningKeySvc
+	roleSvc       *rolesvc.AppRoleSvc
+	secretSvc     *rolesvc.AppSecretSvc
 }
 
 func NewHandler(
@@ -23,13 +24,15 @@ func NewHandler(
 	settingSvc settingsvc.ServerSettingSvc,
 	roleSvc *rolesvc.AppRoleSvc,
 	secretSvc *rolesvc.AppSecretSvc,
+	signingKeySvc settingsvc.SigningKeySvc,
 ) *Handler {
 	return &Handler{
-		querySvc:   querySvc,
-		modifySvc:  modifySvc,
-		settingSvc: settingSvc,
-		roleSvc:    roleSvc,
-		secretSvc:  secretSvc,
+		querySvc:      querySvc,
+		modifySvc:     modifySvc,
+		settingSvc:    settingSvc,
+		roleSvc:       roleSvc,
+		secretSvc:     secretSvc,
+		signingKeySvc: signingKeySvc,
 	}
 }
 

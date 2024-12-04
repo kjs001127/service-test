@@ -16,6 +16,13 @@ import (
 type ServerSettingSvc interface {
 	UpsertUrls(ctx context.Context, appID string, urls Urls) error
 	FetchUrls(ctx context.Context, appID string) (Urls, error)
+}
+
+type AccessTypeSvc interface {
+	UpdateAccessType(ctx context.Context, appID string, accessType model.AccessType) error
+}
+
+type SigningKeySvc interface {
 	RefreshSigningKey(ctx context.Context, appID string) (string, error)
 	HasIssuedBefore(ctx context.Context, appID string) (bool, error)
 }
@@ -31,6 +38,23 @@ type ServerSettingSvcImpl struct {
 
 func NewServerSettingSvcImpl(urlRepo AppServerSettingRepository) *ServerSettingSvcImpl {
 	return &ServerSettingSvcImpl{serverSettingRepo: urlRepo}
+}
+
+func (a *ServerSettingSvcImpl) UpdateAccessType(ctx context.Context, appID string, accessType model.AccessType) error {
+	return tx.Do(ctx, func(ctx context.Context) error {
+		setting, err := a.serverSettingRepo.Fetch(ctx, appID)
+		if err != nil {
+			return err
+		}
+
+		setting.AccessType = accessType
+
+		if _, err := a.serverSettingRepo.Save(ctx, appID, setting); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (a *ServerSettingSvcImpl) UpsertUrls(ctx context.Context, appID string, urls Urls) error {
