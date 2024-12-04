@@ -69,7 +69,7 @@ func (h *Handler) modifyEndpoints(ctx *gin.Context) {
 func (h *Handler) refreshSigningKey(ctx *gin.Context) {
 	appID := ctx.Param("appID")
 
-	key, err := h.settingSvc.RefreshSigningKey(ctx, appID)
+	key, err := h.signingKeySvc.RefreshSigningKey(ctx, appID)
 	if err != nil {
 		_ = ctx.Error(err)
 		return
