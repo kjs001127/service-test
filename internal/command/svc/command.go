@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/pkg/errors"
 
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
@@ -65,7 +66,7 @@ func (r *Invoker) Invoke(ctx context.Context, request CommandRequest) (Action, e
 	r.callListeners(ctx, event)
 
 	if ret.IsError() {
-		return Action{}, ret.Error
+		return Action{}, apierr.UnprocessableEntity(ret.Error)
 	}
 
 	return ret.Result, nil

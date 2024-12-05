@@ -100,7 +100,7 @@ func (i *AppWidgetInvokerImpl) InvokeDeskWidget(ctx context.Context, invoker *de
 	})
 
 	if resp.IsError() {
-		return nil, resp.Error
+		return nil, apierr.UnprocessableEntity(resp.Error)
 	}
 
 	return resp.Result, nil
