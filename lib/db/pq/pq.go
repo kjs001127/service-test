@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"hash/fnv"
+	"reflect"
+	"unsafe"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/lib/pq"
@@ -22,38 +24,52 @@ func Wrap(delegate db.DB) db.DB {
 }
 
 func (p PsqlErrMapper) Exec(query string, args ...interface{}) (sql.Result, error) {
-	return withErrMap(func() (sql.Result, error) {
+	return wrapRowsErr(func() (sql.Result, error) {
 		return p.delegate.Exec(query, args...)
 	})
 }
 
 func (p PsqlErrMapper) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return withErrMap(func() (*sql.Rows, error) {
+	return wrapRowsErr(func() (*sql.Rows, error) {
 		return p.delegate.Query(query, args...)
 	})
 }
 
 func (p PsqlErrMapper) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	return withErrMap(func() (*sql.Rows, error) {
+	return wrapRowsErr(func() (*sql.Rows, error) {
 		return p.delegate.QueryContext(ctx, query, args...)
 	})
 }
 
 func (p PsqlErrMapper) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	return withErrMap(func() (sql.Result, error) {
+	return wrapRowsErr(func() (sql.Result, error) {
 		return p.delegate.ExecContext(ctx, query, args...)
 	})
 }
 
 func (p PsqlErrMapper) QueryRow(query string, args ...interface{}) *sql.Row {
-	return p.delegate.QueryRow(query, args...)
+	return wrapRowErr(p.delegate.QueryRow(query, args...))
 }
 
 func (p PsqlErrMapper) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	return p.delegate.QueryRowContext(ctx, query, args...)
+	return wrapRowErr(p.delegate.QueryRowContext(ctx, query, args...))
 }
 
-func withErrMap[RET any](f func() (RET, error)) (RET, error) {
+const errFieldName = "err"
+
+func wrapRowErr(row *sql.Row) *sql.Row {
+	if row.Err() != nil {
+		rowValue := reflect.ValueOf(row).Elem()
+		errField := rowValue.FieldByName(errFieldName)
+
+		unsafeErrField := reflect.NewAt(errField.Type(), unsafe.Pointer(errField.UnsafeAddr())).Elem()
+		unsafeErrField.Set(reflect.ValueOf(mapErr(row.Err())))
+	}
+
+	return row
+}
+
+func wrapRowsErr[RET any](f func() (RET, error)) (RET, error) {
 	ret, err := f()
 	return ret, mapErr(err)
 }
