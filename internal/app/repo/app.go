@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -52,8 +53,10 @@ func (a *AppDAO) FindBuiltInApps(ctx context.Context) ([]*app.App, error) {
 func (a *AppDAO) Find(ctx context.Context, appID string) (*app.App, error) {
 	appTarget, err := models.Apps(qm.Where("id = ?", appID)).One(ctx, a.db)
 
-	if err != nil {
-		return nil, err
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
+		return nil, errors.Wrap(err, "error while querying app")
 	}
 
 	return a.unmarshal(appTarget)

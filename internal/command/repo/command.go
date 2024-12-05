@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 
@@ -52,7 +53,9 @@ func (c *CommandDao) Fetch(ctx context.Context, key model.CommandKey) (*model.Co
 		qm.Where("name = $3", key.Name),
 	).One(ctx, c.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return nil, err
 	}
 

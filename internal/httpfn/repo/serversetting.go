@@ -2,6 +2,10 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/generated/models"
 	"github.com/channel-io/ch-app-store/internal/httpfn/model"
@@ -23,6 +27,12 @@ func NewAppServerSettingDao(db db.DB) *AppServerSettingDao {
 func (a *AppServerSettingDao) Fetch(ctx context.Context, appID string) (model.ServerSetting, error) {
 	res, err := models.AppServerSettings(qm.Where("app_id = $1", appID)).One(ctx, a.db)
 	if err != nil {
+		return model.ServerSetting{}, err
+	}
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return model.ServerSetting{}, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return model.ServerSetting{}, err
 	}
 

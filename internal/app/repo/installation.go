@@ -2,7 +2,10 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -26,8 +29,10 @@ func (a *AppInstallationDao) Find(ctx context.Context, identifier model.Installa
 		qm.Where("channel_id = $2", identifier.ChannelID),
 	).One(ctx, a.db)
 
-	if err != nil {
-		return nil, err
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
+		return nil, errors.Wrap(err, "error while querying app")
 	}
 
 	return unmarshal(appInstallation), nil
@@ -105,11 +110,19 @@ func (a *AppInstallationDao) Delete(ctx context.Context, identifier model.Instal
 		qm.Where("channel_id = $2", identifier.ChannelID),
 	).One(ctx, a.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return err
 	}
 
 	if _, err = appInstallation.Delete(ctx, a.db); err != nil {
+		return err
+	}
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return err
 	}
 

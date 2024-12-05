@@ -2,7 +2,10 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -48,7 +51,9 @@ func (a *ActivationRepository) Fetch(ctx context.Context, key model.ActivationID
 		qm.Where("channel_id = $2", key.ChannelID),
 	).One(ctx, a.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return nil, err
 	}
 

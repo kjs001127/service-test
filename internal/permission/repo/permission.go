@@ -2,6 +2,10 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+	"github.com/pkg/errors"
 
 	"github.com/channel-io/ch-app-store/generated/models"
 
@@ -45,12 +49,15 @@ func (a *AppAccountRepoImpl) Delete(ctx context.Context, appID, accountID string
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (a *AppAccountRepoImpl) Fetch(ctx context.Context, appID, accountID string) (*model.AppPermission, error) {
 	res, err := models.AppAccounts(qm.Where("app_id = $1", appID), qm.Where("account_id = $2", accountID)).One(ctx, a.db)
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
+	} else if err != nil {
 		return nil, err
 	}
 

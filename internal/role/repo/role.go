@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -105,7 +106,9 @@ func (a *AppRoleDao) Find(ctx context.Context, id string) (*model.AppRole, error
 		qm.Where("id = $1", id),
 	).One(ctx, a.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(err)
+	} else if err != nil {
 		return nil, err
 	}
 
@@ -130,7 +133,9 @@ func (a *AppRoleDao) FindByRoleID(ctx context.Context, roleID string) (*model.Ap
 		qm.Where("role_id = $1", roleID),
 	).One(ctx, a.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(err)
+	} else if err != nil {
 		return nil, err
 	}
 

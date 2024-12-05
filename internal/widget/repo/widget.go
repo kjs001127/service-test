@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
@@ -49,7 +50,9 @@ func (c *AppWidgetDao) Delete(ctx context.Context, id string) error {
 		qm.Where("id = $1", id),
 	).One(ctx, c.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return apierr.NotFound(err)
+	} else if err != nil {
 		return err
 	}
 
@@ -73,9 +76,12 @@ func (c *AppWidgetDao) Fetch(ctx context.Context, appWidgetID string) (*model.Ap
 		qm.Where("id = $1", appWidgetID),
 	).One(ctx, c.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(err)
+	} else if err != nil {
 		return nil, err
 	}
+
 	return marshal(widget)
 }
 
@@ -86,7 +92,9 @@ func (c *AppWidgetDao) FetchByIDAndScope(ctx context.Context, appWidgetID string
 		qm.Where("scope = $2", scope),
 	).One(ctx, c.db)
 
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, apierr.NotFound(err)
+	} else if err != nil {
 		return nil, err
 	}
 
