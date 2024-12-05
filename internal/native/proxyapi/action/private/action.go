@@ -11,4 +11,5 @@ const (
 	PatchUser                  = "patchUser"
 	DeleteUser                 = "deleteUser"
 	RegisterCommerce           = "registerCommerce"
+	DeregisterCommerce         = "deregisterCommerce"
 )

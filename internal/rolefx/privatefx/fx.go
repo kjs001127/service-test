@@ -251,6 +251,11 @@ var PrivateNativeClaims rolesvc.ClaimManager = rolesvc.StaticClaimManager{
 					Action:  privatecore.RegisterCommerce,
 					Scope:   []string{"channel-{id}"},
 				},
+				{
+					Service: config.Get().ChannelServiceName,
+					Action:  privatecore.DeregisterCommerce,
+					Scope:   []string{"channel-{id}"},
+				},
 			}
 		},
 		DefaultClaimsOf: func(appId string) rolesvc.AvailableClaims {
