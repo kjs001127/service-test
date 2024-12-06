@@ -8,7 +8,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+type ErrMapper interface {
+	Map(err error) error
+}
+
 type DB interface {
+	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+
 	Exec(query string, args ...interface{}) (sql.Result, error)
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 	QueryRow(query string, args ...interface{}) *sql.Row

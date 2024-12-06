@@ -31,6 +31,10 @@ func NewDB() *DB {
 	return &DB{}
 }
 
+func (s *DB) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
+	return s.txIfExists(ctx).PrepareContext(ctx, query)
+}
+
 func (s *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return s.defaultDB().Exec(query, args...)
 }

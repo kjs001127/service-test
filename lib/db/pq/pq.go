@@ -5,82 +5,23 @@ import (
 	"database/sql"
 	"errors"
 	"hash/fnv"
-	"reflect"
-	"unsafe"
 
 	"github.com/channel-io/go-lib/pkg/errors/apierr"
 	"github.com/lib/pq"
 
-	"github.com/channel-io/ch-app-store/lib/db"
 	"github.com/channel-io/ch-app-store/lib/db/tx"
 )
 
 type PsqlErrMapper struct {
-	delegate db.DB
 }
 
-func Wrap(delegate db.DB) db.DB {
-	return &PsqlErrMapper{delegate: delegate}
+func NewPsqlErrMapper() *PsqlErrMapper {
+	return &PsqlErrMapper{}
 }
 
-func (p PsqlErrMapper) Exec(query string, args ...interface{}) (sql.Result, error) {
-	return wrapRowsErr(func() (sql.Result, error) {
-		return p.delegate.Exec(query, args...)
-	})
-}
-
-func (p PsqlErrMapper) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	return wrapRowsErr(func() (*sql.Rows, error) {
-		return p.delegate.Query(query, args...)
-	})
-}
-
-func (p PsqlErrMapper) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	return wrapRowsErr(func() (*sql.Rows, error) {
-		return p.delegate.QueryContext(ctx, query, args...)
-	})
-}
-
-func (p PsqlErrMapper) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	return wrapRowsErr(func() (sql.Result, error) {
-		return p.delegate.ExecContext(ctx, query, args...)
-	})
-}
-
-func (p PsqlErrMapper) QueryRow(query string, args ...interface{}) *sql.Row {
-	return wrapRowErr(p.delegate.QueryRow(query, args...))
-}
-
-func (p PsqlErrMapper) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	return wrapRowErr(p.delegate.QueryRowContext(ctx, query, args...))
-}
-
-const errFieldName = "err"
-
-func wrapRowErr(row *sql.Row) *sql.Row {
-	if row.Err() != nil {
-		rowValue := reflect.ValueOf(row).Elem()
-		errField := rowValue.FieldByName(errFieldName)
-
-		unsafeErrField := reflect.NewAt(errField.Type(), unsafe.Pointer(errField.UnsafeAddr())).Elem()
-		unsafeErrField.Set(reflect.ValueOf(mapErr(row.Err())))
-	}
-
-	return row
-}
-
-func wrapRowsErr[RET any](f func() (RET, error)) (RET, error) {
-	ret, err := f()
-	return ret, mapErr(err)
-}
-
-func mapErr(err error) error {
+func (p *PsqlErrMapper) Map(err error) error {
 	if err == nil {
 		return nil
-	}
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(err)
 	}
 
 	var pqErr *pq.Error
@@ -89,11 +30,15 @@ func mapErr(err error) error {
 		return err
 	}
 
-	switch pqErr.Code {
-	case "23305":
+	// https://www.postgresql.org/docs/8.4/errcodes-appendix.html
+	class := pqErr.Code[:2]
+	switch class {
+	case "20":
+		return apierr.NotFound(err)
+	case "22":
+		return apierr.BadRequest(err)
+	case "23":
 		return apierr.Conflict(err)
-	case "23503":
-		return apierr.UnprocessableEntity(err)
 	}
 
 	return err

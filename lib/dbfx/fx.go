@@ -36,5 +36,10 @@ var Postgres = fx.Options(
 		db.DriverName(postgres),
 		pq.LockFn,
 	),
-	fx.Decorate(pq.Wrap),
+	fx.Provide(
+		fx.Annotate(
+			pq.NewPsqlErrMapper,
+			fx.As(new(db.ErrMapper)),
+		),
+	),
 )
