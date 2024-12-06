@@ -99,7 +99,7 @@ func mapErr(err error) error {
 	return err
 }
 
-func Lock(ctx context.Context, tx *sql.Tx, lock tx.Lock) error {
+var LockFn tx.LockFn = func(ctx context.Context, tx *sql.Tx, lock tx.Lock) error {
 	if lock.IsShared {
 		_, err := tx.ExecContext(ctx, "SELECT pg_advisory_xact_lock_shared($1, $2)", hash(lock.Namespace), hash(lock.Id))
 		return err

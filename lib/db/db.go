@@ -29,8 +29,10 @@ type Config struct {
 	MaxOpenConn int    `required:"true"`
 }
 
-func BuildDataSource(driverName string, cfg Config) (*sql.DB, error) {
-	opened, err := sql.Open(driverName, DataSourceName(cfg))
+type DriverName string
+
+func BuildDataSource(driverName DriverName, cfg Config) (*sql.DB, error) {
+	opened, err := sql.Open(string(driverName), DataSourceName(cfg))
 	if err != nil {
 		return nil, errors.Wrap(err, "error while opening psql")
 	}

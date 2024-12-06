@@ -49,10 +49,7 @@ var Datadog = fx.Options(
 	fx.Provide(
 		fx.Annotate(tx.NewDB, fx.As(new(db.DB))),
 
-		fx.Annotate(
-			datadog.NewDataSource,
-			fx.ParamTags(dbfx.DriverName, ``),
-		),
+		datadog.NewDataSource,
 
 		fx.Annotate(
 			datadog.NewMethodSpanTagger,
@@ -66,7 +63,8 @@ var Datadog = fx.Options(
 		),
 	),
 
-	fx.Invoke(func(db *sql.DB) {
+	fx.Invoke(func(db *sql.DB, lock tx.LockFn) {
 		tx.EnableDatabase(db)
+		tx.EnableLock(lock)
 	}),
 )
