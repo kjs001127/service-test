@@ -30,7 +30,7 @@ func NewInstallQuerySvc(
 
 func (s *InstalledAppQuerySvc) QueryInstalledAppsByChannelID(ctx context.Context, channelID string) ([]*model.App, error) {
 	if err := s.installBuiltInApps(ctx, channelID); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "install builtInApps on query by channelID")
 	}
 
 	appInstallations, err := s.appInstallationRepo.FindAllByChannelID(ctx, channelID)
@@ -40,7 +40,7 @@ func (s *InstalledAppQuerySvc) QueryInstalledAppsByChannelID(ctx context.Context
 
 	apps, err := s.appRepo.FindAll(ctx, appIDsOf(appInstallations))
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.Wrap(err, "finding apps while query by channelID")
 	}
 
 	return apps, nil
@@ -57,12 +57,12 @@ func appIDsOf(installations []*model.AppInstallation) []string {
 func (s *InstalledAppQuerySvc) QueryInstalledApp(ctx context.Context, install model.InstallationID) (*model.App, error) {
 	app, err := s.appRepo.Find(ctx, install.AppID)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.Wrap(err, "finding app while querying installedApp")
 	}
 
 	if app.IsBuiltIn {
 		if _, err := s.appInstallSvc.InstallAppIfNotExists(ctx, install.ChannelID, app); err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "install builtin app while querying installedApp")
 		}
 	}
 
@@ -75,7 +75,11 @@ func (s *InstalledAppQuerySvc) QueryInstalledApp(ctx context.Context, install mo
 }
 
 func (s *InstalledAppQuerySvc) QueryInstallationsByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
-	return s.appInstallationRepo.FindAllByAppID(ctx, appID)
+	ret, err := s.appInstallationRepo.FindAllByAppID(ctx, appID)
+	if err != nil {
+		return nil, errors.Wrap(err, "finding apps while querying by appID")
+	}
+	return ret, nil
 }
 
 func (s *InstalledAppQuerySvc) CheckInstall(ctx context.Context, install model.InstallationID) (bool, error) {

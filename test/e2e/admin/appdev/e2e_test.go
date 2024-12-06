@@ -80,12 +80,12 @@ func (e *E2ETest) TestCreateRemoteApp() app.App {
 		},
 	}
 
-	raw, _ := json.Marshal(body)
+	raw, _ := json.MarshalDisplay(body)
 
 	response, _ := m.Post("/admin/apps").SetBody(raw).Do()
 
 	var appResponse svc.AppResponse
-	_ = json.Unmarshal(response.Body(), &appResponse)
+	_ = json.UnmarshalDisplay(response.Body(), &appResponse)
 
 	assert.Equal(e.T(), http.StatusCreated, response.StatusCode())
 	assert.Equal(e.T(), "TestApp", appResponse.Title)
@@ -111,7 +111,7 @@ func (e *E2ETest) TestRegisterCommand() {
 		},
 		EnableByDefault: true,
 	}
-	raw, _ := json.Marshal(commandBody)
+	raw, _ := json.MarshalDisplay(commandBody)
 	response, _ := m.Post("/admin/apps/" + createdApp.ID + "/commands").SetBody(raw).Do()
 
 	assert.Equal(e.T(), http.StatusCreated, response.StatusCode())

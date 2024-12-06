@@ -19,8 +19,8 @@ type AppInstallationRepository interface {
 	Find(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error)
 	FindAllByChannelID(ctx context.Context, channelID string) ([]*model.AppInstallation, error)
 	FindAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error)
-	Save(ctx context.Context, appInstallation *model.AppInstallation) error
-	SaveIfNotExists(ctx context.Context, install *model.AppInstallation) error
+	Save(ctx context.Context, appInstallation *model.AppInstallation) (*model.AppInstallation, error)
+	Create(ctx context.Context, install *model.AppInstallation) (*model.AppInstallation, error)
 	Delete(ctx context.Context, identifier model.InstallationID) error
 	DeleteByAppID(ctx context.Context, appID string) error
 }

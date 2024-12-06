@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/channel-io/go-lib/pkg/errors/apierr"
+
 	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/svc"
 	. "github.com/channel-io/ch-app-store/test/integration"
@@ -50,11 +52,6 @@ func (a *AppDAOTestSuite) TestAppSave() {
 
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
-
-	res, err = a.appRepository.Find(ctx, appID)
-
-	a.Require().NoError(err)
-	a.Require().NotNil(res)
 }
 
 func (a *AppDAOTestSuite) TestAppFind() {
@@ -65,10 +62,11 @@ func (a *AppDAOTestSuite) TestAppFind() {
 	ctx := context.Background()
 
 	_, _ = a.appRepository.Save(ctx, app)
-	res, err := a.appRepository.Find(ctx, appID)
 
+	res, err := a.appRepository.Find(ctx, appID)
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
+	a.Require().Equal(app.ID, res.ID)
 }
 
 func (a *AppDAOTestSuite) TestAppDelete() {
@@ -80,8 +78,10 @@ func (a *AppDAOTestSuite) TestAppDelete() {
 
 	_, _ = a.appRepository.Save(ctx, app)
 	err := a.appRepository.Delete(ctx, appID)
-
 	a.Require().NoError(err)
+
+	_, err = a.appRepository.Find(ctx, appID)
+	a.Require().True(apierr.IsNotFound(err))
 }
 
 func (a *AppDAOTestSuite) TestAppInstallationSave() {
@@ -97,8 +97,24 @@ func (a *AppDAOTestSuite) TestAppInstallationSave() {
 	ctx := context.Background()
 
 	_, _ = a.appRepository.Save(ctx, app)
-	err := a.appInstallationRepository.Save(ctx, appChannel)
+	_, err := a.appInstallationRepository.Save(ctx, appChannel)
+	a.Require().NoError(err)
+}
 
+func (a *AppDAOTestSuite) TestAppInstallationCreate() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	app := &appmodel.App{
+		ID: appID,
+	}
+
+	ctx := context.Background()
+
+	_, _ = a.appRepository.Save(ctx, app)
+	_, err := a.appInstallationRepository.Create(ctx, appChannel)
 	a.Require().NoError(err)
 }
 
@@ -115,13 +131,13 @@ func (a *AppDAOTestSuite) TestAppInstallationDelete() {
 	ctx := context.Background()
 
 	_, _ = a.appRepository.Save(ctx, app)
-	_ = a.appInstallationRepository.Save(ctx, appChannel)
+	_, _ = a.appInstallationRepository.Save(ctx, appChannel)
 	err := a.appInstallationRepository.DeleteByAppID(ctx, appID)
 
 	a.Require().NoError(err)
 }
 
-func (a *AppDAOTestSuite) TestAppInstallationFind() {
+func (a *AppDAOTestSuite) TestAppInstallationSaveAndFind() {
 	appChannel := &appmodel.AppInstallation{
 		ChannelID: channelID,
 		AppID:     appID,
@@ -141,13 +157,65 @@ func (a *AppDAOTestSuite) TestAppInstallationFind() {
 	_, err := a.appRepository.Save(ctx, app)
 	a.Require().NoError(err)
 
-	err = a.appInstallationRepository.Save(ctx, appChannel)
+	_, err = a.appInstallationRepository.Save(ctx, appChannel)
 	a.Require().NoError(err)
 
 	res, err := a.appInstallationRepository.Find(ctx, installationID)
 
 	a.Require().NoError(err)
 	a.Require().NotNil(res)
+}
+
+func (a *AppDAOTestSuite) TestAppInstallationCreateAndFind() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	installationID := appmodel.InstallationID{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	app := &appmodel.App{
+		ID: appID,
+	}
+
+	ctx := context.Background()
+
+	_, err := a.appRepository.Save(ctx, app)
+	a.Require().NoError(err)
+
+	_, err = a.appInstallationRepository.Create(ctx, appChannel)
+	a.Require().NoError(err)
+
+	res, err := a.appInstallationRepository.Find(ctx, installationID)
+
+	a.Require().NoError(err)
+	a.Require().NotNil(res)
+	a.Require().Equal(installationID, res.ID())
+}
+
+func (a *AppDAOTestSuite) TestDuplicateInstallation() {
+	appChannel := &appmodel.AppInstallation{
+		ChannelID: channelID,
+		AppID:     appID,
+	}
+
+	app := &appmodel.App{
+		ID: appID,
+	}
+
+	ctx := context.Background()
+
+	_, err := a.appRepository.Save(ctx, app)
+	a.Require().NoError(err)
+
+	_, err = a.appInstallationRepository.Create(ctx, appChannel)
+	a.Require().NoError(err)
+
+	_, err = a.appInstallationRepository.Create(ctx, appChannel)
+	a.Require().True(apierr.IsConflict(err))
 }
 
 func TestAppDAOs(t *testing.T) {

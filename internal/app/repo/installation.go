@@ -2,152 +2,82 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/channel-io/go-lib/pkg/errors/apierr"
-	"github.com/pkg/errors"
-	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
-	"github.com/channel-io/ch-app-store/generated/models"
+	. "github.com/channel-io/ch-app-store/generated/models"
 	"github.com/channel-io/ch-app-store/internal/app/model"
-	"github.com/channel-io/ch-app-store/lib/db"
+	. "github.com/channel-io/ch-app-store/lib/sqlrepo"
 )
 
 type AppInstallationDao struct {
-	db db.DB
+	repo SQLRepo[*model.AppInstallation]
 }
 
-func NewAppInstallationDao(db db.DB) *AppInstallationDao {
-	return &AppInstallationDao{db: db}
+func NewAppInstallationDao(repo SQLRepo[*model.AppInstallation]) *AppInstallationDao {
+	return &AppInstallationDao{repo: repo}
 }
 
 func (a *AppInstallationDao) Find(ctx context.Context, identifier model.InstallationID) (*model.AppInstallation, error) {
-	appInstallation, err := models.AppInstallations(
-		qm.Select("*"),
-		qm.Where("app_id = $1", identifier.AppID),
-		qm.Where("channel_id = $2", identifier.ChannelID),
-	).One(ctx, a.db)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, apierr.NotFound(errors.Wrap(err, "app not found"))
-	} else if err != nil {
-		return nil, errors.Wrap(err, "error while querying app")
-	}
-
-	return unmarshal(appInstallation), nil
+	return a.repo.FetchBy(ctx,
+		Where(AppInstallationColumns.AppID, EQ, identifier.AppID),
+		Where(AppInstallationColumns.ChannelID, EQ, identifier.ChannelID),
+	)
 }
 
 func (a *AppInstallationDao) FindAllByAppID(ctx context.Context, appID string) ([]*model.AppInstallation, error) {
-	appInstallation, err := models.AppInstallations(
-		qm.Select("*"),
-		qm.Where("app_id = $1", appID),
-	).All(ctx, a.db)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalAll(appInstallation), nil
+	return a.repo.FindAllBy(
+		ctx,
+		Where(AppInstallationColumns.AppID, EQ, appID),
+	)
 }
 
 func (a *AppInstallationDao) FindAllByChannelID(ctx context.Context, channelID string) ([]*model.AppInstallation, error) {
-	appInstallation, err := models.AppInstallations(
-		qm.Select("*"),
-		qm.Where("channel_id = $1", channelID),
-	).All(ctx, a.db)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalAll(appInstallation), nil
+	return a.repo.FindAllBy(
+		ctx,
+		Where(AppInstallationColumns.ChannelID, EQ, channelID),
+	)
 }
 
-func (a *AppInstallationDao) Save(ctx context.Context, appInstallation *model.AppInstallation) error {
-	model := marshal(appInstallation)
+func (a *AppInstallationDao) Save(ctx context.Context, appInstallation *model.AppInstallation) (*model.AppInstallation, error) {
 
-	if err := model.Upsert(
+	return a.repo.Upsert(
 		ctx,
-		a.db,
-		true,
-		[]string{"app_id", "channel_id"},
-		boil.Blacklist("app_id", "channel_id"),
-		boil.Infer(),
-	); err != nil {
-		return err
-	}
-
-	return nil
+		appInstallation,
+		AppInstallationColumns.AppID,
+		AppInstallationColumns.ChannelID,
+	)
 }
 
-func (a *AppInstallationDao) SaveIfNotExists(ctx context.Context, appInstallation *model.AppInstallation) error {
-	model := marshal(appInstallation)
-
-	if err := model.Upsert(
-		ctx,
-		a.db,
-		false,
-		[]string{"app_id", "channel_id"},
-		boil.None(),
-		boil.Infer(),
-	); err != nil {
-		return err
-	}
-
-	return nil
+func (a *AppInstallationDao) Create(ctx context.Context, appInstallation *model.AppInstallation) (*model.AppInstallation, error) {
+	return a.repo.Create(ctx, appInstallation)
 }
 
 func (a *AppInstallationDao) DeleteByAppID(ctx context.Context, appID string) error {
-	_, err := models.AppInstallations(qm.Where("app_id = $1", appID)).DeleteAll(ctx, a.db)
-	return err
+	return a.repo.DeleteBy(ctx, Where(AppInstallationColumns.AppID, EQ, appID))
 }
 
 func (a *AppInstallationDao) Delete(ctx context.Context, identifier model.InstallationID) error {
-	appInstallation, err := models.AppInstallations(
-		qm.Select("*"),
-		qm.Where("app_id = $1", identifier.AppID),
-		qm.Where("channel_id = $2", identifier.ChannelID),
-	).One(ctx, a.db)
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(errors.Wrap(err, "app not found"))
-	} else if err != nil {
-		return err
-	}
-
-	if _, err = appInstallation.Delete(ctx, a.db); err != nil {
-		return err
-	}
-
-	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(errors.Wrap(err, "app not found"))
-	} else if err != nil {
-		return err
-	}
-
-	return nil
+	return a.repo.DeleteBy(ctx,
+		Where(AppInstallationColumns.ChannelID, EQ, identifier.ChannelID),
+		Where(AppInstallationColumns.AppID, EQ, identifier.AppID),
+	)
 }
 
-func unmarshal(channel *models.AppInstallation) *model.AppInstallation {
+var UnmarshalInstallation BTDFunc[*model.AppInstallation, *AppInstallation] = func(channel *AppInstallation) (*model.AppInstallation, error) {
 	return &model.AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-	}
+	}, nil
 }
 
-func marshal(channel *model.AppInstallation) *models.AppInstallation {
-	return &models.AppInstallation{
+var MarshalInstallation DTBFunc[*model.AppInstallation, *AppInstallation] = func(channel *model.AppInstallation) (*AppInstallation, error) {
+	return &AppInstallation{
 		AppID:     channel.AppID,
 		ChannelID: channel.ChannelID,
-	}
+	}, nil
 }
 
-func unmarshalAll(channels models.AppInstallationSlice) []*model.AppInstallation {
-	ret := make([]*model.AppInstallation, 0, len(channels))
-	for _, ch := range channels {
-		unmarshalled := unmarshal(ch)
-		ret = append(ret, unmarshalled)
-	}
-	return ret
+var QueryInstallation QueryFunc[*AppInstallation, AppInstallationSlice] = func(mods ...qm.QueryMod) BoilModelQuery[*AppInstallation, AppInstallationSlice] {
+	return AppInstallations(mods...)
 }

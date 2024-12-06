@@ -61,7 +61,10 @@ func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID
 	})
 
 	if apierr.IsNotFound(err) {
-		return s.InstallApp(ctx, channelID, app)
+		_, err := s.InstallApp(ctx, channelID, app)
+		if err != nil && !apierr.IsConflict(err) {
+			return nil, err
+		}
 	} else if err != nil {
 		return nil, err
 	}
@@ -77,13 +80,13 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 			ChannelID: channelID,
 		}
 
-		err := s.appInstallationRepo.Save(ctx, installation)
+		_, err := s.appInstallationRepo.Create(ctx, installation)
 		if err != nil {
-			return errors.WithStack(err)
+			return errors.Wrap(err, "creating app on install app")
 		}
 
 		if err := s.publishTrxInstallEvent(ctx, app, channelID); err != nil {
-			return errors.Wrap(err, "error while handling onInstall")
+			return errors.Wrap(err, "publish trx install event on install")
 		}
 		return nil
 	}, tx.SLock(namespaceApp, app.ID)); err != nil {
@@ -98,19 +101,19 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.InstallationID) error {
 	app, err := s.appRepo.Find(ctx, req.AppID)
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.Wrap(err, "finding app on uninstall")
 	}
 	if app.IsBuiltIn {
-		return errors.New("cannot uninstall builtin app")
+		return apierr.UnprocessableEntity(errors.New("cannot uninstall builtin app"))
 	}
 
 	if err := tx.Do(ctx, func(ctx context.Context) error {
 		if err = s.appInstallationRepo.Delete(ctx, req); err != nil {
-			return errors.WithStack(err)
+			return errors.Wrap(err, "deleting app on uninstall")
 		}
 
 		if err := s.publishTrxUninstallEvent(ctx, app, req.ChannelID); err != nil {
-			return errors.Wrap(err, "error while uninstalling app")
+			return errors.Wrap(err, "publish trx event on uninstall")
 		}
 
 		return nil

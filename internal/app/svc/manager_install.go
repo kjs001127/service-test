@@ -3,6 +3,8 @@ package svc
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	app "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/shared/errmodel"
 	"github.com/channel-io/ch-app-store/internal/shared/principal/desk"
@@ -42,7 +44,7 @@ func (s *ManagerAppInstallSvc) Install(ctx context.Context, manager desk.Manager
 	}
 
 	if err := checkPermission(ctx, found, manager); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "checking manager install permission")
 	}
 
 	defer func() {
@@ -56,7 +58,7 @@ func (s *ManagerAppInstallSvc) Install(ctx context.Context, manager desk.Manager
 	return tx.DoReturn(ctx, func(ctx context.Context) (*app.App, error) {
 		for _, filter := range s.preInstallFilters {
 			if err := filter.OnInstall(ctx, manager, found); err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "onInstall filter on manager install")
 			}
 		}
 		return s.installSvc.InstallApp(ctx, installID.ChannelID, found)
@@ -87,7 +89,7 @@ func (s *ManagerAppInstallSvc) UnInstall(ctx context.Context, manager desk.Manag
 	}
 
 	if err := checkPermission(ctx, found, manager); err != nil {
-		return err
+		return errors.Wrap(err, "checking manager uninstall permission")
 	}
 
 	defer func() {
@@ -101,7 +103,7 @@ func (s *ManagerAppInstallSvc) UnInstall(ctx context.Context, manager desk.Manag
 	return tx.Do(ctx, func(ctx context.Context) error {
 		for _, filter := range s.preInstallFilters {
 			if err := filter.OnUnInstall(ctx, manager, found); err != nil {
-				return err
+				return errors.Wrap(err, "onInstall filter on manager uninstall")
 			}
 		}
 		return s.installSvc.UnInstallApp(ctx, installID)

@@ -121,7 +121,7 @@ func (a *AppQuerySvcImpl) ReadDetail(ctx context.Context, appID string) (*AppDet
 		if apierr.IsNotFound(err) {
 			display = &model.AppDisplay{AppID: appID}
 		} else if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "finding app display while reading detail")
 		}
 
 		return mergeDetail(app, display), nil
@@ -187,11 +187,11 @@ func (a *AppLifecycleSvcImpl) Create(ctx context.Context, app *model.App) (*mode
 
 		ret, err := a.appRepo.Save(ctx, app)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "saving app while create")
 		}
 
 		if err := a.publishCreateEvent(ctx, app); err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "publish trx event while create")
 		}
 
 		return ret, nil
@@ -202,18 +202,21 @@ func (a *AppLifecycleSvcImpl) UpdateDetail(ctx context.Context, detail *AppDetai
 	return tx.DoReturn(ctx, func(ctx context.Context) (*AppDetail, error) {
 		appBefore, err := a.appRepo.Find(ctx, detail.ID)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "finding app while update detail")
 		}
 
 		ret, err := a.appRepo.Save(ctx, detail.app())
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "saving app while updating detail")
 		}
 
 		display, err := a.displayRepo.Save(ctx, detail.display())
+		if err != nil {
+			return nil, errors.Wrap(err, "saving display while updating detail")
+		}
 
 		if err := a.publishModifyEvent(ctx, appBefore, ret); err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "publish trx event while updating detail")
 		}
 
 		return mergeDetail(ret, display), nil
@@ -224,16 +227,16 @@ func (a *AppLifecycleSvcImpl) Update(ctx context.Context, app *model.App) (*mode
 	return tx.DoReturn(ctx, func(ctx context.Context) (*model.App, error) {
 		appBefore, err := a.appRepo.Find(ctx, app.ID)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "app ")
 		}
 
 		ret, err := a.appRepo.Save(ctx, app)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "")
 		}
 
 		if err := a.publishModifyEvent(ctx, appBefore, app); err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "'")
 		}
 
 		return ret, nil
