@@ -61,6 +61,8 @@ func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID
 	})
 
 	if apierr.IsNotFound(err) {
+		s.logger.Infow(ctx, "installing app on IfNotExists", "appID", app.ID, "channelID", channelID)
+
 		_, err := s.InstallApp(ctx, channelID, app)
 		if err != nil && !apierr.IsConflict(err) {
 			return nil, err
@@ -73,6 +75,7 @@ func (s *AppInstallSvcImpl) InstallAppIfNotExists(ctx context.Context, channelID
 }
 
 func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, app *model.App) (*model.App, error) {
+	s.logger.Infow(ctx, "installing app", "appID", app.ID, "channelID", channelID)
 
 	if err := tx.Do(ctx, func(ctx context.Context) error {
 		installation := &model.AppInstallation{
@@ -99,6 +102,8 @@ func (s *AppInstallSvcImpl) InstallApp(ctx context.Context, channelID string, ap
 }
 
 func (s *AppInstallSvcImpl) UnInstallApp(ctx context.Context, req model.InstallationID) error {
+	s.logger.Infow(ctx, "uninstalling app", "appID", req.AppID, "channelID", req.ChannelID)
+
 	app, err := s.appRepo.Find(ctx, req.AppID)
 	if err != nil {
 		return errors.Wrap(err, "finding app on uninstall")
