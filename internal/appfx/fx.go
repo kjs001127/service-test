@@ -5,9 +5,12 @@ import (
 
 	"go.uber.org/fx"
 
+	"github.com/channel-io/ch-app-store/generated/models"
+	appmodel "github.com/channel-io/ch-app-store/internal/app/model"
 	"github.com/channel-io/ch-app-store/internal/app/repo"
 	app "github.com/channel-io/ch-app-store/internal/app/svc"
 	"github.com/channel-io/ch-app-store/internal/hook/svc"
+	"github.com/channel-io/ch-app-store/lib/sqlrepo"
 )
 
 const (
@@ -69,5 +72,39 @@ var AppDAOs = fx.Options(
 			repo.NewAppDisplayDAO,
 			fx.As(new(app.AppDisplayRepository)),
 		),
+	),
+
+	fx.Provide(
+		fx.Annotate(
+			sqlrepo.New[*appmodel.App, *models.App, models.AppSlice],
+			fx.As(new(sqlrepo.SQLRepo[*appmodel.App])),
+		),
+		fx.Annotate(
+			sqlrepo.New[*appmodel.AppInstallation, *models.AppInstallation, models.AppInstallationSlice],
+			fx.As(new(sqlrepo.SQLRepo[*appmodel.AppInstallation])),
+		),
+
+		fx.Annotate(
+			sqlrepo.New[*appmodel.AppDisplay, *models.AppDisplay, models.AppDisplaySlice],
+			fx.As(new(sqlrepo.SQLRepo[*appmodel.AppDisplay])),
+		),
+	),
+
+	fx.Supply(
+		repo.MarshalInstallation,
+		repo.UnmarshalInstallation,
+		repo.QueryInstallation,
+	),
+
+	fx.Supply(
+		repo.MarshalApp,
+		repo.UnmarshalApp,
+		repo.QueryApp,
+	),
+
+	fx.Supply(
+		repo.MarshalDisplay,
+		repo.UnmarshalDisplay,
+		repo.QueryDisplay,
 	),
 )
