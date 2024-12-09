@@ -69,14 +69,14 @@ var MarshalApp DTBFunc[*app.App, *models.App] = func(appTarget *app.App) (*model
 		AvatarURL:   null.StringFromPtr(appTarget.AvatarURL),
 		IsBuiltIn:   null.BoolFrom(appTarget.IsBuiltIn),
 		I18nMap:     null.JSONFrom(i18nMap),
-		IsPrivate:   appTarget.IsPrivate,
+		IsPrivate:   null.BoolFrom(appTarget.IsPrivate),
 	}, nil
 }
 
 var UnmarshalApp BTDFunc[*app.App, *models.App] = func(rawApp *models.App) (*app.App, error) {
 	var i18nMap map[string]app.I18nFields
 	if err := rawApp.I18nMap.Unmarshal(&i18nMap); err != nil {
-		return nil, apierr.UnprocessableEntity(err, errors.New("repo: failed to unmarshal app"))
+		return nil, apierr.BadRequest(err, errors.New("repo: failed to unmarshal app"))
 	}
 
 	return &app.App{
@@ -86,7 +86,7 @@ var UnmarshalApp BTDFunc[*app.App, *models.App] = func(rawApp *models.App) (*app
 		Description: rawApp.Description.Ptr(),
 		IsBuiltIn:   rawApp.IsBuiltIn.Bool,
 		I18nMap:     i18nMap,
-		IsPrivate:   rawApp.IsPrivate,
+		IsPrivate:   rawApp.IsPrivate.Bool,
 	}, nil
 }
 
