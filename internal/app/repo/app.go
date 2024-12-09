@@ -28,6 +28,7 @@ func (a *AppDAO) FindPublicApps(ctx context.Context, since string, limit int) ([
 		ctx,
 		Where(AppColumns.IsPrivate, EQ, false),
 		Where(AppColumns.ID, GT, since),
+		OrderBy(OrderAsc, AppColumns.ID),
 		Limit(limit),
 	)
 }
