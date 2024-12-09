@@ -41,10 +41,10 @@ type SQLRepo[D DomainModel] interface {
 
 func New[D DomainModel, B BoilModel, BS BoilModelSlice[B]](
 	db db.DB,
+	errMapper db.ErrMapper,
 	dtbFunc DTBFunc[D, B],
 	btdFunc BTDFunc[D, B],
 	modelsFunc QueryFunc[B, BS],
-	errMapper db.ErrMapper,
 ) SQLRepo[D] {
 	return &sqlRepo[D, B, BS]{
 		db:         db,
@@ -83,7 +83,7 @@ func (repo *sqlRepo[D, B, BS]) FetchBy(ctx context.Context, mods ...qm.QueryMod)
 
 func (repo *sqlRepo[D, B, BS]) Find(ctx context.Context, id string) (D, error) {
 	boilModel, err := repo.FindBy(ctx, qmhelper.Where(columnID, qmhelper.EQ, id))
-	return boilModel, repo.errMapper.Map(err)
+	return boilModel, err
 }
 
 func (repo *sqlRepo[D, B, BS]) FindBy(ctx context.Context, mods ...qm.QueryMod) (D, error) {
@@ -92,29 +92,35 @@ func (repo *sqlRepo[D, B, BS]) FindBy(ctx context.Context, mods ...qm.QueryMod) 
 		return lo.Empty[D](), nil
 	}
 	if err != nil {
-		return lo.Empty[D](), repo.errMapper.Map(err)
+		return lo.Empty[D](), errors.Wrapf(repo.errMapper.Map(err), "finding %T", new(D))
 	}
-	return repo.btdFunc(boilModel)
+
+	ret, err := repo.btdFunc(boilModel)
+	if err != nil {
+		return lo.Empty[D](), errors.Wrapf(err, "btd %T", new(D))
+	}
+
+	return ret, nil
 }
 
 func (repo *sqlRepo[D, B, BS]) FindAll(ctx context.Context, ids ...string) ([]D, error) {
 	ret, err := repo.FindAllBy(ctx, qm.WhereIn(`"id" IN ?`, lo.Map(ids, func(id string, _ int) interface{} {
 		return id
 	})...))
-	return ret, repo.errMapper.Map(err)
+	return ret, err
 }
 
 func (repo *sqlRepo[D, B, BS]) FindAllBy(ctx context.Context, mods ...qm.QueryMod) ([]D, error) {
 	boilModels, err := repo.modelsFunc(mods...).All(ctx, repo.db)
 	if err != nil {
-		return lo.Empty[[]D](), repo.errMapper.Map(err)
+		return lo.Empty[[]D](), errors.Wrapf(repo.errMapper.Map(err), "find all %T", new(D))
 	}
 
 	var domainModels []D
 	for _, boilModel := range boilModels {
 		domainModel, err := repo.btdFunc(boilModel)
 		if err != nil {
-			return lo.Empty[[]D](), errors.Wrap(err)
+			return lo.Empty[[]D](), errors.Wrapf(err, "btd  %T", domainModel)
 		}
 		domainModels = append(domainModels, domainModel)
 	}
@@ -123,24 +129,30 @@ func (repo *sqlRepo[D, B, BS]) FindAllBy(ctx context.Context, mods ...qm.QueryMo
 
 func (repo *sqlRepo[D, B, BS]) CountBy(ctx context.Context, mods ...qm.QueryMod) (int64, error) {
 	ret, err := repo.modelsFunc(mods...).Count(ctx, repo.db)
-	return ret, repo.errMapper.Map(err)
+	return ret, errors.Wrapf(repo.errMapper.Map(err), "counting %T", new(D))
 }
 
 func (repo *sqlRepo[D, B, BS]) Create(ctx context.Context, domainModel D) (D, error) {
 	boilModel, err := repo.dtbFunc(domainModel)
 	if err != nil {
-		return lo.Empty[D](), errors.Wrap(err)
+		return lo.Empty[D](), errors.Wrapf(err, "dtb %T", domainModel)
 	}
 	if err := boilModel.Insert(ctx, repo.db, boil.Infer()); err != nil {
-		return lo.Empty[D](), repo.errMapper.Map(err)
+		return lo.Empty[D](), errors.Wrapf(repo.errMapper.Map(err), "create %T", domainModel)
 	}
-	return repo.btdFunc(boilModel)
+
+	ret, err := repo.btdFunc(boilModel)
+	if err != nil {
+		return lo.Empty[D](), errors.Wrapf(err, "btd %T", domainModel)
+	}
+
+	return ret, nil
 }
 
 func (repo *sqlRepo[D, B, BS]) Update(ctx context.Context, domainModel D) (D, error) {
 	boilModel, err := repo.dtbFunc(domainModel)
 	if err != nil {
-		return lo.Empty[D](), errors.Wrap(err)
+		return lo.Empty[D](), errors.Wrapf(err, "dtb %T", domainModel)
 	}
 
 	if _, err := boilModel.Update(ctx, repo.db, boil.Infer()); err != nil {
@@ -153,7 +165,7 @@ func (repo *sqlRepo[D, B, BS]) Update(ctx context.Context, domainModel D) (D, er
 func (repo *sqlRepo[D, B, BS]) Upsert(ctx context.Context, domainModel D, conflictColumns ...string) (D, error) {
 	boilModel, err := repo.dtbFunc(domainModel)
 	if err != nil {
-		return lo.Empty[D](), errors.Wrap(err)
+		return lo.Empty[D](), errors.Wrapf(err, "dtb %T", domainModel)
 	}
 
 	if err = boilModel.Upsert(
@@ -161,10 +173,10 @@ func (repo *sqlRepo[D, B, BS]) Upsert(ctx context.Context, domainModel D, confli
 		repo.db,
 		true,
 		conflictColumns,
-		boil.Blacklist(conflictColumns...),
+		boil.Infer(),
 		boil.Infer(),
 	); err != nil {
-		return lo.Empty[D](), repo.errMapper.Map(err)
+		return lo.Empty[D](), errors.Wrapf(repo.errMapper.Map(err), "upsert %T", domainModel)
 	}
 
 	return repo.btdFunc(boilModel)
@@ -177,14 +189,14 @@ func (repo *sqlRepo[D, B, BS]) Delete(ctx context.Context, id string) error {
 func (repo *sqlRepo[D, B, BS]) DeleteBy(ctx context.Context, mods ...qm.QueryMod) error {
 	boilModel, err := repo.modelsFunc(mods...).One(ctx, repo.db)
 	if errors.Is(err, sql.ErrNoRows) {
-		return apierr.NotFound(err)
+		return apierr.NotFound(errors.Wrapf(err, "delete not found %T", new(D)))
 	} else if err != nil {
-		return repo.errMapper.Map(err)
+		return errors.Wrapf(repo.errMapper.Map(err), "delete find %T", new(D))
 	}
 
 	_, err = boilModel.Delete(ctx, repo.db)
 	if err != nil {
-		return repo.errMapper.Map(err)
+		return errors.Wrapf(repo.errMapper.Map(err), "delete %T", new(D))
 	}
 	return errors.Wrap(err)
 }
