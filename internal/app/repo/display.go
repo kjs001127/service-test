@@ -30,6 +30,7 @@ func (a *AppDisplayDAO) FindPublicDisplays(ctx context.Context, since string, li
 	return a.db.FindAllBy(ctx,
 		Where(AppDisplayColumns.IsPrivate, EQ, false),
 		Where(AppDisplayColumns.AppID, GT, since),
+		OrderBy(OrderAsc, AppDisplayColumns.AppID),
 		Limit(limit),
 	)
 }
