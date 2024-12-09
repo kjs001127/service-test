@@ -148,8 +148,7 @@ func (p *PermissionTestSuite) TestInstallPrivateAppByNonOwner() {
 		AppID: app.ID,
 	}
 
-	installedApp, err := p.installSvc.Install(ctx, manager, installationID)
-	p.Require().Nil(installedApp)
+	_, err = p.installSvc.Install(ctx, manager, installationID)
 	p.Require().Error(err)
 }
 

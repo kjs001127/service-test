@@ -147,6 +147,7 @@ func (a *AccountAppPermissionSvcImpl) CreateApp(ctx context.Context, title strin
 		createApp := appmodel.App{
 			Title:     title,
 			IsBuiltIn: false,
+			IsPrivate: true,
 		}
 
 		app, err := a.appLifeCycleSvc.Create(ctx, &createApp)

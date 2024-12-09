@@ -48,7 +48,7 @@ func (a *AppDisplayDAO) Save(ctx context.Context, display *model.AppDisplay) (*m
 }
 
 func (a *AppDisplayDAO) Delete(ctx context.Context, appID string) error {
-	return a.db.DeleteBy(ctx, Where(AppDisplayColumns.AppID, EQ, appID))
+	return a.db.DeleteAllBy(ctx, Where(AppDisplayColumns.AppID, EQ, appID))
 }
 
 var MarshalDisplay DTBFunc[*model.AppDisplay, *models.AppDisplay] = func(displayTarget *model.AppDisplay) (*models.AppDisplay, error) {
