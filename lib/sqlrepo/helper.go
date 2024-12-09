@@ -49,11 +49,7 @@ const (
 )
 
 func OrderBy(order Order, name ...string) qm.QueryMod {
-	placeholders := make([]string, 0, len(name))
-	for i := 0; i < len(name); i++ {
-		placeholders = append(placeholders, "?")
-	}
-	return qm.OrderBy("ORDER BY" + " (" + strings.Join(placeholders, ",") + ") " + string(order))
+	return qm.OrderBy(" (" + strings.Join(name, ",") + ") " + string(order))
 }
 
 func WhereIn[T any](name string, values []T) qm.QueryMod {
