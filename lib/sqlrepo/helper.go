@@ -3,6 +3,7 @@ package sqlrepo
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -38,6 +39,21 @@ func WhereNotIn[T any](name string, values []T) qm.QueryMod {
 		Args:   slice,
 		notIn:  true,
 	}
+}
+
+type Order string
+
+const (
+	OrderAsc  = Order("ASC")
+	OrderDESC = Order("DESC")
+)
+
+func OrderBy(order Order, name ...string) qm.QueryMod {
+	placeholders := make([]string, 0, len(name))
+	for i := 0; i < len(name); i++ {
+		placeholders = append(placeholders, "?")
+	}
+	return qm.OrderBy("ORDER BY" + " (" + strings.Join(placeholders, ",") + ") " + string(order))
 }
 
 func WhereIn[T any](name string, values []T) qm.QueryMod {
