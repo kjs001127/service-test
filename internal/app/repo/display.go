@@ -36,7 +36,7 @@ func (a *AppDisplayDAO) FindPublicDisplays(ctx context.Context, since string, li
 }
 
 func (a *AppDisplayDAO) Find(ctx context.Context, appID string) (*model.AppDisplay, error) {
-	return a.db.FindBy(ctx, Where(AppDisplayColumns.AppID, EQ, appID))
+	return a.db.FetchBy(ctx, Where(AppDisplayColumns.AppID, EQ, appID))
 }
 
 func (a *AppDisplayDAO) FindAll(ctx context.Context, appIDs []string) ([]*model.AppDisplay, error) {
