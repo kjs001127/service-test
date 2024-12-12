@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/ch-proto/meet";
+option java_package = "io.channel.api.proto";
+option java_multiple_files = true;
+
+package meet;
+
+service MeetService {
+  // dw -> sfu
+  rpc CreateOutboundMeet(OutboundMeetRequest) returns (BareResponse);
+  rpc CreatePrivateMeet(PrivateMeetRequest) returns (BareResponse);
+  rpc HangUpMeetByManager(HangUpMeetByManagerRequest) returns (BareResponse);
+  rpc JoinMeetByManager(JoinMeetByManagerRequest) returns (BareResponse);
+  rpc TerminateMeet(TerminateMeetRequest) returns (BareResponse);
+
+  // sfu -> dw
+  rpc CreateInboundMeet(InboundMeetRequest) returns (InboundMeetResponse);
+  rpc CreateMeetRecord(CreateMeetRecordRequest) returns (BareResponse);
+  rpc InitializeInboundMeet(InitializeInboundMeetRequest) returns (InitializeInboundMeetResponse);
+  rpc JoinMeetByUser(JoinMeetByUserRequest) returns (BareResponse);
+  rpc HangUpMeetByUser(HangUpMeetByUserRequest) returns (BareResponse);
+  rpc RejectMeetByUser(RejectMeetByUserRequest) returns (BareResponse);
+}
+
+enum ResponseCode {
+  SUCCESS = 0; // 200
+  BAD_REQUEST = 1; // 400
+  UNAUTHORIZED = 2; // 401
+  FORBIDDEN = 3; // 403
+  NOT_FOUND = 4; // 404
+  UNKNOWN = 5; // 500
+}
+
+message AudioFile {
+  string bucket = 1;
+  string key = 2;
+  string name = 3;
+  string content_type = 4;
+  double duration = 5;
+  int64 size = 6;
+}
+
+message Person {
+  string type = 1;
+  string id = 2;
+}
+
+message Peer {
+  Person person = 1;
+  string device_id = 2;
+}
+
+// common
+
+message BareResponse {
+  ResponseCode response_code = 1;
+}
+
+// sfu -> dw
+
+message InboundMeetRequest {
+  string from = 1;
+  string to = 2;
+  string carrier = 3;
+  string sfu_server_id = 4;
+  string device_id = 5;
+  string meet_id = 6;
+}
+
+message JoinMeetByUserRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+message HangUpMeetByManagerRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+message InitializeInboundMeetRequest {
+  string to = 1;
+  string from = 2;
+}
+
+message CreateMeetRecordRequest {
+  string meet_id = 1;
+  AudioFile meet_record = 2;
+}
+
+// dw -> sfu
+
+message OutboundMeetRequest {
+  string meet_id = 1;
+  string from = 2;
+  string to = 3;
+  string carrier = 4;
+  Person user = 5;
+  Peer manager = 6;
+  string guide_voice_url = 7;
+  string p_asserted_identity = 8;
+}
+
+message InboundMeetResponse {
+  ResponseCode response_code = 1;
+  string meet_id = 2;
+  Peer peer = 3;
+}
+
+message PrivateMeetRequest {
+  string meet_id = 1;
+  Peer manager = 2;
+}
+
+message JoinMeetByManagerRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+message JoinMeetByUserResponse {
+  ResponseCode response_code = 1;
+  Peer peer = 2;
+}
+
+message TerminateMeetRequest {
+  string meet_id = 1;
+  string channel_id = 2;
+  optional string guide_voice_url = 3;
+}
+
+message HangUpMeetByUserRequest {
+  Peer peer = 1;
+  string meet_id = 2;
+}
+
+message InitializeInboundMeetResponse {
+  bool is_meet_available = 1;
+  string guide_voice_url = 2;
+  string meet_id = 3;
+}
+
+message RejectMeetByUserRequest {
+  Person person = 1;
+  string meet_id = 2;
+}

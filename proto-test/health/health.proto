@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/ch-proto/health";
+
+package health;
+
+import "google/protobuf/empty.proto";
+
+service PingService {
+  rpc Ping(google.protobuf.Empty) returns (PingResponse);
+}
+
+message PingResponse {
+  enum HealthStatus {
+    Healthy = 0;
+    UnHealthy = 1;
+  }
+  HealthStatus status = 1;
+}
