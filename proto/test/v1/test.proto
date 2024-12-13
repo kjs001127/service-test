@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/channel-io/service-test/proto/test/v1;testv1";
+
+package test.v1;
+
+message TestRequest {
+  string some_str = 1;
+  repeated string some_slice = 2;
+}
+
+message TestResponse{
+  string some_str = 1;
+  repeated string resp_slice = 2;
+}
+
+service TestService {
+  rpc Test(TestRequest) returns (TestResponse);
+}

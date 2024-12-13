@@ -1,1 +1,0 @@
-ALTER TABLE brief RENAME TO briefs;

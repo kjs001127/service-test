@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX unique_index_app_roles_on_app_id_and_type ON app_roles USING btree (app_id, type)

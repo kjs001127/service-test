@@ -1,6 +1,0 @@
-FROM flyway/flyway:10-alpine
-
-WORKDIR /root
-
-COPY ./config/flyway/flyway.conf /root/flyway.conf
-COPY ./resource/psql/migration /root/db/migration

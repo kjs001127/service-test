@@ -1,1 +1,0 @@
-ALTER TABLE apps ALTER COLUMN is_private DROP NOT NULL;
