@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@bufbuild/buf": "^1.47.2",
+    "@bufbuild/protobuf": "^2.2.3",
+    "@bufbuild/protoc-gen-es": "^2.2.3",
+    "@connectrpc/connect": "^2.0.0"
+  },
+  "name": "service-test",
+  "description": "```bash  grpcurl -protoset <(buf build -o -) -plaintext -d '{\"someStr\": \"test\"}' localhost:10010 test.v1.TestService/Test ```",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
